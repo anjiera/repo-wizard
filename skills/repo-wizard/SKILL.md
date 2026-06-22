@@ -86,7 +86,7 @@ Upon completion, write two reports:
    - Selection Ledger: `"For [Capability Y], the repo-wizard suggested [Tools]. The developer selected [Tool B] [Reason: Rationales]."`
 2. **Developer Toolchain Summary (`docs/TOOLCHAIN.md`)**:
    - Name and purpose of each configured tool.
-   - Clickable links to the configuration files in the repo (e.g. [eslint.config.js](file:///d:/DevSandbox/agy-projects/repo-wizard/eslint.config.js)).
+   - Clickable links to the configuration files in the repo (e.g. [eslint.config.js](../../eslint.config.js)).
    - Link references to the tools' official docs.
 
 ---
@@ -119,4 +119,4 @@ Upon completion, write two reports:
 - [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback safety checks.
-- [ ] Both `.repo-wizard/audit-report.md` and [docs/TOOLCHAIN.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/TOOLCHAIN.md) are generated with absolute `file://` links.
+- [ ] Both `.repo-wizard/audit-report.md` and [docs/TOOLCHAIN.md](../../docs/TOOLCHAIN.md) are generated with relative links.

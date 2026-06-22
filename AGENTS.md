@@ -21,7 +21,7 @@ This repository is designed to be consumed as a plugin. Agents must automaticall
 Map user queries to skills according to this matrix:
 
 - **Query / Intent:** Banned words check, legal liability scanning, phrasing checks for weather safety/fitness/finance, or running `/legal-neutrality`.
-  - **Skill:** [legal-neutrality-scanner](file:///d:/DevSandbox/agy-projects/repo-wizard/skills/legal-neutrality-scanner/SKILL.md)
+  - **Skill:** [legal-neutrality-scanner](skills/legal-neutrality-scanner/SKILL.md)
 - **Query / Intent:** Setting up testing, auditing code compliance, onboarding a repository, choosing linter configs, or running `/repo-wizard`.
   - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*
 
@@ -31,4 +31,4 @@ This plugin uses a **decoupled specialist handoff** pattern:
 * **The Lead Agent (`repo-wizard`)** is responsible for user profiling, stack evaluation, and dispatching.
 * **Specialist Agents** are independent and should not spawn other agents. They execute specific, narrow parameter contracts (e.g. configuring accessibility tools or writing mock data) and report back.
 
-For details on the architecture, see the specifications in the [repo-wizard-planning/](file:///d:/DevSandbox/agy-projects/repo-wizard/repo-wizard-planning/) folder.
+For details on the architecture, see the specifications in the [repo-wizard-planning/](repo-wizard-planning/) folder.

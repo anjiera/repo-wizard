@@ -17,7 +17,7 @@ Before asking the questionnaire, the agent runs a token-efficient directory anal
  4. If the codebase is larger than 10,000 LOC or contains multiple submodules, the agent must prompt the user with the **Incremental Adoption Question** (preventing token exhaustion and API cost overflow).
 
 ### 1.2 Interactive Alignment Questionnaire
-The wizard guides the developer through a structured interactive questionnaire (detailed in [brainstorming_notes.md](file:///d:/DevSandbox/agy-projects/repo-wizard/repo-wizard-planning/brainstorming_notes.md)), covering:
+The wizard guides the developer through a structured interactive questionnaire (detailed in [brainstorming_notes.md](brainstorming_notes.md)), covering:
 1. *Context & Goals:* Refactoring vs Greenfield, Team Profile, Commercial Release target, Tooling Budget (Free vs Premium/Paid).
 2. *Technical Stack & Runtime:* Target platforms (IoT, Desktop, Web, Mobile), runtime hardware constraints, and build configurations.
 3. *Friction & Gates:* Testing preferences, coverage thresholds, git workflow restrictions, and execution environments (local, pre-commit, remote CI, background crons).
@@ -71,7 +71,7 @@ This is a comprehensive, developer-independent text report that documents the ex
 A public-facing, well-formatted Markdown summary saved to the repository for the engineering team. It lists only the installed toolchain components without internal audit logs.
 * **Structure:**
  * **Tool Name & Purpose:** The human-readable name of the tool and what it is responsible for in the repo (e.g. *Axe-core CLI - Automated Accessibility Checks*).
- * **Configuration Files:** Clickable links to the configuration files created/modified in the repo (e.g. [axe.config.json](file:///d:/DevSandbox/agy-projects/repo-wizard/axe.config.json)).
+ * **Configuration Files:** Clickable links to the configuration files created/modified in the repo (e.g. [axe.config.json](../axe.config.json)).
  * **Audit Reference Links:** Clickable links to the tool's official documentation website or public repository (allowing the team to self-audit licenses, updates, or parameters).
 
 ### 1.6 Execution Order (Interview First, Scaffolding Second)

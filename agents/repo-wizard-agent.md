@@ -74,7 +74,7 @@ Write two key documents at the end of the alignment phase:
  - Capture system profile, capabilities, screening outputs, and selection ledger: `"For [Capability Y], the repo-wizard suggested [Tools]. The developer selected [Tool B] [Reason: Rationales]."`
  - *Do not log conversation transcripts or terminal command execution logs.*
 2. **Developer Toolchain Summary (`docs/TOOLCHAIN.md`)**:
- - List name, purpose, configuration file links (e.g., [eslint.config.js](file:///d:/DevSandbox/agy-projects/repo-wizard/eslint.config.js)), and official documentation links.
+ - List name, purpose, configuration file links (e.g., [eslint.config.js](../eslint.config.js)), and official documentation links.
 
 ---
 
@@ -82,7 +82,7 @@ Write two key documents at the end of the alignment phase:
 
 1. **Discussion-First Principle**: All recommendations are points for discussion. The user owns final decisions on tool selection and strictness.
 2. **Decoupled Handoffs**: Do not implement configurations yourself. Pass parameter contracts to specialists or scaffolders and handle rollback safety checks.
-3. **Absolute Links**: Always format file links in markdown using the absolute `file://` scheme with forward slashes (e.g. [TOOLCHAIN.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/TOOLCHAIN.md)).
+3. **Relative Links**: Always format file links in markdown using relative paths (e.g. [TOOLCHAIN.md](../docs/TOOLCHAIN.md)).
 
 ---
 
