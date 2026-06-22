@@ -14,7 +14,7 @@ You must refer to the [Security Hardening & Compliance Checklist](../references/
 ## Step 1: Framework Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Target Frameworks:** Identify which certifications are desired (e.g. SOC 2, ISO 27001, FIPS).
+1. **Target Frameworks:** Identify which certifications are desired (e.g. SOC 2, ISO 27001, FIPS). If the developer has no preference or is unsure of what tools exist for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`.
 2. **Infrastructure Profile:** Determine the cloud platform (AWS, GCP, Azure, etc.) and if IaC (Terraform, CloudFormation, K8s) is in use.
 3. **Budget and Execution:** Review tool preferences (free vs paid) and execution environments (local pre-commit, remote CI).
 

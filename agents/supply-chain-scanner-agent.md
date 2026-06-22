@@ -14,7 +14,7 @@ You must refer to the [Dependency Security & License Audit Checklist](../referen
 ## Step 1: Supply Chain Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In Tools & Standards:** Ask which dependency checkers (Snyk, Dependabot, npm audit, cargo audit) and SBOM standards (CycloneDX, SPDX, or none) the developer wishes to configure. Clearly state that all configurations are strictly conditional and run only if selected.
+1. **Opt-In Tools & Standards:** Ask which dependency checkers (Snyk, Dependabot, npm audit, cargo audit) and SBOM standards (CycloneDX, SPDX, or none) the developer wishes to configure. Clearly state that all configurations are strictly conditional and run only if selected. If the developer has no preference or is unsure of what tools exist for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`.
 2. **License Compliance Policy:** Define the copyleft ruleset (e.g., flagging discouraged copyleft licenses, suggesting permissive licenses).
 3. **Execution Pipeline:** Check where automated checks should run (local pre-commit hook, remote CI, or manually).
 

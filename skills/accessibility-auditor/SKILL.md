@@ -28,7 +28,7 @@ A specialized accessibility engineering workflow designed to audit UI codebases 
 
 ### Phase 1: Accessibility Alignment
 Before running any analysis or modifications, you **MUST** align with the developer:
-1. **Target Standards:** Ask which accessibility standards are desired (WCAG 2.1 AA, WCAG 2.2 AA, EN 301 549, or none). Explain that checks are strictly conditional and will only run for chosen standards.
+1. **Target Standards:** Ask which accessibility standards are desired (WCAG 2.1 AA, WCAG 2.2 AA, EN 301 549, or none). Explain that checks are strictly conditional and will only run for chosen standards. If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-evaluator.agent`.
 2. **Framework Stack:** Identify the frontend rendering framework (React, Vue, Svelte, static HTML) and styling configurations.
 3. **Execution Pipeline:** Check where automated checks should run (local pre-commit, remote CI, or manually).
 4. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.

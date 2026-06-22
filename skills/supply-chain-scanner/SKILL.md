@@ -28,7 +28,7 @@ A specialized supply chain security engineering workflow designed to audit third
 
 ### Phase 1: Supply Chain Alignment
 Before running any analysis or modifications, you **MUST** align with the developer:
-1. **Target Standards & Tools:** Ask which dependency checkers (Snyk, Dependabot, npm audit) and SBOM standards (CycloneDX, SPDX, or none) the developer wishes to configure. Explain that all checks are strictly conditional and run only if selected.
+1. **Target Standards & Tools:** Ask which dependency checkers (Snyk, Dependabot, npm audit) and SBOM standards (CycloneDX, SPDX, or none) the developer wishes to configure. Explain that all checks are strictly conditional and run only if selected. If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-evaluator.agent`.
 2. **License Compliance Policy:** Establish the license ruleset (e.g., flagging discouraged copyleft licenses, suggesting permissive licenses).
 3. **Execution Pipeline:** Check where automated checks should run (local pre-commit hook, remote CI, or manually).
 4. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.

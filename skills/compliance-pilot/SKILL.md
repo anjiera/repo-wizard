@@ -28,7 +28,7 @@ A specialized security and engineering compliance workflow designed to audit rep
 
 ### Phase 1: Interactive Alignment
 Before generating or modifying any files, you **MUST** align with the developer:
-1. **Compliance Target:** Ask which frameworks are required (SOC 2, ISO 27001, FIPS 140-2/3, or general hardening).
+1. **Compliance Target:** Ask which frameworks are required (e.g. SOC 2, ISO 27001, FIPS 140-2/3, or general hardening). If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-evaluator.agent`.
 2. **Infrastructure Scope:** Ask if they are using Infrastructure-as-Code (Terraform, CloudFormation, Kubernetes yaml, Ansible) and identify the cloud provider (AWS, GCP, Azure, or Hybrid).
 3. **Cryptographic Profile:** Ask if FIPS compliance requires validated modules or standard permissive crypto libraries.
 4. **Consent Check:** Inform the developer that you will analyze existing configurations and ask for permission before modifying scripts or installing tools.

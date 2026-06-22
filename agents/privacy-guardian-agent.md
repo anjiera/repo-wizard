@@ -14,7 +14,7 @@ You must refer to the [Data Privacy & Regulation Compliance Checklist](../refere
 ## Step 1: Privacy Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Target Regulations:** Identify which regulations apply (GDPR, CCPA/CPRA, COPPA, or general hardening).
+1. **Target Regulations:** Identify which regulations apply (GDPR, CCPA/CPRA, COPPA, or general hardening). If the developer has no preference or is unsure of what tools exist for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`.
 2. **Age Thresholds:** Confirm if the application targets or collects data from children under 13 (triggering COPPA rules).
 3. **Data Infrastructure:** Identify database engines (SQL, NoSQL), logging libraries (e.g. winston, logback), and web framework routes.
 

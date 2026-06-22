@@ -28,7 +28,7 @@ A specialized data privacy and regulation compliance workflow designed to audit 
 
 ### Phase 1: Privacy Alignment
 Before generating or modifying any files, you **MUST** align with the developer:
-1. **Target Regulations:** Ask which regulations apply (GDPR, CCPA/CPRA, COPPA, or generic PII protection).
+1. **Target Regulations:** Ask which regulations apply (e.g. GDPR, CCPA/CPRA, COPPA, or generic PII protection). If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-evaluator.agent`.
 2. **Age Profile:** Explicitly ask if the application targets children under 13 (COPPA triggers).
 3. **Storage & Log Stack:** Identify the databases in use (e.g. PostgreSQL, MongoDB) and loggers (e.g. winston, logback).
 4. **Consent Check:** Inform the developer that you will analyze files and seek permission before making any changes.
