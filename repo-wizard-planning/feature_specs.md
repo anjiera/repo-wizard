@@ -146,7 +146,7 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Enforce WCAG 2.1/2.2 AA and EN 301 549 standards.
 * **Deliverables:** Configure ESLint accessibility plug-ins, setup `axe-core` command-line test scripts running in chromium-headless environments, write screen-reader element validation skeletons, and configure accessibility report generators.
 
-### 4.4 `supply-chain-safety.agent` (Dependency Safety & SBOM)
+### 4.4 `supply-chain-scanner.agent` (Dependency Scan & SBOM)
 * **Objective:** Audit active dependency vulnerability risk and license legality.
 * **Deliverables:** Configure automated Software Bill of Materials (SBOM) generation (CycloneDX, SPDX) on release builds, integrate dependency vulnerability checkers (Snyk, Dependabot), and set up pre-commit/CI license auditing (FOSSA, License Finder) configured to block viral copyleft licenses.
 
@@ -265,7 +265,7 @@ Each agent has a corresponding skill folder containing a YAML-frontmatter-driven
 * `skills/compliance-pilot/SKILL.md` (Hardening and audits)
 * `skills/privacy-guardian/SKILL.md` (PII and consent controls)
 * `skills/accessibility-auditor/SKILL.md` (A11y automated sweeps)
-* `skills/supply-chain-safety/SKILL.md` (SBOM and licenses)
+* `skills/supply-chain-scanner/SKILL.md` (SBOM and licenses)
 * `skills/testing-pilot/SKILL.md` (Test framework & mocks setup)
 * `skills/technical-scribe/SKILL.md` (Docs, ADRs, and diagrams)
 
@@ -278,7 +278,7 @@ Specialist agents require access to exhaustive, high-density checklists to preve
 5. **`references/testing-patterns.md`:** Patterns for TDD implementation, mocking layers (MSW), coverage gates, and MC/DC (Modified Condition/Decision Coverage) setup.
 6. **`references/document-standards.md`:** Layout definitions for Michael Nygard ADR files, C4 model architecture diagrams, Mermaid charts, and bug post-mortem retrospective forms.
 7. **`references/ai-safety-checklist.md`:** Validation checksheets for the EU AI Act, OWASP LLM Top 10, LLM guardrails, and model bias auditing.
-8. **`references/supply-chain-checklist.md`:** Audit checklists for lockfile integrity, dependency vulnerability scanning (Snyk/Dependabot configs), Software Bill of Materials (SBOM) structures, and licensing compliance (GPL/AGPL vs. MIT/Apache copyleft 
+8. **`references/supply-chain-audit-checklist.md`:** Audit checklists for lockfile integrity, dependency vulnerability scanning (Snyk/Dependabot configs), Software Bill of Materials (SBOM) structures, and licensing compliance (GPL/AGPL vs. MIT/Apache copyleft 
 
 ### 7.4 Agent Evaluation & Testing
 To ensure the reliability, compliance, and formatting correctness of all agents, a dynamic LLM-as-a-Judge evaluation suite is configured in the repository.

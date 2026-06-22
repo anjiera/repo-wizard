@@ -89,7 +89,7 @@ The list of security standards and compliance frameworks below is a **non-exhaus
 * **Singapore MAS TRM Trigger (Singapore/Fintech):** "Will the application run in financial service or banking environments regulated by the Monetary Authority of Singapore (MAS)?"
  * *Actions:* Integrate vulnerability assessments, strict API security gates, access control and MFA enforcement checks.
 * **EU NIS 2 Directive Trigger (European Union):** "Does the application fall under the scope of the EU's NIS 2 Directive for critical entities (digital providers, critical infrastructure, supply chain secure coding)?"
- * *Actions:* Scaffold supply-chain dependency safety scoring, incident reporting mock channels, and vulnerability disclosure configurations.
+ * *Actions:* Scaffold supply-chain dependency security scoring, incident reporting mock channels, and vulnerability disclosure configurations.
 * **SOC 2 Type I/II Trigger (SaaS Security):** "Are you building a commercial SaaS or B2B application requiring SOC 2 compliance for security, confidentiality, availability, or privacy?"
  * *Actions:* Setup automated access control logs auditing, configuration drift monitors, infrastructure encryption checks, and audit logging standards.
 * **OWASP ASVS / Top 10 Trigger (Application Security):** "Do you want to verify the application against the OWASP Application Security Verification Standard or Top 10 vulnerabilities?"
@@ -207,7 +207,7 @@ To prevent the agent from becoming outdated when new frameworks emerge, the spec
 * **`accessibility-auditor.agent` (A11y Standards & Reporting)**:
  * *Expertise:* Accessibility standards conformance (WCAG 2.1/2.2 AA, Section 508, EN 301 549) and Voluntary Product Accessibility Template (VPAT/ACR) reporting.
  * *Dynamic Scope:* Scaffolds automated DOM accessibility test runners (Axe-core CLI), accessibility linting setups (e.g. eslint-plugin-jsx-a11y), keyboard-navigation test skeletons, and schedules automated accessibility CI/CD regression checks.
-* **`supply-chain-safety.agent` (Dependency Safety & SBOM)**:
+* **`supply-chain-scanner.agent` (Dependency Security & SBOM)**:
  * *Expertise:* Auditing active dependencies, Software Bill of Materials (SBOM) orchestration, and software license legality.
  * *Dynamic Scope:* Scaffolds CycloneDX/SPDX SBOM generation scripts into CI/CD pipelines, configures dependency vulnerability audit scanners (Snyk, Dependabot, npm audit), and integrates license-compliance verification tools (FOSSA, License Finder) to prevent viral copyleft license issues.
 * **`testing-pilot.agent` (Unit, E2E & Mock Scaffolding)**:
