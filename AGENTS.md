@@ -20,7 +20,7 @@ This repository is designed to be consumed as a plugin. Agents must automaticall
 
 Map user queries to skills according to this matrix:
 
-- **Query / Intent:** Banned words check, legal liability scanning, phrasing checks for weather safety/fitness/finance, or running `/legal-neutrality`.
+- **Query / Intent:** Banned words check, legal liability scanning, phrasing checks for weather safety/fitness/finance, or running `/rw-legal-neutrality`.
   - **Skill:** [legal-neutrality-scanner](skills/legal-neutrality-scanner/SKILL.md)
 - **Query / Intent:** Setting up testing, auditing code compliance, onboarding a repository, choosing linter configs, or running `/repo-wizard`.
   - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*

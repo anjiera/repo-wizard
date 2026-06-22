@@ -39,7 +39,7 @@ Once installed, you can trigger a legal neutrality check in two ways:
 ### 1. Slash Command
 Type the custom slash command in the chat input:
 ```bash
-/legal-neutrality
+/rw-legal-neutrality
 ```
 The command automatically invokes the `legal-neutrality-scanner` skill and adopts the `legal-neutrality-agent` auditor persona.
 

@@ -8,7 +8,7 @@ It packages instructions, checklists, and persona configurations that can be loa
 
 ## Features & Commands
 
-### 1. Legal Neutrality Scanner (`/legal-neutrality`)
+### 1. Legal Neutrality Scanner (`/rw-legal-neutrality`)
 * **Purpose:** Scans codebases for high-risk phrases, promises, or claims (e.g. guaranteeing security, offering unregulated fitness/health guidance) that expose the company to legal liability.
 * **Specialist Agent:** `agents/legal-neutrality-agent.md`
 * **Skill:** `skills/legal-neutrality-scanner/SKILL.md`

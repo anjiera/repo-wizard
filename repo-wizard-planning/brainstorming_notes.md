@@ -73,7 +73,7 @@ The list of security standards and compliance frameworks below is a **non-exhaus
 * **Legal & Copyright Header Trigger:** "Does your repository need to enforce standard copyright notices and license headers at the top of every source file (especially important for open-source or commercial IP protection)?"
  * *Actions:* Configure pre-commit scripts that scan and automatically inject or validate license headers.
 * **Legal Liability & Phrase Neutrality Trigger:** "Does the application provide advice, instructions, or claims (health, financial, weather safety, data privacy) that could expose the organization to liability or phrasing-related legal risks?"
- * *Actions:* Scaffold the `/legal-neutrality` scanning agent, setup the legal phrasing dictionary lookup, and configure pre-commit or CI scans to flag non-neutral language.
+ * *Actions:* Scaffold the `/rw-legal-neutrality` scanning agent, setup the legal phrasing dictionary lookup, and configure pre-commit or CI scans to flag non-neutral language.
 * **ISO/IEC 27001 Trigger (International):** "Does the organization require certification against the international standard for information security management systems (ISMS)?"
  * *Actions:* Configure access-control rule linters, secure coding guidelines checkers, and dynamic vulnerability assessment integrations.
 * **UK Cyber Essentials Trigger (United Kingdom):** "Will the software be used by or sold to UK public or private sector organizations requiring Cyber Essentials certification?"
