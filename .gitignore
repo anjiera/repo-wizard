@@ -1,0 +1,14 @@
+# Zip archives of skills (if packaged for distribution)
+skills/*.zip
+
+# OS/System/Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.log
+
+# Repo Wizard active sessions and history
+.repo-wizard/
+
