@@ -27,7 +27,7 @@ A specialized engineering workflow designed to audit user-facing UI elements, me
 ## Core Process
 
 ### Phase 1: Interactive Alignment
-You **MUST** initiate an interactive discussion with the user before executing any file reads or keyword searches:
+You **MUST** initiate an interactive discussion with the user before executing any file reads or keyword searches. If the developer has no preference or is unsure of the target languages, file extensions, or keywords, suggest candidate defaults dynamically.
 1. **Target Language(s)**: Ask which spoken language (e.g., English, Spanish, Japanese) and programming filetypes (e.g., Kotlin, XML, Swift) you should prioritize.
 2. **Exclusion Check**: State which file extensions you plan to analyze by default based on the programming language, and explicitly ask the user if there are any specific file extensions they want to include or ignore.
 3. **Keyword Translation Disclosure**:

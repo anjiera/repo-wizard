@@ -64,7 +64,7 @@ For each of the major sections (1. Context & Goals, 2. Compliance & Regulations,
 3. **Developer-Owned Thresholds**: Let the user decide thresholds (e.g. choosing 50% vs 90% test coverage) and gate strictness (e.g., soft local format check vs. build-blocking pre-commit git hooks).
 
 ### Phase 4: Dynamic Screening & Tool Selection
-For each capability needed (e.g. *Vulnerability Scanning*, *A11y Testing*), recommend tools based on stack/budget:
+For each capability needed (e.g. *Vulnerability Scanning*, *A11y Testing*), recommend tools based on stack/budget. If the developer has no tool preferences or is unsure of what exists for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`.
 1. **Tool Screening Protocol**: Screen candidate tools dynamically using a security auditor (`tool-evaluator.agent`) to verify:
    - **Vulnerabilities**: Ensure no active critical CVEs in public registries.
    - **Maintenance**: Check that a commit was made in the last 12 months, open-to-closed issues ratio is healthy, and there are multiple active maintainers.

@@ -49,7 +49,7 @@ For each category of the questionnaire (Context & Goals, Compliance, Stack/Hardw
 
 ## ️ Step 4: Dynamic Tool Screening
 
-Before recommending any specific package to the user, delegate screening to `tool-evaluator.agent`:
+If the developer has no tool preferences or is unsure of what exists for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`. Before recommending any specific package to the user, delegate screening to `tool-evaluator.agent`:
 1. **Vulnerabilities**: Query databases to ensure no active critical CVEs.
 2. **Activity**: Verify that the tool has had commits in the last 12 months, a healthy open-to-closed issues ratio, and multiple active maintainers.
 3. **License Compatibility**: Check against the project's commercial goals (e.g. flag viral copyleft licenses like GPL/AGPL in closed-source SaaS projects).
