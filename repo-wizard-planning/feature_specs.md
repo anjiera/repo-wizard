@@ -229,8 +229,9 @@ When a specialist or scaffolder alters files and triggers a verification build t
 
 ### 6.1 Recovery Rules
 1. **State Isolation:** Subagents must verify the working tree is clean (`git status`) before starting.
-2. **Build Safety Check:** If the verify script returns a non-zero exit code (compile error, TypeScript validation fail, or broken tests), the scaffolder executes `git checkout -- .` (and deletes untracked files with `git clean -fd` inside the targeted module directories).
-3. **Rollback Safety:** If a subagent's scaffolding breaks the build or fails unit tests, the lead orchestrator rolls back the changes and reports the exact failure to the user.
+2. **Build Safety Check:** If the verify script returns a non-zero exit code (compile error, TypeScript validation fail, or broken tests), notify the developer of the exact error and attempt to debug/resolve the failure first.
+3. **Developer Consent & Rollback:** If debugging attempts fail, explain what was tried and ask the developer for explicit permission/consent before performing a git rollback (`git checkout -- .` and delete untracked files with `git clean -fd` inside the targeted module directories). Give the developer the opportunity to investigate and resolve it manually if preferred.
+4. **Rollback Safety:** If a subagent's scaffolding breaks the build or fails unit tests and rollback is approved/executed, the lead orchestrator reports the exact failure and verifies the workspace is cleanly restored.
 
 ---
 

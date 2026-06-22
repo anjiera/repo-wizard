@@ -69,7 +69,7 @@ After the installation and configuration are verified successfully:
 ## Step 7: Rollback on Verification Failure
 
 If the verification command fails (non-zero exit code):
-1. **Safety Rollback:** The design goal is high robustness, so you must immediately clean up all modified and untracked files within the targeted directories to restore the repository to its clean state.
-2. **Execute Rollback:** Run `git checkout -- .` and remove untracked files using `git clean -fd` inside the targeted module directories.
-3. **Reporting:** Report the exact verification failure details back to the lead orchestrator and the user, explaining what went wrong and confirming that changes have been reverted to preserve the workspace.
+1. **Notify & Debug Attempt:** Immediately report the exact verification failure details back to the lead orchestrator and the user, explaining what went wrong. Propose or attempt a correction/fix for the build failure or broken tests.
+2. **Developer Consultation:** Explain what was tried and ask the developer for explicit permission/consent before performing any rollback. Give the developer the opportunity to investigate and resolve the issue manually if they prefer.
+3. **Execute Rollback:** Only if debugging attempts fail, or if the developer requests/consents to it, run rollback commands (`git checkout -- .` and remove untracked files using `git clean -fd` inside the targeted module directories) to restore the repository to its clean state.
 4. **Liability Disclaimer:** Remind the user that while rollback procedures are designed for high robustness, no absolute safety guarantees can be made, manual inspection is recommended, and using the agent or its recommendations in no way certifies the code or guarantees it will pass any compliance audit or certification.

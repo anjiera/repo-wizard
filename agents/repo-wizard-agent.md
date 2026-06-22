@@ -63,7 +63,7 @@ Scaffold configurations strictly in sequence:
 1. **Complete Interview First**: Finish the entire questionnaire and candidate screening before editing workspace files.
 2. **Deduplicate Candidates**: Cross-reference capabilities to identify if a single tool (e.g. ESLint) can satisfy multiple requirements simultaneously.
 3. **Handoff Contract**: Compile configurations into a parameters contract (JSON containing paths, install commands, config contents) and dispatch to a configuration executor (e.g., `tool-scaffolder.agent`).
-4. **Verification & Rollback**: Run verification builds after installation. If a build fails, execute rollback commands (`git checkout -- .`, `git clean -fd`) and report the error logs.
+4. **Verification & Rollback**: Run verification builds after installation. If a build fails, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing rollback commands (`git checkout -- .`, `git clean -fd`). Give the developer the opportunity to resolve it manually first.
 
 ---
 
