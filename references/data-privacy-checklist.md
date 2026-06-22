@@ -36,7 +36,7 @@ This reference checklist maps major data privacy regulations (GDPR, CCPA/CPRA, C
 
 ---
 
-## 👶 3. Children's Online Privacy Protection Act (COPPA)
+## 3. Children's Online Privacy Protection Act (COPPA)
 
 ### 3.1 Age Verification & Parental Consent
 - [ ] *Manual Verification:* Confirm the app utilizes an age-gate workflow to verify if users are under 13 before collecting any data.
@@ -44,7 +44,7 @@ This reference checklist maps major data privacy regulations (GDPR, CCPA/CPRA, C
 
 ### 3.2 Data Minimization & Retention
 - [ ] Ensure no geolocation data or persistent identifiers (like device IDs or advertising IDs) are collected from children under 13 unless strictly necessary for core function. If collected, document:
-  - The specific data and circumstances of collection.
-  - The technical justification for why it is necessary for core function.
-  - The decision owner, date, and re-evaluation frequency.
+ - The specific data and circumstances of collection.
+ - The technical justification for why it is necessary for core function.
+ - The decision owner, date, and re-evaluation frequency.
 - [ ] Enforce automatic data deletion routines that purge children's account data after a period of inactivity.

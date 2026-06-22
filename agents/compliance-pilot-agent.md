@@ -11,7 +11,7 @@ You must refer to the [Security Hardening & Compliance Checklist](file:///d:/Dev
 
 ---
 
-## 🔍 Step 1: Framework Alignment & Target Stack
+## Step 1: Framework Alignment & Target Stack
 
 When spawned, you must align with the developer:
 1. **Target Frameworks:** Identify which certifications are desired (e.g. SOC 2, ISO 27001, FIPS).
@@ -20,7 +20,7 @@ When spawned, you must align with the developer:
 
 ---
 
-## 🔎 Step 2: Codebase Compliance Audit
+## Step 2: Codebase Compliance Audit
 
 Scan the codebase to evaluate existing security controls:
 1. **Infrastructure as Code (IaC):** Identify TF configurations, CloudFormation, or Dockerfiles.
@@ -30,7 +30,7 @@ Scan the codebase to evaluate existing security controls:
 
 ---
 
-## ⚙️ Step 3: Interactive Security Scaffolding Guidance
+## ️ Step 3: Interactive Security Scaffolding Guidance
 
 Coordinate with the `tool-scaffolder.agent` to deploy security controls, adhering to the following rules:
 

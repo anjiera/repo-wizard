@@ -4,7 +4,7 @@ This reference guide provides comprehensive lists of common high-liability phras
 
 ---
 
-## 🏥 Category 1: Health, Fitness & Weather Safety
+## Category 1: Health, Fitness & Weather Safety
 
 These phrases carry high medical/health liability risks if weather conditions shift or if a user experiences heat stress, frostbite, or cardiovascular distress during recommended windows.
 
@@ -17,7 +17,7 @@ These phrases carry high medical/health liability risks if weather conditions sh
 
 ---
 
-## 💰 Category 2: Financial, Business & Commerce Advice
+## Category 2: Financial, Business & Commerce Advice
 
 Phrases that guarantee outcomes, suggest specific commercial transactions, or advise on investments carry heavy regulatory liability (e.g. SEC/FCA regulations) if the user loses money.
 
@@ -29,7 +29,7 @@ Phrases that guarantee outcomes, suggest specific commercial transactions, or ad
 
 ---
 
-## 🔒 Category 3: Data Security & Privacy Guarantees
+## Category 3: Data Security & Privacy Guarantees
 
 Absolute security claims ("100% secure", "unbreakable") are a major liability if a data breach or server compromise occurs.
 

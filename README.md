@@ -6,7 +6,7 @@ It packages instructions, checklists, and persona configurations that can be loa
 
 ---
 
-## 🚀 Features & Commands
+## Features & Commands
 
 ### 1. Legal Neutrality Scanner (`/legal-neutrality`)
 * **Purpose:** Scans codebases for high-risk phrases, promises, or claims (e.g. guaranteeing security, offering unregulated fitness/health guidance) that expose the company to legal liability.
@@ -20,22 +20,22 @@ It packages instructions, checklists, and persona configurations that can be loa
 
 ---
 
-## 📂 Directory Structure
+## Directory Structure
 
 ```
 repo-wizard/
-├── .claude/commands/     # Claude Code slash command configurations
-├── .gemini/commands/     # Gemini CLI slash command configurations
-├── agents/               # Reusable agent persona instructions
-├── commands/             # Antigravity CLI slash command configurations
-├── docs/                 # User-facing onboarding guides
-├── references/           # Detailed checklists and dictionaries
-└── skills/               # Core workflows (SKILL.md per folder)
+├── .claude/commands/ # Claude Code slash command configurations
+├── .gemini/commands/ # Gemini CLI slash command configurations
+├── agents/ # Reusable agent persona instructions
+├── commands/ # Antigravity CLI slash command configurations
+├── docs/ # User-facing onboarding guides
+├── references/ # Detailed checklists and dictionaries
+└── skills/ # Core workflows (SKILL.md per folder)
 ```
 
 ---
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 For detailed setup instructions on different client environments, see:
 * [docs/getting-started.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/getting-started.md) — General overview.
@@ -45,6 +45,6 @@ For detailed setup instructions on different client environments, see:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](file:///d:/DevSandbox/agy-projects/repo-wizard/LICENSE) file for details.

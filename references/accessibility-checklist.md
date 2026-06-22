@@ -10,7 +10,7 @@ This reference checklist maps major digital accessibility standards (WCAG 2.1 AA
 
 ---
 
-## 🎨 1. WCAG 2.1 Level AA Controls
+## 1. WCAG 2.1 Level AA Controls
 
 ### 1.1 Non-Text Content (SC 1.1.1)
 - [ ] *Conditional Check:* All image elements (`<img>`) must have descriptive `alt` attributes or empty `alt=""` for decorative images.
@@ -30,7 +30,7 @@ This reference checklist maps major digital accessibility standards (WCAG 2.1 AA
 
 ---
 
-## 🚀 2. WCAG 2.2 Level AA Controls (Incremental Additions)
+## 2. WCAG 2.2 Level AA Controls (Incremental Additions)
 
 ### 2.1 Accessible Authentication (SC 3.3.8)
 - [ ] *Conditional Check:* Ensure login and signup forms support browser auto-fill or copy-paste (do not block copy-paste on password or username fields).

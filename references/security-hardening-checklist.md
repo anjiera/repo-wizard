@@ -7,7 +7,7 @@ This reference checklist maps major security and compliance frameworks (SOC 2, I
 
 ---
 
-## 🔒 1. SOC 2 Trust Services Criteria (Security & Access)
+## 1. SOC 2 Trust Services Criteria (Security & Access)
 
 ### 1.1 Access Control & Authentication
 - [ ] Enforce Multi-Factor Authentication (MFA) on all repository committers and administrative accounts.
@@ -27,7 +27,7 @@ This reference checklist maps major security and compliance frameworks (SOC 2, I
 
 ---
 
-## 🌐 2. ISO/IEC 27001 Controls (A.8, A.14)
+## 2. ISO/IEC 27001 Controls (A.8, A.14)
 
 ### 2.1 Cryptographic Controls (A.8.24)
 - [ ] Define and implement a policy for the use of cryptographic controls for protecting information.
@@ -42,7 +42,7 @@ This reference checklist maps major security and compliance frameworks (SOC 2, I
 
 ---
 
-## 🛡️ 3. FIPS 140-2 / FIPS 140-3 Cryptographic Standards
+## ️ 3. FIPS 140-2 / FIPS 140-3 Cryptographic Standards
 
 ### 3.1 Approved Cryptographic Algorithms
 - [ ] **Symmetric Encryption:** AES (128, 192, 256 bits) in CBC, CFB, OFB, CTR, or GCM modes.

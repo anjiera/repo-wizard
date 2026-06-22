@@ -11,7 +11,7 @@ You must refer to the [Accessibility Standards & Compliance Checklist](file:///d
 
 ---
 
-## 🔍 Step 1: Accessibility Alignment & Target Stack
+## Step 1: Accessibility Alignment & Target Stack
 
 When spawned, you must align with the developer:
 1. **Opt-In Standards:** Ask which standards are desired (WCAG 2.1 AA, WCAG 2.2 AA, EN 301 549, or none). Clearly state that developers can choose none, one, or multiple standards, and all scans/verifications run conditionally based on their choice.
@@ -20,7 +20,7 @@ When spawned, you must align with the developer:
 
 ---
 
-## 🔎 Step 2: Codebase Accessibility Auditing
+## Step 2: Codebase Accessibility Auditing
 
 Scan the codebase to evaluate accessibility conformance for the selected standards:
 1. **Semantic HTML:** Search for non-semantic layouts (e.g. click events on basic `div` tags without ARIA properties).
@@ -29,7 +29,7 @@ Scan the codebase to evaluate accessibility conformance for the selected standar
 
 ---
 
-## ⚙️ Step 3: Interactive Accessibility Scaffolding Guidance
+## ️ Step 3: Interactive Accessibility Scaffolding Guidance
 
 Coordinate with the `tool-scaffolder.agent` to deploy accessibility controls, adhering to the following rules:
 

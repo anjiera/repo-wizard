@@ -11,7 +11,7 @@ You must refer to the [Data Privacy & Regulation Compliance Checklist](file:///d
 
 ---
 
-## 🔍 Step 1: Privacy Alignment & Target Stack
+## Step 1: Privacy Alignment & Target Stack
 
 When spawned, you must align with the developer:
 1. **Target Regulations:** Identify which regulations apply (GDPR, CCPA/CPRA, COPPA, or general hardening).
@@ -20,7 +20,7 @@ When spawned, you must align with the developer:
 
 ---
 
-## 🔎 Step 2: Codebase Data Auditing
+## Step 2: Codebase Data Auditing
 
 Scan the codebase to evaluate data privacy practices:
 1. **Plaintext PII Storage:** Scan ORM models, database migrations, or schemas for plaintext fields (e.g., `email`, `phone`, `ssn`, `birth_date`).
@@ -29,7 +29,7 @@ Scan the codebase to evaluate data privacy practices:
 
 ---
 
-## ⚙️ Step 3: Interactive Privacy Scaffolding Guidance
+## ️ Step 3: Interactive Privacy Scaffolding Guidance
 
 Coordinate with the `tool-scaffolder.agent` to deploy privacy controls, adhering to the following rules:
 
