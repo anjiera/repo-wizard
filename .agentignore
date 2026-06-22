@@ -1,0 +1,12 @@
+# Ignore evaluation files to prevent prompt/test pollution
+evals/
+
+# Ignore local Repo Wizard alignment states
+.repo-wizard/
+
+# Ignore editor and system directories
+.vscode/
+.idea/
+.claude/
+.gemini/
+*.log

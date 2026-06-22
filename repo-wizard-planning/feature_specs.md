@@ -278,5 +278,10 @@ Specialist agents require access to exhaustive, high-density checklists to preve
 5. **`references/testing-patterns.md`:** Patterns for TDD implementation, mocking layers (MSW), coverage gates, and MC/DC (Modified Condition/Decision Coverage) setup.
 6. **`references/document-standards.md`:** Layout definitions for Michael Nygard ADR files, C4 model architecture diagrams, Mermaid charts, and bug post-mortem retrospective forms.
 7. **`references/ai-safety-checklist.md`:** Validation checksheets for the EU AI Act, OWASP LLM Top 10, LLM guardrails, and model bias auditing.
-8. **`references/supply-chain-checklist.md`:** Audit checklists for lockfile integrity, dependency vulnerability scanning (Snyk/Dependabot configs), Software Bill of Materials (SBOM) structures, and licensing compliance (GPL/AGPL vs. MIT/Apache copyleft rules).
+8. **`references/supply-chain-checklist.md`:** Audit checklists for lockfile integrity, dependency vulnerability scanning (Snyk/Dependabot configs), Software Bill of Materials (SBOM) structures, and licensing compliance (GPL/AGPL vs. MIT/Apache copyleft 
+
+### 7.4 Agent Evaluation & Testing
+To ensure the reliability, compliance, and formatting correctness of all agents, a dynamic LLM-as-a-Judge evaluation suite is configured in the repository.
+* **Rubric Parity Rule:** Whenever a new agent persona (e.g., `agents/*-agent.md`) is introduced, corresponding evaluation test cases and validation rubrics must be added to `scripts/run-evals.js`.
+* **CI Validation:** The static validation suite (`scripts/validate-agents.js`) will block pull requests if any agent persona is missing evaluation rubrics or test cases.
 

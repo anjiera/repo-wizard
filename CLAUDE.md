@@ -26,5 +26,9 @@ docs/             → User-facing onboarding and setup guides
 ## Command References
 
 Since this is a documentation and configuration repository, build commands are not applicable, but file structure and lint validation must be performed manually before packaging.
-- Check that all skills contain valid YAML frontmatter.
+- Validate all skills: `node scripts/validate-skills.js`
+- Validate all commands: `node scripts/validate-commands.js`
+- Validate agent rubric coverage: `node scripts/validate-agents.js`
+- Run dynamic agent evaluations (requires `GEMINI_API_KEY`): `node scripts/run-evals.js`
+- Validate plugin structure: `agy plugin validate .`
 - Verify all links inside markdown files are absolute using the `file://` scheme.
