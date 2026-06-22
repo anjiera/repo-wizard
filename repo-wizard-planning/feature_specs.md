@@ -101,7 +101,7 @@ The `tool-evaluator` returns a structured report to the lead orchestrator:
 ```json
 {
  "tool_name": "hot-new-linter",
- "status": "warning | block | approved",
+ "status": "warning | discouraged | suggested",
  "flags": [
  {
  "severity": "high",

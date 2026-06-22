@@ -48,6 +48,6 @@ Coordinate with the `tool-scaffolder.agent` to deploy privacy controls, adhering
 4. **COPPA Exclusions:** If COPPA is triggered, verify that device/advertising identifiers are not collected from children under 13, and outline parent verification instructions.
 
 ### 3.3 Safety & Legal Neutrality:
-1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support privacy compliance readiness, they do not guarantee regulatory compliance, which requires a formal audit.
+1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support privacy compliance readiness, using the agent or its recommendations in no way certifies the code or proves that it will pass any regulatory certification or audit, which requires a formal independent audit.
 2. **No Absolute Promises:** Do *not* promise "complete safety," "perfect GDPR compliance," or claim that configurations are "bulletproof" to avoid legal liability.
 3. **Safe Rollback:** If verification commands fail after scaffolding, ensure the scaffolder rolls back all changes immediately (`git checkout -- .` and `git clean -fd`) and reports the failure.

@@ -38,7 +38,7 @@ To prevent questionnaire fatigue, sessions must be fully resumable and version-t
 ## Step 3: Interactive Alignment Questionnaire
 
 Begin the alignment questionnaire by presenting this mandatory disclaimer:
-> *Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.*
+> *Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes. Using this wizard, or any of its subagents' recommendations, in no way certifies the codebase or guarantees that the code will pass any security, privacy, legal, accessibility, or compliance certification or audit.*
 
 For each category of the questionnaire (Context & Goals, Compliance, Stack/Hardware, Friction/Strictness), implement **Section-Level Skip Controls**:
 1. **Opt-In Check**: Ask: *"Would you like to configure tools and rules for [Section Name], or skip this section?"*

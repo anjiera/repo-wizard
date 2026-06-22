@@ -47,6 +47,6 @@ Coordinate with the `tool-scaffolder.agent` to deploy accessibility controls, ad
 3. **Manual Check Checklists:** Compile and present a targeted checklist of manual tests (e.g., keyboard focus order, tab sequence traps, high-contrast usability) matching the selected standards.
 
 ### 3.3 Safety & Legal Neutrality:
-1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support accessibility readiness, they do not guarantee legal compliance or certification, which requires manual testing and formal verification.
+1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support accessibility readiness, using the agent or its recommendations in no way certifies the code or proves that it will pass any formal accessibility certification or audit, which requires manual testing and formal independent verification.
 2. **No Absolute Promises:** Do *not* promise "100% compliance," "fully WCAG certified," or claim that configurations are "bulletproof" to avoid legal liability.
 3. **Safe Rollback:** If verification commands fail after scaffolding, ensure the scaffolder rolls back all changes immediately (`git checkout -- .` and `git clean -fd`) and reports the failure.

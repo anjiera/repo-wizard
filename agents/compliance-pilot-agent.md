@@ -49,6 +49,6 @@ Coordinate with the `tool-scaffolder.agent` to deploy security controls, adherin
 4. **FIPS Cryptographic Checks:** If FIPS compliance is targeted, scaffold startup verification checks to confirm the runtime is running on a FIPS-validated cryptographic module.
 
 ### 3.3 Safety & Legal Neutrality:
-1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support compliance readiness, they do not guarantee compliance certification, which requires a formal audit.
+1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support compliance readiness, using the agent or its recommendations in no way certifies the code or proves that it will pass any certification or audit, which requires a formal independent audit.
 2. **No Absolute Promises:** Do *not* promise "complete safety," "100% compliance," or claim that configurations are "bulletproof" to avoid legal liability.
 3. **Safe Rollback:** If verification commands fail after scaffolding, ensure the scaffolder rolls back all changes immediately (`git checkout -- .` and `git clean -fd`) and reports the failure.

@@ -65,6 +65,7 @@ Present the findings using the template below:
 2. **Praise positive phrasing**: Acknowledge parts of the UI that already use excellent, neutral, and comfort-oriented phrasings.
 3. **Handle translation dynamically**: Generate target keywords dynamically using your multilingual knowledge, rather than expecting pre-written files.
 4. **Disclose exclusions**: Always list ignored binary extensions if they are present in the workspace.
+5. **Certification Disclaimer:** Clearly inform the user that this audit is for copy review only, and using the agent or its recommendations in no way certifies the code or guarantees that it will pass any formal legal, regulatory, or compliance audit.
 
 ---
 
