@@ -70,6 +70,45 @@ Focuses on configuring build automation, deployment replication, container scali
 
 ---
 
+## Interactive Web Dashboard
+
+Repo Wizard includes an interactive **React + Vite Web Dashboard** styled with TailwindCSS that replaces the CLI text interface. It helps you pick target codebases, step through alignment categories, view existing report logs, and run headless local sweeps.
+
+### 1. Build and Run the Dashboard
+To start the dashboard locally:
+1. Navigate to the root directory and start the zero-dependency backend server:
+   ```bash
+   node scripts/dashboard-server.js
+   ```
+2. The server will scan starting at port `3000` until it finds an open port, and output the launch URL:
+   ```text
+   Repo Wizard Interactive Dashboard is Live!
+   Access URL: http://localhost:3000
+   ```
+3. Open the Access URL in your browser to view the interface.
+
+### 2. Developing the Client SPA
+To modify or run the client application in development mode:
+1. Navigate to the `dashboard/` directory:
+   ```bash
+   cd dashboard
+   ```
+2. Run the Vite development server (requires Node.js):
+   ```bash
+   npm run dev
+   ```
+3. Run client rendering and state tests:
+   ```bash
+   npm run test
+   ```
+4. Build static production assets:
+   ```bash
+   npm run build
+   ```
+   *(Note: The build output files inside `dashboard/dist/` are automatically served by the Node.js backend server, keeping the runtime execution zero-dependency).*
+
+---
+
 ## Developer & Validation Utilities
 
 To automatically bootstrap your local development environment, check system prerequisites, configure Git hooks, and verify code integrity, run the setup script:
