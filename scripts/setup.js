@@ -148,9 +148,13 @@ function main() {
   checkGeminiKey();
   checkAgyCli();
 
-  console.log(`\n${BOLD}${GREEN}===========================================${RESET}`);
+  console.log(`\n${BOLD}${GREEN}==================================================${RESET}`);
   console.log(`${BOLD}${GREEN}✓ Setup complete! Repo Wizard is ready for development.${RESET}`);
-  console.log(`${BOLD}${GREEN}===========================================${RESET}\n`);
+  console.log(`\n  To launch the interactive dashboard GUI, run:`);
+  console.log(`    ${CYAN}node scripts/dashboard-server.js${RESET}`);
+  console.log(`${BOLD}${GREEN}==================================================${RESET}\n`);
 }
 
 main();
+
+
