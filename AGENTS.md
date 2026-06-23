@@ -15,6 +15,7 @@ This repository is designed to be consumed as a plugin. Agents must automaticall
 1. **Mandatory Matching:** If the user's intent or request matches the purpose of any skill in this repository, you MUST view that skill's `SKILL.md` file first using your file-viewing tools and follow its process.
 2. **Follow Instructions Exactly:** Do not partially apply or skip steps in a skill's process. The workflows are designed for complete safety audits.
 3. **No Direct Overwrites:** Maintain existing comments and docstrings in target files unless specifically asked to edit them.
+4. **Conventional Commits:** Always use the Conventional Commits style for writing git commit messages (e.g. `feat(api): ...`, `fix(embedded): ...`, `refactor(agents): ...`).
 
 ### Intent-to-Skill Mapping
 
