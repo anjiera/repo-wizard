@@ -13,6 +13,7 @@ Focuses on writing secure code, configuring correct dependencies, and setting up
 * **API Hardening:** [appsec-hardening-guide.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/appsec-hardening-guide.md)
 * **API Contract Validation:** [api-contract-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/api-contract-standards.md)
 * **Notebook Git Hygiene:** [notebook-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/notebook-standards.md)
+* **React State Sanitization:** [state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)
 * **Supply Chain Audits:** [supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)
 * **VCS Automation & Hook Discipline:** [vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)
 
@@ -47,7 +48,7 @@ Focuses on build automation, container configurations, hardware limits, data wor
 
 ## 2. Alphabetical Index of References
 
-Below is a complete index of all 43 reference files with descriptions of their target auditing focus.
+Below is a complete index of all 45 reference files with descriptions of their target auditing focus.
 
 1. **[accessibility-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/accessibility-checklist.md)**
    - UI elements, focus management, screen readers, WCAG 2.1/2.2 AA checklists.
@@ -127,15 +128,17 @@ Below is a complete index of all 43 reference files with descriptions of their t
     - Compliance mapping profiles (SOC 2, ISO 27001, HIPAA controls, FIPS algorithms).
 39. **[shell-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/shell-performance-patterns.md)**
     - Minimizing child process spawns, line-by-line streams, and command output variables caching.
-40. **[supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)**
+40. **[state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)**
+    - Prevent race conditions and stale closures in React hooks, callback updates, and window event listeners.
+41. **[supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)**
     - License validation checkers (blocking viral copyleft packages) and lockfile integrity scanning.
-41. **[swift-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/swift-performance-patterns.md)**
+42. **[swift-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/swift-performance-patterns.md)**
     - Swift Copy-on-Write value structures, avoiding strong cycles (weak/unowned), and Actor concurrency.
-42. **[testing-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/testing-patterns.md)**
+43. **[testing-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/testing-patterns.md)**
     - Unit/integration mocking frameworks (Jest, Vitest, MSW), coverage budgets, and test setups.
-43. **[toolchain-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/toolchain-standards.md)**
+44. **[toolchain-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/toolchain-standards.md)**
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
-44. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
+45. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
 
 ---
