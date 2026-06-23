@@ -162,6 +162,21 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Automate architectural decision tracking, documentation pipelines, and codebase diagrams.
 * **Deliverables:** Scaffold Nygard-style ADR folders (`docs/decisions/`), write lightweight ADR creation CLI scripts, generate baseline architecture C4 Model diagrams using Mermaid, and write bug-fix retrospective templates (Root Cause, Prevention, Action Items) with PR checklist prompts.
 
+### 4.8 `appsec-hardener.agent` (Application Security Hardening)
+* **Objective:** Scaffold application-level security defenses and local static analysis.
+* **Deliverables:** Configure secure HTTP header middlewares (Helmet/custom configs), establish strict CORS origin constraints, set up rate-limiting middleware triggers on authentication endpoints, write parameters sanitization helper templates, and deploy local Semgrep configuration rules.
+
+### 4.9 Cybersecurity Color Wheel Responsibility Matrix
+To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
+* **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
+  * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), and `vcs-workflow.agent` (licensing validations).
+* **Blue Team (Defense & System Visibility):** Configures runtime logging, access control trails, and performance alert triggers.
+  * *Assigned Agents:* `observability-pilot.agent` (Alertmanager triggers, OTel tracing) and `privacy-guardian.agent` (PII telemetry data scrubbing).
+* **White Team (Compliance & Governance):** Defines policies, configures validation frameworks, and audits controls.
+  * *Assigned Agents:* `repo-wizard.agent` (interviews, scope analysis) and `compliance-pilot.agent` (SOC 2, ISO 27001, FIPS list audits).
+* **Yellow Team (System Builders):** The developer and orchestrators who deploy code.
+  * *Assigned Agents:* `tool-scaffolder.agent` (automated build installer).
+
 ---
 
 ## 5. Parameter Contract Interface Specification

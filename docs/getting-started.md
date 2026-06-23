@@ -30,6 +30,28 @@ Currently, the suite includes:
 * **Reference Guide**: [references/legal-phrasing-dictionary.md](../references/legal-phrasing-dictionary.md)
 
 ---
+## Cybersecurity Domain Coverage
+
+To protect your repository across all compliance and security vectors, our specialized agents map directly to the industry-standard **Cybersecurity Color Wheel** roles:
+
+### Green Team (Defensive Coding & Building)
+Focuses on writing secure code, configuring correct dependency frameworks, and setting up static linters to prevent vulnerabilities from being compiled.
+* **API Hardening (`/rw-appsec`):** Scaffolds CORS origin policies, Helmet secure header middlewares, and rate-limiting rules.
+* **Supply Chain Scanner (`/rw-supply-chain`):** Audits active dependency vulnerabilities and blocks viral copyleft package licenses.
+* **VCS Automation (`/rw-vcs-workflow`):** Scaffolds commit lint validation hooks and copyright header scanners.
+
+### Blue Team (Active Defense & System Visibility)
+Focuses on auditing system events, configuring tracing telemetry, and tuning alerts to catch failures instantly.
+* **Observability Pilot (`/rw-observability`):** Scaffolds OpenTelemetry instrumentation SDKs, Grafana dashboards, and Alertmanager metrics.
+* **Privacy Guardian (`/rw-privacy`):** Sanitizes exported logs and trace contexts to scrub PII data.
+
+### White Team (Governance & Audit Compliance)
+Focuses on establishing code quality rules, mapping regulatory controls, and verifying repository hygiene.
+* **Repo Wizard (`/repo-wizard`):** The interactive orchestrator that scopes your project, screens tools, and coordinates handoffs.
+* **Compliance Pilot (`/rw-compliance`):** Verifies technical compliance configurations (SOC 2, ISO 27001, FIPS lists).
+* **Accessibility Auditor (`/rw-accessibility`):** Configures accessibility linters (ESLint JSX-a11y) and headless axe-core scanners.
+
+---
 
 ## Quick Start: Loading Skills
 
