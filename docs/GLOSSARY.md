@@ -1,6 +1,6 @@
 # Repo Wizard Glossary
 
-This glossary defines the regulatory compliance, cybersecurity, software engineering, and artificial intelligence terms used throughout the `repo-wizard` system.
+Welcome to the **Repo Wizard Glossary**! This document is specifically designed to assist junior developers, weekend vibe coders, and engineers of all backgrounds in demystifying the dense terminology, acronyms, and concepts associated with production-level, enterprise-grade software development and automated security/compliance governance.
 
 ---
 

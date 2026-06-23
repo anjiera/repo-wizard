@@ -25,6 +25,7 @@ echo "Running pre-commit validations..."
 node scripts/validate-skills.js && \\
 node scripts/validate-commands.js && \\
 node scripts/validate-agents.js && \\
+node scripts/validate-docs.js && \\
 node scripts/test-helpers.js && \\
 node scripts/run-e2e-tests.js
 

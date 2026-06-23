@@ -80,6 +80,7 @@ function runValidationsAndTests() {
     { name: 'validate-skills.js', cmd: 'node scripts/validate-skills.js' },
     { name: 'validate-commands.js', cmd: 'node scripts/validate-commands.js' },
     { name: 'validate-agents.js', cmd: 'node scripts/validate-agents.js' },
+    { name: 'validate-docs.js', cmd: 'node scripts/validate-docs.js' },
     { name: 'test-helpers.js', cmd: 'node scripts/test-helpers.js' },
     { name: 'run-e2e-tests.js', cmd: 'node scripts/run-e2e-tests.js' }
   ];

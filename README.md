@@ -9,11 +9,12 @@ It packages instructions, checklists, and persona configurations that can be loa
 ## 🗺️ Documentation & Navigation Map
 
 To help you get started quickly, please refer to the following guides:
+* **[AGENT_MATRIX.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/AGENT_MATRIX.md)** — The multi-agent taxonomy matrix mapping personas, skills, commands, and standards.
 * **[getting-started.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/getting-started.md)** — Core concepts and cybersecurity color-wheel categorization.
 * **[GLOSSARY.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/GLOSSARY.md)** — Definitions for compliance frameworks, software engineering, and AI agent terms.
-* **[usage-tutorial.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/usage-tutorial.md)** — Scenario guides for Greenfield vs. Brownfield repos, and interactive vs. headless execution.
 * **[scripts-guide.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/scripts-guide.md)** — Detailed manual for helper, compilation, and testing scripts.
 * **[TESTING.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/TESTING.md)** — Testing philosophy, LLM-as-a-judge evals, and troubleshooting guide.
+* **[usage-tutorial.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/usage-tutorial.md)** — Scenario guides for Greenfield vs. Brownfield repos, and interactive vs. headless execution.
 * **[references/README.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/README.md)** — Alphabetized and domain-mapped catalog of the 23 checklist and pattern standards.
 
 ---

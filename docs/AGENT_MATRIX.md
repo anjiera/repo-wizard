@@ -6,6 +6,7 @@ This document provides a clean taxonomy mapping of the agent personas, skill fol
 | :--- | :--- | :--- | :--- |
 | `repo-wizard-agent` | `repo-wizard`, `remote-profiler` | `/repo-wizard` | *None* |
 | `accessibility-auditor-agent` | `accessibility-auditor` | `/rw-accessibility-auditor` | `accessibility-checklist.md` |
+| `agent-alignment-pilot-agent` | `agent-alignment-pilot` | `/rw-agent-align` | *None* |
 | `ai-robustness-pilot-agent` | `ai-robustness-pilot` | `/rw-ai-robustness` | `ai-robustness-checklist.md` |
 | `api-contract-pilot-agent` | `api-contract-pilot` | `/rw-api-contract` | `api-contract-standards.md` |
 | `appsec-hardener-agent` | `appsec-hardener` | `/rw-appsec` | `appsec-hardening-guide.md` |
