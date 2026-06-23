@@ -25,10 +25,15 @@ Map user queries to skills according to this matrix:
 - **Query / Intent:** Setting up testing, auditing code compliance, onboarding a repository, choosing linter configs, or running `/repo-wizard`.
   - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*
 
-## Orchestration Patterns
+## Orchestration & Scanning Modes
 
-This plugin uses a **decoupled specialist handoff** pattern:
-* **The Lead Agent (`repo-wizard`)** is responsible for user profiling, stack evaluation, and dispatching.
-* **Specialist Agents** are independent and should not spawn other agents. They execute specific, narrow parameter contracts (e.g. configuring accessibility tools or writing mock data) and report back.
+This plugin supports both interactive local configuration and headless remote/local scanning modes:
+* **Interactive Local Mode (`MODE=INTERACTIVE_LOCAL`):** Prompts the user through alignment questions, screens tools, and scaffolds configurations.
+* **Headless Remote Mode (`MODE=HEADLESS_REMOTE`):** Evaluates a remote public repository URL. The orchestrator prompts the user for the scan approach (A or B), then completes a best-guess sweep without blocking for input.
+* **Headless Local Mode (`MODE=HEADLESS_LOCAL`):** Non-blocking best-guess scan of the active local repository.
+
+### Decoupled Subagent Relevance Sweep
+Before running full sweeps, the Lead Agent dispatches a relevance check to each specialist. Specialists must evaluate the codebase metadata/clues and return a JSON verdict containing `relevance` (`High` | `Medium` | `Low`) and a brief `rationale`. Full sweeps are skipped for `Low` relevance subagents.
 
 For details on the architecture, see the specifications in the [repo-wizard-planning/](repo-wizard-planning/) folder.
+

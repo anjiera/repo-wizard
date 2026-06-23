@@ -115,3 +115,23 @@ If the incoming parameter contract specifies `execution_mode: "backlog"`:
    * `epic_name`: The parent Epic name (e.g., `Digital Accessibility Compliance`).
    * `frameworks_goals`: The frameworks or standards addressed (e.g., `WCAG-2.2`).
 4. **Attribution Column Mapping:** Ensure that your name (e.g., `accessibility-auditor-agent`) is clearly captured as the recommending entity so it can be exported to the CSV's `Recommended By (Sub-Agent)` column.
+
+---
+
+## 10. Headless Mode & Best-Guess Analysis Protocol
+
+If the incoming parameter contract specifies `execution_mode: "headless_remote"` or `execution_mode: "headless_local"` (or when the orchestrator indicates headless mode is active):
+1. **Bypass Interactive Alignment & Consent:** Skip all interactive checks, developer questions, opt-in dialogues, and scanning consent prompts (e.g., bypassing Section 2, 3, and 4). Proceed immediately to codebase analysis.
+2. **Relevance Queries:** When queried by the orchestrator for a relevance check, perform a fast scan of the codebase metadata, dependencies, and file structures. Immediately return a JSON object with:
+   - `relevance`: `"High"` | `"Medium"` | `"Low"`
+   - `rationale`: A 1-sentence explanation of your choice (e.g., `"Low: No digital accessibility configs or frontend UI packages found."`).
+3. **Conduct Best-Guess Scanning:** Perform a structural or metadata sweep depending on the scan approach (A or B). Identify existing tools, inferred configurations, and standards that are likely relevant.
+4. **Honest-Boundaries (Approach B):** If the scan approach is `B` (GraphQL & metadata-only), enforce strict honest boundaries. If any detail is physically unobservable from metadata (e.g. test file content, detailed code paths, inline comments), you MUST output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` in your report sections instead of guessing or hallucinating.
+5. **No File Modifications:** Do NOT make any package installations, write configuration files, or modify files in the active workspace.
+6. **Generate Observations Report:** Write a structured markdown section of your findings and save it to `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`. Include:
+   - What was surmised from the code.
+   - Any assumptions made and the technical reasoning behind them.
+   - What tools are already in place.
+   - Suggested toolchain additions, config file tweaks, or commit hooks to improve the codebase.
+   - The standardized Developer Empowerment Disclaimer appended to the bottom.
+
