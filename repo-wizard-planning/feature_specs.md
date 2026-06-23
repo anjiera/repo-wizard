@@ -174,13 +174,17 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Configure multi-replica container topologies, Kubernetes startup/liveness/readiness health probes, and automated database backups with validation restores.
 * **Deliverables:** Scaffold docker-compose replicas behind load-balancer proxies, write Kubernetes deployment probe YAML sections, and draft shell scripts for Postgres/MySQL compressed dumps with temporary recovery verification.
 
-### 4.11 Cybersecurity Color Wheel Responsibility Matrix
+### 4.11 `api-contract-pilot.agent` (Interoperability & Contract Stability)
+* **Objective:** Scaffold OpenAPI/Swagger, gRPC/Protobuf, and GraphQL SDL schemas, and configure build-time contract linters and breaking-change checkers.
+* **Deliverables:** Scaffold REST schemas (openapi.yaml), gRPC protobuf interfaces (service.proto), and GraphQL SDL (schema.graphql) definition templates, and configure automated lint validation rules (Spectral, Buf, GraphQL Inspector).
+
+### 4.12 Cybersecurity Color Wheel Responsibility Matrix
 To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
 * **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
-  * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), and `vcs-workflow.agent` (licensing validations).
+  * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), `vcs-workflow.agent` (licensing validations), and `api-contract-pilot.agent` (schema syntax rules and lint checks).
 * **Blue Team (Defense & System Visibility):** Configures runtime logging, access control trails, performance alert triggers, and system fault tolerance.
   * *Assigned Agents:* `observability-pilot.agent` (Alertmanager triggers, OTel tracing), `privacy-guardian.agent` (PII telemetry scrubbing), and `resilience-pilot.agent` (retries, circuit breakers, chaos tests).
-* **White Team (Compliance & Governance):** Defines policies, configures validation frameworks, and audits controls.
+* **White Team (Governance & Audit Compliance):** Defines policies, configures validation frameworks, and audits controls.
   * *Assigned Agents:* `repo-wizard.agent` (interviews, scope analysis), `compliance-pilot.agent` (SOC 2, ISO 27001, FIPS list audits), and `accessibility-auditor.agent` (A11y automated checks).
 * **Yellow Team (System Builders):** The developer and orchestrators who deploy code.
   * *Assigned Agents:* `tool-scaffolder.agent` (automated build installer) and `deployment-pilot.agent` (high-availability replicas, container probes, database backups).
