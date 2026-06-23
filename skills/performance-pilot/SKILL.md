@@ -38,7 +38,7 @@ Scan the codebase to evaluate current performance configurations:
 Draft all configurations, tests, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying CI/CD configurations.
 2. **Interactive Code Review:** Display generated load-test scripts, benchmark configurations, and budget specifications to the user and prompt them for review and confirmation.
-3. **Decoupled Reference Use:** Use [Performance Benchmarking & Load Testing Standards](../../references/performance-patterns.md) as the source of truth for micro-benchmarks, k6/locust loads, and threshold scripts.
+3. **Decoupled Reference Use**: Use [Performance Benchmarking & Load Testing Standards](../../references/performance-patterns.md) as the source of truth for micro-benchmarks, k6/locust loads, and threshold scripts. You must detect the primary codebase languages/frameworks and explicitly check for a matching checklist under `references/` (e.g. `go-performance-patterns.md`, `csharp-unity-patterns.md`, `jvm-performance-patterns.md`, `electron-performance-patterns.md`, etc.) as your source of truth for optimization auditing. It is not a problem if a matching reference checklist does not exist; if you cannot find a pre-made checklist under `references/`, you should proceed using publicly available data and industry best practices for that language or framework.
 4. **Onboarding Integration:** Once verified, add execution shortcuts or run scripts to the project's setup commands or onboarding guides (`README.md`) for developer review.
 
 ### Phase 4: Verification & Validation
