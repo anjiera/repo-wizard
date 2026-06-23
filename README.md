@@ -49,11 +49,22 @@ repo-wizard/
 
 ## Installation & Setup
 
+To automatically configure your local environment, install pre-commit git hooks, and verify code integrity:
+
+```bash
+# On Linux / macOS / Git Bash
+./setup.sh
+
+# On Windows (PowerShell)
+.\setup.ps1
+```
+
 For detailed setup instructions on different client environments, see:
 * [docs/getting-started.md](docs/getting-started.md) — General overview.
 * [docs/antigravity-setup.md](docs/antigravity-setup.md) — Installing as an Antigravity plugin.
 * [docs/claude-setup.md](docs/claude-setup.md) — Loading into Claude Code.
 * [docs/copilot-setup.md](docs/copilot-setup.md) — Importing into GitHub Copilot.
+
 
 ---
 
