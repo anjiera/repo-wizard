@@ -1,0 +1,15 @@
+---
+description: Configure Jupyter Notebook Git clean filters (nbstripout), notebook linters (nbqa), and python environment isolation files (Conda, Poetry, Pipenv)
+---
+
+Invoke the agent-skills:notebook-sanitizer skill.
+Act as the notebook-sanitizer-agent persona.
+
+Before auditing, follow the interactive alignment phase by asking the user:
+1. Target python virtual environment manager (Conda, Poetry, Pipenv).
+2. Jupyter Notebook folders and output stripping exclusions (if any).
+3. Notebook linting libraries (Ruff, Flake8, Black).
+4. Existing pre-commit hooks configured in the repository to prevent collisions.
+5. Verification workflows for confirming output stripping is active.
+
+Wait for the user's response before proceeding with notebook audits, scaffolding, and verification.

@@ -40,6 +40,7 @@ Focuses on writing secure code, configuring correct dependency frameworks, and s
 * **Supply Chain Scanner (`/rw-supply-chain`):** Audits active dependency vulnerabilities and blocks viral copyleft package licenses.
 * **VCS Automation (`/rw-vcs-workflow`):** Scaffolds commit lint validation hooks and copyright header scanners.
 * **API Contract Validation (`/rw-api-contract`):** Scaffolds OpenAPI specs, gRPC Protobuf definitions, GraphQL schemas, and linter checks.
+* **Notebook Git Hygiene (`/rw-notebook-sanitizer`):** Scaffolds Jupyter Notebook git filters, nbqa linters, and python virtual environments.
 
 ### Blue Team (Active Defense & System Visibility)
 Focuses on auditing system events, configuring tracing telemetry, and tuning alerts to catch failures instantly.

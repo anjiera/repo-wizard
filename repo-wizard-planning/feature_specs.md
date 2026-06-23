@@ -182,10 +182,14 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Configure database connection pooling parameters, data schema validation validations, and workflow orchestrator pipeline DAG scripts.
 * **Deliverables:** Scaffold Pandera DataFrameSchema templates, write dbt testing parameters, configure Apache Airflow/Prefect task retries, and set up SQLAlchemy/pg connection pool sizes and timeouts.
 
-### 4.13 Cybersecurity Color Wheel Responsibility Matrix
+### 4.13 `notebook-sanitizer.agent` (Jupyter Notebook Git Hygiene & Environments)
+* **Objective:** Configure Git attributes clean filters to strip notebook output metadata, setup nbqa notebook linters, and scaffold virtual environments with boundary checks preserving other agents configurations.
+* **Deliverables:** Configure `.gitattributes` and `nbstripout` filters, write Poetry (`pyproject.toml`) and Conda (`environment.yml`) configs, set up `nbqa` with Ruff styling parameters, and integrate pre-commit hook validation gates.
+
+### 4.14 Cybersecurity Color Wheel Responsibility Matrix
 To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
 * **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
-  * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), `vcs-workflow.agent` (licensing validations), and `api-contract-pilot.agent` (schema syntax rules and lint checks).
+  * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), `vcs-workflow.agent` (licensing validations), `api-contract-pilot.agent` (schema syntax rules and lint checks), and `notebook-sanitizer.agent` (notebook filters and quality gates).
 * **Blue Team (Defense & System Visibility):** Configures runtime logging, access control trails, performance alert triggers, and system fault tolerance.
   * *Assigned Agents:* `observability-pilot.agent` (Alertmanager triggers, OTel tracing), `privacy-guardian.agent` (PII telemetry scrubbing), and `resilience-pilot.agent` (retries, circuit breakers, chaos tests).
 * **White Team (Governance & Audit Compliance):** Defines policies, configures validation frameworks, and audits controls.
