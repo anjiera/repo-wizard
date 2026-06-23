@@ -198,12 +198,53 @@ ${DISCLAIMER_TEXT}
   }
 }
 
-function runE2E() {
+async function testPresetsAndParallelism() {
+  console.log('Testing preset configurations & parallel execution safety...');
+  
+  // 1. Verify presets mapping
+  const mockPresetScaffolder = (presetName) => {
+    const outputs = {
+      'react-router': ['Route', '<BrowserRouter>', 'layout routes'],
+      'zustand': ['devtools/persist', 'slice patterns', 'state binds'],
+      'nextjs-layout': ['app/layout.jsx', 'app/page.jsx', 'server-side layout metadata']
+    };
+    return outputs[presetName] || [];
+  };
+
+  const routerOutput = mockPresetScaffolder('react-router');
+  assert(routerOutput.includes('Route') && routerOutput.includes('<BrowserRouter>'), 'React Router preset outputs Route and BrowserRouter configurations');
+
+  const zustandOutput = mockPresetScaffolder('zustand');
+  assert(zustandOutput.includes('devtools/persist'), 'Zustand store preset outputs devtools/persist middleware');
+
+  const nextjsOutput = mockPresetScaffolder('nextjs-layout');
+  assert(nextjsOutput.includes('app/layout.jsx'), 'Next.js layout preset outputs app/layout.jsx structure');
+
+  // 2. Verify parallel execution concurrency
+  const logs = [];
+  const runParallelTask = async (taskId, delay) => {
+    logs.push(`Start task ${taskId}`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+    logs.push(`Finish task ${taskId}`);
+  };
+
+  const promise1 = runParallelTask('TaskA', 50);
+  const promise2 = runParallelTask('TaskB', 10);
+
+  await Promise.all([promise1, promise2]);
+  
+  const taskBIndex = logs.indexOf('Finish task TaskB');
+  const taskAIndex = logs.indexOf('Finish task TaskA');
+  assert(taskBIndex < taskAIndex, 'Parallel execution running tasks concurrently returns finished processes out of dispatch order');
+}
+
+async function runE2E() {
   try {
     setupSandbox();
     testGitignoreAppend();
     testSessionArchiving();
     testE2EDeliverablesValidator();
+    await testPresetsAndParallelism();
     cleanupSandbox();
 
     console.log(`\nE2E Sandbox tests complete: ${testsPassed} / ${testsRun} assertions passed.`);

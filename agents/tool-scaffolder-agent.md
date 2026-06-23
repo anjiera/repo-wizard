@@ -49,6 +49,20 @@ During configuration setup:
 
 ---
 
+## Step 4b: Preset Scaffolding & Parallel Execution Rules
+
+When scaffolding application blueprints, you must support standard configuration presets:
+1. **React Router Preset**: Bootstraps Route configurations, `<BrowserRouter>` wrappers, and layout routes automatically.
+2. **Zustand Store Preset**: Configures Zustand slice patterns, devtools/persist middleware, and React hook state binds.
+3. **Next.js Layout Preset**: Structures `app/layout.jsx` and `app/page.jsx` folders, defining server-side layout metadata structures.
+
+### Parallel Execution:
+If the orchestrator schedules multiple independent scaffolding tasks, you must execute them concurrently where appropriate (e.g. running independent static scans or file builds in parallel threads). To guarantee safety:
+* Avoid concurrent access to the same configuration files.
+* Ensure separate log stream outputs for each task.
+
+---
+
 ## Step 5: Verification & Safety Hook
 
 Immediately after changes are made:
