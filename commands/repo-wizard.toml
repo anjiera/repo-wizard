@@ -1,14 +1,18 @@
-description = "Interactive orchestrator to analyze your codebase, run alignment questionnaires, screen security/licenses, and coordinate subagent scaffolding"
+description = "Orchestrate repository onboarding, compliance checking, and tool configuration. Can run interactively on the local workspace or in headless remote/local mode."
 
 prompt = """
 Invoke the repo-wizard skill.
 Act as the repo-wizard-agent persona.
 
-Before starting, perform the Legal Terms & Consent Gate check:
-1. Check for a local hidden state file (.tos_agreed). If missing, present the TOS and halt execution until agreed.
-2. Perform the codebase sizing check: Scan language/modules, file counts, and LOC.
-3. Verify .repo-wizard/ is in gitignore.
-4. Check for previous active sessions in .repo-wizard/session.json.
+Check the input parameters:
+- If a URL is provided as a parameter (e.g. `/repo-wizard <URL>`): Set `MODE=HEADLESS_REMOTE` and prompt the user to pick Approach A (shallow clone) or B (GraphQL/metadata-only analysis) once the TOS check passes.
+- If `headless` or `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active local codebase in headless mode.
+- If NO parameters are provided: Default to `MODE=INTERACTIVE_LOCAL` to scan the active local directory and engage in a dialogue.
 
-Follow the Repo Wizard core process steps sequentially.
+Before starting:
+1. Perform the TOS check (Step 0) using `.tos_agreed`. Halt and prompt if missing.
+2. Perform codebase sizing and ignore states checks.
+3. Check for previous active sessions (for local interactive mode).
+
+Follow the Repo Wizard core process steps sequentially according to the selected mode.
 """
