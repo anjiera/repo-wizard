@@ -23,9 +23,16 @@ It packages instructions, checklists, and persona configurations that can be loa
 * **Specialist Agent:** `agents/agent-alignment-pilot-agent.md`
 * **Skill:** `skills/agent-alignment-pilot/SKILL.md`
 
+### 4. Helper & Validation Scripts
+To verify repository quality and facilitate testing of AI agent workflows:
+* **Markdown-to-HTML Compiler ([scripts/md-to-html.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/md-to-html.js)):** A zero-dependency utility that compiles standard markdown documentation into responsive, styled HTML pages with light/dark theme support.
+* **Static Linters:** Scripts to validate agent formatting ([validate-agents.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-agents.js)), command parity ([validate-commands.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-commands.js)), and skill layouts ([validate-skills.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-skills.js)).
+* **Test Runners:** Integration, contract schema checking, subagent mocking, and sandbox E2E test suites ([test-helpers.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/test-helpers.js), [validate-contracts.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-contracts.js), [run-mock-harness.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/run-mock-harness.js), and [run-e2e-tests.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/run-e2e-tests.js)).
+
 ---
 
 ## Directory Structure
+
 
 ```
 repo-wizard/

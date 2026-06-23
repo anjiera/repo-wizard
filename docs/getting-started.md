@@ -70,7 +70,25 @@ Focuses on configuring build automation, deployment replication, container scali
 
 ---
 
+## Developer & Validation Utilities
+
+To ensure repository quality, standard formatting, and test coverage, developers can run the following validation scripts:
+
+* **Static Validation Linters**: Validate command parity, agent files syntax, and skill formats:
+  - `node scripts/validate-agents.js` (validates agents Markdown layout)
+  - `node scripts/validate-commands.js` (validates command synchronization)
+  - `node scripts/validate-skills.js` (validates skill folder properties)
+* **Markdown-to-HTML Documentation Compiler**:
+  - The zero-dependency helper utility [md-to-html.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/md-to-html.js) compiles standard Markdown documentation files into responsive HTML pages with native dark-mode stylesheet support:
+    ```bash
+    node scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
+    ```
+    *(Note: Locally generated `.html` files in the `docs/` directory are excluded from Git via [.gitignore](file:///d:/DevSandbox/agy-projects/repo-wizard/.gitignore) to prevent duplicate source code conflicts).*
+
+---
+
 ## Quick Start: Loading Skills
+
 
 Since the repository is built on standard markdown files, you can use these skills in any agent environment:
 
