@@ -291,3 +291,111 @@ groups:
   ]
 }
 ```
+
+---
+
+## 4. W3C Trace Context Propagation
+
+To trace async task boundaries across subagent executions and API borders, use the W3C Trace Context standard. Tracing headers ensure that distributed operations share a single Trace ID and parent-child span hierarchy.
+
+### 4.1 Trace Context Headers
+* **`traceparent`**: A 4-part hyphen-separated identifier:
+  `version-trace_id-parent_id-trace_flags`
+  - Example: `00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01`
+  - `version`: `00`
+  - `trace_id`: `4bf92f3577b34da6a3ce929d0e0e4736` (16-byte random hex)
+  - `parent_id` / `span_id`: `00f067aa0ba902b7` (8-byte random hex)
+  - `trace_flags`: `01` (recorded/sampled)
+* **`tracestate`**: Key-value pairs carrying vendor-specific routing and filtering metadata.
+  - Example: `congo=t61rcWkgMzE,rojo=00f067aa0ba902b7`
+
+### 4.2 Injection & Extraction Examples
+
+#### Node.js (Express HTTP Client)
+```javascript
+import { api, propagation, defaultTextMapSetter, defaultTextMapGetter } from '@opentelemetry/api';
+
+// Inject headers before sending request
+function injectTraceHeaders(headers) {
+  const context = api.context.active();
+  propagation.inject(context, headers, defaultTextMapSetter);
+  return headers;
+}
+
+// Extract headers when receiving request
+function extractTraceContext(req) {
+  return propagation.extract(api.context.active(), req.headers, defaultTextMapGetter);
+}
+```
+
+#### Python (Requests / FastAPI)
+```python
+from opentelemetry import propagate
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
+# Inject tracing context into headers
+def inject_headers(headers: dict):
+    TraceContextTextMapPropagator().inject(headers)
+    return headers
+
+# Extract tracing context from request headers
+def extract_context(headers: dict):
+    return TraceContextTextMapPropagator().extract(carrier=headers)
+```
+
+---
+
+## 5. RED & USE Metrics Specifications
+
+System performance auditing must capture metrics measuring both endpoint quality and physical hardware constraints.
+
+### 5.1 RED Metrics (Service & API Layer)
+Designed for request-driven architectures to monitor microservices and APIs.
+* **Rate**: The number of requests processed per second (e.g. `http_requests_total`).
+* **Errors**: The number of failed requests (returning 5xx HTTP codes or exceptions).
+* **Duration**: The time taken to process requests, measured as percentiles (P50, P90, P99).
+
+### 5.2 USE Metrics (Infrastructure & System Layer)
+Designed for hardware resources (CPUs, Memory, Disks, Network Interfaces).
+* **Utilization**: The percentage of time the resource was busy (e.g., CPU utilization percentage).
+* **Saturation**: The backlog of work that could not be processed immediately (e.g., CPU load average / run queue length, memory swap rate).
+* **Errors**: The count of physical errors (e.g., disk read/write retries, network dropped packets).
+
+---
+
+## 6. PII Log Purging Filters
+
+To prevent sensitive user-identifying data (PII) or secrets from polluting logs and trace payloads:
+
+### 6.1 Regex Purge Targets
+* **Social Security Numbers (SSN)**: `\b\d{3}-\d{2}-\d{4}\b`
+* **Credit Cards**: `\b(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})\b`
+* **API Keys / Auth Tokens**: `\b(?:key|token|password|secret|auth|jwt|credential)(?:[\s_'"-]*[=:]\s*["']?)([a-zA-Z0-9-._~+/]{20,})\b`
+* **Email Addresses**: `\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b`
+
+### 6.2 Middleware Implementation (Node.js)
+```javascript
+const PII_PATTERNS = [
+  /([a-zA-Z0-9-._~+/]{20,})/g, // general tokens
+  /\b\d{3}-\d{2}-\d{4}\b/g,      // SSN
+  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g // Email
+];
+
+function sanitizeLog(message) {
+  if (typeof message !== 'string') {
+    message = JSON.stringify(message);
+  }
+  let sanitized = message;
+  // Replace identified PII tokens with static mask
+  for (const pattern of PII_PATTERNS) {
+    sanitized = sanitized.replace(pattern, '[REDACTED_PII]');
+  }
+  return sanitized;
+}
+
+export function loggerMiddleware(req, res, next) {
+  console.log(sanitizeLog(`Request: ${req.method} ${req.url} - Query: ${JSON.stringify(req.query)}`));
+  next();
+}
+```
+
