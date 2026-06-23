@@ -1,4 +1,4 @@
-# AI Safety & Compliance Checklist
+# AI Robustness & Compliance Checklist
 
 This checklist provides a high-density reference for auditing and configuring repositories containing AI/ML components or large language model (LLM) integrations, specifically covering the EU AI Act, OWASP Top 10 for LLMs, Input/Output Guardrails, and Model Bias Auditing.
 
