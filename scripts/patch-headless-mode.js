@@ -40,7 +40,7 @@ if (fs.existsSync(AGENTS_DIR)) {
 
     // Insert Step 1 override
     const step1Target = '## Step 1: Alignment & Target Stack';
-    if (content.includes(step1Target) && !content.includes('Headless Mode Override: If the lead orchestrator passes `MODE=HEADLESS_REMOTE`')) {
+    if (content.includes(step1Target) && !content.includes('Headless Mode Override:** If the lead orchestrator passes `MODE=HEADLESS_REMOTE`')) {
       content = content.replace(
         step1Target,
         `${step1Target}\n\n- **Headless Mode Override:** If the lead orchestrator passes \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\`, bypass interactive alignment and use best-guess heuristics to infer target standards and stack based on existing code clues.`
@@ -50,7 +50,7 @@ if (fs.existsSync(AGENTS_DIR)) {
 
     // Insert Step 2 override
     const step2Target = '## Step 2: Codebase Scan & Auditing';
-    if (content.includes(step2Target) && !content.includes('Headless Mode Override: If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent')) {
+    if (content.includes(step2Target) && !content.includes('Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent')) {
       content = content.replace(
         step2Target,
         `${step2Target}\n\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, bypass scanning consent and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output \`[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]\` for any unobservable details.`
@@ -60,7 +60,7 @@ if (fs.existsSync(AGENTS_DIR)) {
 
     // Insert Step 3 override
     const step3Target = '## Step 3: Interactive Scaffolding Guidance';
-    if (content.includes(step3Target) && !content.includes('Headless Mode Override: If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes')) {
+    if (content.includes(step3Target) && !content.includes('Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes')) {
       content = content.replace(
         step3Target,
         `${step3Target}\n\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, do not perform any file writes or installations. Instead, output suggested configs, linter rules, or hook configurations directly in your report section.`
@@ -88,7 +88,7 @@ if (fs.existsSync(SKILLS_DIR)) {
 
     let content = fs.readFileSync(filePath, 'utf8');
 
-    if (!content.includes('Headless Mode Override: If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active')) {
+    if (!content.includes('Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active')) {
       content = content.replace(
         /^(### Phase 1: [^\r\n]*)/m,
         `$1\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, skip interactive alignment and infer target standards and stack from the codebase.`
