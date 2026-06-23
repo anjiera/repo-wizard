@@ -12,6 +12,7 @@ Specialist guidelines and checklists map directly to the industry-standard **Cyb
 Focuses on writing secure code, configuring correct dependencies, and setting up static linters to prevent vulnerabilities before deployment.
 * **API Hardening:** [appsec-hardening-guide.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/appsec-hardening-guide.md)
 * **API Contract Validation:** [api-contract-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/api-contract-standards.md)
+* **Google Style Guides:** [google-style-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/google-style-rules.md)
 * **Notebook Git Hygiene:** [notebook-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/notebook-standards.md)
 * **React State Sanitization:** [state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)
 * **Supply Chain Audits:** [supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)
@@ -98,47 +99,49 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Go runtime profiling, sync.Pool allocation pooling, slice/map size preallocations, and escape checks.
 24. **[jvm-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/jvm-performance-patterns.md)**
     - JVM GC tuning (G1GC/ZGC), escape checks, JIT compiler optimizations, and Kotlin inline functions.
-25. **[legal-phrasing-dictionary.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/legal-phrasing-dictionary.md)**
+25. **[google-style-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/google-style-rules.md)**
+    - Google Style formatting templates for C/C++, Java, and JavaScript/TypeScript.
+26. **[legal-phrasing-dictionary.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/legal-phrasing-dictionary.md)**
     - Phrasing scanning databases mapping high-risk claims to legally neutral alternatives.
-26. **[lisp-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/lisp-performance-patterns.md)**
+27. **[lisp-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/lisp-performance-patterns.md)**
     - Tail-Call Optimization (TCO), Common Lisp compilation macros, static arrays, and type assertions.
-27. **[notebook-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/notebook-standards.md)**
+28. **[notebook-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/notebook-standards.md)**
     - Jupyter Notebook nbstripout pre-commit filters, virtual environments (Conda/Poetry), and nbqa linters.
-28. **[observability-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/observability-patterns.md)**
+29. **[observability-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/observability-patterns.md)**
     - OpenTelemetry SDK configuration, W3C tracecontext headers, RED/USE metrics, and PII filters.
-29. **[react-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/react-performance-patterns.md)**
+30. **[react-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/react-performance-patterns.md)**
     - INP yielding (scheduler.yield()), web font metric CLS overrides, and back/forward cache (bfcache) rules.
-30. **[pascal-turbo-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/pascal-turbo-patterns.md)**
+31. **[pascal-turbo-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/pascal-turbo-patterns.md)**
     - Turbo Pascal heap bounds, inline assembler blocks, CPU directives, and range checking bypass.
-31. **[performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/performance-patterns.md)**
+32. **[performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/performance-patterns.md)**
     - K6 performance budget metrics, Micro-benchmarks, and CI budget boundaries.
-32. **[php-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/php-performance-patterns.md)**
+33. **[php-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/php-performance-patterns.md)**
     - OPcache JIT compiler, file preloading, eager-loading relations, and strict typing optimizations.
-33. **[python-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/python-performance-patterns.md)**
+34. **[python-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/python-performance-patterns.md)**
     - Generator streams, object __slots__, compiled C libraries (NumPy), and GIL worker pools.
-34. **[resilience-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/resilience-patterns.md)**
+35. **[resilience-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/resilience-patterns.md)**
     - Retry policies with exponential backoff and jitter, fallback patterns, and circuit breaker setups.
-35. **[ruby-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/ruby-performance-patterns.md)**
+36. **[ruby-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/ruby-performance-patterns.md)**
     - Ruby GC parameters, frozen string literal optimizations, lazy enumerators, and ActiveRecord preloading.
-36. **[rust-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/rust-performance-patterns.md)**
+37. **[rust-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/rust-performance-patterns.md)**
     - Async spawn_blocking, zero-copy borrowing Serde lifetimes, and Cargo release configurations.
-37. **[scaffolding-robustness-protocol.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/scaffolding-robustness-protocol.md)**
+38. **[scaffolding-robustness-protocol.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/scaffolding-robustness-protocol.md)**
     - Safe package installation commands, rollback configurations, AST merge routines, and prompt injection defense.
-38. **[security-hardening-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/security-hardening-checklist.md)**
+39. **[security-hardening-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/security-hardening-checklist.md)**
     - Compliance mapping profiles (SOC 2, ISO 27001, HIPAA controls, FIPS algorithms).
-39. **[shell-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/shell-performance-patterns.md)**
+40. **[shell-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/shell-performance-patterns.md)**
     - Minimizing child process spawns, line-by-line streams, and command output variables caching.
-40. **[state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)**
+41. **[state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)**
     - Prevent race conditions and stale closures in React hooks, callback updates, and window event listeners.
-41. **[supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)**
+42. **[supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)**
     - License validation checkers (blocking viral copyleft packages) and lockfile integrity scanning.
-42. **[swift-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/swift-performance-patterns.md)**
+43. **[swift-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/swift-performance-patterns.md)**
     - Swift Copy-on-Write value structures, avoiding strong cycles (weak/unowned), and Actor concurrency.
-43. **[testing-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/testing-patterns.md)**
+44. **[testing-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/testing-patterns.md)**
     - Unit/integration mocking frameworks (Jest, Vitest, MSW), coverage budgets, and test setups.
-44. **[toolchain-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/toolchain-standards.md)**
+45. **[toolchain-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/toolchain-standards.md)**
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
-45. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
+46. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
 
 ---
