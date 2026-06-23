@@ -1,0 +1,99 @@
+# Repo Wizard Usage Tutorial
+
+This tutorial guides you through analyzing, auditing, and scaffolding tooling in your repositories using `repo-wizard`. 
+
+Whether you are starting a new project (Greenfield) or auditing an existing codebase (Brownfield), this guide explains how the orchestrator and specialized subagents analyze your stack and deliver recommendations.
+
+---
+
+## 1. Greenfield vs. Brownfield Scenarios
+
+### Greenfield Repositories (New Projects)
+When initialized in a clean or newly created workspace, `repo-wizard` acts as a repository bootstrapper:
+1. It gathers your target tech stack, budget, and compliance needs via the questionnaire.
+2. It screens tools and scaffolds configuration files (e.g., `.eslintrc.json`, `axe.config.json`, Git pre-commit hooks) from scratch.
+3. It creates a developer summary guide in `docs/TOOLCHAIN.md` detailing the newly installed tools.
+
+### Brownfield Repositories (Existing or Legacy Projects)
+For established codebases, `repo-wizard` acts as an audit and gap-analysis assistant:
+1. **Current Tooling Sizing:** The orchestrator performs a token-efficient pre-scan. It analyzes your active dependencies, files structure, lint configs, and build scripts to build a ledger of your *existing* tools.
+2. **Gap Analysis & Recommendations:** It identifies security, compliance, accessibility, or testing gaps. It then recommends a tailored list of **additional** tools and rules.
+3. **Trigger Heuristics:** These recommendations are determined based on:
+   - **Interactive Developer Interview:** Your answers to compliance and tooling questionnaires.
+   - **Best-Guess Heuristics (Headless Mode):** The agent's automated inference of tech stack constraints (e.g., if React is detected without accessibility testing, it flags JSX-a11y and Axe-core).
+
+---
+
+## 2. Execution Modes
+
+### Mode 1: Interactive Local Mode (`MODE=INTERACTIVE_LOCAL`)
+Recommended for local developer onboarding and interactive configuration.
+* **Command:** `/repo-wizard` (or `agy run repo-wizard` depending on agent env).
+* **Process:**
+  1. **TOS Gate:** Prompts you to accept the Terms of Service.
+  2. **Opt-In Categories:** At the start of each section (Testing, Compliance, etc.), it asks if you want to configure tools or skip that category entirely.
+  3. **Screening Ledgers:** Screens candidate tools via `tool-evaluator` and prompts you to select preferred tools.
+  4. **Scaffolding/Backlog Handoff:** Installs tools and generates reports.
+
+### Mode 2: Headless Local Mode (`MODE=HEADLESS_LOCAL`)
+A non-blocking scan of the active local repository, ideal for scripts or background sweeps.
+* **Command:** `/repo-wizard --headless`
+* **Process:**
+  - Bypasses interactive prompts.
+  - Detects tech stack and applies **best-guess heuristics** to determine recommendations.
+  - Automatically runs a subagent relevance sweep, audits tools, and outputs report files directly.
+
+### Mode 3: Headless Remote Mode (`MODE=HEADLESS_REMOTE`)
+Used to scan a remote public Git repository.
+* **Command:** `/repo-wizard <github-url>` (e.g., `/repo-wizard https://github.com/user/my-library`)
+* **Process:**
+  - Clones the repository to a temporary directory.
+  - Conducts a decoupled subagent relevance sweep.
+  - Performs best-guess recommendations based on codebase heuristics.
+  - Compiles the full technical report and executive summary.
+
+---
+
+## 3. Decoupled Subagent Relevance Sweep
+
+To optimize token usage and avoid redundant analyses on large codebases, the lead orchestrator runs a **Decoupled Subagent Relevance Sweep** before starting a deep audit:
+
+```
+                  ┌──────────────────────┐
+                  │   Lead Orchestrator  │
+                  └──────────┬───────────┘
+                             │ Dispatches metadata check
+                             ▼
+               ┌───────────────────────────┐
+               │  Specialist Specialist... │
+               └─────────────┬─────────────┘
+                             │ Returns JSON verdict
+                             ▼
+              { "relevance": "High|Medium|Low", 
+                "rationale": "Explanation" }
+```
+
+* **High / Medium Relevance:** The specialist agent is queued to run its full check.
+* **Low Relevance:** Bypassed completely. For example, if no Python files or notebooks exist, the `notebook-sanitizer-agent` returns `Low` relevance, and its checklist is skipped.
+
+---
+
+## 4. Understanding Deliverables
+
+Every successful scan compiles deliverables under the `.repo-wizard/` directory (automatically added to your gitignore):
+
+### 1. Full Technical Report (`repo-wizard-full-report.md` & `.html`)
+A comprehensive audit log detailing detected stack size, candidate tools evaluated, final selections, and detailed implementation rationales.
+
+### 2. Executive Summary (`repo-wizard-executive-summary.md` & `.html`)
+A high-level summary designed for engineering leads and stakeholders. It follows a strict layout:
+* **Section 1: Codebase Health & Strengths:** Positively frames clean patterns already present in the codebase.
+* **Section 2: Tooling & Compliance Opportunities:** Suggests constructive additions (e.g. CCPA data purging) in a neutral, non-blaming tone.
+* **Section 3: Rollout Roadmap:** Describes how to distribute the recommended tasks across standard sprints.
+* *Total word count is restricted to under 450 words total across all sections.*
+
+### 3. Tabular Backlog CSV (`backlog.csv` - Backlog Mode Only)
+A CSV backlog formatted for bulk-importing into task managers (Jira, ClickUp, Azure DevOps). Each row includes the user story, impact area, action items, recommending subagent attribution, and the mandatory **Developer Empowerment Disclaimer**.
+
+### 4. Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)
+Saved to your public documentation folder to onboard new developers, containing configuration file paths and official documentation links for the active tools.
