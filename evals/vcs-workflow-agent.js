@@ -3,8 +3,8 @@
 const path = require('path');
 
 module.exports = {
-  agent: 'vcs-workflow-bot-agent',
-  personaFile: path.join(__dirname, '..', 'agents', 'vcs-workflow-bot-agent.md'),
+  agent: 'vcs-workflow-agent',
+  personaFile: path.join(__dirname, '..', 'agents', 'vcs-workflow-agent.md'),
   testCases: [
     {
       name: 'VCS Hooks Setup With Developer Consent',

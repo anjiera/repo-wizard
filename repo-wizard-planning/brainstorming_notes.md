@@ -213,9 +213,9 @@ To prevent the agent from becoming outdated when new frameworks emerge, the spec
 * **`testing-pilot.agent` (Unit, E2E & Mock Scaffolding)**:
  * *Expertise:* Test framework configuration (Vitest, Jest, PyTest, JUnit, Cargo test, Playwright), test-driven development (TDD) rules, database/API mocking, and coverage threshold integration.
  * *Dynamic Scope:* Scaffolds unit/integration/E2E test suites, designs mock configurations (MSW, wiremock, Testcontainers), configures code coverage tools (Istanbul, Jacoco), and hooks test runs into package configurations and CI/CD pipelines.
-* **`git-workflow-bot.agent`**:
- * *Expertise:* Git discipline and local automation hooks.
- * *Dynamic Scope:* Sets up Husky pre-commit hooks, lint-staged scripts, commit lints, or licensing header scripts for the designated codebase.
+* **`vcs-workflow.agent`**:
+ * *Expertise:* VCS hook setups, commit formatting lints, formatting rules, and license/copyright header validation.
+ * *Dynamic Scope:* Configures pre-commit hooks (Husky/git hooks, hg hooks, or Perforce trigger setups), Conventional Commits check scripts, formatting tools, and automated copyright header scanners.
 * **`technical-scribe.agent` (Docs, ADRs & Architecture Diagrams)**:
  * *Expertise:* Technical writing, architecture visualization (Mermaid/C4 Model), Nygard ADR setups, API docs generators, and knowledge-base curation.
  * *Dynamic Scope:* Scaffolds Nygard-style ADR templates, CLI helpers, or Git hooks under `docs/decisions/`, auto-generates API doc generator configs (e.g. TypeDoc, Sphinx), creates baseline C4 architectural diagrams in Markdown using Mermaid, and sets up bug-fix post-mortem directories and PR verification checklists.

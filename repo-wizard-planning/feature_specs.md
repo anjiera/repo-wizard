@@ -154,9 +154,9 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Scaffold test runners, mocks, and coverage collection gates.
 * **Deliverables:** Scaffold testing suite folders, configure testing runners (Jest, Vitest, PyTest, JUnit, Cargo test), set up API mocking layers (MSW, MockWebServer), and set up local code coverage gates (e.g. vitest coverage limits) matching the developer's requested coverage threshold.
 
-### 4.6 `git-workflow-bot.agent` (Git Discipline & Local Automation)
+### 4.6 `vcs-workflow.agent` (VCS Discipline & Local Automation)
 * **Objective:** Automate formatting, styling, linting, and commit discipline.
-* **Deliverables:** Configure Husky pre-commit hooks, set up `lint-staged` scripts, integrate Conventional Commits validation, and write scripts that scan and append licensing/copyright headers on new commits.
+* **Deliverables:** Configure Husky pre-commit hooks (or Mercurial hooks/Perforce submit triggers), set up linting/formatting scripts, integrate Conventional Commits validation, and write scripts that scan and append licensing/copyright headers on new commits.
 
 ### 4.7 `technical-scribe.agent` (Docs, ADRs & Architecture Diagrams)
 * **Objective:** Automate architectural decision tracking, documentation pipelines, and codebase diagrams.
