@@ -26,8 +26,8 @@ You receive a configuration parameter contract containing:
 ## Step 2: Clean State Verification
 
 Before running any installation or modification command:
-1. Check that the Git working tree is clean (`git status`).
-2. If there are uncommitted changes, notify the user and recommend committing or stashing before proceeding, to ensure a clean recovery path.
+1. Check that the working tree is clean using the command appropriate for the detected version control system (e.g., `git status` for Git, `hg status` for Mercurial, `p4 status` for Perforce).
+2. If there are uncommitted changes, notify the user and recommend committing, stashing, or shelving before proceeding, to ensure a clean recovery path.
 
 ---
 
@@ -71,5 +71,5 @@ After the installation and configuration are verified successfully:
 If the verification command fails (non-zero exit code):
 1. **Notify & Debug Attempt:** Immediately report the exact verification failure details back to the lead orchestrator and the user, explaining what went wrong. Propose or attempt a correction/fix for the build failure or broken tests.
 2. **Developer Consultation:** Explain what was tried and ask the developer for explicit permission/consent before performing any rollback. Give the developer the opportunity to investigate and resolve the issue manually if they prefer.
-3. **Execute Rollback:** Only if debugging attempts fail, or if the developer requests/consents to it, run rollback commands (`git checkout -- .` and remove untracked files using `git clean -fd` inside the targeted module directories) to restore the repository to its clean state.
+3. **Execute Rollback:** Only if debugging attempts fail, or if the developer requests/consents to it, run the rollback commands appropriate for the detected VCS (such as `git checkout -- .` & `git clean -fd` for Git, `hg revert --all` & `hg purge` for Mercurial, or `p4 revert` for Perforce) to restore the repository to its clean state.
 4. **Liability Disclaimer:** Remind the user that while rollback procedures are designed for high robustness, no absolute safety guarantees can be made, manual inspection is recommended, and using the agent or its recommendations in no way certifies the code or guarantees it will pass any compliance audit or certification.

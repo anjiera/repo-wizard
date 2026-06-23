@@ -76,7 +76,7 @@ Perform execution in a strict sequence:
 1. **Stage 1 (Complete Interview)**: Finish all questions and candidate screening before scaffolding or editing files.
 2. **Stage 2 (Deduplication)**: Audit selected tools to see if a single tool covers multiple capabilities (e.g., configuring *ESLint* to handle formatting, accessibility rules, and translation limits).
 3. **Stage 3 (Handoff)**: Dispatch execution contracts containing paths, install commands, and config contents to specialized installer subagents (e.g. `tool-scaffolder.agent`).
-4. **Rollback & Verification**: Run build tests after each specialist installation. If the build breaks, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing rollback commands (`git checkout -- .`, `git clean -fd`). Give the developer the opportunity to resolve it manually first.
+4. **Rollback & Verification**: Run build tests after each specialist installation. If the build breaks, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ### Phase 6: Reporting
 Upon completion, write two reports:
