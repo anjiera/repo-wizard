@@ -53,6 +53,7 @@ Focuses on establishing code quality rules, mapping regulatory controls, and ver
 * **Repo Wizard (`/repo-wizard`):** The interactive orchestrator that scopes your project, screens tools, and coordinates handoffs.
 * **Compliance Pilot (`/rw-compliance`):** Verifies technical compliance configurations (SOC 2, ISO 27001, FIPS lists).
 * **Accessibility Auditor (`/rw-accessibility`):** Configures accessibility linters (ESLint JSX-a11y) and headless axe-core scanners.
+* **Formal Methods Pilot (`/rw-formal-methods`):** Scaffolds mathematical proof verifications (TLA+ specs, Rust Kani harnesses) to prove execution invariants.
 
 ### Yellow Team (System Builders & Deployment)
 Focuses on configuring build automation, deployment replication, container scaling, and recovery systems.

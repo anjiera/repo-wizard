@@ -198,14 +198,18 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Configure cross-compilation compiler parameters, multi-architecture target configurations (ARM, RISC-V, WASM), sysroots, and linker scripting overlays.
 * **Deliverables:** Scaffold CMake target toolchain profiles (`riscv.cmake`), Cargo targets config configurations, and WebAssembly compiler setups.
 
-### 4.17 Cybersecurity Color Wheel Responsibility Matrix
+### 4.17 `formal-methods-pilot.agent` (Formal Verification & Mathematical Modeling)
+* **Objective:** Configure mathematical verification proof checks, TLA+ state specs, Rust Kani proof harnesses, and SMT solver invariants validation.
+* **Deliverables:** Scaffold TLA+ specification files, Rust Kani SMT verification blocks (`#[cfg(kani)]`), and abstract interpretation rules.
+
+### 4.18 Cybersecurity Color Wheel Responsibility Matrix
 To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
 * **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
 * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), `vcs-workflow.agent` (licensing validations), `api-contract-pilot.agent` (schema syntax rules and lint checks), and `notebook-sanitizer.agent` (notebook filters and quality gates).
 * **Blue Team (Defense & System Visibility):** Configures runtime logging, access control trails, performance alert triggers, and system fault tolerance.
 * *Assigned Agents:* `observability-pilot.agent` (Alertmanager triggers, OTel tracing), `privacy-guardian.agent` (PII telemetry scrubbing), `resilience-pilot.agent` (retries, circuit breakers, chaos tests), and `fuzzing-pilot.agent` (fuzzing harnesses, sanitizers).
 * **White Team (Governance & Audit Compliance):** Defines policies, configures validation frameworks, and audits controls.
-* *Assigned Agents:* `repo-wizard.agent` (interviews, scope analysis), `compliance-pilot.agent` (SOC 2, ISO 27001, FIPS list audits), and `accessibility-auditor.agent` (A11y automated checks).
+* *Assigned Agents:* `repo-wizard.agent` (interviews, scope analysis), `compliance-pilot.agent` (SOC 2, ISO 27001, FIPS list audits), `accessibility-auditor.agent` (A11y automated checks), and `formal-methods-pilot.agent` (formal model proofs, Rust Kani, TLA+).
 * **Yellow Team (System Builders):** The developer and orchestrators who deploy code.
 * *Assigned Agents:* `tool-scaffolder.agent` (automated build installer), `deployment-pilot.agent` (high-availability replicas, container probes, database backups), `data-pipeline-pilot.agent` (connection pooling, schema validations, orchestrator DAGs), `embedded-systems-pilot.agent` (MISRA analysis, compiler warnings, stack limits, QEMU test runner, local logging), and `toolchain-pilot.agent` (cross-compilation config, sysroots, CMake files).
 
