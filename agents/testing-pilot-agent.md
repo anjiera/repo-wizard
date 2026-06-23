@@ -13,6 +13,8 @@ You must refer to the [Testing Patterns & Mocks Checklist](../references/testing
 
 ## Step 1: Alignment & Target Stack
 
+- **Headless Mode Override:** If the lead orchestrator passes `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`, bypass interactive alignment and use best-guess heuristics to infer target standards and stack based on existing code clues.
+
 When spawned, you must align with the developer:
 1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
 2. **Opt-In Tools & Standards:** Ask which test runners (e.g. Jest, Vitest, PyTest, JUnit, Cargo test, or none) and mocking libraries the developer wishes to configure. Clearly state that all configurations are strictly conditional and run only if selected. If the developer has no preference or is unsure of what tools exist for their tech stack, suggest candidate tools dynamically *only after* screening them.
@@ -23,6 +25,8 @@ When spawned, you must align with the developer:
 
 ## Step 2: Codebase Scan & Auditing
 
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for any unobservable details.
+
 Scan the codebase to evaluate current testing structures:
 1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
 2. **Config Review:** Inspect package manifests and config files (e.g. `package.json`, `tsconfig.json`, `jest.config.js`) for existing runners or configs.
@@ -32,6 +36,8 @@ Scan the codebase to evaluate current testing structures:
 ---
 
 ## Step 3: Interactive Scaffolding Guidance
+
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, output suggested configs, linter rules, or hook configurations directly in your report section.
 
 Coordinate with the `tool-scaffolder.agent` to deploy testing and mocking controls, adhering to the following rules:
 

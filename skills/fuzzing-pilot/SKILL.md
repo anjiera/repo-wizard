@@ -36,6 +36,7 @@ A specialized security engineering and quality assurance workflow designed to au
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Scope Mapping
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before generating harness code or installing fuzzer packages, align with the developer:
 1. **Target Module Identification:** Identify the specific functions that accept raw byte buffers or strings and parse them.
 2. **Target Fuzz Engine:** Choose the appropriate runner for the language (e.g., `libFuzzer` for C/C++, `cargo-fuzz` for Rust, `Atheris` for Python, `go-fuzz` for Go).
@@ -43,12 +44,14 @@ Before generating harness code or installing fuzzer packages, align with the dev
 4. **CI Integration Scope:** Determine whether the fuzzer should run only locally (default) or integrate into remote security pipelines (e.g. ClusterFuzz, GitHub Action fuzz loops).
 
 ### Phase 2: Ingest & Parser Codebase Scan
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the repository to map inputs:
 1. **Parser & Ingest File Sweeps:** Search for functions with signatures accepting raw input (e.g., `char*`, `const uint8_t*`, `std::string`, `bytes`, `read()`).
 2. **Dependency Manager Scan:** Check `package.json`, `Cargo.toml`, `requirements.txt` to find compiler toolchains and language versions.
 3. **Compiler Checks:** Verify that `clang`, `gcc`, or `cargo` are available in the local execution path.
 
 ### Phase 3: Interactive Scaffolding Guidance
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-fuzzing-pilot-agent-<repo-name-here>.md`.
 Draft all configurations, harness templates, and launch scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing compiler configurations, creating fuzzing directories, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing test structures. Do **NOT** overwrite, alter, or remove configurations added by other testing agents (such as Jest, Vitest, or JUnit configurations).

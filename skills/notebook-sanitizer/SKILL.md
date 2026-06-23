@@ -19,6 +19,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Policy Setup
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before installing VCS filters or editing environment files, align with the developer on hygiene parameters:
 1. **Target Package Manager:** Identify the preferred virtual environment manager (Poetry, Conda, Pipenv, pip/venv).
 2. **Output Stripping Rule:** Confirm whether to strip all cell outputs on pre-commit (default) or retain them for specific tutorial folders.
@@ -27,6 +28,7 @@ Before installing VCS filters or editing environment files, align with the devel
 5. **PII Safety Warning:** Explain that clean filters only strip local staged files and do not scrub historical commits or replace runtime data validators.
 
 ### Phase 2: Codebase Notebook & Environment Scan
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the repository to locate active notebooks and manifests:
 1. **Notebook Sweeps:** Locate all `.ipynb` files in the repository directory.
 2. **Environment Manifest Scan:** Search for `pyproject.toml`, `environment.yml`, `Pipfile`, or `requirements.txt` files.
@@ -34,6 +36,7 @@ Audit the repository to locate active notebooks and manifests:
 4. **Inter-Agent Checks:** Scan for pre-commit hooks configured by other agents (e.g. `vcs-workflow` or `compliance-pilot` setups).
 
 ### Phase 3: Interactive Scaffolding Guidance
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-notebook-sanitizer-agent-<repo-name-here>.md`.
 Draft all configurations, manifests, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating environment manifests, or modifying existing configuration scripts.
 2. **Strict Inter-Agent Boundaries:** Respect existing hook files (like Husky hooks, pre-commit config YAML files, or custom scripts). You must **NOT** overwrite, alter, or remove configurations added by other agents. Always request developer consent and provide options to append filters cleanly without disrupting existing tools.

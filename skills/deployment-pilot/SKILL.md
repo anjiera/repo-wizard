@@ -19,6 +19,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Parameters Setup
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before editing container scripts or K8s YAML files, align with the developer on architecture targets:
 1. **Target Environment:** Determine whether the deployment runs on local Docker Compose, Kubernetes clusters, or cloud-managed services (ECS, GCP Cloud Run, etc.).
 2. **Replication Strategy:** Define replication factors (number of replicas) and load balancer requirements.
@@ -27,6 +28,7 @@ Before editing container scripts or K8s YAML files, align with the developer on 
 5. **Recovery Validation:** Confirm testing parameters for backup files (e.g. automatic temporary dry-run restore validation).
 
 ### Phase 2: Deployment & Container Sweep
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the codebase to assess current infrastructure setups:
 1. **Docker Config Scan:** Locate existing Dockerfiles, `.dockerignore` files, and `docker-compose.yaml` manifests.
 2. **Kubernetes Scan:** Locate active Kubernetes charts or deployment YAML resource files.
@@ -34,6 +36,7 @@ Audit the codebase to assess current infrastructure setups:
 4. **Script & Tool Scan:** Check for existing backup utility scripts, cron definitions, or recovery routines.
 
 ### Phase 3: Interactive Scaffolding Guidance
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-deployment-pilot-agent-<repo-name-here>.md`.
 Draft all configurations, manifests, and scripts in coordination with `tool-scaffolder.agent`, adhering to these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated Compose multi-replica blocks, Kubernetes probe sections, and database backup scripts to the developer, prompting them for review and confirmation.

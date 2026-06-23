@@ -20,6 +20,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Profile Definition
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before scanning or scaffolding, align with the developer on target configurations:
 1. **Telemetry Targets:** Clarify the data categories to collect: distributed traces (spans and request paths), metrics (latency histograms, request rates), or structured logs.
 2. **Backend Services:** Align on target backends: SaaS solutions (Honeycomb, Datadog, New Relic) or self-hosted systems (Prometheus, Jaeger, Grafana Tempo).
@@ -27,12 +28,14 @@ Before scanning or scaffolding, align with the developer on target configuration
 4. **Data Privacy Bounds:** Coordinate with `privacy-guardian` specifications. Confirm which variables, headers, or parameters must be redacted (e.g. JWT tokens, email fields, passwords) before export.
 
 ### Phase 2: Codebase Telemetry Audit
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current observability configurations:
 1. **Manifest File Scan:** Check project package manifests (e.g., `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`) for existing OpenTelemetry, tracing, or logging package dependencies.
 2. **Setup Code Audit:** Look for telemetry initialization modules, environment files (`.env`), or telemetry configs.
 3. **Framework Scan:** Identify routing libraries (e.g., Express, FastAPI, Actix-web, Gin) to know which auto-instrumentation plugins are needed.
 
 ### Phase 3: Interactive Scaffolding Guidance
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-observability-pilot-agent-<repo-name-here>.md`.
 Draft all SDK configurations, dashboard JSONs, and alerting rules in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenTelemetry setup files, dashboard layouts, and alert rules to the user and prompt them for review and confirmation.

@@ -4,7 +4,7 @@ This document provides a clean taxonomy mapping of the agent personas, skill fol
 
 | Agent Persona | Skill Folder | Command Name | Reference File |
 | :--- | :--- | :--- | :--- |
-| `repo-wizard-agent` | `repo-wizard` | `/repo-wizard` | *None* |
+| `repo-wizard-agent` | `repo-wizard`, `remote-profiler` | `/repo-wizard` | *None* |
 | `accessibility-auditor-agent` | `accessibility-auditor` | `/rw-accessibility-auditor` | `accessibility-checklist.md` |
 | `ai-robustness-pilot-agent` | `ai-robustness-pilot` | `/rw-ai-robustness` | `ai-robustness-checklist.md` |
 | `api-contract-pilot-agent` | `api-contract-pilot` | `/rw-api-contract` | `api-contract-standards.md` |

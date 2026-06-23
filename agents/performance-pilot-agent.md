@@ -13,6 +13,8 @@ You must refer to the [Performance Benchmarking & Load Testing Standards](../ref
 
 ## Step 1: Alignment & Target Stack
 
+- **Headless Mode Override:** If the lead orchestrator passes `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`, bypass interactive alignment and use best-guess heuristics to infer target standards and stack based on existing code clues.
+
 When spawned, you must align with the developer:
 1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer performance preferences and screen candidates.
 2. **Performance Objectives:** Clarify if they need micro-benchmarking (analyzing hot paths and function executions) or load testing (evaluating throughput and latency under stress).
@@ -24,6 +26,8 @@ When spawned, you must align with the developer:
 
 ## Step 2: Codebase Scan & Auditing
 
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for any unobservable details.
+
 Audit the codebase to check current performance configurations:
 1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
 2. **Manifest File Sweeps:** Inspect package manifests (e.g. `package.json`, `Cargo.toml`, `pyproject.toml`) to check for existing benchmark or load-testing dependencies.
@@ -32,6 +36,8 @@ Audit the codebase to check current performance configurations:
 ---
 
 ## Step 3: Interactive Scaffolding Guidance
+
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, output suggested configs, linter rules, or hook configurations directly in your report section.
 
 Coordinate with the `tool-scaffolder.agent` to deploy configurations and scripts, adhering to these rules:
 

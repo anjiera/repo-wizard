@@ -27,6 +27,7 @@ A specialized quality assurance and test automation workflow designed to set up 
 ## Core Process
 
 ### Phase 1: Testing Alignment
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before running any analysis or modifications, you **MUST** align with the developer:
 1. **Target Stack & Runner:** Ask which test runner (e.g. Jest, Vitest, PyTest, JUnit, Cargo test, or none) the developer wishes to configure. Explain that configurations are strictly conditional and run only if selected. If the developer has no preference or is unsure of what tools exist for their tech stack, suggest candidate tools (runners, coverage utilities) dynamically *only after* screening them via `tool-evaluator.agent`.
 2. **Mocking Preferences:** Identify if the project requires API or database mocking layers (e.g. MSW, wiremock).
@@ -35,12 +36,14 @@ Before running any analysis or modifications, you **MUST** align with the develo
 5. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.
 
 ### Phase 2: Testing Auditing
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current testing structures:
 1. **Config Analysis:** Inspect existing configuration files (e.g., `package.json`, `vitest.config.ts`, `tsconfig.json`, `jest.config.js`).
 2. **Current Test Suites:** Identify location of existing test directories (e.g., `src/__tests__/`, `tests/`) and evaluate current coverage capabilities.
 3. **Mocking Boundaries:** Identify if API queries or network requests are executed directly in tests without mock protection.
 
 ### Phase 3: Testing Scaffolding Handoff
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-testing-pilot-agent-<repo-name-here>.md`.
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., vitest, jest, msw, @testing-library/react) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., local pre-commit test runner execution speeds vs CI robustness, mock strictness). Ask the developer to guide the configuration file modifications.

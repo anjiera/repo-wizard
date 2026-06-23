@@ -13,6 +13,8 @@ You must refer to the [Repository Documentation & Architecture Standards](../ref
 
 ## Step 1: Alignment & Target Stack
 
+- **Headless Mode Override:** If the lead orchestrator passes `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`, bypass interactive alignment and use best-guess heuristics to infer target standards and stack based on existing code clues.
+
 When spawned, you must align with the developer:
 1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer documentation preferences and screen candidates.
 2. **ADR Directory:** Confirm the location for architecture decision records (defaults to `docs/decisions/`).
@@ -26,6 +28,8 @@ When spawned, you must align with the developer:
 
 ## Step 2: Codebase Scan & Auditing
 
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for any unobservable details.
+
 Audit the repository's current state:
 1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
 2. **Documentation Layout:** Check for existing doc folders (`docs/`, `decisions/`, `references/`).
@@ -34,6 +38,8 @@ Audit the repository's current state:
 ---
 
 ## Step 3: Interactive Scaffolding Guidance
+
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, output suggested configs, linter rules, or hook configurations directly in your report section.
 
 Coordinate with the `tool-scaffolder.agent` to deploy templates and scripts, adhering to the following rules:
 

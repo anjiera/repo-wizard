@@ -18,15 +18,18 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Pre-requisites Check & State Isolation
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 1. **Developer Consent:** Prompt the developer and obtain explicit permission before executing installations or modifying files.
 2. **Clean State Check:** Run version control checks (e.g., `git status`, `hg status`, `p4 status`) to ensure the working tree is clean before modifying files.
 
 ### Phase 2: Package Installation & Configuration
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 1. **Installation:** Run package manager commands securely.
 2. **Safe Merging:** Write new configurations or merge into existing configurations. Always use precise, AST-based edits or line replacements to prevent syntax syntax breakage.
 3. **Nuance Explanation:** Explain the configuration parameters being created or modified, highlighting tradeoffs (e.g. strictness settings).
 
 ### Phase 3: Verification & Documentation Integration
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-tool-scaffolder-agent-<repo-name-here>.md`.
 1. **Verification Command:** Run the designated verification check (e.g. `npm run build`, `cargo check`, `npm test`) to ensure the build compiles cleanly.
 2. **Setup Integration:** Search for and append setup/install instructions to onboarding guides (`README.md`, `setup.sh`, `install.sh`) to support onboarding.
 

@@ -19,6 +19,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Profile Definition
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before scanning or scaffolding, align with the developer on target configurations:
 1. **Performance Focus:** Confirm the focus areas: micro-benchmarks (isolated logic speed) vs. load testing (system concurrency and API throughput).
 2. **Benchmark Frameworks:** Align on preferred local benchmarking tools based on the stack (e.g. pytest-benchmark for Python, Tinybench for Node.js, Criterion.rs for Rust).
@@ -26,12 +27,14 @@ Before scanning or scaffolding, align with the developer on target configuration
 4. **CI Budget Gates:** Ask the developer for permission and specifications to configure performance budget limits that fail builds or pull requests on regressions.
 
 ### Phase 2: Codebase Performance Audit
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current performance configurations:
 1. **Manifest Audit:** Read build manifest files (e.g., `package.json`, `Cargo.toml`, `pyproject.toml`) to detect existing benchmark dependencies or load-testing libraries.
 2. **Config Audit:** Look for configuration files related to speed or benchmarks (e.g. `.k6.js`, `locustfile.py`, `pytest.ini`).
 3. **Module Profile:** Identify the key entry points, server routers, and database setups to locate critical code pathways.
 
 ### Phase 3: Interactive Scaffolding Guidance
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-performance-pilot-agent-<repo-name-here>.md`.
 Draft all configurations, tests, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying CI/CD configurations.
 2. **Interactive Code Review:** Display generated load-test scripts, benchmark configurations, and budget specifications to the user and prompt them for review and confirmation.

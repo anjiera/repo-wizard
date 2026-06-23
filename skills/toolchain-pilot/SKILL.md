@@ -19,6 +19,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Architecture Setup
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Before writing toolchain configuration overrides, align with the developer:
 1. **Target Architecture & Processor:** Map out the target processor architecture (ARM Cortex-M0/M3/M4/M7, RISC-V 32/64 bit, WebAssembly, etc.).
 2. **Build System Framework:** Identify CMake, GNU Make, Cargo, or PlatformIO environments.
@@ -27,12 +28,14 @@ Before writing toolchain configuration overrides, align with the developer:
 5. **Sysroot Location:** Identify the sysroot directory mapping target standard C library headers (glibc, newlib, musl) if compiling on disconnected hosts.
 
 ### Phase 2: Ingestion & Toolchain Path Scan
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the host platform:
 1. **Toolchain Check:** Verify that cross-compiler binaries (e.g. `riscv-none-elf-gcc --version`) are present in the system environment path.
 2. **Linker Mappings Audit:** Inspect the workspace for compiler configuration overrides, environment scripts, or target configurations.
 3. **AST Build Tool Check:** Scan the workspace structure (CMakeLists.txt, Cargo.toml) to understand active target rules.
 
 ### Phase 3: Interactive Scaffolding Guidance
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-toolchain-pilot-agent-<repo-name-here>.md`.
 Draft all configurations, CMake toolchain configs, and setup wrappers in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending compiler settings, creating toolchain folders, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing build configurations. Do **NOT** overwrite, alter, or remove configurations added by other build or test agents (such as testing setups, coverage rules, or appsec hardeners).

@@ -17,12 +17,14 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Input Analysis
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
 Accept the parameters contract containing:
 1. **Package Details:** The target package name and optional version.
 2. **Project Profile:** The target project release environment (Commercial Closed-Source SaaS, Open Source, Regulated Enterprise).
 3. **Tooling Budget:** Free-only vs paid or mixed.
 
 ### Phase 2: Metadata Verification
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Evaluate the target package:
 1. **Security Scan:** Query public CVE and package vulnerability databases. Discourage tools containing unpatched critical or high severity CVEs.
 2. **Maintenance Check:** Check repository commit activity. Flag a warning if no commits in >12 months, and discourage if no commits in >2 years (abandoned).
@@ -30,6 +32,7 @@ Evaluate the target package:
 4. **Reputation Assessment:** Confirm community trust via download volumes and GitHub stars.
 
 ### Phase 3: Verdict Formatting
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-tool-evaluator-agent-<repo-name-here>.md`.
 Construct and return a strict JSON output matching:
 ```json
 {

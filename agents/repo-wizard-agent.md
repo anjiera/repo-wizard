@@ -22,85 +22,88 @@ Before running the tool or performing any codebase profiling, checks, or session
 
 ---
 
-## ️ Step 1: Codebase Sizing & Analysis (Initial Gate)
+## ️ Step 1: Codebase Sizing, Analysis & Parameter Routing
 
-Before presenting the questionnaire, size the repository to protect the developer from token limits and API cost overhead:
-1. **Analyze Language & Modules**: Detect build files (e.g. `package.json`, `build.gradle.kts`, `Cargo.toml`), file counts, and estimate lines of code (LOC).
-2. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, you **MUST** prompt the user:
- > *"This repository appears to be a large codebase ([count] lines). To prevent running out of AI tokens and to minimize API costs, should we scaffold your unit tests and QA configurations incrementally (e.g. library-by-library or module-by-module) rather than auditing the entire project at once?"*
+1. **Parameter Routing Check**: Parse the command parameters:
+   - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Step 0 passes.
+   - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+   - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
+2. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
+   - Estimate LOC, count files, detect primary languages and build systems.
+   - For `MODE=INTERACTIVE_LOCAL` or `MODE=HEADLESS_LOCAL`, if the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user for Incremental Adoption (in interactive mode).
 3. **Ignore Local States**: Verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`.
 
 ---
 
 ## Step 2: Session Checking & Resumability
 
-To prevent questionnaire fatigue, sessions must be fully resumable and version-tracked:
-1. **Search Session File**: Look for `.repo-wizard/session.json` in the workspace root.
+For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
+1. **Search Session File**: Look for `.repo-wizard/session.json`.
 2. **Prompt Session Actions**:
- - *Incomplete Session*: *"We found an active wizard session. Would you like to: [Resume, Revisit previous answers, Report selected choices, Start Fresh]"*
- - *Completed Session*: *"We found a completed setup session. Would you like to: [Revisit previous answers, Report selected choices, Start Fresh]"*
-3. **Execute Session Actions**:
- - *Resume*: Load state, skip already answered questions, and ask the remaining questions.
- - *Revisit*: Let the user select categories to modify answers, updating `session.json` immediately.
- - *Report*: List all tool choices and gates selected up to that point.
- - *Start Fresh*: Archive the current state and restart the questionnaire.
+   - *Incomplete Session*: *"We found an active wizard session. Would you like to: [Resume, Revisit previous answers, Report selected choices, Start Fresh]"*
+   - *Completed Session*: *"We found a completed setup session. Would you like to: [Revisit previous answers, Report selected choices, Start Fresh]"*
+3. **Execute Actions**: Resume, Revisit, Report, or Start Fresh.
 4. **Archiving History**: Before overwriting or starting fresh, copy `session.json` and `.repo-wizard/repo-wizard-full-report.md` to `.repo-wizard/history/` with YYYYMMDD_HHMMSS timestamp suffixes.
+
+For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md` to allow resuming halted scans.
 
 ---
 
-## Step 3: Interactive Alignment Questionnaire
+## Step 3: Core Profiling & Questionnaire
 
-Begin the alignment questionnaire by presenting this mandatory disclaimer:
-> *Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes. Using this wizard, or any of its subagents' recommendations, in no way certifies the codebase or guarantees that the code will pass any security, privacy, legal, accessibility, or compliance certification or audit.*
+### A. Local Interactive Alignment (`MODE=INTERACTIVE_LOCAL`)
+Begin the questionnaire by presenting the mandatory disclaimer. Sequentially present questions for Context, Compliance, Stack, and Friction with section skip controls. Promote user-owned thresholds and select scaffolding vs backlog mode.
 
-For each category of the questionnaire, implement **Section-Level Skip Controls**:
-1. **Opt-In Check**: Ask: *"Would you like to configure tools and rules for [Section Name], or skip this section?"*
-2. **Skip Action**: If skipped, record the skip status in `session.json` and `repo-wizard-full-report.md`, and skip to the next section.
-3. **User-Owned Thresholds**: Ensure the user has final authority over test coverage thresholds and git gate strictness.
-4. **Rollout Mode Prompt (Context & Goals)**: Ask the developer if they want to immediately scaffold configurations (`scaffold`) or generate a JIRA/backlog-ready ticket backlog (`backlog`). If `backlog` is selected, prompt for task granularity (stories vs. epics), planning framework (Scrum, Kanban, Checklist), and custom project labels.
+### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
+Bypass the questionnaire and live alignment:
+1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
+2. **Coordinate Headless Scans**: Dispatch the best-guess parameter contract to High/Medium relevance subagents. Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+3. **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
 
 ---
 
 ## ️ Step 4: Dynamic Tool Screening
 
-If the developer has no tool preferences or is unsure of what exists for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`. Before recommending any specific package to the user, delegate screening to `tool-evaluator.agent`:
-1. **Vulnerabilities**: Query databases to ensure no active critical CVEs.
-2. **Activity**: Verify that the tool has had commits in the last 12 months, a healthy open-to-closed issues ratio, and multiple active maintainers.
-3. **License Compatibility**: Check against the project's commercial goals (e.g. flag viral copyleft licenses like GPL/AGPL in closed-source SaaS projects).
-4. **Warning Ledger**: List warnings for borderline tools to allow the user to make informed choices.
+Under all modes, screen candidate tool recommendations using the `tool-evaluator.agent` protocol to check:
+1. **Vulnerabilities**: Ensure no active critical CVEs.
+2. **Activity**: Verify commits in the last 12 months, open/closed issues, and maintainer counts.
+3. **License Compatibility**: Check licenses against project commercial profiles.
 
 ---
 
-## Step 5: Optimization & Handoff
+## Step 5: Scaffolding, Optimization & Handoff
 
-Scaffold or document configurations strictly in sequence:
-1. **Complete Interview First**: Finish the entire questionnaire and candidate screening before editing workspace files or generating final issue lists.
-2. **Deduplicate Candidates**: Cross-reference capabilities to identify if a single tool (e.g. ESLint) can satisfy multiple requirements simultaneously.
-3. **Handoff Contract**:
-   - *Scaffolding Mode*: Compile configurations into a parameters contract (JSON containing paths, install commands, config contents) and dispatch to a configuration executor (e.g., `tool-scaffolder.agent`).
-   - *Backlog Mode*: Compile requirements and disclaimers into a parameters contract with `execution_mode: "backlog"` and backlog parameters. Dispatch to specialist subagents (e.g. `privacy-guardian.agent`). Specialist subagents will utilize Section 9 of the robustness protocol to return a structured JSON list of issues.
-4. **Verification & Rollback (Scaffolding Mode Only)**: Run verification builds after installation. If a build fails, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+### A. Local Interactive Mode
+1. Complete interview first.
+2. Deduplicate candidates.
+3. Dispatch parameters contract to `tool-scaffolder.agent` (scaffold mode) or subagents (backlog mode).
+4. Run verification and VCS rollback on failure.
+
+### B. Headless Mode
+1. Do NOT make any package installations or write files in the targeted repository.
+2. Read and consolidate all subagents' mini-reports from `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
 
 ---
 
-## Step 6: Reports & Backlog Generation
+## Step 6: Reports & Summary Generation
 
-Write the deliverables upon alignment completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom:
-1. **The Full Technical Report (`.repo-wizard/repo-wizard-full-report.md` & `.repo-wizard/repo-wizard-full-report.html`)**:
- - Capture system profile, capabilities, screening outputs, and selection ledger: `"For [Capability Y], the repo-wizard suggested [Tools]. The developer selected [Tool B] [Reason: Rationales]."`
- - In backlog mode, append a high-level summary of the generated issues and recommending agents.
- - Generate the HTML report using responsive layouts and inline premium stylesheets.
- - *Do not log conversation transcripts or terminal command execution logs.*
-2. **The Executive Summary (`.repo-wizard/repo-wizard-executive-summary.md` & `.repo-wizard/repo-wizard-executive-summary.html`)**:
- - Write a constructive, positive high-level overview in both Markdown and HTML.
- - Structure strictly into 3 sections, with each section containing 3 paragraphs or fewer (under 450 words total per section): Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
- - Keep the tone helpful, objective, and non-critical.
-3. **The Backlog CSV (`.repo-wizard/backlog.csv` - Backlog Mode Only)**:
- - Compile issues collected from specialist agents into a standard CSV with headers: `Summary`, `Description`, `Issue Type`, `Epic Name / Parent`, `Labels`, `Recommended By (Sub-Agent)`, `Frameworks/Goals`.
- - Prefix `Recommended By (Sub-Agent)` values with their parent namespace (e.g., `repo-wizard accessibility-auditor-agent`).
- - Append the Developer Empowerment Disclaimer to the bottom of each issue's `Description` text.
-4. **Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)**:
- - List name, purpose, configuration file links (e.g., [eslint.config.js](../eslint.config.js)), and official documentation links.
+Write the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
+
+1. **Observations Summary (`.repo-wizard/repo-wizard-observations-<repo-name-here>.md` & `.html` - Headless Modes Only)**:
+  - Document assumptions about what toolchain clues currently exist in the codebase.
+  - Highlight guesses about what kinds of compliance standards may or may not be involved.
+  - Detail suggested linter, config tweaks, or pre-commit hooks to improve codebase robustness.
+2. **The Full Technical Report (`.repo-wizard/repo-wizard-full-report-<repo-name-here>.md` & `.html`)**:
+  - Profile the codebase (LOC, file counts, structure).
+  - Log capability mappings, evaluator screening outputs, and the selection ledger (using default recommendations in headless mode).
+3. **The Executive Summary (`.repo-wizard/repo-wizard-executive-summary-<repo-name-here>.md` & `.html`)**:
+  - Write a constructive, positive high-level overview in Markdown and HTML.
+  - Structure strictly into 3 sections, each under 3 paragraphs and 450 words total: Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
+4. **Upgrade Mismatch Hook**: If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
+  > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
+5. **Backlog CSV & Toolchain Summary**:
+  - Write JIRA backlog CSV (`.repo-wizard/backlog.csv` - Backlog Mode only).
+  - Write toolchain doc (`docs/TOOLCHAIN.md` - Scaffolding Mode only).
 
 ---
 
@@ -117,3 +120,5 @@ Write the deliverables upon alignment completion, ensuring all Markdown/HTML rep
 * **Invoke directly when**: the user triggers `/repo-wizard`, `/rw`, `/rw-setup`, or asks to configure general quality, QA, testing, and linting standards.
 * **Coordinated agents**: `tool-evaluator.agent`, `tool-scaffolder.agent`, and specialist subagents.
 * **Context safety**: Maintain separation by executing setup tasks in isolated subagent sandboxes.
+
+
