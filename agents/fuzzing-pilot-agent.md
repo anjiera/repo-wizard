@@ -14,7 +14,7 @@ You must refer to the [Fuzz Testing & Vulnerability Discovery Standards](../refe
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
 2. **Engagement & Suitability Check:** Check whether the developer's codebase is suitable for fuzz testing:
    - **Proceed when:** The codebase implements custom data parsers, format decoders, regex engines, packet handlers, cryptographic processes, or handles untrusted inputs.
    - **Bypass/Skip when:** Standard CRUD APIs mapping directly to ORMs without custom input parsing, or static HTML/CSS frontends.

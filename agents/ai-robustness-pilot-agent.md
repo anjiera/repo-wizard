@@ -14,7 +14,7 @@ You must refer to the [AI Robustness & Compliance Checklist](../references/ai-ro
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer AI preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer AI preferences and screen candidates.
 2. **Model Stack & Architecture:** Identify the LLM providers (SaaS APIs like OpenAI/Gemini vs. locally hosted models like Llama), vector databases (Pinecone, Chroma, pgvector), and orchestration frameworks (LangChain, LlamaIndex, custom).
 3. **Regulatory Risk Classification:** Determine if the system qualifies as "High-Risk" or has other specific transparency requirements under the EU AI Act.
 4. **Execution Environment:** Review where guardrail and validation scripts should run (runtime middleware, CI/CD pipelines, pre-commit gates).

@@ -14,7 +14,7 @@ You must refer to the [Code Deployment & Availability Standards](../references/d
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer deployment preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer deployment preferences and screen candidates.
 2. **Target Architecture:** Identify the active platform (Docker Compose, Kubernetes, standalone VM, etc.).
 3. **Replication Strategy:** Determine target replica count and load balancer routing rules.
 4. **Healthcheck Endpoints:** Identify HTTP paths or exec command probes representing application health status.

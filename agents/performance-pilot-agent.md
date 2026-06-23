@@ -14,7 +14,7 @@ You must refer to the [Performance Benchmarking & Load Testing Standards](../ref
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer performance preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer performance preferences and screen candidates.
 2. **Performance Objectives:** Clarify if they need micro-benchmarking (analyzing hot paths and function executions) or load testing (evaluating throughput and latency under stress).
 3. **Benchmark Frameworks:** Identify the preferred tools based on the project's language stack (e.g. pytest-benchmark for Python, Tinybench for Node.js, Criterion.rs for Rust).
 4. **Load-Testing SLA Targets:** Establish the APIs to test, target virtual users, duration, and acceptable latency bounds (e.g., 95% of requests under 300ms).

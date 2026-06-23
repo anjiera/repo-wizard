@@ -14,7 +14,7 @@ You must refer to the [Cross-Compilation & Toolchain Standards](../references/to
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer build configurations preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer build configurations preferences and screen candidates.
 2. **Target Architecture:** Map out processor target specifications (ARM, RISC-V, WebAssembly, etc.).
 3. **Active Build Framework:** Identify build engine structures (CMake, Make, Cargo, platformio).
 4. **Compiler Binaries:** Establish the executable compiler name and host paths.

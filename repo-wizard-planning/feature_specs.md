@@ -8,6 +8,12 @@ This document defines the functional requirements, architectural designs, data c
 
 The lead orchestrator acts as the customer-facing concierge and manager of the repository analysis and scaffolding lifecycle. It determines project scope, guides the developer through interactive alignment, audits candidate tools, and coordinates specialists.
 
+### 1.0 Legal Terms & Consent Gate (TOS Check)
+Before executing any codebase analysis, sizing, target stack alignment, or session state checking:
+* **TOS Check**: Check for a local hidden state file `.tos_agreed` inside the `.repo-wizard/` directory (i.e. `.repo-wizard/.tos_agreed`) or at the workspace root.
+* **Consent Gate**: If missing, halt execution and present the Terms of Service & Developer Agreement. Prompt the user to accept (y/N).
+* **Save Agreement State**: If accepted, write a JSON file to `.repo-wizard/.tos_agreed` storing the timestamp and user's login name (retrieved from environment variables `USERNAME`, `USER`, `LOGNAME`, or via `whoami`). If declined, halt execution and refuse to proceed.
+
 ### 1.1 Sizing & Analysis Phase
 Before asking the questionnaire, the agent runs a token-efficient directory analysis to size the repository.
 * **Requirements:**
@@ -55,7 +61,7 @@ To prevent developer questionnaire fatigue, the setup session must be fully resu
  * This allows the development team to audit historical decisions (e.g. verifying that the repository *used to* use Tool X, but migrated to Tool Y on a specific date).
 
 ### 1.5 Audit & Toolchain Reports
-To provide absolute transparency and debug support for tool recommendations, the system generates two types of reports at the end of the alignment phase.
+To provide absolute transparency and debug support for tool recommendations, the system generates two types of reports at the end of the alignment phase. Every generated report or documentation update (including `.repo-wizard/audit-report.md` and `docs/TOOLCHAIN.md`) **MUST** have the standardized **Developer Empowerment Disclaimer** markdown blockquote appended to the bottom.
 
 #### 1.5.1 The System Audit Trail (`.repo-wizard/audit-report.md`)
 This is a comprehensive, developer-independent text report that documents the exact rationale behind the final configurations. It serves as a diagnostic record for agent developers when analyzing why specific tools were suggested, without recording conversational transcripts to preserve user privacy.

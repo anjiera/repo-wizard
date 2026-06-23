@@ -14,7 +14,7 @@ You must refer to the [VCS Hook & Commit Discipline Reference Checklist](../refe
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer VCS preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer VCS preferences and screen candidates.
 2. **Active VCS System:** Confirm the detected version control system (Git, Mercurial, Perforce). Clearly state that all configurations are strictly conditional and run only if selected.
 3. **Commit Discipline:** Ask if Conventional Commits rules should be enforced, and define scope validation patterns.
 4. **Styling & Formatting Gates:** Identify the formatting tool preferences (e.g. Prettier, rustfmt, gofmt) and confirm where format/lint checks should run (editor, pre-commit hook, CI).

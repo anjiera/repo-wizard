@@ -14,7 +14,7 @@ You must refer to the [Security Hardening & Compliance Checklist](../references/
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
 2. **Target Frameworks:** Identify which certifications are desired (e.g. SOC 2, ISO 27001, FIPS, HIPAA, PCI-DSS, FedRAMP). If the developer has no preference or is unsure of what tools exist for their stack, suggest candidate tools dynamically *only after* screening them.
 3. **Infrastructure Profile:** Determine the cloud platform (AWS, GCP, Azure, etc.) and if IaC (Terraform, CloudFormation, K8s) is in use.
 4. **Budget and Execution:** Review tool preferences (free vs paid) and execution environments (local pre-commit, remote CI).

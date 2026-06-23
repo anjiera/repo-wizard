@@ -14,7 +14,7 @@ You must refer to the [Code Resilience & Fault-Tolerance Standards](../reference
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer resilience preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer resilience preferences and screen candidates.
 2. **Protected integrations:** Identify the external HTTP clients or database connections to protect.
 3. **Retry Specifications:** Establish retry limits, backoff multipliers, and jitter configurations.
 4. **Circuit Breaker Settings:** Define error threshold percentages, timeouts, and cool-down resets.

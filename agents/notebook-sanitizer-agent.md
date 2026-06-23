@@ -14,7 +14,7 @@ You must refer to the [Jupyter Notebook & Data Science Standards](../references/
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer framework preferences and screen candidates.
 2. **Virtual Environment Manager:** Select Conda, Poetry, Pipenv, or pip/venv.
 3. **Output Filtering Scope:** Agree on stripping all cells output on pre-commit (default) or whitelist specific documentation directories.
 4. **Notebook Linters:** Select formatting and syntax tools (Ruff, Flake8, Black).

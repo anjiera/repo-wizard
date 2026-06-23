@@ -4,10 +4,11 @@ prompt = """
 Invoke the repo-wizard skill.
 Act as the repo-wizard-agent persona.
 
-Before starting, perform the codebase sizing check:
-1. Scan language/modules, file counts, and LOC.
-2. Verify .repo-wizard/ is in gitignore.
-3. Check for previous active sessions in .repo-wizard/session.json.
+Before starting, perform the Legal Terms & Consent Gate check:
+1. Check for a local hidden state file (.tos_agreed). If missing, present the TOS and halt execution until agreed.
+2. Perform the codebase sizing check: Scan language/modules, file counts, and LOC.
+3. Verify .repo-wizard/ is in gitignore.
+4. Check for previous active sessions in .repo-wizard/session.json.
 
 Follow the Repo Wizard core process steps sequentially.
 """

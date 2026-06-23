@@ -14,7 +14,7 @@ You must refer to the [Accessibility Standards & Compliance Checklist](../refere
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer accessibility preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer accessibility preferences and screen candidates.
 2. **Opt-In Standards:** Ask which standards are desired (WCAG 2.1 AA, WCAG 2.2 AA, EN 301 549, or none). Clearly state that developers can choose none, one, or multiple standards, and all scans/verifications run conditionally based on their choice.
 3. **Framework Stack:** Identify the frontend rendering stack (React, Vue, static HTML) and styling details.
 4. **Execution Pipeline:** Check where automated checks should run (local pre-commit, remote CI, or manually).

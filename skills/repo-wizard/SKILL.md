@@ -29,6 +29,16 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ## Core Process
 
+### Phase 0: Legal Terms & Consent Gate
+Before performing codebase analysis, sizing, or session resume operations:
+1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the `.repo-wizard/` directory (i.e. `.repo-wizard/.tos_agreed`), or `.tos_agreed` at the workspace root.
+2. **Halt and Prompt if Missing**: If this file is missing, halt execution immediately. Present the exact **Terms of Service & Developer Agreement** (disclaimer) to the developer and prompt them to accept (y/N).
+3. **Save Agreement**: If accepted, write a JSON file to `.repo-wizard/.tos_agreed` containing:
+   - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
+   - `timestamp`: The current timestamp in ISO format.
+4. **Refuse if Declined**: If declined, halt execution, state that the agent cannot proceed without agreement, and do not write the file.
+5. **Proceed**: If the agreement exists, read it and proceed to Phase 1.
+
 ### Phase 1: Codebase Sizing & Analysis
 Before displaying the questionnaire, size the repository to prevent API token exhaustion and cost issues:
 1. **Repository Sweep**: Detect primary languages, build configurations (e.g., `package.json`, `build.gradle.kts`, `Cargo.toml`), and folder structures.
@@ -67,7 +77,7 @@ For each of the major sections (1. Context & Goals, 2. Compliance & Regulations,
 For each capability needed (e.g. *Vulnerability Scanning*, *A11y Testing*), recommend tools based on stack/budget. If the developer has no tool preferences or is unsure of what exists for their stack, suggest candidate tools dynamically *only after* screening them via `tool-evaluator.agent`.
 1. **Tool Screening Protocol**: Screen candidate tools dynamically using a security auditor (`tool-evaluator.agent`) to verify:
    - **Vulnerabilities**: Ensure no active critical CVEs in public registries.
-   - **Maintenance**: Check that a commit was made in the last 12 months, open-to-closed issues ratio is healthy, and there are multiple active maintainers.
+   - **Activity**: Verify that the tool has had commits in the last 12 months, a healthy open-to-closed issues ratio, and multiple active maintainers.
    - **License legality**: Flag copyleft conflicts (e.g., AGPL in a commercial closed-source SaaS).
 2. **Warning Ledger**: Flag flagged or borderline tools in the chat layout before final selection.
 
@@ -79,7 +89,7 @@ Perform execution in a strict sequence:
 4. **Rollback & Verification**: Run build tests after each specialist installation. If the build breaks, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ### Phase 6: Reporting
-Upon completion, write two reports:
+Upon completion, write two reports and ensure you append the **Developer Empowerment Disclaimer** blockquote to the bottom of each:
 1. **Audit Report (`.repo-wizard/audit-report.md`)**:
    - System Profile (LOC, language structure).
    - Capability mapping & screening logs (including rejected tools and skip notes).
@@ -112,6 +122,7 @@ Upon completion, write two reports:
 ---
 
 ## Verification
+- [ ] Check for `.tos_agreed` (with username and timestamp) is performed before codebase sizing and session checks.
 - [ ] Codebase size is estimated, monorepo state detected, and Incremental Adoption prompted if LOC > 10,000.
 - [ ] Active session is checked on startup, prompting Resume/Revisit/Report/Start Fresh.
 - [ ] Prior configs/session files are archived with YYYYMMDD_HHMMSS timestamp suffixes in `.repo-wizard/history/` before overwrites.
@@ -119,4 +130,4 @@ Upon completion, write two reports:
 - [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback safety checks.
-- [ ] Both `.repo-wizard/audit-report.md` and [docs/TOOLCHAIN.md](../../docs/TOOLCHAIN.md) are generated with relative links.
+- [ ] Both `.repo-wizard/audit-report.md` and [docs/TOOLCHAIN.md](../../docs/TOOLCHAIN.md) are generated with relative links and have the Developer Empowerment Disclaimer blockquote appended.

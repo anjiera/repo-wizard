@@ -14,7 +14,7 @@ You must refer to the [Embedded Systems & Firmware Standards](../references/embe
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer firmware preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer firmware preferences and screen candidates.
 2. **Target Architecture & MCU:** Identify the microcontroller family (ARM Cortex, RISC-V, AVR, ESP32, etc.) and compilation toolchain.
 3. **Build Toolchain:** Identify the build tool (CMake, Makefile, Cargo, platformio, etc.).
 4. **Compiler Warnings & Stack Budget:** Define compiler warning levels (e.g., `-Wall -Wextra -Werror -Wdouble-promotion`) and stack frame allocation limits.

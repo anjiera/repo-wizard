@@ -14,7 +14,7 @@ You must refer to the [Formal Verification & Mathematical Modeling Standards](..
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer verification preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer verification preferences and screen candidates.
 2. **Target Algorithm/Module:** Identify the concurrent module or state transition logic under test.
 3. **SMT Solver Environment:** Determine the target checker (TLA+ specification modules vs Rust `Kani` compiler loops).
 4. **Invariants & Safety Properties:** Define the mathematical bounds that must hold true under all states.

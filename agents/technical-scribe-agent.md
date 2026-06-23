@@ -14,7 +14,7 @@ You must refer to the [Repository Documentation & Architecture Standards](../ref
 ## Step 1: Alignment & Target Stack
 
 When spawned, you must align with the developer:
-1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer documentation preferences and screen candidates.
+1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer documentation preferences and screen candidates.
 2. **ADR Directory:** Confirm the location for architecture decision records (defaults to `docs/decisions/`).
 3. **ADR CLI Script Language:** Ask which language (Bash shell script, Python, or Node.js) should be used for the ADR generator utility.
 4. **System Components:** Map out the client applications, server components, database layers, and third-party integrations to visualize via C4 Model Mermaid diagrams.
