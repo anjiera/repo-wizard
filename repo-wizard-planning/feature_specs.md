@@ -194,7 +194,11 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Configure coverage-guided fuzz testing loops, input parser verification harnesses, and memory/undefined behavior compilation sanitizers.
 * **Deliverables:** Scaffold C/C++ `libFuzzer` harnesses, Rust `cargo-fuzz` targets, Python `Atheris` scripts, and compile-time sanitizer configurations.
 
-### 4.16 Cybersecurity Color Wheel Responsibility Matrix
+### 4.16 `toolchain-pilot.agent` (Cross-Compilation & Build Toolchains)
+* **Objective:** Configure cross-compilation compiler parameters, multi-architecture target configurations (ARM, RISC-V, WASM), sysroots, and linker scripting overlays.
+* **Deliverables:** Scaffold CMake target toolchain profiles (`riscv.cmake`), Cargo targets config configurations, and WebAssembly compiler setups.
+
+### 4.17 Cybersecurity Color Wheel Responsibility Matrix
 To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
 * **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
 * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), `vcs-workflow.agent` (licensing validations), `api-contract-pilot.agent` (schema syntax rules and lint checks), and `notebook-sanitizer.agent` (notebook filters and quality gates).
@@ -203,7 +207,7 @@ To clarify repository security governance, our subagents are mapped directly to 
 * **White Team (Governance & Audit Compliance):** Defines policies, configures validation frameworks, and audits controls.
 * *Assigned Agents:* `repo-wizard.agent` (interviews, scope analysis), `compliance-pilot.agent` (SOC 2, ISO 27001, FIPS list audits), and `accessibility-auditor.agent` (A11y automated checks).
 * **Yellow Team (System Builders):** The developer and orchestrators who deploy code.
-* *Assigned Agents:* `tool-scaffolder.agent` (automated build installer), `deployment-pilot.agent` (high-availability replicas, container probes, database backups), `data-pipeline-pilot.agent` (connection pooling, schema validations, orchestrator DAGs), and `embedded-systems-pilot.agent` (MISRA analysis, compiler warnings, stack limits, QEMU test runner, local logging).
+* *Assigned Agents:* `tool-scaffolder.agent` (automated build installer), `deployment-pilot.agent` (high-availability replicas, container probes, database backups), `data-pipeline-pilot.agent` (connection pooling, schema validations, orchestrator DAGs), `embedded-systems-pilot.agent` (MISRA analysis, compiler warnings, stack limits, QEMU test runner, local logging), and `toolchain-pilot.agent` (cross-compilation config, sysroots, CMake files).
 
 ---
 

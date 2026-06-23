@@ -59,6 +59,7 @@ Focuses on configuring build automation, deployment replication, container scali
 * **Deployment Pilot (`/rw-deployment`):** Scaffolds Docker Compose replicas, Kubernetes health probes, and database backups.
 * **Data Pipeline Pilot (`/rw-data-pipeline`):** Scaffolds database connection pooling, schema validations, and workflow orchestrators.
 * **Embedded Systems Pilot (`/rw-embedded-systems`):** Scaffolds static analysis rulesets (MISRA via cppcheck), compiler warning/stack limits, QEMU target testing, and local circular ring buffer loggers.
+* **Toolchain Pilot (`/rw-toolchain`):** Scaffolds cross-compilation configurations (CMake files, cargo targets, link scripts) and sysroots.
 
 ---
 
