@@ -1,0 +1,218 @@
+#!/usr/bin/env node
+/**
+ * run-e2e-tests.js
+ *
+ * Runs end-to-end (E2E) state-assertion testing in isolated sandbox workspaces.
+ * Simulates physical repo-wizard directory creations, gitignore updates,
+ * session archiving with timestamp formats, and final report deliverables.
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+const ROOT = path.resolve(__dirname, '..');
+const SANDBOX_DIR = path.join(ROOT, 'temp_e2e_sandbox');
+
+let testsRun = 0;
+let testsPassed = 0;
+
+function assert(condition, message) {
+  testsRun++;
+  if (condition) {
+    testsPassed++;
+    console.log(`  ✓ Pass: ${message}`);
+  } else {
+    console.error(`  ✗ Fail: ${message}`);
+    throw new Error(`Assertion failed: ${message}`);
+  }
+}
+
+/**
+ * Simulates the gitignore appending logic from Phase 1
+ */
+function appendGitignore(workspacePath) {
+  const gitignorePath = path.join(workspacePath, '.gitignore');
+  const ignoreLine = '.repo-wizard/';
+  
+  let content = '';
+  if (fs.existsSync(gitignorePath)) {
+    content = fs.readFileSync(gitignorePath, 'utf8');
+  }
+
+  // Ensure it's not already ignored
+  if (!content.split(/\r?\n/).map(l => l.trim()).includes(ignoreLine)) {
+    const divider = content.length > 0 && !content.endsWith('\n') ? '\n' : '';
+    fs.writeFileSync(gitignorePath, `${content}${divider}${ignoreLine}\n`, 'utf8');
+  }
+}
+
+/**
+ * Simulates the session version archiving logic from Step 2 / 1.4
+ */
+function archiveSession(workspacePath) {
+  const wizardDir = path.join(workspacePath, '.repo-wizard');
+  const historyDir = path.join(wizardDir, 'history');
+  
+  const sessionPath = path.join(wizardDir, 'session.json');
+  const reportPath = path.join(wizardDir, 'repo-wizard-full-report.md');
+
+  if (!fs.existsSync(historyDir)) {
+    fs.mkdirSync(historyDir, { recursive: true });
+  }
+
+  // Generate timestamp string YYYYMMDD_HHMMSS
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_` +
+                    `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+
+  if (fs.existsSync(sessionPath)) {
+    const archiveSessionPath = path.join(historyDir, `session_${timestamp}.json`);
+    fs.copyFileSync(sessionPath, archiveSessionPath);
+  }
+
+  if (fs.existsSync(reportPath)) {
+    const archiveReportPath = path.join(historyDir, `repo-wizard-full-report_${timestamp}.md`);
+    fs.copyFileSync(reportPath, archiveReportPath);
+  }
+}
+
+function setupSandbox() {
+  console.log('Setting up isolated workspace sandbox...');
+  if (fs.existsSync(SANDBOX_DIR)) {
+    cleanupSandbox();
+  }
+  fs.mkdirSync(SANDBOX_DIR, { recursive: true });
+  fs.writeFileSync(path.join(SANDBOX_DIR, 'README.md'), '# Mock Project\n');
+  fs.writeFileSync(path.join(SANDBOX_DIR, '.gitignore'), '# Gitignore file\n/node_modules\n');
+}
+
+function cleanupSandbox() {
+  const deleteFolderRecursive = (folderPath) => {
+    if (fs.existsSync(folderPath)) {
+      fs.readdirSync(folderPath).forEach((file) => {
+        const curPath = path.join(folderPath, file);
+        if (fs.lstatSync(curPath).isDirectory()) {
+          deleteFolderRecursive(curPath);
+        } else {
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(folderPath);
+    }
+  };
+  deleteFolderRecursive(SANDBOX_DIR);
+}
+
+function testGitignoreAppend() {
+  console.log('Testing .gitignore append verification...');
+  
+  // Appends if missing
+  appendGitignore(SANDBOX_DIR);
+  let content = fs.readFileSync(path.join(SANDBOX_DIR, '.gitignore'), 'utf8');
+  assert(content.includes('.repo-wizard/'), '.repo-wizard/ successfully appended to .gitignore');
+
+  // Should not append duplicate line
+  const lengthBefore = content.length;
+  appendGitignore(SANDBOX_DIR);
+  const lengthAfter = fs.readFileSync(path.join(SANDBOX_DIR, '.gitignore'), 'utf8').length;
+  assert(lengthBefore === lengthAfter, 'No duplicate lines appended to .gitignore on subsequent runs');
+}
+
+function testSessionArchiving() {
+  console.log('Testing session archiving & history backups...');
+  
+  const wizardDir = path.join(SANDBOX_DIR, '.repo-wizard');
+  if (!fs.existsSync(wizardDir)) {
+    fs.mkdirSync(wizardDir, { recursive: true });
+  }
+
+  const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+  const sessionContent = '{"tools":["semgrep","husky"],"status":"completed"}';
+  const reportContent = `# Full Technical Report\nSome mock audit logs here\n\n${DISCLAIMER_TEXT}\n`;
+
+  fs.writeFileSync(path.join(wizardDir, 'session.json'), sessionContent);
+  fs.writeFileSync(path.join(wizardDir, 'repo-wizard-full-report.md'), reportContent);
+
+  // Trigger archiving
+  archiveSession(SANDBOX_DIR);
+
+  const historyDir = path.join(wizardDir, 'history');
+  assert(fs.existsSync(historyDir), 'history/ directory created successfully');
+
+  const files = fs.readdirSync(historyDir);
+  assert(files.length === 2, 'Archived session and report files exist in history');
+
+  const sessionArchiveFile = files.find(f => f.startsWith('session_') && f.endsWith('.json'));
+  const reportArchiveFile = files.find(f => f.startsWith('repo-wizard-full-report_') && f.endsWith('.md'));
+
+  assert(sessionArchiveFile !== undefined, 'Session archive matches prefix session_YYYYMMDD_HHMMSS.json');
+  assert(reportArchiveFile !== undefined, 'Report archive matches prefix repo-wizard-full-report_YYYYMMDD_HHMMSS.md');
+
+  // Verify contents match
+  const sessionArchivedContent = fs.readFileSync(path.join(historyDir, sessionArchiveFile), 'utf8');
+  const reportArchivedContent = fs.readFileSync(path.join(historyDir, reportArchiveFile), 'utf8');
+
+  assert(sessionArchivedContent === sessionContent, 'Archived session.json content is correct');
+  assert(reportArchivedContent === reportContent, 'Archived repo-wizard-full-report.md content is correct');
+}
+
+function testE2EDeliverablesValidator() {
+  console.log('Testing E2E deliverables validator validation...');
+  const validatorScript = path.join(ROOT, 'scripts', 'validate-deliverables.js');
+  
+  const wizardDir = path.join(SANDBOX_DIR, '.repo-wizard');
+  
+  // 1. Create a compliant executive summary
+  const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+  const execSummaryContent = `
+# Executive Summary
+
+## Section 1: Codebase Health & Strengths
+Paragraph 1 of strengths. It is very healthy.
+Paragraph 2 of strengths. Yes indeed.
+Paragraph 3 of strengths. Outstanding code quality.
+
+## Section 2: Tooling & Compliance Opportunities
+Opportunity paragraph 1.
+Opportunity paragraph 2.
+
+## Section 3: Rollout Roadmap
+Roadmap paragraph 1.
+Roadmap paragraph 2.
+
+${DISCLAIMER_TEXT}
+`;
+  fs.writeFileSync(path.join(wizardDir, 'repo-wizard-executive-summary-mock.md'), execSummaryContent);
+
+  // 2. Run the validator tool against the sandbox
+  try {
+    const result = execSync(`node "${validatorScript}" --dir "${wizardDir}"`, { stdio: 'pipe' }).toString();
+    assert(result.includes('Deliverables check complete: 0 error(s) found.'), 'validate-deliverables.js reports 0 errors on sandbox deliverables');
+  } catch (err) {
+    console.error(err.stdout ? err.stdout.toString() : '');
+    throw err;
+  }
+}
+
+function runE2E() {
+  try {
+    setupSandbox();
+    testGitignoreAppend();
+    testSessionArchiving();
+    testE2EDeliverablesValidator();
+    cleanupSandbox();
+
+    console.log(`\nE2E Sandbox tests complete: ${testsPassed} / ${testsRun} assertions passed.`);
+    process.exit(0);
+  } catch (err) {
+    cleanupSandbox();
+    console.error(`E2E sandbox test suite failed: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+runE2E();
