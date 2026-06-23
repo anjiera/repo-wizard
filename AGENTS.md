@@ -24,6 +24,8 @@ Map user queries to skills according to this matrix:
   - **Skill:** [legal-neutrality-scanner](skills/legal-neutrality-scanner/SKILL.md)
 - **Query / Intent:** Setting up testing, auditing code compliance, onboarding a repository, choosing linter configs, or running `/repo-wizard`.
   - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*
+- **Query / Intent:** Auditing agent prompts, checking prompt consistency, configuring agent rubric evaluations, or running `/rw-agent-align`.
+  - **Skill:** [agent-alignment-pilot](skills/agent-alignment-pilot/SKILL.md)
 
 ## Orchestration & Scanning Modes
 

@@ -18,6 +18,11 @@ It packages instructions, checklists, and persona configurations that can be loa
 * **Purpose:** Runs an interactive onboarding interview with developers, dynamically recommends tailored QA, testing, security, accessibility, and compliance tools based on budget/stack constraints, and guides specialist subagents to scaffold them safely.
 * **Orchestrator Specification:** Located in the [repo-wizard-planning/](repo-wizard-planning/) directory.
 
+### 3. Agent Alignment Pilot (`/rw-agent-align`)
+* **Purpose:** Audits agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and scaffolds rubric-based evaluation suites and validation checks.
+* **Specialist Agent:** `agents/agent-alignment-pilot-agent.md`
+* **Skill:** `skills/agent-alignment-pilot/SKILL.md`
+
 ---
 
 ## Directory Structure
