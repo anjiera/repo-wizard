@@ -1,0 +1,13 @@
+---
+description: Interactive orchestrator to analyze your codebase, run alignment questionnaires, screen security/licenses, and coordinate subagent scaffolding
+---
+
+Invoke the agent-skills:repo-wizard skill.
+Act as the repo-wizard-agent persona.
+
+Before starting, perform the codebase sizing check:
+1. Scan language/modules, file counts, and LOC.
+2. Verify .repo-wizard/ is in gitignore.
+3. Check for previous active sessions in .repo-wizard/session.json.
+
+Follow the Repo Wizard core process steps sequentially.
