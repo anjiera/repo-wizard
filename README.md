@@ -16,6 +16,10 @@ To help you get started quickly, please refer to the following guides:
 * **[TESTING.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/TESTING.md)** — Testing philosophy, LLM-as-a-judge evals, and troubleshooting guide.
 * **[usage-tutorial.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/usage-tutorial.md)** — Scenario guides for Greenfield vs. Brownfield repos, and interactive vs. headless execution.
 * **[references/README.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/README.md)** — Alphabetized and domain-mapped catalog of the 23 checklist and pattern standards.
+* **[hybrid-orchestration.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/hybrid-orchestration.md)** — Architectural design of the manifest-driven hybrid runner and TTY execution model.
+* **[passive-data-boundaries.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
+* **[prompt-evaluations.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
+* **[zero-dependency-scripting.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
 
 ---
 

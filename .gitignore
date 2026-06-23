@@ -13,7 +13,7 @@ Thumbs.db
 .repo-wizard/
 
 # Locally generated HTML documentation files
-docs/*.html
+docs/**/*.html
 
 # Web Dashboard dependencies and build files
 /dashboard/node_modules/

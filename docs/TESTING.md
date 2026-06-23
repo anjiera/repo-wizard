@@ -43,6 +43,7 @@ These scripts check configuration, command, and prompt files for syntactic corre
 Catches prompt regressions by evaluating agent intent:
 - **[run-evals.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/run-evals.js)**: Feeds the agent persona and a mock prompt into Gemini, then passes the output to a second Gemini call (the judge) to verify specific rubrics.
 - **Evals definitions**: Stored under [evals/](file:///d:/DevSandbox/agy-projects/repo-wizard/evals/) (e.g., [repo-wizard-agent.js](file:///d:/DevSandbox/agy-projects/repo-wizard/evals/repo-wizard-agent.js)).
+- *Reference:* For more details, see the standalone [prompt-evaluations.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/prompt-evaluations.md) guide.
 
 ### Level 3: Contract Validation
 Ensures the orchestrator and subagents communicate using consistent interfaces:
@@ -51,17 +52,19 @@ Ensures the orchestrator and subagents communicate using consistent interfaces:
 ### Level 4: Subagent Mocking & Harnesses
 Simulates subagent execution to test the orchestrator's report-compilation logic:
 - **[run-mock-harness.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/run-mock-harness.js)**: Simulates the orchestration of all 18 specialist subagents. It generates mock observations files on the filesystem, runs contract validation on every exchange, and verifies observation file paths.
+- *Reference:* For more details on the parallel run-time architecture, see the [hybrid-orchestration.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/hybrid-orchestration.md) design document.
 
 ### Level 5: End-to-End (E2E) Sandboxes
 Asserts physical workspace transformations:
 - **[run-e2e-tests.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/run-e2e-tests.js)**: Spawns a temporary repository, triggers gitignore updates, performs session version archiving (creating `session_YYYYMMDD_HHMMSS.json`), and executes [validate-deliverables.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-deliverables.js) to audit formatting, section/paragraph counts, and disclaimers.
+- *Reference:* For details on how the sandbox tests injection vulnerabilities, see the security guide [passive-data-boundaries.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/passive-data-boundaries.md).
 
 ---
 
 ## 3. How and When to Run Tests
 
 ### Running Locally (Manual Executions)
-All test scripts are self-contained and run with zero external npm dependencies:
+All test scripts are self-contained and run with zero external npm dependencies. For more details on the architecture behind these zero-dependency scripts, see [zero-dependency-scripting.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/zero-dependency-scripting.md).
 
 ```bash
 # Run all static checks
