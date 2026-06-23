@@ -10,3 +10,7 @@ evals/
 .claude/
 .gemini/
 *.log
+
+# Ignore Web Dashboard dependencies and build files
+/dashboard/node_modules/
+/dashboard/dist/
