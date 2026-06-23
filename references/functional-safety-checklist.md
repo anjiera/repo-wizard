@@ -1,6 +1,6 @@
-# Safety-of-Life & Functional Safety Checklist
+# Functional Safety & Safety-Critical Checklist
 
-This checklist provides a high-density reference for auditing and configuring repositories targeting safety-critical or safety-of-life environments, specifically covering aerospace (DO-178C), automotive (ISO 26262), and medical device (IEC 62304) software standards.
+This checklist provides a high-density reference for auditing and configuring repositories targeting safety-critical or functional safety environments, specifically covering aerospace (DO-178C), automotive (ISO 26262), and medical device (IEC 62304) software standards.
 
 ---
 

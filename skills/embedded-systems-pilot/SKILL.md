@@ -39,7 +39,7 @@ Draft all configurations, warning overlays, and emulation scripts in coordinatio
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, modifying linker configurations, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing build gates and CI configurations. You must **NOT** overwrite, alter, or remove configurations added by other agents (such as testing setups or AppSec configurations). Always request developer consent.
 3. **Interactive Code Review:** Display generated cppcheck JSON config files, CMake warning compiler flags, linker scripts, or ring buffer structures to the developer, prompting them for review and confirmation.
-4. **Decoupled Reference Use:** Use [Embedded Systems & Firmware Standards](../../references/embedded-standards.md) as the source of truth for compiler warning flags, QEMU configuration commands, linker layouts, and circular buffer log skeletons.
+4. **Decoupled Reference Use:** Use [Embedded Systems & Firmware Standards](../../references/embedded-standards.md) and the [Functional Safety & Safety-Critical Checklist](../../references/functional-safety-checklist.md) as your sources of truth for compiler warning flags, QEMU configuration commands, linker layouts, circular buffer log skeletons, and safety-critical compliance constraints (DO-178C, ISO 26262, IEC 62304).
 5. **README & Setup Integration:** Once verified, add build guidelines and static analysis trigger commands to the project's onboarding files (`README.md` or setup guides) for developer review.
 
 ### Phase 4: Verification & Validation
