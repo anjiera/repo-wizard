@@ -1,0 +1,53 @@
+---
+name: tool-scaffolder
+description: Guides agents through safely installing tools, editing configuration files using safe AST-based methods, running verification builds, and performing robust VCS-specific rollbacks if compilation or tests break. Use when executing shell package installations, merging config files, or verifying setups.
+---
+
+# Unified Environment Scaffolder & Integrator (`tool-scaffolder`)
+
+## Overview
+A specialized environment executor workflow designed to safely run shell package installations, create/merge configuration files, verify compilation and build outputs, and perform VCS-specific rollbacks if the environment is broken, preserving existing tool setups.
+
+## When to Use
+Use this skill when:
+- Executing shell package installations (e.g. `npm install`, `cargo add`, `pip install`).
+- Creating new config files or merging configurations (e.g., `.eslintrc.js`, `.gitignore`, `tsconfig.json`) safely.
+- Running verification builds (e.g., `npm run build`, `cargo check`) to validate changes.
+- Executing rollbacks on compilation or unit test failures.
+
+## Core Process
+
+### Phase 1: Pre-requisites Check & State Isolation
+1. **Developer Consent:** Prompt the developer and obtain explicit permission before executing installations or modifying files.
+2. **Clean State Check:** Run version control checks (e.g., `git status`, `hg status`, `p4 status`) to ensure the working tree is clean before modifying files.
+
+### Phase 2: Package Installation & Configuration
+1. **Installation:** Run package manager commands securely.
+2. **Safe Merging:** Write new configurations or merge into existing configurations. Always use precise, AST-based edits or line replacements to prevent syntax syntax breakage.
+3. **Nuance Explanation:** Explain the configuration parameters being created or modified, highlighting tradeoffs (e.g. strictness settings).
+
+### Phase 3: Verification & Documentation Integration
+1. **Verification Command:** Run the designated verification check (e.g. `npm run build`, `cargo check`, `npm test`) to ensure the build compiles cleanly.
+2. **Setup Integration:** Search for and append setup/install instructions to onboarding guides (`README.md`, `setup.sh`, `install.sh`) to support onboarding.
+
+### Phase 4: Rollback & Recovery
+1. **Build Safety Failures:** If verification fails, notify the developer. Attempt to resolve the issue first.
+2. **Developer Consent:** Ask the developer for explicit permission/consent before executing any VCS rollback.
+3. **VCS Rollback:** Run target VCS rollback commands (e.g. `git checkout -- .` and `git clean -fd`, `hg revert --all`, or `p4 revert`) if debugging fails or if approved.
+
+## Common Rationalizations
+- *"I don't need to run verification if the package was installed successfully."* - Package installation is only half the battle. Configuration files can introduce syntax errors or conflict with other setups. Always run verification.
+- *"I can rollback changes right away if the build breaks."* - Never perform destructive rollbacks without consulting the developer. Give them the chance to inspect the error first.
+
+## Red Flags
+- Running destructive shell installations without asking the developer for permission first.
+- Modifying files when there are uncommitted changes without alerting the developer.
+- Leaving a broken codebase without rolling back or explaining the failures.
+
+## Verification
+Confirm that:
+- [ ] User consent was obtained before running shell commands.
+- [ ] Working tree status was checked before beginning.
+- [ ] AST-based/safe merging tools were used for config changes.
+- [ ] Verification commands compiled successfully (exit code 0).
+- [ ] VCS-specific rollback was performed with developer consent if verification failed.
