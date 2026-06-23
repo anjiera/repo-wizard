@@ -45,7 +45,7 @@ Once parameters are approved:
 
 ### Phase 3: Analysis & Batching
 For each match found:
-1. **Assess Legal Risk**: Evaluate why the phrasing lacks neutrality (e.g., "Telling the user the weather is 'Safe & Pleasant' could be construed as a health or safety guarantee, exposing the app to liability if the user experiences heat stress").
+1. **Assess Legal Risk**: Evaluate why the phrasing lacks neutrality (e.g., "Telling the user the weather is 'Safe & Pleasant' could be construed as a health or safety guarantee, exposing the app to liability if the user experiences heat stress"), referring to the [Legal Phrasing Dictionary & Reference Guide](../../references/legal-phrasing-dictionary.md) as your source of truth for high-liability phrases and recommended alternatives.
 2. **Suggest Alternatives**: Provide up to **5 alternative phrasings** that use subjective, comfort-based language (e.g., "Safe Now" $\rightarrow$ "Within Comfort Range", "Conditions Met", "Temp: OK").
 3. **Batch Presentation (Limit 20)**:
    - If the scan flags more than 20 phrases, you **must** group them by component/theme.

@@ -38,3 +38,26 @@ Absolute security claims ("100% secure", "unbreakable") are a major liability if
 | **"100% secure"** / **"Hacker-proof"** | Guarantees absolute protection. If a breach occurs, this phrasing is used as evidence of misleading advertising. | 1. "Industry-standard encryption"<br>2. "Secure sockets layer active"<br>3. "Data protected in transit"<br>4. "Private storage encryption"<br>5. "Security protocols enabled" |
 | **"Your data is completely deleted"** | Implies absolute deletion, which can be legally complex due to database backups, cache layers, or legal retention rules. | 1. "Account deactivation initiated"<br>2. "Marked for deletion"<br>3. "Data scrub queue started"<br>4. "User-facing profile removed"<br>5. "Data deletion processing" |
 | **"We guarantee privacy"** | Implies a binding zero-risk privacy contract. | 1. "Review our privacy practices"<br>2. "Privacy preferences configured"<br>3. "Data minimization enabled"<br>4. "Zero-data collection preset"<br>5. "Standard data protection" |
+
+---
+
+## Category 4: System Reliability & Availability Guarantees
+
+Absolute reliability or availability claims ("zero downtime", "bulletproof", "failsafe") ignore hardware, environment, or network failures and expose the vendor to breach-of-contract and SLA claims.
+
+| High-Risk Phrasing | Why it is problematic | Recommended Alternative Templates (Up to 5) |
+| :--- | :--- | :--- |
+| **"Zero downtime"** / **"Outage-proof"** | Guarantees 100% availability, which is statistically and operationally impossible over time. | 1. "High availability targets"<br>2. "Designed for minimal interruption"<br>3. "Redundant failovers active"<br>4. "99.9% uptime target"<br>5. "Robust system architecture" |
+| **"Bulletproof code"** / **"Failsafe operations"** | Implies code cannot fail under any circumstances. | 1. "Fault-tolerant design"<br>2. "Resilient error handling"<br>3. "Tested recovery procedures"<br>4. "Defensive coding standard"<br>5. "Reliability parameters" |
+| **"Unbreakable connections"** | Promises network sockets or database links will never drop. | 1. "Auto-reconnect enabled"<br>2. "Circuit breaker wrapped"<br>3. "Persistent connection profile"<br>4. "Retry-on-failure policy"<br>5. "Network retries configured" |
+
+---
+
+## Category 5: Safety-Critical & Verification Claims
+
+Claims of absolute safety, qualification, or bug-free code carry significant legal liability, particularly in embedded, medical, or aerospace sectors.
+
+| High-Risk Phrasing | Why it is problematic | Recommended Alternative Templates (Up to 5) |
+| :--- | :--- | :--- |
+| **"Safety guaranteed"** / **"Safe firmware"** | Assures the user of absolute physical/hardware safety, which is high-liability and cannot be certified solely via code analysis. | 1. "Functional safety boundaries"<br>2. "Within operational parameters"<br>3. "Meets compliance criteria"<br>4. "Safety-monitored controls"<br>5. "Protective bounds active" |
+| **"Bug-free"** / **"Provably correct"** | Implies there are absolutely no errors in the software. | 1. "Verified against specifications"<br>2. "Conforms to MISRA standards"<br>3. "Formal verification complete"<br>4. "Model invariants held"<br>5. "Tested codebase metrics" |
