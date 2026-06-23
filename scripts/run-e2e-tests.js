@@ -209,8 +209,8 @@ function runE2E() {
     console.log(`\nE2E Sandbox tests complete: ${testsPassed} / ${testsRun} assertions passed.`);
     process.exit(0);
   } catch (err) {
-    cleanupSandbox();
-    console.error(`E2E sandbox test suite failed: ${err.message}`);
+    console.error(`\nE2E sandbox test suite failed: ${err.message}`);
+    console.error(`[FAIL] Sandbox workspace preserved for diagnostics at: ${SANDBOX_DIR}`);
     process.exit(1);
   }
 }
