@@ -17,6 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 const API_KEY = process.env.GEMINI_API_KEY;
 const MODEL_NAME = 'gemini-2.5-flash';
@@ -128,6 +129,19 @@ Evaluate each rubric carefully. Set "passed" to true only if all rubrics pass. R
   return JSON.parse(judgeResult);
 }
 
+function askQuestion(query) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+  return new Promise(resolve => {
+    rl.question(query, ans => {
+      rl.close();
+      resolve(ans);
+    });
+  });
+}
+
 async function run() {
   if (!API_KEY) {
     console.warn('========================================================================');
@@ -139,21 +153,45 @@ async function run() {
     process.exit(0);
   }
 
+  if (process.stdin.isTTY && !process.env.CI && !process.env.NON_INTERACTIVE) {
+    console.warn('========================================================================');
+    console.warn('WARNING: Running dynamic LLM evaluations makes live API calls to external');
+    console.warn('services. This will consume tokens and may incur API usage costs.');
+    console.warn('========================================================================');
+    const answer = await askQuestion('Do you want to proceed? (y/N): ');
+    if (answer.trim().toLowerCase() !== 'y' && answer.trim().toLowerCase() !== 'yes') {
+      console.log('Skipping dynamic LLM evaluations.');
+      process.exit(0);
+    }
+  }
+
   console.log(`Starting dynamic LLM-as-a-Judge evaluation using model: ${MODEL_NAME}\n`);
 
   let totalCases = 0;
   let passedCases = 0;
+  let totalRubricsCount = 0;
+  let passedRubricsCount = 0;
+  
+  let reportMarkdown = `# Agent Evaluation Results (Snapshot)
+
+- **Timestamp**: ${new Date().toISOString()}
+- **Model**: \`${MODEL_NAME}\`
+
+`;
 
   for (const suite of TEST_SUITE) {
     console.log(`=========================================`);
     console.log(`Agent under test: ${suite.agent}`);
     console.log(`=========================================`);
 
+    reportMarkdown += `## Suite: ${suite.agent}\n\n`;
+
     let personaContent;
     try {
       personaContent = fs.readFileSync(suite.personaFile, 'utf8');
     } catch (err) {
       console.error(`  ✗ Failed to read persona file ${suite.personaFile}: ${err.message}`);
+      reportMarkdown += `*Failed to read persona file: ${err.message}*\n\n`;
       continue;
     }
 
@@ -162,6 +200,9 @@ async function run() {
       console.log(`\nTest Case: ${testCase.name}`);
       console.log(`  Prompt: "${testCase.input.substring(0, 80)}${testCase.input.length > 80 ? '...' : ''}"`);
       
+      reportMarkdown += `### Test Case: ${testCase.name}\n`;
+      reportMarkdown += `- **Prompt**: \`${testCase.input}\`\n`;
+
       try {
         process.stdout.write('  → Running Agent...');
         const agentOutput = await callGemini(personaContent, testCase.input);
@@ -171,27 +212,68 @@ async function run() {
         
         process.stdout.write('\r'); // Clear line
 
+        const totalRubrics = evaluation.rubrics.length;
+        const passedRubrics = evaluation.rubrics.filter(r => r.passed).length;
+        totalRubricsCount += totalRubrics;
+        passedRubricsCount += passedRubrics;
+
         if (evaluation.passed) {
           passedCases++;
           console.log(`  ✓ Passed`);
+          reportMarkdown += `- **Verdict**: ✓ Passed (${passedRubrics} / ${totalRubrics} rubrics)\n\n`;
         } else {
           console.log(`  ✗ Failed`);
+          reportMarkdown += `- **Verdict**: ✗ Failed (${passedRubrics} / ${totalRubrics} rubrics)\n\n`;
         }
+
+        reportMarkdown += `| Status | Rubric | Explanation |\n`;
+        reportMarkdown += `| :---: | :--- | :--- |\n`;
 
         for (const r of evaluation.rubrics) {
           const status = r.passed ? '  ✓' : '  ✗';
+          const mdStatus = r.passed ? '✓' : '✗';
           console.log(`    ${status} Rubric: "${r.rubric}"`);
           console.log(`      Reason: ${r.explanation}`);
+          
+          reportMarkdown += `| ${mdStatus} | ${r.rubric} | ${r.explanation} |\n`;
         }
+        reportMarkdown += `\n`;
       } catch (err) {
         process.stdout.write('\r'); // Clear line
         console.error(`  ✗ Error running test: ${err.message}`);
+        reportMarkdown += `- **Verdict**: ✗ Error (${err.message})\n\n`;
       }
     }
     console.log();
   }
 
+  const consistencyScore = totalRubricsCount > 0 ? ((passedRubricsCount / totalRubricsCount) * 100).toFixed(1) : '100.0';
+  
   console.log(`Evaluation complete: ${passedCases} / ${totalCases} test cases passed.`);
+  console.log(`Overall Agent Consistency Score: ${consistencyScore}% (${passedRubricsCount} / ${totalRubricsCount} rubrics passed)\n`);
+
+  // Prepend summary details to report
+  const summaryHeader = `- **Overall Consistency Score**: **${consistencyScore}%** (${passedRubricsCount} / ${totalRubricsCount} rubrics passed)
+- **Test Cases Passed**: ${passedCases} / ${totalCases}
+
+---
+
+`;
+  reportMarkdown = reportMarkdown.replace('## Suite:', summaryHeader + '## Suite:');
+
+  // Write report artifact
+  try {
+    const reportsDir = path.join(ROOT, 'evals', 'reports');
+    if (!fs.existsSync(reportsDir)) {
+      fs.mkdirSync(reportsDir, { recursive: true });
+    }
+    const reportPath = path.join(reportsDir, 'latest-results.md');
+    fs.writeFileSync(reportPath, reportMarkdown, 'utf8');
+    console.log(`✓ Saved evaluation report snapshot to evals/reports/latest-results.md`);
+  } catch (err) {
+    console.error(`Warning: Failed to save report snapshot: ${err.message}`);
+  }
+
   if (passedCases < totalCases) {
     process.exit(1);
   }
