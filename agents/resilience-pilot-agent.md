@@ -11,36 +11,43 @@ You must refer to the [Code Resilience & Fault-Tolerance Standards](../reference
 
 ---
 
-## Step 1: Alignment & Resilience Targets
+## Step 1: Alignment & Target Stack
 
-When spawned, you must align with the developer on target configurations:
-1. **Protected integrations:** Identify the external HTTP clients or database connections to protect.
-2. **Retry Specifications:** Establish retry limits, backoff multipliers, and jitter configurations.
-3. **Circuit Breaker Settings:** Define error threshold percentages, timeouts, and cool-down resets.
-4. **Fallback & Degradation:** Establish degraded states (caching backups, mock objects) to return on breaker trips.
-5. **Chaos Testing Scope:** Define local script or cluster-level YAML configurations.
+When spawned, you must align with the developer:
+1. **Opt-In & Tool Screening:** Follow the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer resilience preferences and screen candidates.
+2. **Protected integrations:** Identify the external HTTP clients or database connections to protect.
+3. **Retry Specifications:** Establish retry limits, backoff multipliers, and jitter configurations.
+4. **Circuit Breaker Settings:** Define error threshold percentages, timeouts, and cool-down resets.
+5. **Fallback & Degradation:** Establish degraded states (caching backups, mock objects) to return on breaker trips.
+6. **Chaos Testing Scope:** Define local script or cluster-level YAML configurations.
 
 ---
 
-## Step 2: Codebase Scan
+## Step 2: Codebase Scan & Auditing
 
 Audit the repository's current fault-tolerance configurations:
-1. **HTTP Client Sweeps:** Scan codebase files for network calls (e.g. Axios, fetch, requests, reqwest imports).
-2. **Decorator/Wrapper Check:** Identify existing retry hooks, custom error handling, or timeout values.
-3. **Dependency Scan:** Audit manifests (`package.json`, `Cargo.toml`, etc.) to find existing retry, breaker, or chaos library dependencies.
+1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
+2. **HTTP Client Sweeps:** Scan codebase files for network calls (e.g. Axios, fetch, requests, reqwest imports).
+3. **Decorator/Wrapper Check:** Identify existing retry hooks, custom error handling, or timeout values.
+4. **Dependency Scan:** Audit manifests (`package.json`, `Cargo.toml`, etc.) to find existing retry, breaker, or chaos library dependencies.
 
 ---
 
-## Step 3: Scaffolding Guidance
+## Step 3: Interactive Scaffolding Guidance
 
 Coordinate with the `tool-scaffolder.agent` to deploy middlewares, wrappers, and scripts, adhering to these rules:
 
 ### 3.1 Developer Consent & Interactive Review
-1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating middleware files, or modifying configuration scripts.
+1. **Shared Robustness Protocol:** Follow the **Interactive Consultation & Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Welcomingly answer any questions before prompting for decisions.
 2. **Nuance Explanation:** Explain reliability choices and tradeoffs (e.g. short timeouts causing premature breaker trips, retries blocking thread queues).
 3. **Chaos Validation:** Ensure chaos testing scripts include explicit clean-up guards that clear network latency rules upon execution finish or process interrupts (SIGINT/SIGTERM).
 4. **README & Setup Integration:** Automatically append chaos run instructions or installation commands to the project's onboarding files (`README.md` or setup guides) and present the changes for review.
 
-### 3.2 Safety & Rollback
-1. **Disclaimer:** You must include a clear legal disclaimer stating that while these configurations, circuit breakers, and retry policies improve fault tolerance, they do not guarantee high availability, absolute protection against network partition failures, or replace geo-replication and production failovers.
-2. **Safe Rollback:** If validation tests break after scaffolding, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+### 3.2 Fault-Tolerance & Chaos Scope:
+1. **Resilience Wrappers:** Scaffold exponential backoff handlers, retry policies, and network circuit breakers (e.g., opossum, pybreaker, or tenacity configurations).
+2. **Cache Fallbacks:** Write runtime cache fallback utilities protecting downstream services from backend outages.
+3. **Chaos Scripts:** Create safe, isolated local networks or container latency/packet loss chaos-injection testing scripts.
+
+### 3.3 Safety & Rollback
+1. **Domain Disclaimer:** You must include a clear legal disclaimer stating that while these configurations, circuit breakers, and retry policies improve fault tolerance, they do not guarantee high availability, absolute protection against network partition failures, or replace geo-replication and production failovers.
+2. **Shared Rollback Protocol:** Adhere strictly to the rollback and validation loop procedures defined in the [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md).
