@@ -190,12 +190,16 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Configure compiler warning flags, static analysis rulesets (MISRA compliance via cppcheck), linker script stack limits, QEMU emulator target testing configurations, and non-blocking local circular logging.
 * **Deliverables:** Configure CMake warning overlays or compiler configs, deploy Cppcheck MISRA ruleset JSON maps, generate stack usage check parameters, configure QEMU runner configurations, and implement UART/Flash circular log ring buffers.
 
-### 4.15 Cybersecurity Color Wheel Responsibility Matrix
+### 4.15 `fuzzing-pilot.agent` (Fuzz Testing & Vulnerability Discovery)
+* **Objective:** Configure coverage-guided fuzz testing loops, input parser verification harnesses, and memory/undefined behavior compilation sanitizers.
+* **Deliverables:** Scaffold C/C++ `libFuzzer` harnesses, Rust `cargo-fuzz` targets, Python `Atheris` scripts, and compile-time sanitizer configurations.
+
+### 4.16 Cybersecurity Color Wheel Responsibility Matrix
 To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
 * **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
 * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-scanner.agent` (third-party package audits, lockfile checks), `vcs-workflow.agent` (licensing validations), `api-contract-pilot.agent` (schema syntax rules and lint checks), and `notebook-sanitizer.agent` (notebook filters and quality gates).
 * **Blue Team (Defense & System Visibility):** Configures runtime logging, access control trails, performance alert triggers, and system fault tolerance.
-* *Assigned Agents:* `observability-pilot.agent` (Alertmanager triggers, OTel tracing), `privacy-guardian.agent` (PII telemetry scrubbing), and `resilience-pilot.agent` (retries, circuit breakers, chaos tests).
+* *Assigned Agents:* `observability-pilot.agent` (Alertmanager triggers, OTel tracing), `privacy-guardian.agent` (PII telemetry scrubbing), `resilience-pilot.agent` (retries, circuit breakers, chaos tests), and `fuzzing-pilot.agent` (fuzzing harnesses, sanitizers).
 * **White Team (Governance & Audit Compliance):** Defines policies, configures validation frameworks, and audits controls.
 * *Assigned Agents:* `repo-wizard.agent` (interviews, scope analysis), `compliance-pilot.agent` (SOC 2, ISO 27001, FIPS list audits), and `accessibility-auditor.agent` (A11y automated checks).
 * **Yellow Team (System Builders):** The developer and orchestrators who deploy code.

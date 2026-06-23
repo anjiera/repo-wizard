@@ -46,6 +46,7 @@ Focuses on writing secure code, configuring correct dependency frameworks, and s
 Focuses on auditing system events, configuring tracing telemetry, and tuning alerts to catch failures instantly.
 * **Observability Pilot (`/rw-observability`):** Scaffolds OpenTelemetry instrumentation SDKs, Grafana dashboards, and Alertmanager metrics.
 * **Privacy Guardian (`/rw-privacy`):** Sanitizes exported logs and trace contexts to scrub PII data.
+* **Fuzzing Pilot (`/rw-fuzzing`):** Scaffolds coverage-guided fuzz targets (libFuzzer, cargo-fuzz, Atheris) and sanitizers to find crash defects on untrusted parser entry points.
 
 ### White Team (Governance & Audit Compliance)
 Focuses on establishing code quality rules, mapping regulatory controls, and verifying repository hygiene.
