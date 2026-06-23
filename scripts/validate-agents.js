@@ -88,6 +88,47 @@ function main() {
       });
     }
 
+    // Structural validations for execution agents
+    const EXEMPT_AGENTS = [
+      'repo-wizard-agent.md',
+      'legal-neutrality-agent.md',
+      'tool-evaluator-agent.md',
+      'tool-scaffolder-agent.md'
+    ];
+
+    if (!EXEMPT_AGENTS.includes(file)) {
+      try {
+        const content = fs.readFileSync(fullPath, 'utf8');
+
+        if (!content.includes('## Step 1: Alignment & Target Stack')) {
+          errors.push("Missing exact header: '## Step 1: Alignment & Target Stack'");
+        }
+        if (!content.includes('## Step 2: Codebase Scan & Auditing')) {
+          errors.push("Missing exact header: '## Step 2: Codebase Scan & Auditing'");
+        }
+        if (!content.includes('## Step 3: Interactive Scaffolding Guidance')) {
+          errors.push("Missing exact header: '## Step 3: Interactive Scaffolding Guidance'");
+        }
+        if (!content.includes('### 3.1 Developer Consent & Interactive Review')) {
+          errors.push("Missing exact subheading: '### 3.1 Developer Consent & Interactive Review'");
+        }
+
+        const controlsScopeRegex = /### 3\.2 .*(?:Controls )?Scope/i;
+        if (!controlsScopeRegex.test(content)) {
+          errors.push("Missing subheading pattern matching '### 3.2 ... Scope'");
+        }
+
+        if (!content.includes('### 3.3 Safety & Rollback')) {
+          errors.push("Missing exact subheading: '### 3.3 Safety & Rollback'");
+        }
+        if (!content.includes('scaffolding-robustness-protocol.md')) {
+          errors.push("Missing link reference to '../references/scaffolding-robustness-protocol.md'");
+        }
+      } catch (err) {
+        errors.push(`Failed to read agent file: ${err.message}`);
+      }
+    }
+
     if (errors.length === 0) {
       console.log(`  ✓  ${file}`);
     } else {
