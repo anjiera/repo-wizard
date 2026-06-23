@@ -1,0 +1,15 @@
+description = "Scaffold retry policies with backoff/jitter, wrap HTTP clients with opossum/pybreaker circuit breakers, and configure chaos engineering latency scripts"
+
+prompt = """
+Invoke the resilience-pilot skill.
+Act as the resilience-pilot-agent persona.
+
+Before auditing, follow the interactive alignment phase by asking the user:
+1. Target external API endpoints and database clients needing fault-tolerance wrappers.
+2. Retry limits, backoff multipliers, and jitter configurations.
+3. Circuit breaker trip conditions (error threshold rate, timeout duration, reset delay).
+4. Fallback execution strategies (cached static data, degraded mock returns).
+5. Chaos test scopes (local tc scripts, cluster Chaos Mesh configurations).
+
+Wait for the user's response before proceeding with resilience audits, scaffolding, and verification.
+"""
