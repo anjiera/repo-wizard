@@ -54,3 +54,53 @@ This reference checklist maps major security and compliance frameworks (SOC 2, I
 - [ ] Bind application code to a FIPS-validated cryptographic provider (e.g. OpenSSL FIPS Provider, BoringSSL FIPS mode, AWS-LC).
 - [ ] Enforce FIPS-mode checking at startup, throwing a terminal error and halting boot if FIPS self-tests fail.
 - [ ] Implement key zeroization routines to wipe keys from RAM immediately after use.
+
+---
+
+## 4. HIPAA Technical Safeguards (PHI Protection)
+
+HIPAA (Health Insurance Portability and Accountability Act) requires safeguards for Protected Health Information (PHI) stored, processed, or transmitted by the system:
+
+### 4.1 Access Control & PHI Encryption (45 CFR § 164.312(a), (iv))
+- [ ] **Encryption in Transit:** Enforce HTTPS/TLS 1.3 for all endpoints serving PHI. Disable insecure cipher suites.
+- [ ] **Encryption at Rest:** Enable AES-256 encryption on all databases, backups, and storage buckets storing medical records.
+- [ ] **Automatic Logoff:** Scaffold session timeouts and automatic UI logoffs for inactive users (e.g., 15-minute limits).
+- [ ] **Unique User Identification:** Verify that every system user has a unique username/ID; forbid shared credentials or admin accounts.
+
+### 4.2 Transmission & Audit Controls (45 CFR § 164.312(c), (d))
+- [ ] **Data Integrity Protection:** Implement hash-based message authentication codes (HMAC) or database checksums to confirm PHI has not been altered in transit.
+- [ ] **Leveled Audit Logs:** Record all events that create, read, update, or delete PHI, capturing user ID, timestamp, and action performed.
+- [ ] **Log Scrubbing:** Ensure logs do not print raw PHI payload variables (e.g. patient names, diagnoses) in plaintext.
+
+---
+
+## 5. PCI-DSS Cardholder Data Security
+
+The Payment Card Industry Data Security Standard (PCI-DSS) establishes requirements for protecting Cardholder Data (CHD) and Sensitive Authentication Data (SAD):
+
+### 5.1 Cardholder Data Protection (Req 3, Req 4)
+- [ ] **Restricted SAD Storage:** Never store Sensitive Authentication Data (full magnetic stripe, CVV/CVC, or PIN) after authorization, even if encrypted.
+- [ ] **PAN Encryption:** Encrypt Primary Account Numbers (PANs) wherever they are stored (databases, log files, configuration parameters) using strong cryptography.
+- [ ] **Truncation & Masking:** Mask PAN when displayed (maximum of first 6 and last 4 digits visible) unless explicitly required for business needs.
+- [ ] **Encrypted Transmission:** Enforce TLS 1.2 or TLS 1.3 with secure ciphers (e.g. ECDHE-RSA-AES256-GCM-SHA384) for all digital transactions.
+
+### 5.2 Vulnerability Management & Access Controls (Req 6, Req 8)
+- [ ] **SQL Injection Prevention:** Configure parameterized database queries and ORMs exclusively to block injection attacks.
+- [ ] **Access Logs Auditing:** Assign unique IDs to users, enforce multi-factor authentication (MFA) for administrative access, and record all access attempts to the cardholder data environment (CDE).
+- [ ] **Vulnerability Scanning:** Integrate automated static analysis security testing (SAST) and package scanning to identify and patch dependencies with known CVEs.
+
+---
+
+## 6. FedRAMP Cloud Security Hardening Controls
+
+FedRAMP (Federal Risk and Authorization Management Program) builds on NIST SP 800-53 controls for securing cloud services hosted for government agencies:
+
+### 6.1 Configuration & Vulnerability Management (NIST SP 800-53 CM-6, RA-5)
+- [ ] **IaC Hardening:** Scan Terraform, CloudFormation, or Kubernetes manifests for configuration drift, insecure ports, and unencrypted volumes.
+- [ ] **Base Container Image Auditing:** Configure automated image scanning (e.g. Trivy, Grype) to block deployments of container images containing critical or high CVEs.
+- [ ] **Automated Dependency Updates:** Configure package registries and alert tools to track and auto-patch software vulnerabilities within strict timelines (e.g., 30 days for high risk).
+
+### 6.2 Monitoring, Auditing & Crypto (NIST SP 800-53 AU-2, IA-2, SC-13)
+- [ ] **Continuous Logging:** Scaffolding must direct all event logs to a central Security Information and Event Management (SIEM) service.
+- [ ] **FIPS 140 Cryptographic Modules:** Enforce compile/runtime configurations requiring all cryptographic operations (transit, rest, hashing) to execute inside FIPS-validated modules.
+- [ ] **Multi-Factor Authentication (MFA):** Enforce code-level checks validating MFA token parameters on all administrative dashboard routes and API integrations.
