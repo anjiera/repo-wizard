@@ -51,6 +51,10 @@ Focuses on establishing code quality rules, mapping regulatory controls, and ver
 * **Compliance Pilot (`/rw-compliance`):** Verifies technical compliance configurations (SOC 2, ISO 27001, FIPS lists).
 * **Accessibility Auditor (`/rw-accessibility`):** Configures accessibility linters (ESLint JSX-a11y) and headless axe-core scanners.
 
+### Yellow Team (System Builders & Deployment)
+Focuses on configuring build automation, deployment replication, container scaling, and recovery systems.
+* **Deployment Pilot (`/rw-deployment`):** Scaffolds Docker Compose replicas, Kubernetes health probes, and database backups.
+
 ---
 
 ## Quick Start: Loading Skills
