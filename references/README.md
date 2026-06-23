@@ -14,6 +14,7 @@ Focuses on writing secure code, configuring correct dependencies, and setting up
 * **API Contract Validation:** [api-contract-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/api-contract-standards.md)
 * **Google Style Guides:** [google-style-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/google-style-rules.md)
 * **Notebook Git Hygiene:** [notebook-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/notebook-standards.md)
+* **Python Coding Standards:** [python-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/python-standards.md)
 * **React State Sanitization:** [state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)
 * **Supply Chain Audits:** [supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)
 * **VCS Automation & Hook Discipline:** [vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)
@@ -119,29 +120,31 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - OPcache JIT compiler, file preloading, eager-loading relations, and strict typing optimizations.
 34. **[python-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/python-performance-patterns.md)**
     - Generator streams, object __slots__, compiled C libraries (NumPy), and GIL worker pools.
-35. **[resilience-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/resilience-patterns.md)**
+35. **[python-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/python-standards.md)**
+    - Python PEP 8 styling guidelines and automated Ruff config templates.
+36. **[resilience-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/resilience-patterns.md)**
     - Retry policies with exponential backoff and jitter, fallback patterns, and circuit breaker setups.
-36. **[ruby-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/ruby-performance-patterns.md)**
+37. **[ruby-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/ruby-performance-patterns.md)**
     - Ruby GC parameters, frozen string literal optimizations, lazy enumerators, and ActiveRecord preloading.
-37. **[rust-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/rust-performance-patterns.md)**
+38. **[rust-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/rust-performance-patterns.md)**
     - Async spawn_blocking, zero-copy borrowing Serde lifetimes, and Cargo release configurations.
-38. **[scaffolding-robustness-protocol.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/scaffolding-robustness-protocol.md)**
+39. **[scaffolding-robustness-protocol.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/scaffolding-robustness-protocol.md)**
     - Safe package installation commands, rollback configurations, AST merge routines, and prompt injection defense.
-39. **[security-hardening-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/security-hardening-checklist.md)**
+40. **[security-hardening-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/security-hardening-checklist.md)**
     - Compliance mapping profiles (SOC 2, ISO 27001, HIPAA controls, FIPS algorithms).
-40. **[shell-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/shell-performance-patterns.md)**
+41. **[shell-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/shell-performance-patterns.md)**
     - Minimizing child process spawns, line-by-line streams, and command output variables caching.
-41. **[state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)**
+42. **[state-sanitization-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/state-sanitization-rules.md)**
     - Prevent race conditions and stale closures in React hooks, callback updates, and window event listeners.
-42. **[supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)**
+43. **[supply-chain-audit-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/supply-chain-audit-checklist.md)**
     - License validation checkers (blocking viral copyleft packages) and lockfile integrity scanning.
-43. **[swift-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/swift-performance-patterns.md)**
+44. **[swift-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/swift-performance-patterns.md)**
     - Swift Copy-on-Write value structures, avoiding strong cycles (weak/unowned), and Actor concurrency.
-44. **[testing-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/testing-patterns.md)**
+45. **[testing-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/testing-patterns.md)**
     - Unit/integration mocking frameworks (Jest, Vitest, MSW), coverage budgets, and test setups.
-45. **[toolchain-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/toolchain-standards.md)**
+46. **[toolchain-standards.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/toolchain-standards.md)**
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
-46. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
+47. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
 
 ---
