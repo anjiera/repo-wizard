@@ -123,7 +123,7 @@ Below is a complete index of all 45 reference files with descriptions of their t
 36. **[rust-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/rust-performance-patterns.md)**
     - Async spawn_blocking, zero-copy borrowing Serde lifetimes, and Cargo release configurations.
 37. **[scaffolding-robustness-protocol.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/scaffolding-robustness-protocol.md)**
-    - Safe package installation commands, rollback configurations, and AST merge routines.
+    - Safe package installation commands, rollback configurations, AST merge routines, and prompt injection defense.
 38. **[security-hardening-checklist.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/security-hardening-checklist.md)**
     - Compliance mapping profiles (SOC 2, ISO 27001, HIPAA controls, FIPS algorithms).
 39. **[shell-performance-patterns.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/shell-performance-patterns.md)**
