@@ -57,8 +57,11 @@ Begin the questionnaire by presenting the mandatory disclaimer. Sequentially pre
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment:
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
-2. **Coordinate Headless Scans**: Dispatch the best-guess parameter contract to High/Medium relevance subagents. Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
-3. **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
+2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.
+3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts.
+4. **Collect and Read Observations**:
+   - If execution status in `manifest.json` is `completed`, directly read and consolidate their mini-reports.
+   - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`, and then consolidate.
 
 ---
 
@@ -76,12 +79,15 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 ### A. Local Interactive Mode
 1. Complete interview first.
 2. Deduplicate candidates.
-3. Dispatch parameters contract to `tool-scaffolder.agent` (scaffold mode) or subagents (backlog mode).
-4. Run verification and VCS rollback on failure.
+3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.
+4. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`.
+5. **Handle Fallback Execution**:
+   - If execution status in the manifest is `fallback_to_agent`, sequentially invoke the subagents flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their scaffolding reports, and then continue.
+6. Run verification and VCS rollback on failure.
 
 ### B. Headless Mode
 1. Do NOT make any package installations or write files in the targeted repository.
-2. Read and consolidate all subagents' mini-reports from `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
+2. Read and consolidate all subagents' mini-reports from `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md` (either written by the runtime or the fallback manual execution loop).
 
 ---
 

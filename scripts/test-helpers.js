@@ -238,6 +238,139 @@ function testValidateDocs() {
   }
 }
 
+function testRunOrchestration() {
+  console.log('Testing run-orchestration.js...');
+  const scriptPath = path.join(ROOT, 'scripts', 'run-orchestration.js');
+  const manifestDir = path.join(ROOT, '.repo-wizard');
+  const manifestPath = path.join(manifestDir, 'manifest.json');
+  const agentsDir = path.join(manifestDir, 'agents');
+
+  // Helper to ensure clean temp manifest dir
+  if (!fs.existsSync(manifestDir)) fs.mkdirSync(manifestDir);
+  
+  // Backup existing manifest if any
+  let originalManifestContent = null;
+  if (fs.existsSync(manifestPath)) {
+    originalManifestContent = fs.readFileSync(manifestPath, 'utf8');
+  }
+
+  try {
+    // Test 1: Successful run with MOCK_CLI=true
+    const mockManifest = {
+      status: "pending",
+      contracts: [
+        {
+          agent_name: "privacy-guardian-agent",
+          status: "pending",
+          contract: {
+            task_metadata: {
+              target_modules: ["/src"],
+              language: "javascript",
+              build_system: "npm",
+              execution_mode: "scaffold"
+            }
+          }
+        }
+      ]
+    };
+    fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
+
+    // Run script with MOCK_CLI=true env
+    const mockRun = (() => {
+      try {
+        const stdout = execSync(`node "${scriptPath}"`, {
+          cwd: ROOT,
+          stdio: 'pipe',
+          env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return { code: err.status || 1, stdout: err.stdout ? err.stdout.toString() : '', stderr: err.stderr ? err.stderr.toString() : '' };
+      }
+    })();
+
+    assert(mockRun.code === 0, 'run-orchestration.js exits with 0 on successful mock run');
+    
+    // Check manifest status update
+    const updatedManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assert(updatedManifest.status === 'completed', 'manifest status updated to completed');
+    assert(updatedManifest.contracts[0].status === 'completed', 'contract status updated to completed');
+    
+    // Check observations generated
+    const obsPath = path.join(agentsDir, 'observations-privacy-guardian-agent-test-repo.md');
+    assert(fs.existsSync(obsPath), 'mock observations file created successfully');
+    if (fs.existsSync(obsPath)) fs.unlinkSync(obsPath);
+
+    // Test 2: Pre-flight validation fails on bad contract structure
+    const badManifest = {
+      status: "pending",
+      contracts: [
+        {
+          agent_name: "privacy-guardian-agent",
+          status: "pending",
+          contract: {
+            task_metadata: {
+              // language is missing
+              target_modules: ["/src"],
+              build_system: "npm",
+              execution_mode: "scaffold"
+            }
+          }
+        }
+      ]
+    };
+    fs.writeFileSync(manifestPath, JSON.stringify(badManifest, null, 2), 'utf8');
+
+    const badRun = (() => {
+      try {
+        const stdout = execSync(`node "${scriptPath}"`, {
+          cwd: ROOT,
+          stdio: 'pipe',
+          env: { ...process.env, MOCK_CLI: 'true' }
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return {
+          code: err.status || 1,
+          stdout: err.stdout ? err.stdout.toString() : '',
+          stderr: err.stderr ? err.stderr.toString() : ''
+        };
+      }
+    })();
+
+    assert(badRun.code === 1, 'run-orchestration.js exits with 1 on invalid parameter contract');
+    assert(badRun.stderr.includes('task_metadata.language must be a non-empty string'), 'correct validation error outputted in stderr');
+
+    // Test 3: Fallback triggered when no CLI binary exists
+    fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
+    const fallbackRun = (() => {
+      try {
+        const stdout = execSync(`node "${scriptPath}"`, {
+          cwd: ROOT,
+          stdio: 'pipe',
+          env: { ...process.env, DISABLE_CLI: 'true' }
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return { code: err.status || 1, stdout: err.stdout ? err.stdout.toString() : '', stderr: err.stderr ? err.stderr.toString() : '' };
+      }
+    })();
+
+    assert(fallbackRun.code === 0, 'run-orchestration.js exits with 0 on fallback when CLI not found');
+    const fallbackManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    assert(fallbackManifest.status === 'fallback_to_agent', 'manifest status updated to fallback_to_agent');
+    assert(fallbackManifest.contracts[0].status === 'pending_agent_fallback', 'contract status updated to pending_agent_fallback');
+
+  } finally {
+    // Restore original manifest
+    if (originalManifestContent !== null) {
+      fs.writeFileSync(manifestPath, originalManifestContent, 'utf8');
+    } else if (fs.existsSync(manifestPath)) {
+      fs.unlinkSync(manifestPath);
+    }
+  }
+}
+
 function runAll() {
   try {
     testValidateAgents();
@@ -245,6 +378,7 @@ function runAll() {
     testValidateSkills();
     testPatchHeadlessMode();
     testValidateDocs();
+    testRunOrchestration();
 
     console.log(`\nAll helper validator tests complete: ${testsPassed} / ${testsRun} assertions passed.`);
     process.exit(0);
