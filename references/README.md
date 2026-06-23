@@ -95,3 +95,10 @@ Below is a complete index of all 23 reference files with descriptions of their t
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
 23. **[vcs-discipline-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
+
+---
+
+## ⚠️ Disclaimer & Legal Safety
+
+> [!IMPORTANT]
+> **No Advice Provided:** The reference standards, checklists, and documentation catalogs in this directory are educational and informational resources. They do not constitute legal, financial, compliance, regulatory, or safety advice. Developers must perform their own review of recommendations, configurations, and licenses to ensure compatibility with their organizational standards and local laws.

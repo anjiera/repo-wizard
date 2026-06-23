@@ -2,6 +2,9 @@
 
 Welcome to the **Repo Wizard Glossary**! This document is specifically designed to assist junior developers, weekend vibe coders, and engineers of all backgrounds in demystifying the dense terminology, acronyms, and concepts associated with production-level, enterprise-grade software development and automated security/compliance governance.
 
+> [!NOTE]
+> **Educational & Informational Disclaimer:** The definitions, summaries, and explanations provided in this glossary are simplified, high-level conceptual reference points designed for developer education. They are not exhaustive, final, or legally binding. They do not constitute legal, financial, regulatory, compliance, or professional advice. Users should explore these concepts through their own curiosity and must consult certified legal or compliance experts for formal definitions and audits.
+
 ---
 
 ## 1. AI & Agentic System Terms
