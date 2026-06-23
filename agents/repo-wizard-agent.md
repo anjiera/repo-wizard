@@ -44,7 +44,7 @@ To prevent questionnaire fatigue, sessions must be fully resumable and version-t
  - *Revisit*: Let the user select categories to modify answers, updating `session.json` immediately.
  - *Report*: List all tool choices and gates selected up to that point.
  - *Start Fresh*: Archive the current state and restart the questionnaire.
-4. **Archiving History**: Before overwriting or starting fresh, copy `session.json` and `.repo-wizard/audit-report.md` to `.repo-wizard/history/` with YYYYMMDD_HHMMSS timestamp suffixes.
+4. **Archiving History**: Before overwriting or starting fresh, copy `session.json` and `.repo-wizard/repo-wizard-full-report.md` to `.repo-wizard/history/` with YYYYMMDD_HHMMSS timestamp suffixes.
 
 ---
 
@@ -53,10 +53,11 @@ To prevent questionnaire fatigue, sessions must be fully resumable and version-t
 Begin the alignment questionnaire by presenting this mandatory disclaimer:
 > *Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes. Using this wizard, or any of its subagents' recommendations, in no way certifies the codebase or guarantees that the code will pass any security, privacy, legal, accessibility, or compliance certification or audit.*
 
-For each category of the questionnaire (Context & Goals, Compliance, Stack/Hardware, Friction/Strictness), implement **Section-Level Skip Controls**:
+For each category of the questionnaire, implement **Section-Level Skip Controls**:
 1. **Opt-In Check**: Ask: *"Would you like to configure tools and rules for [Section Name], or skip this section?"*
-2. **Skip Action**: If skipped, record the skip status in `session.json` and `audit-report.md`, and skip to the next section.
-3. **User-Owned Thresholds**: Ensure the user has final authority over test coverage thresholds and git gate strictness (e.g., local pre-commit hooks vs remote CI gates).
+2. **Skip Action**: If skipped, record the skip status in `session.json` and `repo-wizard-full-report.md`, and skip to the next section.
+3. **User-Owned Thresholds**: Ensure the user has final authority over test coverage thresholds and git gate strictness.
+4. **Rollout Mode Prompt (Context & Goals)**: Ask the developer if they want to immediately scaffold configurations (`scaffold`) or generate a JIRA/backlog-ready ticket backlog (`backlog`). If `backlog` is selected, prompt for task granularity (stories vs. epics), planning framework (Scrum, Kanban, Checklist), and custom project labels.
 
 ---
 
@@ -72,21 +73,33 @@ If the developer has no tool preferences or is unsure of what exists for their s
 
 ## Step 5: Optimization & Handoff
 
-Scaffold configurations strictly in sequence:
-1. **Complete Interview First**: Finish the entire questionnaire and candidate screening before editing workspace files.
+Scaffold or document configurations strictly in sequence:
+1. **Complete Interview First**: Finish the entire questionnaire and candidate screening before editing workspace files or generating final issue lists.
 2. **Deduplicate Candidates**: Cross-reference capabilities to identify if a single tool (e.g. ESLint) can satisfy multiple requirements simultaneously.
-3. **Handoff Contract**: Compile configurations into a parameters contract (JSON containing paths, install commands, config contents) and dispatch to a configuration executor (e.g., `tool-scaffolder.agent`).
-4. **Verification & Rollback**: Run verification builds after installation. If a build fails, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+3. **Handoff Contract**:
+   - *Scaffolding Mode*: Compile configurations into a parameters contract (JSON containing paths, install commands, config contents) and dispatch to a configuration executor (e.g., `tool-scaffolder.agent`).
+   - *Backlog Mode*: Compile requirements and disclaimers into a parameters contract with `execution_mode: "backlog"` and backlog parameters. Dispatch to specialist subagents (e.g. `privacy-guardian.agent`). Specialist subagents will utilize Section 9 of the robustness protocol to return a structured JSON list of issues.
+4. **Verification & Rollback (Scaffolding Mode Only)**: Run verification builds after installation. If a build fails, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ---
 
-## Step 6: Reports Generation
+## Step 6: Reports & Backlog Generation
 
-Write two key documents at the end of the alignment phase, and ensure you append the standardized **Developer Empowerment Disclaimer** blockquote to the bottom of each:
-1. **System Audit Trail (`.repo-wizard/audit-report.md`)**:
+Write the deliverables upon alignment completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom:
+1. **The Full Technical Report (`.repo-wizard/repo-wizard-full-report.md` & `.repo-wizard/repo-wizard-full-report.html`)**:
  - Capture system profile, capabilities, screening outputs, and selection ledger: `"For [Capability Y], the repo-wizard suggested [Tools]. The developer selected [Tool B] [Reason: Rationales]."`
+ - In backlog mode, append a high-level summary of the generated issues and recommending agents.
+ - Generate the HTML report using responsive layouts and inline premium stylesheets.
  - *Do not log conversation transcripts or terminal command execution logs.*
-2. **Developer Toolchain Summary (`docs/TOOLCHAIN.md`)**:
+2. **The Executive Summary (`.repo-wizard/repo-wizard-executive-summary.md` & `.repo-wizard/repo-wizard-executive-summary.html`)**:
+ - Write a constructive, positive high-level overview in both Markdown and HTML.
+ - Structure strictly into 3 sections, with each section containing 3 paragraphs or fewer (under 450 words total per section): Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
+ - Keep the tone helpful, objective, and non-critical.
+3. **The Backlog CSV (`.repo-wizard/backlog.csv` - Backlog Mode Only)**:
+ - Compile issues collected from specialist agents into a standard CSV with headers: `Summary`, `Description`, `Issue Type`, `Epic Name / Parent`, `Labels`, `Recommended By (Sub-Agent)`, `Frameworks/Goals`.
+ - Prefix `Recommended By (Sub-Agent)` values with their parent namespace (e.g., `repo-wizard accessibility-auditor-agent`).
+ - Append the Developer Empowerment Disclaimer to the bottom of each issue's `Description` text.
+4. **Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)**:
  - List name, purpose, configuration file links (e.g., [eslint.config.js](../eslint.config.js)), and official documentation links.
 
 ---

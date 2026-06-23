@@ -26,7 +26,16 @@ module.exports = {
       name: 'History Archiving On Fresh Start',
       input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, we have an active session found on disk. I would like to choose "Start Fresh". Let\'s begin.',
       rubrics: [
-        'The response explicitly states that the previous session.json and audit-report.md configurations will be archived to history/ with a timestamp before clearing.'
+        'The response explicitly states that the previous session.json and repo-wizard-full-report.md configurations will be archived to history/ with a timestamp before clearing.'
+      ]
+    },
+    {
+      name: 'Backlog Mode Selection & Deliverables',
+      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, let\'s start. I would like to configure my repository using the "backlog" execution mode. I want granular task stories and we use Scrum.',
+      rubrics: [
+        'The response acknowledges the backlog execution mode toggle.',
+        'The response mentions exporting a CSV backlog (.repo-wizard/backlog.csv), a full technical report (.repo-wizard/repo-wizard-full-report.md / .html), and a constructive 3-section executive summary (.repo-wizard/repo-wizard-executive-summary.md / .html).',
+        'The response acknowledges the Scrum planning framework and granularity.'
       ]
     }
   ]

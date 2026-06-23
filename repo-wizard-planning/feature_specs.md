@@ -24,7 +24,7 @@ Before asking the questionnaire, the agent runs a token-efficient directory anal
 
 ### 1.2 Interactive Alignment Questionnaire
 The wizard guides the developer through a structured interactive questionnaire (detailed in [brainstorming_notes.md](brainstorming_notes.md)), covering:
-1. *Context & Goals:* Refactoring vs Greenfield, Team Profile, Commercial Release target, Tooling Budget (Free vs Premium/Paid).
+1. *Context & Goals:* Refactoring vs Greenfield, Team Profile, Commercial Release target, Tooling Budget (Free vs Premium/Paid), Rollout Mode (Immediate Scaffolding vs. Backlog Generation). If Backlog Generation is selected, the wizard asks clarifying questions regarding task granularity (granular stories vs. high-level epics), planning frameworks (Scrum/Kanban/Checklist), and custom project labels.
 2. *Technical Stack & Runtime:* Target platforms (IoT, Desktop, Web, Mobile), runtime hardware constraints, and build configurations.
 3. *Friction & Gates:* Testing preferences, coverage thresholds, git workflow restrictions, and execution environments (local, pre-commit, remote CI, background crons).
 4. *Compliance Triggers:* Interactive questions that flag regulatory needs (HIPAA, SOC 2, ISO 27001, GDPR, DO-178C, ISO 26262, EU AI Act, GLI, etc.).
@@ -54,26 +54,42 @@ To prevent developer questionnaire fatigue, the setup session must be fully resu
  7. *Start Fresh Behavior:* Clears the active session and begins the questionnaire from the first step.
 * **Session Version Archiving:**
  * To prevent loss of configuration tracking and allow auditing of toolchain changes over time, the orchestrator **must archive** the active configuration before making any updates.
- * Whenever a user selects *Start Fresh* or completes modifications in *Revisit*, the current `session.json` and `.repo-wizard/audit-report.md` are copied into `.repo-wizard/history/` before being modified.
+ * Whenever a user selects *Start Fresh* or completes modifications in *Revisit*, the current `session.json` and `.repo-wizard/repo-wizard-full-report.md` are copied into `.repo-wizard/history/` before being modified.
  * The archived files are renamed with timestamp suffixes:
  * `.repo-wizard/history/session_YYYYMMDD_HHMMSS.json`
- * `.repo-wizard/history/audit-report_YYYYMMDD_HHMMSS.md`
+ * `.repo-wizard/history/repo-wizard-full-report_YYYYMMDD_HHMMSS.md`
  * This allows the development team to audit historical decisions (e.g. verifying that the repository *used to* use Tool X, but migrated to Tool Y on a specific date).
 
-### 1.5 Audit & Toolchain Reports
-To provide absolute transparency and debug support for tool recommendations, the system generates two types of reports at the end of the alignment phase. Every generated report or documentation update (including `.repo-wizard/audit-report.md` and `docs/TOOLCHAIN.md`) **MUST** have the standardized **Developer Empowerment Disclaimer** markdown blockquote appended to the bottom.
+### 1.5 Reports & Backlog Deliverables
+To provide absolute transparency and support rollout planning, the system generates the following set of deliverables. Every generated Markdown or HTML report **MUST** have the standardized **Developer Empowerment Disclaimer** markdown blockquote (or styled disclaimer block) appended to the bottom.
 
-#### 1.5.1 The System Audit Trail (`.repo-wizard/audit-report.md`)
-This is a comprehensive, developer-independent text report that documents the exact rationale behind the final configurations. It serves as a diagnostic record for agent developers when analyzing why specific tools were suggested, without recording conversational transcripts to preserve user privacy.
+#### 1.5.1 The Full Technical Report (`.repo-wizard/repo-wizard-full-report.md` & `.repo-wizard/repo-wizard-full-report.html`)
+This is a comprehensive technical report documenting the exact codebase state and rationale behind the recommendations. It is generated in both Markdown and structured, responsive HTML with premium inline styles.
 * **Structure & Data Points:**
- * **System Profile:** Target LOC, module layout, and detected language/build config.
- * **Capability Mapping:** The abstract capabilities required based on the questionnaire responses (e.g., "Static Application Security Testing").
- * **Screening Audits:** The full list of candidate tools passed to `tool-evaluator.agent` and the detailed CVE, activity, and license scan results returned (including rejected candidates).
- * **Selection Ledger:** A clear ledger documenting suggested candidates vs. final developer selections:
- * *Format:* `"For [Capability Y], the repo-wizard suggested [Tool A, Tool B, Tool C]. The developer selected [Tool B] [Reason: Developer provided summary rationale, if any]."`
- * *Note: No command installation logs or process output are captured.*
+  * **System Profile:** Target LOC, module layout, and detected language/build config.
+  * **Capability Mapping:** The abstract capabilities required based on the questionnaire responses.
+  * **Screening Audits:** The full list of candidate tools evaluated by `tool-evaluator.agent` (including rejected candidates).
+  * **Selection Ledger:** Ledger mapping recommended tools vs. developer choices and rationales.
+  * **Backlog Summary (If Backlog Mode):** High-level summary listing the count of stories, epics, and recommending agents exported to the CSV.
 
-#### 1.5.2 Developer Toolchain Summary (`docs/TOOLCHAIN.md`)
+#### 1.5.2 The Executive Summary (`.repo-wizard/repo-wizard-executive-summary.md` & `.repo-wizard/repo-wizard-executive-summary.html`)
+A constructive high-level overview generated in both Markdown and styled HTML, designed for stakeholders who need a quick brief. It is structured strictly into 3 sections, with each section containing 3 paragraphs or fewer (under 450 words total per section):
+* **Section 1: Codebase Health & Strengths:** Highlights clean practices, build setups, and existing strengths of the repository.
+* **Section 2: Tooling & Compliance Opportunities:** Identifies optional, constructive areas for improvement (e.g. digital accessibility audits, PII security filters) without using critical or blaming tone.
+* **Section 3: Rollout Roadmap:** Outlines a strategic overview of next steps to digest the issue backlog during standard sprints.
+
+#### 1.5.3 The Tabular Backlog CSV (`.repo-wizard/backlog.csv` - Backlog Mode Only)
+A standard Agile-compliant CSV file designed for bulk-importing into JIRA, ClickUp, Monday.com, Trello, and Azure DevOps via their interactive column-mapping wizards.
+* **CSV Columns Schema:**
+  * `Summary`: Task title, prefixed with the domain standard (e.g., `[GDPR] Implement PII logs scrubbing filter`).
+  * `Description`: Rich text detailing the User Story, context/rationale, impacted workspace components, manual implementation checklist, recommending attribution (`Recommended by: repo-wizard [agent-name]`), and the Developer Empowerment Disclaimer appended at the bottom.
+  * `Issue Type`: Categorization (e.g., `Epic`, `Story`, `Task`).
+  * `Epic Name / Parent`: Captures hierarchical relationships.
+  * `Labels`: Comma-separated tags (e.g., `repo-wizard`, domain labels).
+  * `Recommended By (Sub-Agent)`: The specific recommending agent name (e.g., `repo-wizard privacy-guardian-agent`).
+  * `Frameworks/Goals`: The framework or compliance standard addressed (e.g., `GDPR`).
+
+#### 1.5.4 Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)
 A public-facing, well-formatted Markdown summary saved to the repository for the engineering team. It lists only the installed toolchain components without internal audit logs.
 * **Structure:**
  * **Tool Name & Purpose:** The human-readable name of the tool and what it is responsible for in the repo (e.g. *Axe-core CLI - Automated Accessibility Checks*).
@@ -84,7 +100,9 @@ A public-facing, well-formatted Markdown summary saved to the repository for the
 To optimize recommendations and prevent unnecessary tool duplication, the wizard must execute in a strict two-stage sequence.
 1. **Stage 1: Complete Interview:** The entire questionnaire and candidate evaluation must run to completion *before* any installation or workspace modifications are proposed.
 2. **Stage 2: Cross-Capability Optimization:** Once the interview is complete, the orchestrator audits the selected tool suite to identify if any single tool can cover multiple capabilities (e.g., configuring *ESLint* to handle general code formatting, accessibility checks, and internationalization checks simultaneously). This prevents duplicate tool clutter.
-3. **Stage 3: Scaffolding Handoff:** The orchestrator compiles the final optimized list of tools and dispatches them sequentially to the specialists for configuration.
+3. **Stage 3: Handoff Execution:** 
+   * **If Scaffolding Mode:** The orchestrator compiles the final optimized list of tools and dispatches them sequentially to the specialists for configuration and verification.
+   * **If Backlog Mode:** The orchestrator dispatches parameter contracts to specialists to gather structured JSON issue lists. It aggregates these lists, appends disclaimers to each description, exports the `.repo-wizard/backlog.csv`, and generates the MD and HTML full reports and executive summaries. Workspace configuration modifications and package installations are bypassed.
 
 ---
 
@@ -228,34 +246,40 @@ To delegate tasks without hardcoding tool behavior into specialist prompts, the 
 ### 5.1 Invocation Contract Schema
 ```json
 {
- "task_metadata": {
- "target_modules": ["/src/backend", "/src/frontend"],
- "language": "typescript",
- "build_system": "npm-vite",
- "budget_tier": "free | premium",
- "execution_environments": ["pre-commit", "CI"]
- },
- "compliance_targets": [
- {
- "standard": "GDPR",
- "focus_areas": ["PII logs scrubbing", "right-to-be-forgotten endpoint template"]
- },
- {
- "standard": "SOC2",
- "focus_areas": ["audit logs retention check", "access control checks"]
- }
- ],
- "tooling_specification": [
- {
- "capability": "Static Application Security Testing",
- "selected_tool": "Semgrep",
- "install_command": "npm install -D semgrep",
- "config_file": {
- "path": ".semgrep.yaml",
- "ruleset": "p/security-audit"
- }
- }
- ]
+  "task_metadata": {
+    "target_modules": ["/src/backend", "/src/frontend"],
+    "language": "typescript",
+    "build_system": "npm-vite",
+    "budget_tier": "free | premium",
+    "execution_environments": ["pre-commit", "CI"],
+    "execution_mode": "scaffold | backlog",
+    "backlog_parameters": {
+      "granularity": "granular | epic",
+      "framework": "Scrum | Kanban",
+      "custom_labels": ["sprint-0"]
+    }
+  },
+  "compliance_targets": [
+    {
+      "standard": "GDPR",
+      "focus_areas": ["PII logs scrubbing", "right-to-be-forgotten endpoint template"]
+    },
+    {
+      "standard": "SOC2",
+      "focus_areas": ["audit logs retention check", "access control checks"]
+    }
+  ],
+  "tooling_specification": [
+    {
+      "capability": "Static Application Security Testing",
+      "selected_tool": "Semgrep",
+      "install_command": "npm install -D semgrep",
+      "config_file": {
+        "path": ".semgrep.yaml",
+        "ruleset": "p/security-audit"
+      }
+    }
+  ]
 }
 ```
 

@@ -95,3 +95,23 @@ To protect against legal liability:
    > **Developer Empowerment Disclaimer**
    > Repo Wizard provides automated observations, analysis, and educational suggestions regarding your codebase and toolchain. The user retains final engineering accountability and sole responsibility for tool choices, configuration, testing, compliance adoption, and long-term maintenance. This report does not constitute legal advice, compliance certification, or formal audit results.
    ```
+
+---
+
+## 9. Backlog Generation Mode Protocol
+
+If the incoming parameter contract specifies `execution_mode: "backlog"`:
+1. **Bypass Scaffolding & VCS Actions:** Do NOT run any package installation commands, do NOT create or edit configuration files in the active workspace, and do NOT invoke the `tool-scaffolder.agent`.
+2. **Collect Recommendations:** Utilize your domain checklists to identify relevant setup tasks, refactoring jobs, security improvements, or compliance policies.
+3. **Format Task Outputs:** Return a structured JSON object containing a list of tasks. Each task must follow this schema:
+   * `title`: A short, descriptive title (e.g., `[WCAG 2.2] Configure axe-core CLI check in CI`).
+   * `description`: A thorough description containing:
+     - User story / goal.
+     - Impacted codebase modules or files.
+     - Step-by-step implementation checklist.
+     - The recommending agent identifier formatted as `Recommended by: repo-wizard [agent-persona-name]` (e.g., `Recommended by: repo-wizard accessibility-auditor-agent`).
+     - The **Developer Empowerment Disclaimer** blockquote appended at the very bottom.
+   * `issue_type`: The issue type (e.g., `Story`, `Epic`, `Task`).
+   * `epic_name`: The parent Epic name (e.g., `Digital Accessibility Compliance`).
+   * `frameworks_goals`: The frameworks or standards addressed (e.g., `WCAG-2.2`).
+4. **Attribution Column Mapping:** Ensure that your name (e.g., `accessibility-auditor-agent`) is clearly captured as the recommending entity so it can be exported to the CSV's `Recommended By (Sub-Agent)` column.

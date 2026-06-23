@@ -59,9 +59,9 @@ On startup, verify the existence of a prior wizard session:
    - **Revisit**: Show a list of categories to let the developer modify their previous answers.
    - **Report**: Display a formatted markdown summary in the chat of all tool selections and gates selected so far, then return to the prompt.
    - **Start Fresh**: Archive the current setup and begin from the first question.
-5. **Session Archiving**: Before clearing the state or modifying answers during *Revisit*, copy the active `session.json` and `.repo-wizard/audit-report.md` into `.repo-wizard/history/` using timestamp suffixes:
+5. **Session Archiving**: Before clearing the state or modifying answers during *Revisit*, copy the active `session.json` and `.repo-wizard/repo-wizard-full-report.md` into `.repo-wizard/history/` using timestamp suffixes:
    - `session_YYYYMMDD_HHMMSS.json`
-   - `audit-report_YYYYMMDD_HHMMSS.md`
+   - `repo-wizard-full-report_YYYYMMDD_HHMMSS.md`
 
 ### Phase 3: Interactive Alignment Questionnaire
 Present the questionnaire sequentially. Present a clear disclaimer at the start:
@@ -70,7 +70,7 @@ Present the questionnaire sequentially. Present a clear disclaimer at the start:
 For each of the major sections (1. Context & Goals, 2. Compliance & Regulations, 3. Stack & Performance, 4. Friction & Quality), implement **Section-Level Skip Controls**:
 1. **Opt-In Verification**: Before starting a category (e.g. *Regulatory & Compliance*), ask:
    > *"Would you like to configure tools and rules for [Section Name], or skip this section?"*
-2. **Skip Action**: If skipped, bypass all questions in that category. Store `"[Section Name]": {"status": "skipped"}` in `.repo-wizard/session.json`, and note the omission in `.repo-wizard/audit-report.md`.
+2. **Skip Action**: If skipped, bypass all questions in that category. Store `"[Section Name]": {"status": "skipped"}` in `.repo-wizard/session.json`, and note the omission in `.repo-wizard/repo-wizard-full-report.md`.
 3. **Developer-Owned Thresholds**: Let the user decide thresholds (e.g. choosing 50% vs 90% test coverage) and gate strictness (e.g., soft local format check vs. build-blocking pre-commit git hooks).
 
 ### Phase 4: Dynamic Screening & Tool Selection
@@ -85,19 +85,32 @@ For each capability needed (e.g. *Vulnerability Scanning*, *A11y Testing*), reco
 Perform execution in a strict sequence:
 1. **Stage 1 (Complete Interview)**: Finish all questions and candidate screening before scaffolding or editing files.
 2. **Stage 2 (Deduplication)**: Audit selected tools to see if a single tool covers multiple capabilities (e.g., configuring *ESLint* to handle formatting, accessibility rules, and translation limits).
-3. **Stage 3 (Handoff)**: Dispatch execution contracts containing paths, install commands, and config contents to specialized installer subagents (e.g. `tool-scaffolder.agent`).
-4. **Rollback & Verification**: Run build tests after each specialist installation. If the build breaks, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+3. **Stage 3 (Handoff)**: 
+   - **If Scaffolding Mode:** Dispatch execution contracts containing paths, install commands, and config contents to specialized installer subagents (e.g. `tool-scaffolder.agent`).
+   - **If Backlog Mode:** Dispatch backlog parameter contracts to specialist subagents (e.g. `privacy-guardian.agent`). Specialist agents will utilize Section 9 of the robustness protocol to return a structured list of tasks in JSON format instead of running installations.
+4. **Rollback & Verification (Scaffolding Mode Only)**: Run build tests after each specialist installation. If the build breaks, notify the developer of the error and attempt to debug/resolve the failure. If debugging fails, explain what was tried and ask the developer for explicit permission/consent before executing VCS-specific rollback commands (e.g. `git checkout -- .` & `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ### Phase 6: Reporting
-Upon completion, write two reports and ensure you append the **Developer Empowerment Disclaimer** blockquote to the bottom of each:
-1. **Audit Report (`.repo-wizard/audit-report.md`)**:
+Upon completion, generate the following deliverables:
+1. **The Full Technical Report (`.repo-wizard/repo-wizard-full-report.md` & `.repo-wizard/repo-wizard-full-report.html`)**:
    - System Profile (LOC, language structure).
    - Capability mapping & screening logs (including rejected tools and skip notes).
    - Selection Ledger: `"For [Capability Y], the repo-wizard suggested [Tools]. The developer selected [Tool B] [Reason: Rationales]."`
-2. **Developer Toolchain Summary (`docs/TOOLCHAIN.md`)**:
+   - Backlog Summary (If Backlog Mode): Total count of generated stories and epics.
+   - Every format must have the **Developer Empowerment Disclaimer** blockquote (or styled disclaimer block) appended to the bottom.
+2. **The Executive Summary (`.repo-wizard/repo-wizard-executive-summary.md` & `.repo-wizard/repo-wizard-executive-summary.html`)**:
+   - A constructive high-level overview structured into 3 sections, with each section containing 3 paragraphs or fewer (under 450 words total per section): Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
+   - Positive and constructive tone, avoiding critical language.
+   - Append the **Developer Empowerment Disclaimer** blockquote (or styled disclaimer block) to the bottom of both files.
+3. **The Tabular Backlog CSV (`.repo-wizard/backlog.csv` - Backlog Mode Only)**:
+   - Contains headers: `Summary`, `Description`, `Issue Type`, `Epic Name / Parent`, `Labels`, `Recommended By (Sub-Agent)`, `Frameworks/Goals`.
+   - Recommending agent namespace-prefixed as `repo-wizard [agent-name]`.
+   - Individual task descriptions must have the **Developer Empowerment Disclaimer** blockquote appended at the very bottom.
+4. **Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)**:
    - Name and purpose of each configured tool.
    - Clickable links to the configuration files in the repo (e.g. [eslint.config.js](../../eslint.config.js)).
    - Link references to the tools' official docs.
+   - Append the **Developer Empowerment Disclaimer** blockquote to the bottom.
 
 ---
 
@@ -117,7 +130,7 @@ Upon completion, write two reports and ensure you append the **Developer Empower
 * Overwriting `.gitignore` without adding `.repo-wizard/` to the ignore list on startup.
 * Proposing unsupported/outdated tools without running them through the evaluator.
 * Leaving the codebase in a broken compilation state after a verification build fail.
-* Capturing user conversations or terminal install logs in `audit-report.md`.
+* Capturing user conversations or terminal install logs in `repo-wizard-full-report.md`.
 
 ---
 
@@ -130,4 +143,8 @@ Upon completion, write two reports and ensure you append the **Developer Empower
 - [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback safety checks.
-- [ ] Both `.repo-wizard/audit-report.md` and [docs/TOOLCHAIN.md](../../docs/TOOLCHAIN.md) are generated with relative links and have the Developer Empowerment Disclaimer blockquote appended.
+- [ ] Renamed report `.repo-wizard/repo-wizard-full-report.md` and companion `.repo-wizard/repo-wizard-full-report.html` are generated with relative links.
+- [ ] Constructive `.repo-wizard/repo-wizard-executive-summary.md` and `.repo-wizard/repo-wizard-executive-summary.html` are generated (3 sections, each under 3 paragraphs and 450 words).
+- [ ] If in Backlog Mode, `.repo-wizard/backlog.csv` is correctly output with JIRA-compatible headers and sub-agent attribution tags.
+- [ ] If in Scaffolding Mode, [docs/TOOLCHAIN.md](../../docs/TOOLCHAIN.md) is generated.
+- [ ] All Markdown and HTML reports have the Developer Empowerment Disclaimer blockquote appended.
