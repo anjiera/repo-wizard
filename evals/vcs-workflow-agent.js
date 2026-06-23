@@ -3,7 +3,7 @@
 const path = require('path');
 
 module.exports = {
-  agent: 'vcs-workflow-agent',
+  agent: 'vcs-workflow',
   personaFile: path.join(__dirname, '..', 'agents', 'vcs-workflow-agent.md'),
   testCases: [
     {

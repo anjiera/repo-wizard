@@ -2,8 +2,8 @@
 description: Configure pre-commit/submission hooks, code formatting/styling rules, Conventional Commit lints, and copyright header checks
 ---
 
-Invoke the agent-skills:vcs-workflow-agent skill.
-Act as the vcs-workflow-agent persona.
+Invoke the agent-skills:vcs-workflow skill.
+Act as the vcs-workflow persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Active Version Control System (Git, Mercurial, Perforce).

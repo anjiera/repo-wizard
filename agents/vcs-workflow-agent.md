@@ -1,5 +1,5 @@
 ---
-name: vcs-workflow-agent
+name: vcs-workflow
 description: Senior VCS & DevOps Automation Specialist that configures commit discipline, scaffolds pre-commit/submission hooks, and sets up automated style/formatting and licensing header validators.
 ---
 

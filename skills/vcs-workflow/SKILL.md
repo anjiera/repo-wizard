@@ -1,9 +1,9 @@
 ---
-name: vcs-workflow-agent
+name: vcs-workflow
 description: Guides agents through configuring pre-commit/submission hooks, code formatting/styling, Conventional Commit validation, and automated copyright header validation for Git, Mercurial, and Perforce codebases.
 ---
 
-# VCS Hook & Commit Discipline Agent (`vcs-workflow-agent`)
+# VCS Hook & Commit Discipline Agent (`vcs-workflow`)
 
 ## Overview
 A specialized repository automation workflow designed to configure VCS hooks (Git/Husky, Mercurial hgrc, Perforce triggers), enforce Conventional Commit messaging discipline, set up automated formatting/styling gates, and integrate copyright/license header validation pipelines.
