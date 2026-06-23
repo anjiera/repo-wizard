@@ -12,10 +12,19 @@ To load the plugin locally:
    ```bash
    git clone https://github.com/anjiera/repo-wizard.git
    ```
-2. Start your Claude Code session by pointing to the plugin directory:
+2. Run the repository setup script to check prerequisites, configure Git hooks, and verify code integrity:
+   ```bash
+   # On Unix / macOS
+   ./setup.sh
+
+   # On Windows
+   .\setup.ps1
+   ```
+3. Start your Claude Code session by pointing to the plugin directory:
    ```bash
    claude --plugin-dir /path/to/repo-wizard
    ```
+
 
 Verify that the plugin is loaded by typing `/plugins` in the chat window.
 

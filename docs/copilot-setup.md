@@ -1,8 +1,18 @@
 # Using Repo Wizard with GitHub Copilot
 
+Before getting started, run the repository setup script to check prerequisites, configure Git hooks, and verify code integrity:
+```bash
+# On Unix / macOS / Git Bash
+./setup.sh
+
+# On Windows (PowerShell)
+.\setup.ps1
+```
+
 GitHub Copilot does not support native plugin slash commands like Antigravity, but you can easily load the personas and skills as project-wide guidelines or reference them directly in Copilot Chat.
 
 ---
+
 
 ## Method 1: Project-Wide Guidelines (Recommended)
 

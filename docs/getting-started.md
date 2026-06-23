@@ -72,7 +72,17 @@ Focuses on configuring build automation, deployment replication, container scali
 
 ## Developer & Validation Utilities
 
-To ensure repository quality, standard formatting, and test coverage, developers can run the following validation scripts:
+To automatically bootstrap your local development environment, check system prerequisites, configure Git hooks, and verify code integrity, run the setup script:
+
+```bash
+# On Unix / macOS / Git Bash
+./setup.sh
+
+# On Windows (PowerShell)
+.\setup.ps1
+```
+
+Once set up, developers can run individual validation and utility scripts:
 
 * **Static Validation Linters**: Validate command parity, agent files syntax, and skill formats:
   - `node scripts/validate-agents.js` (validates agents Markdown layout)

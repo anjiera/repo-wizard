@@ -25,7 +25,8 @@ docs/             → User-facing onboarding and setup guides
 
 ## Command References
 
-Since this is a documentation and configuration repository, build commands are not applicable, but initial environment setup, hooks installation, and lint validation are automated.
+Since this repository contains agent instructions, custom CLI commands, validation test suites, and judge evaluations, traditional compilation build steps are not required, but environment setup, Git hook installations, and test/validation suites are automated.
+
 - Setup environment: `./setup.sh` (Unix/macOS) or `.\setup.ps1` (Windows)
 - Validate all skills: `node scripts/validate-skills.js`
 - Validate all commands: `node scripts/validate-commands.js`

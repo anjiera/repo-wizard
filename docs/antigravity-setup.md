@@ -12,10 +12,19 @@ You can install the `repo-wizard` package as a native plugin in the Google Antig
    ```bash
    git clone https://github.com/anjiera/repo-wizard.git
    ```
-2. Install the plugin using `agy`:
+2. Run the repository setup script to check prerequisites, configure Git hooks, and verify code integrity:
+   ```bash
+   # On Unix / macOS
+   ./setup.sh
+
+   # On Windows
+   .\setup.ps1
+   ```
+3. Install the plugin using `agy`:
    ```bash
    agy plugin install /path/to/repo-wizard
    ```
+
    This validates the directory structure and installs the skills, personas, and commands into your global Antigravity config directory.
 
 ### Option 2: Install from Remote Git Repository
