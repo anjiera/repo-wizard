@@ -6,7 +6,7 @@ It packages instructions, checklists, and persona configurations that can be loa
 
 ---
 
-## 🗺️ Documentation & Navigation Map
+## Documentation & Navigation Map
 
 To help you get started quickly, please refer to the following guides:
 * **[AGENT_MATRIX.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/AGENT_MATRIX.md)** — The multi-agent taxonomy matrix mapping personas, skills, commands, and standards.
@@ -19,7 +19,7 @@ To help you get started quickly, please refer to the following guides:
 
 ---
 
-## ⚙️ Architecture & Orchestration Flow
+## Architecture & Orchestration Flow
 
 Repo Wizard utilizes a multi-agent orchestration pattern where a lead orchestrator handles user onboarding and sizing checks, and coordinates specialist subagents using parameter contract validations.
 
@@ -39,7 +39,7 @@ graph TD
 
 ---
 
-## 🛠️ Features & Commands
+## Features & Commands
 
 ### 1. Legal Neutrality Scanner (`/rw-legal-neutrality`)
 * **Purpose:** Scans codebases for high-risk phrases, promises, or claims (e.g. guaranteeing security, offering unregulated fitness/health guidance) that expose the company to legal liability.
@@ -64,7 +64,7 @@ To verify repository quality and facilitate testing of AI agent workflows:
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 repo-wizard/
@@ -79,7 +79,7 @@ repo-wizard/
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 To automatically configure your local environment, install pre-commit git hooks, and verify code integrity:
 
@@ -99,7 +99,7 @@ For detailed setup instructions on different client environments, see:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](file:///d:/DevSandbox/agy-projects/repo-wizard/LICENSE) file for details.
 
