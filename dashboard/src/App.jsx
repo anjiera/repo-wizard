@@ -46,10 +46,17 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [scanMessage, setScanMessage] = useState('');
   const [logs, setLogs] = useState([]);
+  const [hasSession, setHasSession] = useState(false);
 
-  // Fetch reports on startup
+  // Fetch reports and active session state on startup/screen change
   useEffect(() => {
+    // Clear active timeouts when screen changes to prevent background redirects/updates
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
     let active = true;
+
+    // Fetch reports
     fetch('/api/reports')
       .then(res => {
         if (!res.ok) throw new Error();
@@ -59,6 +66,16 @@ export default function App() {
         if (active && data.reports) setReports(data.reports);
       })
       .catch(() => {});
+
+    // Check if session exists
+    fetch('/api/session')
+      .then(res => {
+        if (active) setHasSession(res.ok);
+      })
+      .catch(() => {
+        if (active) setHasSession(false);
+      });
+
     return () => {
       active = false;
     };
@@ -142,6 +159,10 @@ export default function App() {
       alert('Please enter a target path or Git URL.');
       return;
     }
+    // Clear any pending timeouts from previous actions/errors to avoid overlap
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+
     setScreen('running');
     setScanMessage('Sizing repository and scanning dependencies...');
     setLogs([]);
@@ -240,7 +261,10 @@ export default function App() {
       {/* Header */}
       <header className="w-full max-w-6xl flex justify-between items-center py-6 border-b border-brand-border mb-10">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#2ea44f] flex items-center justify-center font-bold text-white text-xl">W</div>
+          <div className="w-8 h-8 rounded-lg bg-[#2ea44f] flex flex-col items-center justify-center font-bold text-white select-none leading-none pt-0.5 shadow-[0_0_10px_rgba(46,164,79,0.3)]">
+            <span className="text-[10px] font-black leading-none -mb-1 text-[#a5d6ff] select-none">^</span>
+            <span className="text-lg font-black leading-none select-none">R</span>
+          </div>
           <span className="font-extrabold text-xl tracking-tight text-white">Repo Wizard Dashboard</span>
         </div>
         <div className="flex gap-4">
@@ -292,12 +316,25 @@ export default function App() {
                   Retrieve on-disk alignment sessions and resume from where the survey was paused.
                 </p>
               </div>
-              <button 
-                onClick={handleResume}
-                className="w-full bg-[#30363d] hover:bg-[#8b949e]/20 text-[#c9d1d9] border border-brand-border font-semibold py-3 px-6 rounded-xl transition"
-              >
-                Resume Paused Session
-              </button>
+              <div className="flex flex-col gap-2">
+                <button 
+                  onClick={handleResume}
+                  disabled={!hasSession}
+                  className={`w-full font-semibold py-3 px-6 rounded-xl transition border ${
+                    hasSession 
+                      ? 'bg-[#1f6feb]/20 hover:bg-[#1f6feb]/30 text-[#58a6ff] border-[#1f6feb] shadow-[0_0_15px_rgba(31,111,235,0.1)]' 
+                      : 'bg-[#161b22] text-[#484f58] border-[#30363d] cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  Resume Paused Session
+                </button>
+                <p className="text-xs text-center text-[#8b949e] mt-1 select-none">
+                  {hasSession 
+                    ? '✓ Active session found on disk.' 
+                    : 'ⓘ No active session found (.repo-wizard/session.json).'
+                  }
+                </p>
+              </div>
             </div>
 
             <div className="glass-panel p-8 rounded-2xl shadow-xl flex flex-col justify-between md:col-span-2">
@@ -422,6 +459,8 @@ export default function App() {
                   <div>
                     <label className="block text-sm text-[#c9d1d9] mb-2">Primary Language / Platform</label>
                     <select 
+                      value={session.answers.frameworks[0] || 'react'}
+                      onChange={(e) => setSession({...session, answers: {...session.answers, frameworks: [e.target.value]}})}
                       className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-3 text-white focus:outline-none"
                     >
                       <option value="react">React / Node.js Workspace</option>

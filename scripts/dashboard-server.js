@@ -43,6 +43,9 @@ function writeLog(level, message, correlationId = '', extra = {}) {
  * Searches for an open port using the native net package
  */
 function findOpenPort(startPort, callback) {
+  if (startPort > 65535) {
+    throw new Error('No open ports found in range 3000-65535');
+  }
   const server = net.createServer();
   server.listen(startPort, () => {
     server.once('close', () => callback(startPort));
@@ -97,14 +100,21 @@ function serveStaticFile(res, reqPath, correlationId) {
     filePath = path.join(ROOT, 'dashboard', 'dist', 'index.html');
   }
 
-  const ext = path.extname(filePath);
-  let contentType = 'text/html';
-  if (ext === '.js') contentType = 'application/javascript';
-  if (ext === '.css') contentType = 'text/css';
-  if (ext === '.json') contentType = 'application/json';
-  if (ext === '.png') contentType = 'image/png';
-  if (ext === '.ico') contentType = 'image/x-icon';
-  if (ext === '.svg') contentType = 'image/svg+xml';
+  const ext = path.extname(filePath).toLowerCase();
+  const MIME_TYPES = {
+    '.html': 'text/html',
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.ico': 'image/x-icon',
+    '.svg': 'image/svg+xml',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf',
+    '.map': 'application/json'
+  };
+  const contentType = MIME_TYPES[ext] || (ext === '' ? 'text/html' : 'application/octet-stream');
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
@@ -119,8 +129,11 @@ function serveStaticFile(res, reqPath, correlationId) {
 }
 
 const server = http.createServer((req, res) => {
-  // CORS Headers for development
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Secure CORS Headers: only allow requests from localhost/127.0.0.1
+  const origin = req.headers.origin;
+  if (origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Correlation-ID');
 
@@ -153,19 +166,18 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    fs.readFile(SESSION_FILE, 'utf8', (err, data) => {
-      if (err) {
-        writeLog('error', 'Failed to read session file', correlationId, { error: err.message });
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Failed to read session file.' }));
-      } else {
-        res.writeHead(200, { 
-          'Content-Type': 'application/json',
-          'ETag': etag
-        });
-        res.end(data);
-      }
-    });
+    try {
+      const data = fs.readFileSync(SESSION_FILE, 'utf8');
+      res.writeHead(200, { 
+        'Content-Type': 'application/json',
+        'ETag': etag
+      });
+      res.end(data);
+    } catch (err) {
+      writeLog('error', 'Failed to read session file', correlationId, { error: err.message });
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed to read session file.' }));
+    }
     return;
   }
 
@@ -344,7 +356,8 @@ const server = http.createServer((req, res) => {
 findOpenPort(PORT_START, (openPort) => {
   server.listen(openPort, () => {
     console.log(`\n\x1b[1m\x1b[32m==================================================\x1b[0m`);
-    console.log(`\x1b[1m\x1b[36m  Repo Wizard Interactive Dashboard is Live!\x1b[0m`);
+    console.log(`\x1b[1m\x1b[35m   ^   \x1b[0m`);
+    console.log(`\x1b[1m\x1b[35m   R   \x1b[0m  \x1b[1m\x1b[36mRepo Wizard Interactive Dashboard is Live!\x1b[0m`);
     console.log(`\x1b[1m\x1b[34m  Access URL:\x1b[0m \x1b[4mhttp://localhost:${openPort}\x1b[0m`);
     console.log(`\x1b[1m\x1b[32m==================================================\x1b[0m\n`);
     

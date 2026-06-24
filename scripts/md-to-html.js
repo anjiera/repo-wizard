@@ -126,6 +126,9 @@ function parseMarkdown(md) {
   }
 
   if (inList) html += '</ul>\n';
+  if (inCodeBlock) {
+    html += `<pre><code class="language-${escapeHtml(codeBlockLang)}">${escapeHtml(codeLines.join('\n'))}</code></pre>\n`;
+  }
 
   return html;
 }
@@ -135,10 +138,35 @@ function parseMarkdown(md) {
  */
 function sanitizeUrl(url) {
   if (!url) return '#';
-  const cleaned = url.replace(/[\s\x00-\x1f\x7f]/g, '').toLowerCase();
-  if (/^(javascript|data|vbscript):/i.test(cleaned)) {
+  
+  // Remove control characters and whitespace
+  const cleaned = url.replace(/[\s\x00-\x1f\x7f]/g, '');
+  
+  // HTML entity decode for common protocol bypasses
+  let decoded = cleaned
+    .replace(/&colon;/ig, ':')
+    .replace(/&#x3a;/ig, ':')
+    .replace(/&#58;/ig, ':')
+    .replace(/&amp;/ig, '&');
+
+  // Decode decimal and hex entities completely to be safe
+  decoded = decoded.replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)));
+  decoded = decoded.replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+  
+  const lower = decoded.toLowerCase();
+  
+  if (/^(javascript|data|vbscript|file):/i.test(lower)) {
     return '#';
   }
+  
+  const protocolMatch = lower.match(/^([a-z0-9\-\.\+]+):/);
+  if (protocolMatch) {
+    const proto = protocolMatch[1];
+    if (proto !== 'http' && proto !== 'https' && proto !== 'mailto' && proto !== 'tel') {
+      return '#';
+    }
+  }
+  
   return url;
 }
 
@@ -146,20 +174,33 @@ function sanitizeUrl(url) {
  * Parses inline formatting like bold, code, links
  */
 function inlineParse(text) {
-  let clean = escapeHtml(text || '');
-
-  // Bold: **text**
-  clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-  // Inline Code: `code`
-  clean = clean.replace(/`(.*?)`/g, '<code>$1</code>');
-
-  // Links: [text](url)
-  clean = clean.replace(/\[(.*?)\]\((.*?)\)/g, (match, linkText, url) => {
-    return `<a href="${sanitizeUrl(url)}">${linkText}</a>`;
+  const links = [];
+  // Extract links from raw text first to prevent double HTML escaping of URL parameters
+  let parsed = (text || '').replace(/\[(.*?)\]\((.*?)\)/g, (match, linkText, url) => {
+    const id = links.length;
+    links.push({ linkText, url });
+    return `__LINK_PLACEHOLDER_${id}__`;
   });
 
-  return clean;
+  // Escape HTML on the rest of the text content
+  parsed = escapeHtml(parsed);
+
+  // Parse bold and inline code on the escaped text
+  parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  parsed = parsed.replace(/`(.*?)`/g, '<code>$1</code>');
+
+  // Restore and safely format URLs and link text
+  parsed = parsed.replace(/__LINK_PLACEHOLDER_(\d+)__/g, (match, id) => {
+    const link = links[parseInt(id, 10)];
+    let safeText = escapeHtml(link.linkText);
+    // Allow bold and code formatting inside link text
+    safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    safeText = safeText.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    return `<a href="${escapeHtml(sanitizeUrl(link.url))}">${safeText}</a>`;
+  });
+
+  return parsed;
 }
 
 /**
