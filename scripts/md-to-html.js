@@ -182,16 +182,21 @@ function sanitizeUrl(url) {
   // Remove control characters and whitespace
   const cleaned = url.replace(/[\s\x00-\x1f\x7f]/g, '');
   
-  // HTML entity decode for common protocol bypasses
-  let decoded = cleaned
-    .replace(/&colon;/ig, ':')
-    .replace(/&#x3a;/ig, ':')
-    .replace(/&#58;/ig, ':')
-    .replace(/&amp;/ig, '&');
-
-  // Decode decimal and hex entities completely to be safe
-  decoded = decoded.replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)));
-  decoded = decoded.replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+  // Decode HTML entities recursively to prevent nested bypasses
+  let decoded = cleaned;
+  let prev;
+  let limit = 0;
+  do {
+    prev = decoded;
+    decoded = decoded
+      .replace(/&colon;/ig, ':')
+      .replace(/&#x3a;/ig, ':')
+      .replace(/&#58;/ig, ':')
+      .replace(/&amp;/ig, '&')
+      .replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)))
+      .replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+    limit++;
+  } while (decoded !== prev && limit < 10);
   
   const lower = decoded.toLowerCase();
   

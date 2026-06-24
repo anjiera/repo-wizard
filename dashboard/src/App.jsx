@@ -377,29 +377,64 @@ export default function App() {
                 />
               </div>
 
-              <div className="flex gap-4">
+              {/* Option A: Interactive Wizard */}
+              <div className="border-t border-brand-border/40 pt-5">
+                <h3 className="text-xs font-bold text-[#8b949e] mb-2 uppercase tracking-wider">Option A: Interactive Setup</h3>
+                <p className="text-xs text-[#8b949e] mb-3">
+                  Highly recommended. Customize rules, select testing packages, and review all configurations before writing changes.
+                </p>
                 <button 
                   type="submit"
-                  className="flex-1 bg-[#2ea44f] hover:bg-[#2c974b] text-white font-semibold py-3 rounded-xl transition shadow-lg"
+                  className="w-full bg-[#2ea44f] hover:bg-[#2c974b] text-white font-semibold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
                 >
-                  Configure & Audit
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => handleHeadlessScan('full')}
-                  className="flex-1 bg-[#58a6ff]/10 hover:bg-[#58a6ff]/20 text-[#58a6ff] border border-[#58a6ff]/30 font-semibold py-3 rounded-xl transition"
-                >
-                  Skip to Headless Scan
+                  <span>Configure & Audit</span>
+                  <span className="text-xs opacity-75 font-normal">(Press Enter to Submit)</span>
                 </button>
               </div>
-              
-              <button 
-                type="button"
-                onClick={() => handleHeadlessScan('backlog')}
-                className="w-full text-center text-xs text-[#8b949e] hover:text-white transition"
-              >
-                Direct Backlog Generation (No Scaffolding)
-              </button>
+
+              {/* Option B: Automated Headless Scan */}
+              <div className="border-t border-brand-border/40 pt-5 space-y-4">
+                <h3 className="text-xs font-bold text-[#8b949e] mb-1 uppercase tracking-wider">Option B: Headless Scan Modes</h3>
+                <p className="text-xs text-[#8b949e] mb-3">
+                  Audit immediately using best-guess rules and bypass the step-by-step questionnaire.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Full Headless Scan */}
+                  <div className="flex flex-col justify-between p-4 rounded-xl border border-brand-border bg-[#0d1117]/30 hover:border-[#58a6ff]/30 transition group">
+                    <div className="mb-3">
+                      <h4 className="text-xs font-bold text-[#58a6ff] mb-1">Full Headless Scan</h4>
+                      <p className="text-[11px] text-[#8b949e] leading-normal">
+                        Audits and automatically applies scaffolding configs, hooks, and tests directly to the workspace.
+                      </p>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => handleHeadlessScan('full')}
+                      className="w-full bg-[#58a6ff]/10 hover:bg-[#58a6ff]/20 text-[#58a6ff] border border-[#58a6ff]/30 font-semibold py-2 px-3 rounded-lg text-xs transition"
+                    >
+                      Run Full Scan
+                    </button>
+                  </div>
+
+                  {/* Read-only Backlog Generation */}
+                  <div className="flex flex-col justify-between p-4 rounded-xl border border-brand-border bg-[#0d1117]/30 hover:border-purple-500/30 transition group">
+                    <div className="mb-3">
+                      <h4 className="text-xs font-bold text-purple-400 mb-1">Backlog Only</h4>
+                      <p className="text-[11px] text-[#8b949e] leading-normal">
+                        A safe, read-only analysis. Compiles a backlog report of issues, leaving target codebase files untouched.
+                      </p>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => handleHeadlessScan('backlog')}
+                      className="w-full bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold py-2 px-3 rounded-lg text-xs transition"
+                    >
+                      Generate Backlog
+                    </button>
+                  </div>
+                </div>
+              </div>
             </form>
           </div>
         )}

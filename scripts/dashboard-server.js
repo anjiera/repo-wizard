@@ -44,17 +44,29 @@ function writeLog(level, message, correlationId = '', extra = {}) {
  */
 function findOpenPort(startPort, callback) {
   if (startPort > 65535) {
-    throw new Error('No open ports found in range 3000-65535');
+    callback(new Error('No open ports found in range 3000-65535'));
+    return;
   }
   const server = net.createServer();
   server.listen(startPort, () => {
-    server.once('close', () => callback(startPort));
+    server.once('close', () => callback(null, startPort));
     server.close();
   });
   server.on('error', () => {
     findOpenPort(startPort + 1, callback);
   });
 }
+
+// Initialize in-memory sessionState cache from disk on startup
+let sessionState = {};
+if (fs.existsSync(SESSION_FILE)) {
+  try {
+    sessionState = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+  } catch (e) {
+    sessionState = {};
+  }
+}
+
 
 /**
  * Generates ETag for cache validation
@@ -142,11 +154,20 @@ const server = http.createServer((req, res) => {
   if (req.method === 'POST') {
     const origin = req.headers.origin;
     const referer = req.headers.referer;
+    
+    // Require at least one local verification header to be present
+    if (!origin && !referer) {
+      writeLog('warning', 'CSRF validation failed: both Origin and Referer headers are missing', correlationId);
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Forbidden: CSRF validation failed.' }));
+      return;
+    }
+
     const isLocalOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-    const isLocalReferer = !referer || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(referer);
+    const isLocalReferer = !referer || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/.test(referer);
     
     if (!isLocalOrigin || !isLocalReferer) {
-      writeLog('warning', 'CSRF validation failed for POST request', correlationId);
+      writeLog('warning', 'CSRF validation failed for POST request', correlationId, { origin, referer });
       res.writeHead(403, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Forbidden: CSRF validation failed.' }));
       return;
@@ -224,26 +245,55 @@ const server = http.createServer((req, res) => {
       try {
         const payload = JSON.parse(body);
         
-        // Read existing session to merge
-        let existingSession = {};
-        if (fs.existsSync(SESSION_FILE)) {
-          try {
-            existingSession = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
-          } catch (e) {
-            existingSession = {};
+        // Merge into global sessionState to prevent write race conditions
+        if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') sessionState.targetPath = payload.targetPath;
+        if (payload.status !== undefined && typeof payload.status === 'string') sessionState.status = payload.status;
+        if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') sessionState.currentStep = payload.currentStep;
+        if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
+
+        // Nested validation for answers
+        if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {
+          const cleanAnswers = sessionState.answers || {};
+          const pAnswers = payload.answers;
+          
+          if (pAnswers.goals !== undefined && typeof pAnswers.goals === 'string') cleanAnswers.goals = pAnswers.goals;
+          if (pAnswers.team !== undefined && typeof pAnswers.team === 'string') cleanAnswers.team = pAnswers.team;
+          if (pAnswers.budget !== undefined && typeof pAnswers.budget === 'string') cleanAnswers.budget = pAnswers.budget;
+          
+          if (pAnswers.platforms !== undefined && Array.isArray(pAnswers.platforms)) {
+            cleanAnswers.platforms = pAnswers.platforms.filter(x => typeof x === 'string');
           }
+          if (pAnswers.frameworks !== undefined && Array.isArray(pAnswers.frameworks)) {
+            cleanAnswers.frameworks = pAnswers.frameworks.filter(x => typeof x === 'string');
+          }
+          if (pAnswers.testing !== undefined && typeof pAnswers.testing === 'boolean') cleanAnswers.testing = pAnswers.testing;
+          if (pAnswers.coverageThreshold !== undefined && typeof pAnswers.coverageThreshold === 'number') {
+            cleanAnswers.coverageThreshold = pAnswers.coverageThreshold;
+          }
+          if (pAnswers.compliance !== undefined && Array.isArray(pAnswers.compliance)) {
+            cleanAnswers.compliance = pAnswers.compliance.filter(x => typeof x === 'string');
+          }
+          sessionState.answers = cleanAnswers;
         }
 
-        // Schema validation to prevent prototype pollution or session corruption
-        const cleanPayload = { ...existingSession };
-        if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') cleanPayload.targetPath = payload.targetPath;
-        if (payload.status !== undefined && typeof payload.status === 'string') cleanPayload.status = payload.status;
-        if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') cleanPayload.currentStep = payload.currentStep;
-        if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) cleanPayload.answers = payload.answers;
-        if (payload.sections !== undefined && typeof payload.sections === 'object' && payload.sections !== null) cleanPayload.sections = payload.sections;
-        if (payload.mode !== undefined && typeof payload.mode === 'string') cleanPayload.mode = payload.mode;
+        // Nested validation for sections
+        if (payload.sections !== undefined && typeof payload.sections === 'object' && payload.sections !== null) {
+          const cleanSections = sessionState.sections || {};
+          const pSections = payload.sections;
+          const validSections = ['context', 'stack', 'gates', 'compliance'];
+          
+          for (const key of validSections) {
+            if (pSections[key] !== undefined && typeof pSections[key] === 'object' && pSections[key] !== null) {
+              if (pSections[key].status !== undefined && typeof pSections[key].status === 'string') {
+                cleanSections[key] = { status: pSections[key].status };
+              }
+            }
+          }
+          sessionState.sections = cleanSections;
+        }
 
-        fs.writeFileSync(SESSION_FILE, JSON.stringify(cleanPayload, null, 2), 'utf8');
+        // Write atomic updates to disk
+        fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionState, null, 2), 'utf8');
         writeLog('info', 'Successfully updated session state', correlationId);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'success', message: 'Session updated.' }));
@@ -392,7 +442,11 @@ const server = http.createServer((req, res) => {
 });
 
 // Run port scan
-findOpenPort(PORT_START, (openPort) => {
+findOpenPort(PORT_START, (err, openPort) => {
+  if (err) {
+    writeLog('error', `Failed to find open port: ${err.message}`);
+    process.exit(1);
+  }
   server.listen(openPort, () => {
     console.log(`\n\x1b[1m\x1b[32m==================================================\x1b[0m`);
     console.log(`\x1b[1m\x1b[35m   ^   \x1b[0m`);

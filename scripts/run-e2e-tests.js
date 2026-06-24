@@ -255,16 +255,27 @@ function testPromptInjectionDefense() {
   assert(parseResult.dataParsed === injectionPayload, "The raw injection content is safely captured as literal string data");
 }
 
+function runGit(args, cwd) {
+  const env = { ...process.env };
+  // Remove git environment variables to avoid leaking parent repository state
+  for (const key of Object.keys(env)) {
+    if (key.startsWith('GIT_')) {
+      delete env[key];
+    }
+  }
+  return execSync(`git ${args}`, { env, cwd, stdio: 'pipe' });
+}
+
 function testVCSScaffoldingRollback() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing VCS scaffolding rollback safety...${RESET}`);
   
   // 1. Initialize git in the sandbox to test VCS commands
   try {
-    execSync('git init', { stdio: 'ignore', cwd: SANDBOX_DIR });
-    execSync('git config user.name "E2E Tester"', { stdio: 'ignore', cwd: SANDBOX_DIR });
-    execSync('git config user.email "tester@e2e.local"', { stdio: 'ignore', cwd: SANDBOX_DIR });
-    execSync('git add .', { stdio: 'ignore', cwd: SANDBOX_DIR });
-    execSync('git commit -m "Initial mock stable checkpoint"', { stdio: 'ignore', cwd: SANDBOX_DIR });
+    runGit('init', SANDBOX_DIR);
+    runGit('config user.name "E2E Tester"', SANDBOX_DIR);
+    runGit('config user.email "tester@e2e.local"', SANDBOX_DIR);
+    runGit('add .', SANDBOX_DIR);
+    runGit('commit -m "Initial mock stable checkpoint"', SANDBOX_DIR);
   } catch (err) {
     console.warn(`  ${YELLOW}⚠${RESET} ${BOLD}Warning:${RESET} Skipping git rollback tests (Git CLI is not configured or fails to init).`);
     return;
@@ -288,8 +299,8 @@ function testVCSScaffoldingRollback() {
   // 4. Execute the VCS Rollback sequence from Section 7 of the protocol
   if (!buildPassed) {
     if (SANDBOX_DIR && SANDBOX_DIR !== ROOT && fs.existsSync(SANDBOX_DIR) && path.basename(SANDBOX_DIR) === 'temp_e2e_sandbox') {
-      execSync('git checkout -- .', { stdio: 'ignore', cwd: SANDBOX_DIR });
-      execSync('git clean -fd', { stdio: 'ignore', cwd: SANDBOX_DIR });
+      runGit('checkout -- .', SANDBOX_DIR);
+      runGit('clean -fd', SANDBOX_DIR);
     }
   }
 
@@ -297,7 +308,7 @@ function testVCSScaffoldingRollback() {
   const fileExists = fs.existsSync(brokenFilePath);
   assert(fileExists === false, 'VCS Rollback (git checkout/clean) successfully deleted the broken configuration file');
   
-  const status = execSync('git status --porcelain', { cwd: SANDBOX_DIR }).toString().trim();
+  const status = runGit('status --porcelain', SANDBOX_DIR).toString().trim();
   assert(status === '', 'VCS Rollback restored the workspace to a clean stable state');
 }
 

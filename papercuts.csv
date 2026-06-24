@@ -1,0 +1,5 @@
+DateFirstSeen,DateLastSeen,File,Line,Scope,Severity,Description,Frequency
+2026-06-24,2026-06-24,scripts/md-to-html.js,72,Markdown Table Parser,Nit,Regex-based table parser splits on pipes even inside inline code blocks (e.g. a | b) causing alignment corruption,1
+2026-06-24,2026-06-24,scripts/validate-deliverables.js,134,HTML Element Comments,Nit,Regex hRegex counts commented-out headings as sections causing false validation failures,1
+2026-06-24,2026-06-24,scripts/validate-deliverables.js,165,HTML Section Word Count,Nit,Tag-stripping regex counts CSS/JS contents inside tags as words inflating word count,1
+2026-06-24,2026-06-24,scripts/md-to-html.js,109,Nested Lists,FYI,Single-pass list parser does not fully support multi-level nested lists of differing indentations,1
