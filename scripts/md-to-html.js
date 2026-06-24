@@ -38,6 +38,8 @@ function parseMarkdown(md) {
   
   let inList = false;
   let inCodeBlock = false;
+  let inTable = false;
+  let tableHeaderParsed = false;
   let codeBlockLang = '';
   let codeLines = [];
 
@@ -62,6 +64,43 @@ function parseMarkdown(md) {
     if (inCodeBlock) {
       codeLines.push(line);
       continue;
+    }
+
+    // 1b. Table Handler
+    const isTableRow = line.trim().startsWith('|') && line.trim().endsWith('|');
+    if (isTableRow) {
+      const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+      const isSeparator = cells.every(c => /^[:\-\s]+$/.test(c) && c.includes('-'));
+      
+      if (isSeparator) {
+        tableHeaderParsed = true;
+        continue;
+      }
+      
+      if (!inTable) {
+        html += '<table>\n';
+        inTable = true;
+        tableHeaderParsed = false;
+      }
+      
+      if (!tableHeaderParsed) {
+        html += '  <thead>\n    <tr>\n';
+        cells.forEach(cell => {
+          html += `      <th>${inlineParse(cell)}</th>\n`;
+        });
+        html += '    </tr>\n  </thead>\n  <tbody>\n';
+        tableHeaderParsed = true;
+      } else {
+        html += '    <tr>\n';
+        cells.forEach(cell => {
+          html += `      <td>${inlineParse(cell)}</td>\n`;
+        });
+        html += '    </tr>\n';
+      }
+      continue;
+    } else if (inTable) {
+      html += '  </tbody>\n</table>\n';
+      inTable = false;
     }
 
     // 2. Unordered List Handler
@@ -126,6 +165,7 @@ function parseMarkdown(md) {
   }
 
   if (inList) html += '</ul>\n';
+  if (inTable) html += '  </tbody>\n</table>\n';
   if (inCodeBlock) {
     html += `<pre><code class="language-${escapeHtml(codeBlockLang)}">${escapeHtml(codeLines.join('\n'))}</code></pre>\n`;
   }
@@ -341,6 +381,32 @@ function convertMdToHtml(mdContent, title = 'Documentation') {
       font-weight: 600;
       display: block;
       margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 0.9em;
+      border: 1px solid var(--border-color);
+    }
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th {
+      background-color: var(--code-bg);
+      font-weight: 600;
+      color: var(--text-heading);
+    }
+    tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+    @media (prefers-color-scheme: dark) {
+      tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
     }
 
     hr {

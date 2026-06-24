@@ -91,7 +91,7 @@ export default function App() {
       .then(data => {
         setSession(data);
         setTargetPath(data.targetPath || '');
-        setScreen('questionnaire');
+        setScreen(prev => prev === 'landing' ? 'questionnaire' : prev);
       })
       .catch(err => {
         setErrorMsg(err.message || 'No active session found.');
@@ -145,7 +145,7 @@ export default function App() {
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to save session.');
-        setScreen('questionnaire');
+        setScreen(prev => prev === 'picker' ? 'questionnaire' : prev);
       })
       .catch(err => {
         setErrorMsg(err.message || 'Failed to save session.');
@@ -190,22 +190,26 @@ export default function App() {
 
     // Simulate backend call
     safeSetTimeout(() => {
+      const completedSession = {
+        ...session,
+        targetPath,
+        status: 'completed',
+        mode: mode === 'full' ? 'headless' : 'backlog'
+      };
+      setSession(completedSession);
+
       fetch('/api/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          targetPath,
-          status: 'completed',
-          mode: mode === 'full' ? 'headless' : 'backlog'
-        })
+        body: JSON.stringify(completedSession)
       })
         .then(res => {
           if (!res.ok) throw new Error('Failed to complete scan.');
-          setScreen('success');
+          setScreen(prev => prev === 'running' ? 'success' : prev);
         })
         .catch(err => {
           setErrorMsg(err.message || 'Failed to complete scan.');
-          setScreen('landing');
+          setScreen(prev => prev === 'running' ? 'landing' : prev);
           safeSetTimeout(() => setErrorMsg(''), 3000);
         });
     }, logList.length * 600 + 200);
@@ -672,7 +676,7 @@ export default function App() {
                         srcDoc={activeReport.content}
                         title="Report Content"
                         className="w-full h-[400px] border-none bg-white rounded-lg"
-                        sandbox="allow-same-origin"
+                        sandbox=""
                       />
                     ) : (
                       <pre className="text-xs font-mono text-[#c9d1d9] whitespace-pre-wrap leading-relaxed">

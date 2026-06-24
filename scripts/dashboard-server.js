@@ -129,6 +129,30 @@ function serveStaticFile(res, reqPath, correlationId) {
 }
 
 const server = http.createServer((req, res) => {
+  const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();
+
+  // Prevent crash via null byte injection
+  if (req.url.includes('\0') || req.url.includes('%00')) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('Bad Request');
+    return;
+  }
+
+  // CSRF Protection for mutating POST requests
+  if (req.method === 'POST') {
+    const origin = req.headers.origin;
+    const referer = req.headers.referer;
+    const isLocalOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    const isLocalReferer = !referer || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(referer);
+    
+    if (!isLocalOrigin || !isLocalReferer) {
+      writeLog('warning', 'CSRF validation failed for POST request', correlationId);
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Forbidden: CSRF validation failed.' }));
+      return;
+    }
+  }
+
   // Secure CORS Headers: only allow requests from localhost/127.0.0.1
   const origin = req.headers.origin;
   if (origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
@@ -143,7 +167,6 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
   writeLog('info', `Received request: ${req.method} ${url.pathname}`, correlationId);
@@ -201,8 +224,18 @@ const server = http.createServer((req, res) => {
       try {
         const payload = JSON.parse(body);
         
+        // Read existing session to merge
+        let existingSession = {};
+        if (fs.existsSync(SESSION_FILE)) {
+          try {
+            existingSession = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+          } catch (e) {
+            existingSession = {};
+          }
+        }
+
         // Schema validation to prevent prototype pollution or session corruption
-        const cleanPayload = {};
+        const cleanPayload = { ...existingSession };
         if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') cleanPayload.targetPath = payload.targetPath;
         if (payload.status !== undefined && typeof payload.status === 'string') cleanPayload.status = payload.status;
         if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') cleanPayload.currentStep = payload.currentStep;
@@ -307,38 +340,44 @@ const server = http.createServer((req, res) => {
 
   // 4b. GET /api/report-content - Fetch specific report content securely
   if (req.method === 'GET' && url.pathname === '/api/report-content') {
-    const fileName = url.searchParams.get('file');
-    if (!fileName || !fileName.startsWith('repo-wizard-') || (!fileName.endsWith('.md') && !fileName.endsWith('.html'))) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Invalid or missing file name.' }));
-      return;
-    }
-
-    const filePath = path.resolve(REPORTS_DIR, fileName);
-
-    // Enforce boundary check to prevent Directory Traversal
-    if (!filePath.startsWith(REPORTS_DIR + path.sep)) {
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Access denied.' }));
-      return;
-    }
-
-    if (!fs.existsSync(filePath)) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Report not found.' }));
-      return;
-    }
-
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        writeLog('error', `Failed to read report content: ${fileName}`, correlationId, { error: err.message });
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Failed to read report file.' }));
-      } else {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ content: data }));
+    try {
+      const fileName = url.searchParams.get('file');
+      if (!fileName || !fileName.startsWith('repo-wizard-') || (!fileName.endsWith('.md') && !fileName.endsWith('.html'))) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid or missing file name.' }));
+        return;
       }
-    });
+
+      const filePath = path.resolve(REPORTS_DIR, fileName);
+
+      // Enforce boundary check to prevent Directory Traversal
+      if (!filePath.startsWith(REPORTS_DIR + path.sep)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Access denied.' }));
+        return;
+      }
+
+      if (!fs.existsSync(filePath)) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Report not found.' }));
+        return;
+      }
+
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          writeLog('error', `Failed to read report content: ${fileName}`, correlationId, { error: err.message });
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Failed to read report file.' }));
+        } else {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ content: data }));
+        }
+      });
+    } catch (err) {
+      writeLog('error', 'Exception in report-content handler', correlationId, { error: err.message });
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Bad Request' }));
+    }
     return;
   }
 
