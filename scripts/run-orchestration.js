@@ -18,6 +18,41 @@ const path = require('path');
 const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
 
+const activeChildren = new Set();
+
+function cleanupChildren() {
+  for (const child of activeChildren) {
+    try {
+      if (process.platform === 'win32') {
+        execSync(`taskkill /pid ${child.pid} /t /f`, { stdio: 'ignore' });
+      } else {
+        process.kill(-child.pid, 'SIGKILL');
+      }
+    } catch (e) {
+      try {
+        child.kill('SIGKILL');
+      } catch (err) {
+        // ignore
+      }
+    }
+  }
+  activeChildren.clear();
+}
+
+// Register process exit and abort signal hooks
+const signals = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+signals.forEach(sig => {
+  process.on(sig, () => {
+    console.error(`\nReceived signal ${sig}, cleaning up child processes...`);
+    cleanupChildren();
+    process.exit(1);
+  });
+});
+
+process.on('exit', () => {
+  cleanupChildren();
+});
+
 const ROOT = path.resolve(__dirname, '..');
 const targetPath = process.env.TARGET_PATH || ROOT;
 const resolvedTarget = path.resolve(targetPath);
@@ -216,6 +251,7 @@ async function main() {
 
       const contractStr = JSON.stringify(entry.contract);
       const child = spawn(cliCmd, [
+        '--dangerously-skip-permissions',
         'run-agent',
         agentName,
         '--prompt',
@@ -225,15 +261,43 @@ async function main() {
         env: { ...process.env, PAGER: 'cat' }
       });
 
+      activeChildren.add(child);
+
       let stdoutData = '';
       let stderrData = '';
+      let stdoutBuffer = '';
+      let stderrBuffer = '';
 
       child.stdout.on('data', (data) => {
-        stdoutData += data.toString();
+        const text = data.toString();
+        stdoutData += text;
+        if (!isTTY) {
+          stdoutBuffer += text;
+          let idx;
+          while ((idx = stdoutBuffer.indexOf('\n')) !== -1) {
+            const line = stdoutBuffer.substring(0, idx).trim();
+            stdoutBuffer = stdoutBuffer.substring(idx + 1);
+            if (line) {
+              console.log(`[${agentName}] ${line}`);
+            }
+          }
+        }
       });
 
       child.stderr.on('data', (data) => {
-        stderrData += data.toString();
+        const text = data.toString();
+        stderrData += text;
+        if (!isTTY) {
+          stderrBuffer += text;
+          let idx;
+          while ((idx = stderrBuffer.indexOf('\n')) !== -1) {
+            const line = stderrBuffer.substring(0, idx).trim();
+            stderrBuffer = stderrBuffer.substring(idx + 1);
+            if (line) {
+              console.error(`[${agentName}] [stderr] ${line}`);
+            }
+          }
+        }
       });
       let resolved = false;
       const safeResolve = () => {
@@ -244,6 +308,7 @@ async function main() {
       };
 
       child.on('error', (err) => {
+        activeChildren.delete(child);
         errors.push({ agent: agentName, code: -1, stderr: `Failed to spawn process: ${err.message}` });
         if (!isTTY) {
           console.error(`[ERROR] ${agentName} failed to spawn: ${err.message}`);
@@ -252,6 +317,15 @@ async function main() {
       });
 
       child.on('close', (code) => {
+        activeChildren.delete(child);
+        if (!isTTY) {
+          if (stdoutBuffer.trim()) {
+            console.log(`[${agentName}] ${stdoutBuffer.trim()}`);
+          }
+          if (stderrBuffer.trim()) {
+            console.error(`[${agentName}] [stderr] ${stderrBuffer.trim()}`);
+          }
+        }
         if (code === 0) {
           fs.writeFileSync(obsPath, stdoutData || `# Observations for ${agentName}\n\nEmpty observations output.\n`, 'utf8');
           entry.status = 'completed';

@@ -269,15 +269,31 @@ export default function App() {
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
 
+    const updatedSession = {
+      ...session,
+      targetPath,
+      mode: mode,
+      status: 'active'
+    };
+
+    setSession(updatedSession);
     setScreen('running');
     setLogs(['[System] Initializing backend scan...']);
     setWarnings([]);
     setScanMessage('Sizing repository and running agents...');
 
-    fetch('/api/scan', {
+    fetch('/api/session', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedSession)
     })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to update session.');
+        return fetch('/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+      })
       .then(res => {
         if (!res.ok) {
           return res.json().then(data => { throw new Error(data.error || 'Failed to start scan.'); });

@@ -93,7 +93,18 @@ function parseCSV(content) {
  * Helper to count words in a string
  */
 function countWords(str) {
-  const clean = str.replace(/[#\-\*\`\[\]\(\)\<\>\/]/g, ' ').trim();
+  if (!str) return 0;
+  let clean = str;
+  // Strip style blocks
+  clean = clean.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ');
+  // Strip script blocks
+  clean = clean.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ');
+  // Strip HTML comments
+  clean = clean.replace(/<!--[\s\S]*?-->/g, ' ');
+  // Strip HTML tags
+  clean = clean.replace(/<[^>]*>/g, ' ');
+  // Replace markdown characters and punctuation with space
+  clean = clean.replace(/[#\-\*\`\[\]\(\)\<\>\/]/g, ' ').trim();
   if (!clean) return 0;
   return clean.split(/\s+/).length;
 }
@@ -131,10 +142,12 @@ function validateFile(filePath) {
     if (isHtml) {
       // Basic HTML structural validation for 3 sections and paragraph counts
       // In HTML, sections are typically separated by headings (<h2> or <h3>)
+      // Strip comments first to avoid matching headings in comments
+      const cleanContent = content.replace(/<!--[\s\S]*?-->/g, ' ');
       const hRegex = /<(h[2-3])\b[^>]*>([\s\S]*?)<\/\1>/gi;
       const headings = [];
       let match;
-      while ((match = hRegex.exec(content)) !== null) {
+      while ((match = hRegex.exec(cleanContent)) !== null) {
         headings.push({ tag: match[1], title: match[2].trim(), index: match.index });
       }
 
@@ -144,8 +157,8 @@ function validateFile(filePath) {
         // Evaluate paragraphs and word counts within each section
         for (let i = 0; i < headings.length; i++) {
           const start = headings[i].index;
-          const end = i < headings.length - 1 ? headings[i + 1].index : content.length;
-          const sectionContent = content.slice(start, end);
+          const end = i < headings.length - 1 ? headings[i + 1].index : cleanContent.length;
+          const sectionContent = cleanContent.slice(start, end);
           
           // Match paragraphs <p>...</p>
           const pRegex = /<p\b[^>]*>([\s\S]*?)<\/p>/gi;

@@ -329,7 +329,7 @@ function testRunOrchestration() {
         const stdout = execSync(`node "${scriptPath}"`, {
           cwd: ROOT,
           stdio: 'pipe',
-          env: { ...process.env, MOCK_CLI: 'true' }
+          env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
         }).toString();
         return { code: 0, stdout };
       } catch (err) {
@@ -351,7 +351,7 @@ function testRunOrchestration() {
         const stdout = execSync(`node "${scriptPath}"`, {
           cwd: ROOT,
           stdio: 'pipe',
-          env: { ...process.env, DISABLE_CLI: 'true' }
+          env: { ...process.env, DISABLE_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
         }).toString();
         return { code: 0, stdout };
       } catch (err) {

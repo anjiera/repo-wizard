@@ -186,6 +186,8 @@ function sanitizeUrl(url) {
   do {
     prev = decoded;
     decoded = decoded
+      .replace(/&NewLine;/ig, '\n')
+      .replace(/&Tab;/ig, '\t')
       .replace(/&colon;/ig, ':')
       .replace(/&#x3a;/ig, ':')
       .replace(/&#58;/ig, ':')
@@ -193,8 +195,8 @@ function sanitizeUrl(url) {
       .replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)))
       .replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
       
-    // Strip control characters and whitespace on every iteration, especially after decoding entities
-    decoded = decoded.replace(/[\s\x00-\x1f\x7f]/g, '');
+    // Strip control characters, ASCII whitespace, and Unicode zero-width/bidirectional/formatting characters
+    decoded = decoded.replace(/[\s\x00-\x1f\x7f\u200b-\u200d\ufeff\u200e\u200f\u202a-\u202e]/gi, '');
     
     // Check intermediate decoded state to block deep or nested obfuscation early
     const lowerState = decoded.toLowerCase();
