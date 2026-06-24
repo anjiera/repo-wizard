@@ -85,8 +85,14 @@ function serveStaticFile(res, reqPath, correlationId) {
     return;
   }
 
-  // Fallback to index.html for SPA router
+  // Fallback to index.html for SPA router only for non-asset requests
+  const isAsset = reqPath.startsWith('/assets/') || reqPath.startsWith('/vite.svg') || path.extname(reqPath) !== '';
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+    if (isAsset) {
+      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.end('Not Found');
+      return;
+    }
     filePath = path.join(ROOT, 'dashboard', 'dist', 'index.html');
   }
 
@@ -97,6 +103,7 @@ function serveStaticFile(res, reqPath, correlationId) {
   if (ext === '.json') contentType = 'application/json';
   if (ext === '.png') contentType = 'image/png';
   if (ext === '.ico') contentType = 'image/x-icon';
+  if (ext === '.svg') contentType = 'image/svg+xml';
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
