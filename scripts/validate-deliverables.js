@@ -282,40 +282,48 @@ function runValidation(targetDir) {
     return 0;
   }
 
-  const files = fs.readdirSync(targetDir);
   let totalErrors = 0;
 
-  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Auditing deliverables in directory: ${targetDir}${RESET}`);
+  function scanDir(dir) {
+    if (!fs.existsSync(dir)) return;
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      const stats = fs.statSync(fullPath);
 
-  for (const file of files) {
-    const fullPath = path.join(targetDir, file);
-    const stats = fs.statSync(fullPath);
-
-    if (stats.isDirectory()) continue;
-
-    if (file === 'backlog.csv') {
-      console.log(`  Auditing CSV: ${file}`);
-      const csvErrors = validateCSV(fullPath);
-      if (csvErrors.length === 0) {
-        console.log(`    ${GREEN}✓ Passed${RESET}`);
-      } else {
-        csvErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
-        totalErrors += csvErrors.length;
+      if (stats.isDirectory()) {
+        if (file !== 'agents' && file !== 'history' && file !== 'node_modules' && file !== '.git') {
+          scanDir(fullPath);
+        }
+        continue;
       }
-    } else if (file.endsWith('.md') || file.endsWith('.html')) {
-      // Check if it's a report file
-      if (file.includes('report') || file.includes('executive-summary') || file.includes('observations')) {
-        console.log(`  Auditing report: ${file}`);
-        const reportErrors = validateFile(fullPath);
-        if (reportErrors.length === 0) {
+
+      if (file === 'backlog.csv') {
+        console.log(`  Auditing CSV: ${fullPath}`);
+        const csvErrors = validateCSV(fullPath);
+        if (csvErrors.length === 0) {
           console.log(`    ${GREEN}✓ Passed${RESET}`);
         } else {
-          reportErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
-          totalErrors += reportErrors.length;
+          csvErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
+          totalErrors += csvErrors.length;
+        }
+      } else if (file.endsWith('.md') || file.endsWith('.html')) {
+        if (file.includes('report') || file.includes('executive-summary') || file.includes('observations')) {
+          console.log(`  Auditing report: ${fullPath}`);
+          const reportErrors = validateFile(fullPath);
+          if (reportErrors.length === 0) {
+            console.log(`    ${GREEN}✓ Passed${RESET}`);
+          } else {
+            reportErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
+            totalErrors += reportErrors.length;
+          }
         }
       }
     }
   }
+
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Auditing deliverables in directory: ${targetDir}${RESET}`);
+  scanDir(targetDir);
 
   return totalErrors;
 }

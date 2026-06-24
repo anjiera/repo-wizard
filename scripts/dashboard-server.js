@@ -20,13 +20,25 @@ const { convertMdToHtml } = require('./md-to-html');
 
 const ROOT = path.resolve(__dirname, '..');
 const PORT_START = 3000;
-const SESSION_FILE = path.join(ROOT, '.repo-wizard', 'session.json');
 const TOS_FILE = path.join(ROOT, '.repo-wizard', '.tos_agreed');
 
-// Ensure reports directory exists
-const REPORTS_DIR = path.join(ROOT, '.repo-wizard');
-if (!fs.existsSync(REPORTS_DIR)) {
-  fs.mkdirSync(REPORTS_DIR, { recursive: true });
+const REPORTS_ROOT = path.join(ROOT, 'reports');
+if (!fs.existsSync(REPORTS_ROOT)) {
+  fs.mkdirSync(REPORTS_ROOT, { recursive: true });
+}
+
+const LAST_SESSION_POINTER = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
+let currentSessionFile = path.join(ROOT, '.repo-wizard', 'session.json');
+
+if (fs.existsSync(LAST_SESSION_POINTER)) {
+  try {
+    const ptr = JSON.parse(fs.readFileSync(LAST_SESSION_POINTER, 'utf8'));
+    if (ptr.lastSessionPath && fs.existsSync(ptr.lastSessionPath)) {
+      currentSessionFile = ptr.lastSessionPath;
+    }
+  } catch (e) {
+    // Ignore
+  }
 }
 
 let activeScanProcess = null;
@@ -65,9 +77,9 @@ function findOpenPort(startPort, callback) {
 
 // Initialize in-memory sessionState cache from disk on startup
 let sessionState = {};
-if (fs.existsSync(SESSION_FILE)) {
+if (fs.existsSync(currentSessionFile)) {
   try {
-    sessionState = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+    sessionState = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
   } catch (e) {
     sessionState = {};
   }
@@ -423,7 +435,10 @@ Based on static file analysis, we assume the repository uses:
 Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
 `;
 
-  const reportsDir = path.join(ROOT, '.repo-wizard');
+  const reportsDir = path.join(ROOT, 'reports', repoName);
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true });
+  }
   const execPath = path.join(reportsDir, `repo-wizard-executive-summary-${repoName}.md`);
   const fullPath = path.join(reportsDir, `repo-wizard-full-report-${repoName}.md`);
   const obsPath = path.join(reportsDir, `repo-wizard-observations-${repoName}.md`);
@@ -564,13 +579,13 @@ const server = http.createServer((req, res) => {
 
   // 1. GET /api/session - Read alignment questionnaire state
   if (req.method === 'GET' && url.pathname === '/api/session') {
-    if (!fs.existsSync(SESSION_FILE)) {
+    if (!fs.existsSync(currentSessionFile)) {
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ status: 'not_found', message: 'No active session exists.' }));
       return;
     }
 
-    const etag = getFileETag(SESSION_FILE);
+    const etag = getFileETag(currentSessionFile);
     const clientEtag = req.headers['if-none-match'];
 
     if (clientEtag && clientEtag === etag) {
@@ -581,7 +596,7 @@ const server = http.createServer((req, res) => {
     }
 
     try {
-      const data = fs.readFileSync(SESSION_FILE, 'utf8');
+      const data = fs.readFileSync(currentSessionFile, 'utf8');
       res.writeHead(200, { 
         'Content-Type': 'application/json',
         'ETag': etag
@@ -615,8 +630,14 @@ const server = http.createServer((req, res) => {
       try {
         const payload = JSON.parse(body);
         
-        // Merge into global sessionState to prevent write race conditions
-        if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') sessionState.targetPath = payload.targetPath;
+        let repoName = 'project';
+        if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
+          sessionState.targetPath = payload.targetPath;
+          repoName = path.basename(payload.targetPath);
+        } else if (sessionState.targetPath) {
+          repoName = path.basename(sessionState.targetPath);
+        }
+
         if (payload.status !== undefined && typeof payload.status === 'string') sessionState.status = payload.status;
         if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') sessionState.currentStep = payload.currentStep;
         if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
@@ -662,8 +683,16 @@ const server = http.createServer((req, res) => {
           sessionState.sections = cleanSections;
         }
 
+        // Select the correct output session file
+        const newSessionFile = path.join(ROOT, 'reports', repoName, 'session.json');
+        fs.mkdirSync(path.dirname(newSessionFile), { recursive: true });
+        currentSessionFile = newSessionFile;
+
+        // Save pointer
+        fs.writeFileSync(LAST_SESSION_POINTER, JSON.stringify({ lastSessionPath: currentSessionFile }, null, 2), 'utf8');
+
         // Write atomic updates to disk
-        fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionState, null, 2), 'utf8');
+        fs.writeFileSync(currentSessionFile, JSON.stringify(sessionState, null, 2), 'utf8');
         writeLog('info', 'Successfully updated session state', correlationId);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'success', message: 'Session updated.' }));
@@ -685,15 +714,16 @@ const server = http.createServer((req, res) => {
     }
 
     try {
-      if (!fs.existsSync(SESSION_FILE)) {
+      if (!fs.existsSync(currentSessionFile)) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'No active session configuration found to scan.' }));
         return;
       }
 
-      const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+      const session = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
       const manifest = generateManifestFromSession(session);
-      const manifestPath = path.join(ROOT, '.repo-wizard', 'manifest.json');
+      const repoName = path.basename(session.targetPath || 'repo');
+      const manifestPath = path.join(ROOT, 'reports', repoName, 'manifest.json');
       
       // Ensure directory exists
       fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
@@ -708,7 +738,12 @@ const server = http.createServer((req, res) => {
       // Spawn run-orchestration.js in background
       activeScanProcess = spawn('node', [path.join(ROOT, 'scripts', 'run-orchestration.js')], {
         cwd: ROOT,
-        env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: path.basename(session.targetPath || 'repo') },
+        env: {
+          ...process.env,
+          MOCK_CLI: 'true',
+          MOCK_REPO_NAME: repoName,
+          TARGET_PATH: session.targetPath
+        },
         detached: process.platform !== 'win32'
       });
 
@@ -738,11 +773,11 @@ const server = http.createServer((req, res) => {
         activeScanProcess = null;
         
         // Update session state status on disk
-        if (fs.existsSync(SESSION_FILE)) {
+        if (fs.existsSync(currentSessionFile)) {
           try {
-            const currentSession = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+            const currentSession = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
             currentSession.status = code === 0 ? 'completed' : 'failed';
-            fs.writeFileSync(SESSION_FILE, JSON.stringify(currentSession, null, 2), 'utf8');
+            fs.writeFileSync(currentSessionFile, JSON.stringify(currentSession, null, 2), 'utf8');
             sessionState.status = currentSession.status;
             
             if (code === 0) {
@@ -788,11 +823,11 @@ const server = http.createServer((req, res) => {
       activeScanProcess = null;
       
       // Update session status to paused on disk
-      if (fs.existsSync(SESSION_FILE)) {
+      if (fs.existsSync(currentSessionFile)) {
         try {
-          const currentSession = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
+          const currentSession = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
           currentSession.status = 'paused';
-          fs.writeFileSync(SESSION_FILE, JSON.stringify(currentSession, null, 2), 'utf8');
+          fs.writeFileSync(currentSessionFile, JSON.stringify(currentSession, null, 2), 'utf8');
           sessionState.status = 'paused';
         } catch (e) {
           writeLog('error', 'Failed to update session status on scan cancel', correlationId, { error: e.message });
@@ -900,11 +935,30 @@ const server = http.createServer((req, res) => {
     });
   }
 
+function scanReports(dir, baseDir, fileList = []) {
+  if (!fs.existsSync(dir)) return fileList;
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    const stat = fs.statSync(fullPath);
+    if (stat.isDirectory()) {
+      if (file !== 'agents' && file !== 'history') {
+        scanReports(fullPath, baseDir, fileList);
+      }
+    } else {
+      if (file === 'backlog.csv' || (file.startsWith('repo-wizard-') && (file.endsWith('.md') || file.endsWith('.html')))) {
+        const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
+        fileList.push(relativePath);
+      }
+    }
+  }
+  return fileList;
+}
+
   // 3. GET /api/reports - Fetch compiled reports list
   if (req.method === 'GET' && url.pathname === '/api/reports') {
     try {
-      const files = fs.readdirSync(REPORTS_DIR);
-      const reports = files.filter(f => f.startsWith('repo-wizard-') && (f.endsWith('.md') || f.endsWith('.html')));
+      const reports = scanReports(REPORTS_ROOT, REPORTS_ROOT);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ reports }));
     } catch (err) {
@@ -940,11 +994,10 @@ const server = http.createServer((req, res) => {
           return;
         }
 
-        const inputPath = path.resolve(ROOT, '.repo-wizard', markdownFile);
-        const reportsDir = path.resolve(ROOT, '.repo-wizard');
+        const inputPath = path.resolve(REPORTS_ROOT, markdownFile);
 
         // Enforce boundary check to prevent Directory Traversal
-        if (!inputPath.startsWith(reportsDir + path.sep)) {
+        if (!inputPath.startsWith(REPORTS_ROOT + path.sep)) {
           res.writeHead(403, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Access denied.' }));
           return;
@@ -986,16 +1039,23 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && url.pathname === '/api/report-content') {
     try {
       const fileName = url.searchParams.get('file');
-      if (!fileName || !fileName.startsWith('repo-wizard-') || (!fileName.endsWith('.md') && !fileName.endsWith('.html'))) {
+      if (!fileName || (!fileName.endsWith('.md') && !fileName.endsWith('.html') && !fileName.endsWith('.csv'))) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid or missing file name.' }));
         return;
       }
 
-      const filePath = path.resolve(REPORTS_DIR, fileName);
+      const baseName = path.basename(fileName);
+      if (baseName !== 'backlog.csv' && !baseName.startsWith('repo-wizard-')) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid file name pattern.' }));
+        return;
+      }
+
+      const filePath = path.resolve(REPORTS_ROOT, fileName);
 
       // Enforce boundary check to prevent Directory Traversal
-      if (!filePath.startsWith(REPORTS_DIR + path.sep)) {
+      if (!filePath.startsWith(REPORTS_ROOT + path.sep)) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Access denied.' }));
         return;

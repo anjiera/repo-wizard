@@ -297,9 +297,12 @@ function testRunOrchestration() {
     assert(updatedManifest.contracts[0].status === 'completed', 'contract status updated to completed');
     
     // Check observations generated
-    const obsPath = path.join(agentsDir, 'observations-privacy-guardian-agent-test-repo.md');
+    const reportsDir = path.join(ROOT, 'reports', 'test-repo');
+    const obsPath = path.join(reportsDir, 'agents', 'observations-privacy-guardian-agent-test-repo.md');
     assert(fs.existsSync(obsPath), 'mock observations file created successfully');
-    if (fs.existsSync(obsPath)) fs.unlinkSync(obsPath);
+    if (fs.existsSync(reportsDir)) {
+      fs.rmSync(reportsDir, { recursive: true, force: true });
+    }
 
     // Test 2: Pre-flight validation fails on bad contract structure
     const badManifest = {

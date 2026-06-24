@@ -19,8 +19,18 @@ const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
 
 const ROOT = path.resolve(__dirname, '..');
-const MANIFEST_PATH = path.join(ROOT, '.repo-wizard', 'manifest.json');
-const OBSERVATIONS_DIR = path.join(ROOT, '.repo-wizard', 'agents');
+const targetPath = process.env.TARGET_PATH || ROOT;
+const repoName = process.env.MOCK_REPO_NAME || path.basename(targetPath);
+const REPORTS_DIR = path.join(ROOT, 'reports', repoName);
+const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
+
+let manifestPath = path.join(REPORTS_DIR, 'manifest.json');
+if (!fs.existsSync(manifestPath)) {
+  const legacyPath = path.join(ROOT, '.repo-wizard', 'manifest.json');
+  if (fs.existsSync(legacyPath)) {
+    manifestPath = legacyPath;
+  }
+}
 
 function ensureDirExists(dir) {
   if (!fs.existsSync(dir)) {
@@ -69,14 +79,14 @@ function detectAgentCLI() {
 }
 
 async function main() {
-  if (!fs.existsSync(MANIFEST_PATH)) {
-    console.error(`ERROR: Manifest file not found at ${MANIFEST_PATH}`);
+  if (!fs.existsSync(manifestPath)) {
+    console.error(`ERROR: Manifest file not found at ${manifestPath}`);
     process.exit(1);
   }
 
   let manifest;
   try {
-    manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   } catch (err) {
     console.error(`ERROR: Failed to parse manifest JSON: ${err.message}`);
     process.exit(1);
@@ -123,7 +133,7 @@ async function main() {
       }
     });
 
-    fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
     process.exit(0);
   }
 
@@ -174,7 +184,7 @@ async function main() {
     }
 
     manifest.status = 'completed';
-    fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
     process.exit(0);
   }
 
@@ -284,13 +294,13 @@ async function main() {
     });
     
     // Save state so we can resume later from the failed ones
-    fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
     process.exit(1);
   }
 
   console.log('\n[SUCCESS] All specialists completed successfully.');
   manifest.status = 'completed';
-  fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
   process.exit(0);
 }
 
