@@ -247,6 +247,50 @@ function testPromptInjectionDefense() {
   assert(parseResult.dataParsed === injectionPayload, "The raw injection content is safely captured as literal string data");
 }
 
+function testVCSScaffoldingRollback() {
+  console.log('Testing VCS scaffolding rollback safety...');
+  
+  // 1. Initialize git in the sandbox to test VCS commands
+  try {
+    execSync('git init', { stdio: 'ignore', cwd: SANDBOX_DIR });
+    execSync('git config user.name "E2E Tester"', { stdio: 'ignore', cwd: SANDBOX_DIR });
+    execSync('git config user.email "tester@e2e.local"', { stdio: 'ignore', cwd: SANDBOX_DIR });
+    execSync('git add .', { stdio: 'ignore', cwd: SANDBOX_DIR });
+    execSync('git commit -m "Initial mock stable checkpoint"', { stdio: 'ignore', cwd: SANDBOX_DIR });
+  } catch (err) {
+    console.warn('  ⚠ Warning: Skipping git rollback tests (Git CLI is not configured or fails to init).');
+    return;
+  }
+
+  // 2. Write a syntax-broken file to simulate a failing build configuration
+  const brokenFilePath = path.join(SANDBOX_DIR, 'broken-config.js');
+  fs.writeFileSync(brokenFilePath, 'const a = ; // Intentional syntax error\n', 'utf8');
+
+  // 3. Run a verification check (should fail)
+  let buildPassed = false;
+  try {
+    execSync(`node "${brokenFilePath}"`, { stdio: 'ignore' });
+    buildPassed = true;
+  } catch (err) {
+    buildPassed = false;
+  }
+
+  assert(buildPassed === false, 'Verification command correctly fails on broken configuration file');
+
+  // 4. Execute the VCS Rollback sequence from Section 7 of the protocol
+  if (!buildPassed) {
+    execSync('git checkout -- .', { stdio: 'ignore', cwd: SANDBOX_DIR });
+    execSync('git clean -fd', { stdio: 'ignore', cwd: SANDBOX_DIR });
+  }
+
+  // 5. Assertions
+  const fileExists = fs.existsSync(brokenFilePath);
+  assert(fileExists === false, 'VCS Rollback (git checkout/clean) successfully deleted the broken configuration file');
+  
+  const status = execSync('git status --porcelain', { cwd: SANDBOX_DIR }).toString().trim();
+  assert(status === '', 'VCS Rollback restored the workspace to a clean stable state');
+}
+
 async function runE2E() {
   try {
     setupSandbox();
@@ -255,6 +299,7 @@ async function runE2E() {
     testE2EDeliverablesValidator();
     await testPresetsAndParallelism();
     testPromptInjectionDefense();
+    testVCSScaffoldingRollback();
     cleanupSandbox();
 
     console.log(`\nE2E Sandbox tests complete: ${testsPassed} / ${testsRun} assertions passed.`);
@@ -267,3 +312,4 @@ async function runE2E() {
 }
 
 runE2E();
+
