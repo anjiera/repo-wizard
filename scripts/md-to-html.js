@@ -132,7 +132,7 @@ function parseMarkdown(md) {
  * Parses inline formatting like bold, code, links
  */
 function inlineParse(text) {
-  let clean = text;
+  let clean = escapeHtml(text || '');
 
   // Bold: **text**
   clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -157,7 +157,7 @@ function convertMdToHtml(mdContent, title = 'Documentation') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title}</title>
+  <title>${escapeHtml(String(title))}</title>
   <style>
     :root {
       --bg-primary: #fafafa;
