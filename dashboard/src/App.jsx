@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function App() {
   const [screen, setScreen] = useState('landing'); // 'landing', 'picker', 'questionnaire', 'reports', 'running', 'success'
+  const timeoutsRef = useRef([]);
+
+  const safeSetTimeout = (fn, delay) => {
+    const id = setTimeout(() => {
+      timeoutsRef.current = timeoutsRef.current.filter(tId => tId !== id);
+      fn();
+    }, delay);
+    timeoutsRef.current.push(id);
+    return id;
+  };
+
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+    };
+  }, []);
   const [targetPath, setTargetPath] = useState('');
   const [session, setSession] = useState({
     targetPath: '',
@@ -33,12 +49,16 @@ export default function App() {
 
   // Fetch reports on startup
   useEffect(() => {
+    let active = true;
     fetch('/api/reports')
       .then(res => res.json())
       .then(data => {
-        if (data.reports) setReports(data.reports);
+        if (active && data.reports) setReports(data.reports);
       })
       .catch(() => {});
+    return () => {
+      active = false;
+    };
   }, [screen]);
 
   // Handle Resume
@@ -55,7 +75,7 @@ export default function App() {
       })
       .catch(err => {
         setErrorMsg(err.message);
-        setTimeout(() => setErrorMsg(''), 3000);
+        safeSetTimeout(() => setErrorMsg(''), 3000);
       });
   };
 
@@ -133,13 +153,13 @@ export default function App() {
     ];
 
     logList.forEach((log, idx) => {
-      setTimeout(() => {
+      safeSetTimeout(() => {
         setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${log}`]);
       }, idx * 600);
     });
 
     // Simulate backend call
-    setTimeout(() => {
+    safeSetTimeout(() => {
       fetch('/api/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -538,7 +558,7 @@ export default function App() {
                               })
                               .catch(() => {
                                 setErrorMsg('Failed to load report content.');
-                                setTimeout(() => setErrorMsg(''), 3000);
+                                safeSetTimeout(() => setErrorMsg(''), 3000);
                               });
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition flex items-center gap-2 ${
