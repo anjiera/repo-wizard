@@ -903,7 +903,10 @@ export default function App() {
                           max="100"
                           value={session.answers.coverageThreshold}
                           onChange={(e) => setSession({...session, answers: {...session.answers, coverageThreshold: parseInt(e.target.value) || 0}})}
-                          className="flex-grow h-2 bg-[#161b22] rounded-lg appearance-none cursor-pointer accent-[#2ea44f]"
+                          className="flex-grow h-2 rounded-lg appearance-none cursor-pointer accent-[#2ea44f]"
+                          style={{
+                            background: `linear-gradient(to right, #2ea44f 0%, #2ea44f ${session.answers.coverageThreshold}%, #161b22 ${session.answers.coverageThreshold}%, #161b22 100%)`
+                          }}
                         />
                         <input 
                           type="number" 
@@ -1037,11 +1040,23 @@ export default function App() {
                 <div className="font-bold flex items-center gap-1.5 text-sm">
                   <span>⚠️</span> Technical Stack Mismatches Detected
                 </div>
-                <ul className="list-disc pl-4 space-y-1 font-medium text-[#c9d1d9]">
+                <ul className="list-disc pl-4 space-y-1 font-medium text-[#c9d1d9] mb-2">
                   {warnings.map((warning, idx) => (
                     <li key={idx}>{warning}</li>
                   ))}
                 </ul>
+                <div className="flex justify-end pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSession({...session, currentStep: 1});
+                      setScreen('questionnaire');
+                    }}
+                    className="bg-yellow-500/20 hover:bg-yellow-500/35 text-yellow-500 font-semibold py-1.5 px-3 rounded-lg transition text-[10px] uppercase tracking-wider cursor-pointer"
+                  >
+                    Adjust Technical Stack
+                  </button>
+                </div>
               </div>
             )}
             <div className="flex gap-4">

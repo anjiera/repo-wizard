@@ -308,12 +308,12 @@ function generateManifestFromSession(session) {
   };
 }
 
-function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFiles = 1000) {
+async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFiles = 1000) {
   if (fileLimit.count >= maxFiles) return;
 
   let files;
   try {
-    files = fs.readdirSync(dir);
+    files = await fs.promises.readdir(dir);
   } catch (err) {
     return;
   }
@@ -326,14 +326,18 @@ function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFi
     const fullPath = path.join(dir, file);
     let stat;
     try {
-      stat = fs.statSync(fullPath);
+      stat = await fs.promises.lstat(fullPath);
     } catch (err) {
+      continue;
+    }
+
+    if (stat.isSymbolicLink()) {
       continue;
     }
 
     if (stat.isDirectory()) {
       if (ignoreDirs.includes(file)) continue;
-      scanDirectoryExtensions(fullPath, extCounts, fileLimit, maxFiles);
+      await scanDirectoryExtensions(fullPath, extCounts, fileLimit, maxFiles);
     } else if (stat.isFile()) {
       fileLimit.count++;
       const ext = path.extname(file).toLowerCase();
@@ -341,6 +345,105 @@ function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFi
         extCounts[ext] = (extCounts[ext] || 0) + 1;
       }
     }
+  }
+}
+
+function generateMockReports(session) {
+  const repoName = path.basename(session.targetPath || 'project');
+  const answers = session.answers || {};
+  const frameworks = answers.frameworks || [];
+  const platforms = answers.platforms || [];
+  const compliance = answers.compliance || [];
+
+  // 1. Executive Summary
+  const execSummary = `# Repo Wizard Executive Summary - ${repoName}
+
+## Section 1: Codebase Health & Strengths
+The repository "${repoName}" displays a healthy structure with standard package files, organized folders, and version control configurations. Static checks indicate a stable foundation, enabling systematic adoption of modern linter and code quality gates.
+
+## Section 2: Tooling & Compliance Opportunities
+We identified opportunities to strengthen quality control by integrating static analysis configurations for the selected frameworks: ${frameworks.join(', ') || 'General'}. Furthermore, compliance integrations for ${compliance.join(', ') || 'None'} will assist in enforcing data boundary policies and privacy governance.
+
+## Section 3: Rollout Roadmap
+We recommend a three-step roadmap: first, establish linter rules and pre-commit validation. Second, configure verification gates in CI to enforce the target ${answers.coverageThreshold || 80}% test coverage. Third, initialize standard audit checklists for the selected platforms: ${platforms.join(', ') || 'General'}.
+
+Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
+`;
+
+  // 2. Full Technical Report
+  const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
+
+## Overview
+This full technical report consolidates findings from all active specialist agents.
+
+## Domain Audit Profiles
+
+### 1. General Repository Governance
+- Status: Verified
+- Observations: Clean repository structure, package manifests detected, standard README present.
+
+### 2. Stack-specific Tooling (${frameworks.join(', ') || 'General'})
+- Status: Scaffold Pending
+- Observations: Recommended tooling templates mapped for the selected frameworks: ${frameworks.join(', ')}.
+
+### 3. Verification Gates
+- Status: Configured
+- Target Coverage: ${answers.coverageThreshold || 80}%
+- Warnings: ${answers.coverageThreshold === 100 ? 'Warning: 100% target coverage is a threshold and does not guarantee absolute software safety.' : 'Standard threshold target.'}
+
+### 4. Regulatory Compliance Profiles (${compliance.join(', ') || 'None'})
+- Status: Analyzed
+- Selected standards: ${compliance.join(', ') || 'None'}
+- Observations: Scaffolding files ready for standard-specific logging, PII filters, and export routes.
+
+## Suggested Scaffolding Commands
+\`\`\`bash
+# Install linter templates
+node scripts/install-hooks.js
+\`\`\`
+
+Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
+`;
+
+  // 3. Observations Summary
+  const observationsSummary = `# Repo Wizard Observations Summary - ${repoName}
+
+## Toolchain Assumptions
+Based on static file analysis, we assume the repository uses:
+- Primary stack / framework elements.
+- Clean root structure.
+
+## Compliance Guesses
+- Regulatory standards under consideration: ${compliance.join(', ') || 'None'}.
+
+## Suggested Adjustments
+- Establish standard lint rules.
+- Set up pre-commit validation.
+
+Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
+`;
+
+  const reportsDir = path.join(ROOT, '.repo-wizard');
+  const execPath = path.join(reportsDir, `repo-wizard-executive-summary-${repoName}.md`);
+  const fullPath = path.join(reportsDir, `repo-wizard-full-report-${repoName}.md`);
+  const obsPath = path.join(reportsDir, `repo-wizard-observations-${repoName}.md`);
+
+  try {
+    fs.writeFileSync(execPath, execSummary, 'utf8');
+    fs.writeFileSync(fullPath, fullReport, 'utf8');
+    fs.writeFileSync(obsPath, observationsSummary, 'utf8');
+
+    // Also compile them to HTML using the in-process converter
+    const htmlExec = convertMdToHtml(execSummary, `Executive Summary - ${repoName}`);
+    fs.writeFileSync(execPath.replace(/\.md$/, '.html'), htmlExec, 'utf8');
+
+    const htmlFull = convertMdToHtml(fullReport, `Full Technical Report - ${repoName}`);
+    fs.writeFileSync(fullPath.replace(/\.md$/, '.html'), htmlFull, 'utf8');
+
+    const htmlObs = convertMdToHtml(observationsSummary, `Observations Summary - ${repoName}`);
+    fs.writeFileSync(obsPath.replace(/\.md$/, '.html'), htmlObs, 'utf8');
+  } catch (err) {
+    console.error('Failed to write mock reports or compile HTML:', err.message);
   }
 }
 
@@ -605,7 +708,8 @@ const server = http.createServer((req, res) => {
       // Spawn run-orchestration.js in background
       activeScanProcess = spawn('node', [path.join(ROOT, 'scripts', 'run-orchestration.js')], {
         cwd: ROOT,
-        env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: path.basename(session.targetPath || 'repo') }
+        env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: path.basename(session.targetPath || 'repo') },
+        detached: process.platform !== 'win32'
       });
 
       activeScanProcess.stdout.on('data', (data) => {
@@ -640,8 +744,12 @@ const server = http.createServer((req, res) => {
             currentSession.status = code === 0 ? 'completed' : 'failed';
             fs.writeFileSync(SESSION_FILE, JSON.stringify(currentSession, null, 2), 'utf8');
             sessionState.status = currentSession.status;
+            
+            if (code === 0) {
+              generateMockReports(currentSession);
+            }
           } catch (e) {
-            writeLog('error', 'Failed to update session status on scan close', correlationId, { error: e.message });
+            writeLog('error', 'Failed to update session status or compile mock reports on scan close', correlationId, { error: e.message });
           }
         }
       });
@@ -703,8 +811,20 @@ const server = http.createServer((req, res) => {
   // 2e. POST /api/analyze-target - Analyze target directory for language mismatches
   if (req.method === 'POST' && url.pathname === '/api/analyze-target') {
     let body = '';
-    req.on('data', chunk => { body += chunk; });
+    let tooLarge = false;
+    const MAX_SIZE = 10 * 1024; // 10KB limit
+    req.on('data', chunk => {
+      if (tooLarge) return;
+      body += chunk;
+      if (body.length > MAX_SIZE) {
+        tooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload Too Large' }));
+        req.destroy();
+      }
+    });
     req.on('end', () => {
+      if (tooLarge) return;
       try {
         const payload = JSON.parse(body);
         const targetPath = payload.targetPath || (sessionState && sessionState.targetPath);
@@ -717,54 +837,60 @@ const server = http.createServer((req, res) => {
 
         const extCounts = {};
         const fileLimit = { count: 0 };
-        scanDirectoryExtensions(targetPath, extCounts, fileLimit, 1000);
+        scanDirectoryExtensions(targetPath, extCounts, fileLimit, 1000)
+          .then(() => {
+            // Fetch selected frameworks from current sessionState
+            const selectedFrameworks = (sessionState && sessionState.answers && sessionState.answers.frameworks) || [];
 
-        // Fetch selected frameworks from current sessionState
-        const selectedFrameworks = (sessionState && sessionState.answers && sessionState.answers.frameworks) || [];
+            const warnings = [];
 
-        const warnings = [];
+            // Check for selected but missing
+            const langMap = {
+              'react': { name: 'React / Node.js', extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+              'rust': { name: 'Rust (Cargo)', extensions: ['.rs'] },
+              '.net': { name: '.NET Core (C#)', extensions: ['.cs'] },
+              'swift': { name: 'Swift', extensions: ['.swift'] },
+              'unity': { name: 'Unity (C#)', extensions: ['.cs', '.meta'] },
+              'godot': { name: 'Godot (GDScript)', extensions: ['.gd', '.tscn'] },
+              'cobol': { name: 'COBOL', extensions: ['.cob', '.cbl'] },
+              'php': { name: 'PHP', extensions: ['.php'] }
+            };
 
-        // Check for selected but missing
-        const langMap = {
-          'react': { name: 'React / Node.js', extensions: ['.js', '.jsx', '.ts', '.tsx'] },
-          'rust': { name: 'Rust (Cargo)', extensions: ['.rs'] },
-          '.net': { name: '.NET Core (C#)', extensions: ['.cs'] },
-          'swift': { name: 'Swift', extensions: ['.swift'] },
-          'unity': { name: 'Unity (C#)', extensions: ['.cs', '.meta'] },
-          'godot': { name: 'Godot (GDScript)', extensions: ['.gd', '.tscn'] },
-          'cobol': { name: 'COBOL', extensions: ['.cob', '.cbl'] },
-          'php': { name: 'PHP', extensions: ['.php'] }
-        };
-
-        for (const [key, spec] of Object.entries(langMap)) {
-          if (selectedFrameworks.includes(key)) {
-            const hasAny = spec.extensions.some(ext => (extCounts[ext] || 0) > 0);
-            if (!hasAny) {
-              warnings.push(`You selected "${spec.name}" but no matching files (${spec.extensions.join(', ')}) were detected.`);
+            for (const [key, spec] of Object.entries(langMap)) {
+              if (selectedFrameworks.includes(key)) {
+                const hasAny = spec.extensions.some(ext => (extCounts[ext] || 0) > 0);
+                if (!hasAny) {
+                  warnings.push(`You selected "${spec.name}" but no matching files (${spec.extensions.join(', ')}) were detected.`);
+                }
+              }
             }
-          }
-        }
 
-        // Check for unselected but present
-        const unselectedChecks = {
-          '.php': { key: 'php', name: 'PHP' },
-          '.rs': { key: 'rust', name: 'Rust' },
-          '.gd': { key: 'godot', name: 'Godot (GDScript)' },
-          '.cob': { key: 'cobol', name: 'COBOL' },
-          '.swift': { key: 'swift', name: 'Swift' }
-        };
+            // Check for unselected but present
+            const unselectedChecks = {
+              '.php': { key: 'php', name: 'PHP' },
+              '.rs': { key: 'rust', name: 'Rust' },
+              '.gd': { key: 'godot', name: 'Godot (GDScript)' },
+              '.cob': { key: 'cobol', name: 'COBOL' },
+              '.swift': { key: 'swift', name: 'Swift' }
+            };
 
-        for (const [ext, info] of Object.entries(unselectedChecks)) {
-          if (!selectedFrameworks.includes(info.key)) {
-            const count = extCounts[ext] || 0;
-            if (count > 5) {
-              warnings.push(`We detected ${count} files with extension "${ext}" (${info.name}) which was not selected in your technical stack.`);
+            for (const [ext, info] of Object.entries(unselectedChecks)) {
+              if (!selectedFrameworks.includes(info.key)) {
+                const count = extCounts[ext] || 0;
+                if (count > 5) {
+                  warnings.push(`We detected ${count} files with extension "${ext}" (${info.name}) which was not selected in your technical stack.`);
+                }
+              }
             }
-          }
-        }
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'success', warnings }));
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'success', warnings }));
+          })
+          .catch(err => {
+            writeLog('error', 'Failed in scanDirectoryExtensions async traversal', correlationId, { error: err.message });
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: `Analysis failed: ${err.message}` }));
+          });
 
       } catch (err) {
         writeLog('error', 'Exception in analyze-target handler', correlationId, { error: err.message });
@@ -772,7 +898,6 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ error: `Analysis failed: ${err.message}` }));
       }
     });
-    return;
   }
 
   // 3. GET /api/reports - Fetch compiled reports list
@@ -943,9 +1068,13 @@ function killProcessTree(proc) {
     }
   } else {
     try {
-      proc.kill('SIGKILL');
+      process.kill(-pid, 'SIGKILL');
     } catch (err) {
-      // Ignore
+      try {
+        proc.kill('SIGKILL');
+      } catch (e) {
+        // Ignore
+      }
     }
   }
 }

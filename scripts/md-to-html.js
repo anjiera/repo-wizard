@@ -69,7 +69,10 @@ function parseMarkdown(md) {
     // 1b. Table Handler
     const isTableRow = line.trim().startsWith('|') && line.trim().endsWith('|');
     if (isTableRow) {
-      const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+      const rawCells = line.split(/(?<!\\)\|/);
+      const cells = rawCells
+        .map(c => c.trim().replace(/\\\|/g, '|'))
+        .filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
       const isSeparator = cells.every(c => /^[:\-\s]+$/.test(c) && c.includes('-'));
       
       if (isSeparator) {
@@ -176,11 +179,8 @@ function parseMarkdown(md) {
 function sanitizeUrl(url) {
   if (!url) return '#';
   
-  // Remove control characters and whitespace
-  const cleaned = url.replace(/[\s\x00-\x1f\x7f]/g, '');
-  
   // Decode HTML entities recursively to prevent nested bypasses
-  let decoded = cleaned;
+  let decoded = url;
   let prev;
   let limit = 0;
   do {
@@ -193,6 +193,9 @@ function sanitizeUrl(url) {
       .replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)))
       .replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
       
+    // Strip control characters and whitespace on every iteration, especially after decoding entities
+    decoded = decoded.replace(/[\s\x00-\x1f\x7f]/g, '');
+    
     // Check intermediate decoded state to block deep or nested obfuscation early
     const lowerState = decoded.toLowerCase();
     if (/^(javascript|data|vbscript|file):/i.test(lowerState)) {
@@ -212,21 +215,7 @@ function sanitizeUrl(url) {
     return '#'; // Block excessively nested entities
   }
   
-  const lower = decoded.toLowerCase();
-  
-  if (/^(javascript|data|vbscript|file):/i.test(lower)) {
-    return '#';
-  }
-  
-  const protocolMatch = lower.match(/^([a-z0-9\-\.\+]+):/);
-  if (protocolMatch) {
-    const proto = protocolMatch[1];
-    if (proto !== 'http' && proto !== 'https' && proto !== 'mailto' && proto !== 'tel') {
-      return '#';
-    }
-  }
-  
-  return url;
+  return decoded;
 }
 
 
