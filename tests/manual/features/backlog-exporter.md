@@ -11,7 +11,7 @@ This test plan defines the manual verification procedure for **Backlog CSV Expor
 - [ ] **2. Verify output file exists**: Check `.repo-wizard/backlog.csv` (or the customized output path).
   - *Expected*: The CSV file is created.
 - [ ] **3. Inspect CSV columns**: Open the CSV file in a text editor or spreadsheet viewer.
-  - *Expected*: The CSV contains headers: `ID`, `Priority`, `Standard`, `Agent`, `File/Path`, `Friction`, `Recommendation`, `Status`.
+  - *Expected*: The CSV contains JIRA-compatible headers: `Summary`, `Description`, `Issue Type`, `Epic Name / Parent`, `Labels`, `Recommended By (Sub-Agent)`, `Frameworks/Goals`.
   - All recommendations are filled out, and no columns are empty.
 
 ### Scenario 2: Deliverables Linter Gate
