@@ -28,6 +28,25 @@ function ensureDirExists(dir) {
   }
 }
 
+/**
+ * Zero-dependency helper to run tasks with a concurrency limit
+ */
+async function runWithLimit(limit, items, workerFn) {
+  const results = [];
+  const executing = new Set();
+  for (const item of items) {
+    const p = Promise.resolve().then(() => workerFn(item));
+    results.push(p);
+    executing.add(p);
+    const clean = () => executing.delete(p);
+    p.then(clean, clean);
+    if (executing.size >= limit) {
+      await Promise.race(executing);
+    }
+  }
+  return Promise.all(results);
+}
+
 // Detect Agent CLI in the system PATH
 function detectAgentCLI() {
   if (process.env.DISABLE_CLI === 'true') {
@@ -230,7 +249,8 @@ async function main() {
     }, 200);
   }
 
-  await Promise.all(manifest.contracts.map(c => runAgentPromise(c)));
+  const CONCURRENCY_LIMIT = 4;
+  await runWithLimit(CONCURRENCY_LIMIT, manifest.contracts, runAgentPromise);
 
   if (progressInterval) {
     clearInterval(progressInterval);
