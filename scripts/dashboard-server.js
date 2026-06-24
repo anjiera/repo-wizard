@@ -76,7 +76,8 @@ function serveStaticFile(res, reqPath, correlationId) {
   }
   const distDir = path.resolve(ROOT, 'dashboard', 'dist');
   const safePrefix = distDir + path.sep;
-  let filePath = path.resolve(distDir, reqPath === '/' ? 'index.html' : reqPath);
+  const relativePath = reqPath === '/' ? 'index.html' : reqPath.replace(/^\/+/, '');
+  let filePath = path.resolve(distDir, relativePath);
   
   // Clean path to prevent directory traversal securely
   if (filePath !== distDir && !filePath.startsWith(safePrefix)) {

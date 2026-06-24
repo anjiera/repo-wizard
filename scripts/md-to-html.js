@@ -49,7 +49,7 @@ function parseMarkdown(md) {
       if (inCodeBlock) {
         // End code block
         inCodeBlock = false;
-        html += `<pre><code class="language-${codeBlockLang}">${escapeHtml(codeLines.join('\n'))}</code></pre>\n`;
+        html += `<pre><code class="language-${escapeHtml(codeBlockLang)}">${escapeHtml(codeLines.join('\n'))}</code></pre>\n`;
         codeLines = [];
       } else {
         // Start code block

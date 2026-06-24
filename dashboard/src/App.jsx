@@ -51,7 +51,10 @@ export default function App() {
   useEffect(() => {
     let active = true;
     fetch('/api/reports')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
       .then(data => {
         if (active && data.reports) setReports(data.reports);
       })
@@ -65,8 +68,8 @@ export default function App() {
   const handleResume = () => {
     fetch('/api/session')
       .then(res => {
-        if (res.status === 304 || res.ok) return res.json();
-        throw new Error('No active session found.');
+        if (!res.ok) throw new Error('No active session found.');
+        return res.json();
       })
       .then(data => {
         setSession(data);
@@ -74,7 +77,7 @@ export default function App() {
         setScreen('questionnaire');
       })
       .catch(err => {
-        setErrorMsg(err.message);
+        setErrorMsg(err.message || 'No active session found.');
         safeSetTimeout(() => setErrorMsg(''), 3000);
       });
   };
@@ -122,9 +125,15 @@ export default function App() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedSession)
-    }).then(() => {
-      setScreen('questionnaire');
-    });
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to save session.');
+        setScreen('questionnaire');
+      })
+      .catch(err => {
+        setErrorMsg(err.message || 'Failed to save session.');
+        safeSetTimeout(() => setErrorMsg(''), 3000);
+      });
   };
 
   // Trigger immediate headless scan
@@ -168,9 +177,16 @@ export default function App() {
           status: 'completed',
           mode: mode === 'full' ? 'headless' : 'backlog'
         })
-      }).then(() => {
-        setScreen('success');
-      });
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to complete scan.');
+          setScreen('success');
+        })
+        .catch(err => {
+          setErrorMsg(err.message || 'Failed to complete scan.');
+          setScreen('landing');
+          safeSetTimeout(() => setErrorMsg(''), 3000);
+        });
     }, logList.length * 600 + 200);
   };
 
@@ -206,11 +222,17 @@ export default function App() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedSession)
-    }).then(() => {
-      if (isLastStep) {
-        handleHeadlessScan('full');
-      }
-    });
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to save step progress.');
+        if (isLastStep) {
+          handleHeadlessScan('full');
+        }
+      })
+      .catch(err => {
+        setErrorMsg(err.message || 'Failed to save step progress.');
+        safeSetTimeout(() => setErrorMsg(''), 3000);
+      });
   };
 
   return (
@@ -552,7 +574,10 @@ export default function App() {
                         <button
                           onClick={() => {
                             fetch(`/api/report-content?file=${report}`)
-                              .then(res => res.json())
+                              .then(res => {
+                                if (!res.ok) throw new Error();
+                                return res.json();
+                              })
                               .then(data => {
                                 setActiveReport({ name: report, content: data.content });
                               })
