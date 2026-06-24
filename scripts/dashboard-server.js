@@ -244,7 +244,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 4b. GET /api/report-content - Fetch specific report content
+  // 4b. GET /api/report-content - Fetch specific report content securely
   if (req.method === 'GET' && url.pathname === '/api/report-content') {
     const fileName = url.searchParams.get('file');
     if (!fileName || !fileName.startsWith('repo-wizard-') || (!fileName.endsWith('.md') && !fileName.endsWith('.html'))) {
@@ -253,7 +253,15 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const filePath = path.join(REPORTS_DIR, fileName);
+    const filePath = path.resolve(REPORTS_DIR, fileName);
+
+    // Enforce boundary check to prevent Directory Traversal
+    if (!filePath.startsWith(REPORTS_DIR + path.sep)) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Access denied.' }));
+      return;
+    }
+
     if (!fs.existsSync(filePath)) {
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'Report not found.' }));
