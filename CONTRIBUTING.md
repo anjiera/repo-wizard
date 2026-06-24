@@ -41,4 +41,5 @@ When introducing a new command, configure configuration bindings across all clie
 ## Testing Your Changes
 
 * Validate that all `SKILL.md` files contain correct YAML frontmatter names and descriptions.
-* Ensure all links use absolute paths with the `file://` scheme to ensure they are clickable in client chats.
+* Ensure all links use relative repository paths to make them portable and compatible across different git and documentation rendering environments.
+

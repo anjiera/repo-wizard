@@ -34,5 +34,6 @@ Since this repository contains agent instructions, custom CLI commands, validati
 - Validate agent rubric coverage: `node scripts/validate-agents.js`
 - Run dynamic agent evaluations (requires `GEMINI_API_KEY`): `node scripts/run-evals.js`
 - Validate plugin structure: `agy plugin validate .`
-- Verify all links inside markdown files are absolute using the `file://` scheme.
+- Verify all links inside markdown files use relative repository paths instead of absolute system or `file://` paths.
+
 
