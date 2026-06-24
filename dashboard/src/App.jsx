@@ -14,6 +14,8 @@ const complianceFrameworks = [
 export default function App() {
   const [screen, setScreen] = useState('landing'); // 'landing', 'picker', 'questionnaire', 'reports', 'running', 'success'
   const timeoutsRef = useRef([]);
+  const pollIntervalRef = useRef(null);
+  const logContainerRef = useRef(null);
 
   const safeSetTimeout = (fn, delay) => {
     const id = setTimeout(() => {
@@ -117,6 +119,60 @@ export default function App() {
     };
   }, [screen, hasConsented]);
 
+  // Poll real-time logs while running a scan
+  useEffect(() => {
+    if (screen === 'running') {
+      const fetchLogs = () => {
+        fetch('/api/scan-logs')
+          .then(res => res.ok ? res.json() : { logs: [], isScanning: false })
+          .then(data => {
+            setLogs(data.logs || []);
+            if (!data.isScanning) {
+              if (pollIntervalRef.current) {
+                clearInterval(pollIntervalRef.current);
+                pollIntervalRef.current = null;
+              }
+              // Fetch latest session to see final status
+              fetch('/api/session')
+                .then(res => res.ok ? res.json() : null)
+                .then(sess => {
+                  if (sess) {
+                    setSession(sess);
+                    if (sess.status === 'completed') {
+                      setScreen('success');
+                    } else {
+                      setErrorMsg('Scan failed or was aborted.');
+                      setScreen('landing');
+                      safeSetTimeout(() => setErrorMsg(''), 4000);
+                    }
+                  }
+                });
+            }
+          })
+          .catch(err => {
+            console.error('Failed to fetch scan logs:', err);
+          });
+      };
+
+      fetchLogs();
+      pollIntervalRef.current = setInterval(fetchLogs, 800);
+    }
+
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+    };
+  }, [screen]);
+
+  // Auto-scroll logs to bottom
+  useEffect(() => {
+    if (logContainerRef.current) {
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+    }
+  }, [logs]);
+
   // Handle Resume
   const handleResume = () => {
     fetch('/api/session')
@@ -200,55 +256,44 @@ export default function App() {
     timeoutsRef.current = [];
 
     setScreen('running');
-    setScanMessage('Sizing repository and scanning dependencies...');
-    setLogs([]);
+    setLogs(['[System] Initializing backend scan...']);
+    setScanMessage('Sizing repository and running agents...');
 
-    const logList = [
-      'Initializing scan thread...',
-      'Sizing codebase: detected 124 files, ~12,400 LOC',
-      'Scanning package manifests for dependencies...',
-      'Running decoupled relevance sweep...',
-      'Subagent: react-performance-pilot-agent returned High Relevance',
-      'Subagent: state-sanitizer-agent returned High Relevance',
-      'Subagent: privacy-guardian-agent returned Medium Relevance',
-      'Subagent: compliance-pilot-agent returned Low Relevance (Bypassed)',
-      'Generating abstract capability mapping...',
-      'Deduplicating recommendations...',
-      'Writing technical and executive summaries...',
-      'Compiling markdown audits to HTML reports...'
-    ];
-
-    logList.forEach((log, idx) => {
-      safeSetTimeout(() => {
-        setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${log}`]);
-      }, idx * 600);
-    });
-
-    // Simulate backend call
-    safeSetTimeout(() => {
-      const completedSession = {
-        ...session,
-        targetPath,
-        status: 'completed',
-        mode: mode === 'full' ? 'headless' : 'backlog'
-      };
-      setSession(completedSession);
-
-      fetch('/api/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(completedSession)
+    fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(data => { throw new Error(data.error || 'Failed to start scan.'); });
+        }
+        return res.json();
       })
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to complete scan.');
-          setScreen(prev => prev === 'running' ? 'success' : prev);
-        })
-        .catch(err => {
-          setErrorMsg(err.message || 'Failed to complete scan.');
-          setScreen(prev => prev === 'running' ? 'landing' : prev);
+      .catch(err => {
+        setErrorMsg(err.message || 'Failed to trigger codebase scan.');
+        setScreen('landing');
+        safeSetTimeout(() => setErrorMsg(''), 4000);
+      });
+  };
+
+  const handleCancelScan = () => {
+    fetch('/api/cancel-scan', {
+      method: 'POST'
+    })
+      .then(res => {
+        if (res.ok) {
+          if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
+          }
+          setScreen('landing');
+          setErrorMsg('Scan cancelled successfully.');
           safeSetTimeout(() => setErrorMsg(''), 3000);
-        });
-    }, logList.length * 600 + 200);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to cancel scan:', err);
+      });
   };
 
   // Stepper steps config
@@ -941,11 +986,25 @@ export default function App() {
             <p className="text-[#8b949e] text-sm">{scanMessage}</p>
             
             {/* Real-time scanning log box */}
-            <div className="bg-[#0d1117] border border-brand-border rounded-xl p-4 text-left font-mono text-xs text-[#2ea44f] h-48 overflow-y-auto space-y-1">
+            <div 
+              ref={logContainerRef}
+              className="bg-[#0d1117] border border-brand-border rounded-xl p-4 text-left font-mono text-xs text-[#2ea44f] h-48 overflow-y-auto space-y-1"
+            >
               {logs.map((log, i) => (
                 <div key={i} className="leading-relaxed">{log}</div>
               ))}
               {logs.length === 0 && <div className="text-[#484f58]">Waiting for logs...</div>}
+            </div>
+
+            {/* Cancel Scan Button */}
+            <div className="pt-2">
+              <button 
+                type="button"
+                onClick={handleCancelScan}
+                className="bg-[#da3637] hover:bg-[#b92c2c] text-white font-semibold py-3 px-8 rounded-xl transition shadow-lg text-sm"
+              >
+                Cancel Scan
+              </button>
             </div>
           </div>
         )}

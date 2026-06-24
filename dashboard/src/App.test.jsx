@@ -33,6 +33,18 @@ describe('App Component Workflow', () => {
           })
         });
       }
+      if (url.includes('/api/scan-logs')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ logs: ['[Mock] Scan log entry'], isScanning: false })
+        });
+      }
+      if (url.includes('/api/scan')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ status: 'success' })
+        });
+      }
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
   });
