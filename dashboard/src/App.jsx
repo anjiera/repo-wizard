@@ -47,6 +47,7 @@ export default function App() {
   const [scanMessage, setScanMessage] = useState('');
   const [logs, setLogs] = useState([]);
   const [hasSession, setHasSession] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Fetch reports and active session state on startup/screen change
   useEffect(() => {
@@ -56,25 +57,27 @@ export default function App() {
 
     let active = true;
 
-    // Fetch reports
-    fetch('/api/reports')
-      .then(res => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(data => {
-        if (active && data.reports) setReports(data.reports);
-      })
-      .catch(() => {});
+    Promise.all([
+      fetch('/api/reports')
+        .then(res => res.ok ? res.json() : { reports: [] })
+        .catch(() => ({ reports: [] })),
+      fetch('/api/session')
+        .then(res => res.ok)
+        .catch(() => false)
+    ]).then(([reportsData, sessionOk]) => {
+      if (!active) return;
+      
+      const reportsList = reportsData.reports || [];
+      setReports(reportsList);
+      setHasSession(sessionOk);
 
-    // Check if session exists
-    fetch('/api/session')
-      .then(res => {
-        if (active) setHasSession(res.ok);
-      })
-      .catch(() => {
-        if (active) setHasSession(false);
-      });
+      // Skip landing page on initial load if no session and no reports exist
+      if (isInitialLoad && screen === 'landing' && !sessionOk && reportsList.length === 0) {
+        setScreen('picker');
+      }
+      
+      setIsInitialLoad(false);
+    });
 
     return () => {
       active = false;
