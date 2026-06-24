@@ -49,6 +49,8 @@ export default function App() {
   const [hasSession, setHasSession] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [hasConsented, setHasConsented] = useState(false);
+  const [customLanguage, setCustomLanguage] = useState('');
+  const [customPlatform, setCustomPlatform] = useState('');
 
   // Check consent status on startup
   useEffect(() => {
@@ -632,22 +634,179 @@ export default function App() {
               )}
 
               {session.currentStep === 1 && (
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Languages / Frameworks Section */}
                   <div>
-                    <label className="block text-sm text-[#c9d1d9] mb-2">Primary Language / Platform</label>
-                    <select 
-                      value={session.answers.frameworks[0] || 'react'}
-                      onChange={(e) => setSession({...session, answers: {...session.answers, frameworks: [e.target.value]}})}
-                      className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-3 text-white focus:outline-none"
-                    >
-                      <option value="react">React / Node.js Workspace</option>
-                      <option value="rust">Rust Cargo Crate</option>
-                      <option value="dotnet">.NET Core C# App</option>
-                      <option value="swift">Swift (iOS/macOS)</option>
-                      <option value="unity">Unity (C# Game)</option>
-                      <option value="godot">Godot (GDScript)</option>
-                      <option value="cobol">COBOL Mainframe</option>
-                    </select>
+                    <h4 className="text-sm font-bold text-[#c9d1d9] mb-3 border-b border-brand-border/40 pb-1.5 uppercase tracking-wider text-xs">Languages & Frameworks</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {[
+                        { label: 'React / Node.js', value: 'react' },
+                        { label: 'Rust (Cargo)', value: 'rust' },
+                        { label: '.NET Core (C#)', value: 'dotnet' },
+                        { label: 'Swift', value: 'swift' },
+                        { label: 'Unity (C#)', value: 'unity' },
+                        { label: 'Godot (GDScript)', value: 'godot' },
+                        { label: 'COBOL', value: 'cobol' },
+                        { label: 'PHP', value: 'php' }
+                      ].map((item) => {
+                        const isChecked = (session.answers.frameworks || []).includes(item.value);
+                        return (
+                          <label key={item.value} className="flex items-center gap-2.5 bg-[#0d1117]/50 border border-brand-border/60 p-3 rounded-xl cursor-pointer hover:border-brand-border transition">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => {
+                                const arr = session.answers.frameworks || [];
+                                const newArr = isChecked ? arr.filter(x => x !== item.value) : [...arr, item.value];
+                                setSession({
+                                  ...session,
+                                  answers: { ...session.answers, frameworks: newArr }
+                                });
+                              }}
+                              className="w-4 h-4 accent-[#2ea44f]"
+                            />
+                            <span className="text-xs text-[#c9d1d9] font-medium">{item.label}</span>
+                          </label>
+                        );
+                      })}
+
+                      {/* Custom Language Checkbox */}
+                      <label className="flex items-center gap-2.5 bg-[#0d1117]/50 border border-brand-border/60 p-3 rounded-xl cursor-pointer hover:border-brand-border transition">
+                        <input
+                          type="checkbox"
+                          checked={(session.answers.frameworks || []).includes('other')}
+                          onChange={() => {
+                            const arr = session.answers.frameworks || [];
+                            const isChecked = arr.includes('other');
+                            let newArr = isChecked ? arr.filter(x => x !== 'other') : [...arr, 'other'];
+                            if (isChecked) {
+                              newArr = newArr.filter(x => x !== customLanguage);
+                            } else if (customLanguage.trim()) {
+                              newArr = [...newArr, customLanguage.trim()];
+                            }
+                            setSession({
+                              ...session,
+                              answers: { ...session.answers, frameworks: newArr }
+                            });
+                          }}
+                          className="w-4 h-4 accent-[#2ea44f]"
+                        />
+                        <span className="text-xs text-[#c9d1d9] font-medium">Other</span>
+                      </label>
+                    </div>
+
+                    {(session.answers.frameworks || []).includes('other') && (
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          value={customLanguage}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setCustomLanguage(val);
+                            const arr = session.answers.frameworks || [];
+                            let newArr = arr.filter(x => x !== customLanguage && x !== 'other');
+                            if (val.trim()) {
+                              newArr = [...newArr, 'other', val.trim()];
+                            } else {
+                              newArr = [...newArr, 'other'];
+                            }
+                            setSession({
+                              ...session,
+                              answers: { ...session.answers, frameworks: newArr }
+                            });
+                          }}
+                          placeholder="Specify other languages/frameworks (comma-separated)..."
+                          className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#484f58] focus:outline-none focus:border-[#58a6ff] transition"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Platforms Section */}
+                  <div>
+                    <h4 className="text-sm font-bold text-[#c9d1d9] mb-3 border-b border-brand-border/40 pb-1.5 uppercase tracking-wider text-xs">Target Platforms</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {[
+                        { label: 'Windows', value: 'windows' },
+                        { label: 'iPhone / iOS', value: 'iphone' },
+                        { label: 'Nintendo Switch 2', value: 'switch2' },
+                        { label: 'Web', value: 'web' },
+                        { label: 'Firmware', value: 'firmware' },
+                        { label: 'macOS', value: 'macos' },
+                        { label: 'Linux', value: 'linux' },
+                        { label: 'Android', value: 'android' }
+                      ].map((item) => {
+                        const isChecked = (session.answers.platforms || []).includes(item.value);
+                        return (
+                          <label key={item.value} className="flex items-center gap-2.5 bg-[#0d1117]/50 border border-brand-border/60 p-3 rounded-xl cursor-pointer hover:border-brand-border transition">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => {
+                                const arr = session.answers.platforms || [];
+                                const newArr = isChecked ? arr.filter(x => x !== item.value) : [...arr, item.value];
+                                setSession({
+                                  ...session,
+                                  answers: { ...session.answers, platforms: newArr }
+                                });
+                              }}
+                              className="w-4 h-4 accent-[#2ea44f]"
+                            />
+                            <span className="text-xs text-[#c9d1d9] font-medium">{item.label}</span>
+                          </label>
+                        );
+                      })}
+
+                      {/* Custom Platform Checkbox */}
+                      <label className="flex items-center gap-2.5 bg-[#0d1117]/50 border border-brand-border/60 p-3 rounded-xl cursor-pointer hover:border-brand-border transition">
+                        <input
+                          type="checkbox"
+                          checked={(session.answers.platforms || []).includes('other')}
+                          onChange={() => {
+                            const arr = session.answers.platforms || [];
+                            const isChecked = arr.includes('other');
+                            let newArr = isChecked ? arr.filter(x => x !== 'other') : [...arr, 'other'];
+                            if (isChecked) {
+                              newArr = newArr.filter(x => x !== customPlatform);
+                            } else if (customPlatform.trim()) {
+                              newArr = [...newArr, customPlatform.trim()];
+                            }
+                            setSession({
+                              ...session,
+                              answers: { ...session.answers, platforms: newArr }
+                            });
+                          }}
+                          className="w-4 h-4 accent-[#2ea44f]"
+                        />
+                        <span className="text-xs text-[#c9d1d9] font-medium">Other</span>
+                      </label>
+                    </div>
+
+                    {(session.answers.platforms || []).includes('other') && (
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          value={customPlatform}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setCustomPlatform(val);
+                            const arr = session.answers.platforms || [];
+                            let newArr = arr.filter(x => x !== customPlatform && x !== 'other');
+                            if (val.trim()) {
+                              newArr = [...newArr, 'other', val.trim()];
+                            } else {
+                              newArr = [...newArr, 'other'];
+                            }
+                            setSession({
+                              ...session,
+                              answers: { ...session.answers, platforms: newArr }
+                            });
+                          }}
+                          placeholder="Specify other platforms (comma-separated)..."
+                          className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#484f58] focus:outline-none focus:border-[#58a6ff] transition"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
