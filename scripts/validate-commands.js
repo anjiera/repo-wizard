@@ -19,6 +19,13 @@
 const fs   = require('fs');
 const path = require('path');
 
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+
 const ROOT = path.resolve(__dirname, '..');
 
 const DIRS = {
@@ -87,7 +94,7 @@ function main() {
 
   let errors = 0;
 
-  console.log('Checking command parity...');
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Checking command parity...${RESET}`);
 
   for (const stem of allCanonicalStems) {
     const missing = [];
@@ -96,7 +103,7 @@ function main() {
     if (!(stem in byTool.antigravity)) missing.push('commands');
 
     if (missing.length) {
-      console.log(`  ✗  ${stem} — missing in: ${missing.join(', ')}`);
+      console.log(`  ${RED}✗${RESET}  ${stem} — missing in: ${missing.join(', ')}`);
       errors++;
     } else {
       // Check descriptions match
@@ -106,9 +113,9 @@ function main() {
 
       const allMatch = descClaude === descGemini && descGemini === descAgy;
       if (allMatch) {
-        console.log(`  ✓  ${stem}`);
+        console.log(`  ${GREEN}✓${RESET}  ${stem}`);
       } else {
-        console.log(`  ✗  ${stem} — descriptions do not match`);
+        console.log(`  ${RED}✗${RESET}  ${stem} — descriptions do not match`);
         console.log(`       .claude:      ${descClaude}`);
         console.log(`       .gemini:      ${descGemini}`);
         console.log(`       commands/:    ${descAgy}`);
@@ -118,10 +125,11 @@ function main() {
   }
 
   const status = errors > 0 ? 'FAILED' : 'PASSED';
-  console.log(`\n${allCanonicalStems.size} commands checked — ${errors} error(s) — ${status}`);
-
   if (errors > 0) {
+    console.log(`\n${BOLD}${RED}${allCanonicalStems.size} commands checked — ${errors} error(s) — ${status}${RESET}`);
     process.exit(1);
+  } else {
+    console.log(`\n${BOLD}${GREEN}${allCanonicalStems.size} commands checked — ${errors} error(s) — ${status}${RESET}`);
   }
 }
 

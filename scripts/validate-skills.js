@@ -19,6 +19,12 @@
 const fs   = require('fs');
 const path = require('path');
 
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+
 const SKILLS_DIR = path.resolve(__dirname, '..', 'skills');
 const MAX_DESCRIPTION_LENGTH = 1024;
 
@@ -111,19 +117,20 @@ function main() {
     totalErrors += errors.length;
 
     if (errors.length === 0) {
-      console.log(`  ✓  ${dirName}`);
+      console.log(`  ${GREEN}✓${RESET}  ${dirName}`);
     } else {
-      console.log(`  ✗  ${dirName}`);
+      console.log(`  ${RED}✗${RESET}  ${dirName}`);
       for (const msg of errors) {
-        console.log(`       ERROR: ${msg}`);
+        console.log(`       ${RED}ERROR:${RESET} ${msg}`);
       }
     }
   }
 
-  console.log(`\n${skillDirs.length} skills checked — ${totalErrors} error(s) found`);
-
   if (totalErrors > 0) {
+    console.log(`\n${BOLD}${RED}${skillDirs.length} skills checked — ${totalErrors} error(s) found${RESET}`);
     process.exit(1);
+  } else {
+    console.log(`\n${BOLD}${GREEN}${skillDirs.length} skills checked — ${totalErrors} error(s) found${RESET}`);
   }
 }
 

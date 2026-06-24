@@ -16,6 +16,14 @@
 const fs = require('fs');
 const path = require('path');
 
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+const YELLOW = '\x1b[33m';
+
 const ROOT = path.resolve(__dirname, '..');
 const REFS_DIR = path.join(ROOT, 'references');
 const REFS_INDEX = path.join(REFS_DIR, 'README.md');
@@ -31,7 +39,7 @@ let totalErrors = 0;
 
 function reportError(msg) {
   totalErrors++;
-  console.log(`  ✗ ERROR: ${msg}`);
+  console.log(`  ${RED}✗ ERROR:${RESET} ${msg}`);
 }
 
 function validateReferencesIndex() {
@@ -160,7 +168,7 @@ function validateAgentsMdLength() {
   if (lines > MAX_AGENTS_MD_LINES) {
     reportError(`AGENTS.md has ${lines} lines, which exceeds the threshold of ${MAX_AGENTS_MD_LINES} lines. Please refactor detailed rules, guidelines, or checklists into separate files in references/ or skills/ to avoid agent cognitive overload.`);
   } else {
-    console.log(`  ✓ AGENTS.md length is within limits (${lines}/${MAX_AGENTS_MD_LINES} lines).`);
+    console.log(`  ${GREEN}✓${RESET} AGENTS.md length is within limits (${lines}/${MAX_AGENTS_MD_LINES} lines).`);
   }
 }
 
@@ -172,11 +180,11 @@ function main() {
   validateNoUnapprovedEmojis();
   validateAgentsMdLength();
 
-  console.log(`\nDocumentation check complete: ${totalErrors} error(s) found.`);
   if (totalErrors > 0) {
+    console.log(`\n${BOLD}${RED}Documentation check complete: ${totalErrors} error(s) found.${RESET}`);
     process.exit(1);
   } else {
-    console.log('✓ All documentation upkeep audits passed successfully.');
+    console.log(`\n${BOLD}${GREEN}✓ All documentation upkeep audits passed successfully.${RESET}`);
     process.exit(0);
   }
 }

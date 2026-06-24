@@ -18,6 +18,13 @@
 const fs   = require('fs');
 const path = require('path');
 
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+
 const AGENTS_DIR = path.resolve(__dirname, '..', 'agents');
 const EVALS_FILE = path.resolve(__dirname, 'run-evals.js');
 
@@ -53,7 +60,7 @@ function main() {
 
   let totalErrors = 0;
 
-  console.log('Checking agent evaluation coverage...');
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Checking agent evaluation coverage...${RESET}`);
 
   for (const file of agentFiles) {
     const fullPath = path.join(AGENTS_DIR, file);
@@ -66,7 +73,7 @@ function main() {
     });
 
     if (!matchingSuite) {
-      console.log(`  ✗  ${file} — No evaluation test suite defined in run-evals.js`);
+      console.log(`  ${RED}✗${RESET}  ${file} — No evaluation test suite defined in run-evals.js`);
       totalErrors++;
       continue;
     }
@@ -130,20 +137,21 @@ function main() {
     }
 
     if (errors.length === 0) {
-      console.log(`  ✓  ${file}`);
+      console.log(`  ${GREEN}✓${RESET}  ${file}`);
     } else {
-      console.log(`  ✗  ${file}`);
+      console.log(`  ${RED}✗${RESET}  ${file}`);
       for (const msg of errors) {
-        console.log(`       ERROR: ${msg}`);
+        console.log(`       ${RED}ERROR:${RESET} ${msg}`);
       }
       totalErrors += errors.length;
     }
   }
 
-  console.log(`\n${agentFiles.length} agent personas checked — ${totalErrors} error(s) found`);
-
   if (totalErrors > 0) {
+    console.log(`\n${BOLD}${RED}${agentFiles.length} agent personas checked — ${totalErrors} error(s) found${RESET}`);
     process.exit(1);
+  } else {
+    console.log(`\n${BOLD}${GREEN}${agentFiles.length} agent personas checked — ${totalErrors} error(s) found${RESET}`);
   }
 }
 

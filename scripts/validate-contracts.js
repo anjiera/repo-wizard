@@ -11,6 +11,13 @@
 
 'use strict';
 
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+
 /**
  * Validates a contract object against the schema.
  * Returns an array of error messages. Empty array means valid.
@@ -18,12 +25,12 @@
 function validateContract(contract) {
   const errors = [];
 
-  if (!contract || typeof contract !== 'object') {
+  if (!contract || typeof contract !== 'object' || Array.isArray(contract)) {
     return ['Contract must be a valid JSON object.'];
   }
 
   // 1. Validate task_metadata
-  if (!contract.task_metadata || typeof contract.task_metadata !== 'object') {
+  if (!contract.task_metadata || typeof contract.task_metadata !== 'object' || Array.isArray(contract.task_metadata)) {
     errors.push('Missing or invalid "task_metadata" object.');
   } else {
     const meta = contract.task_metadata;
@@ -49,7 +56,7 @@ function validateContract(contract) {
 
     // Validate backlog_parameters if execution_mode is backlog
     if (meta.execution_mode === 'backlog') {
-      if (!meta.backlog_parameters || typeof meta.backlog_parameters !== 'object') {
+      if (!meta.backlog_parameters || typeof meta.backlog_parameters !== 'object' || Array.isArray(meta.backlog_parameters)) {
         errors.push('Missing "backlog_parameters" object under task_metadata for backlog mode.');
       } else {
         const bp = meta.backlog_parameters;
@@ -72,7 +79,7 @@ function validateContract(contract) {
       errors.push('compliance_targets must be an array.');
     } else {
       contract.compliance_targets.forEach((ct, idx) => {
-        if (!ct || typeof ct !== 'object') {
+        if (!ct || typeof ct !== 'object' || Array.isArray(ct)) {
           errors.push(`compliance_targets[${idx}] must be an object.`);
         } else {
           if (typeof ct.standard !== 'string' || !ct.standard) {
@@ -92,7 +99,7 @@ function validateContract(contract) {
       errors.push('tooling_specification must be an array.');
     } else {
       contract.tooling_specification.forEach((ts, idx) => {
-        if (!ts || typeof ts !== 'object') {
+        if (!ts || typeof ts !== 'object' || Array.isArray(ts)) {
           errors.push(`tooling_specification[${idx}] must be an object.`);
         } else {
           if (typeof ts.capability !== 'string' || !ts.capability) {
@@ -105,7 +112,7 @@ function validateContract(contract) {
             errors.push(`tooling_specification[${idx}].install_command must be a string.`);
           }
           if (ts.config_file !== undefined) {
-            if (!ts.config_file || typeof ts.config_file !== 'object') {
+            if (!ts.config_file || typeof ts.config_file !== 'object' || Array.isArray(ts.config_file)) {
               errors.push(`tooling_specification[${idx}].config_file must be an object.`);
             } else {
               if (typeof ts.config_file.path !== 'string' || !ts.config_file.path) {
@@ -128,7 +135,7 @@ function validateContract(contract) {
  * Self-test suite for the contract validator
  */
 function runSelfTest() {
-  console.log('Running contract validator self-test...');
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Running contract validator self-test...${RESET}`);
   let failures = 0;
 
   const validContract = {
@@ -223,18 +230,18 @@ function runSelfTest() {
   // Test Valid
   const validErrors = validateContract(validContract);
   if (validErrors.length > 0) {
-    console.error('  ✗ Fail: Valid scaffold contract was rejected:', validErrors);
+    console.error(`  ${RED}✗${RESET} ${BOLD}Fail:${RESET} Valid scaffold contract was rejected:`, validErrors);
     failures++;
   } else {
-    console.log('  ✓ Pass: Valid scaffold contract accepted');
+    console.log(`  ${GREEN}✓${RESET} ${BOLD}Pass:${RESET} Valid scaffold contract accepted`);
   }
 
   const validBacklogErrors = validateContract(validBacklogContract);
   if (validBacklogErrors.length > 0) {
-    console.error('  ✗ Fail: Valid backlog contract was rejected:', validBacklogErrors);
+    console.error(`  ${RED}✗${RESET} ${BOLD}Fail:${RESET} Valid backlog contract was rejected:`, validBacklogErrors);
     failures++;
   } else {
-    console.log('  ✓ Pass: Valid backlog contract accepted');
+    console.log(`  ${GREEN}✓${RESET} ${BOLD}Pass:${RESET} Valid backlog contract accepted`);
   }
 
   // Test Invalid
@@ -242,18 +249,18 @@ function runSelfTest() {
     const errs = validateContract(tc.data);
     const matched = errs.some(e => e.includes(tc.expectedError));
     if (errs.length > 0 && matched) {
-      console.log(`  ✓ Pass: Invalid contract (${tc.description}) correctly caught with error matching "${tc.expectedError}"`);
+      console.log(`  ${GREEN}✓${RESET} ${BOLD}Pass:${RESET} Invalid contract (${tc.description}) correctly caught with error matching "${tc.expectedError}"`);
     } else {
-      console.error(`  ✗ Fail: Invalid contract (${tc.description}) was not correctly rejected. Errors found:`, errs);
+      console.error(`  ${RED}✗${RESET} ${BOLD}Fail:${RESET} Invalid contract (${tc.description}) was not correctly rejected. Errors found:`, errs);
       failures++;
     }
   }
 
   if (failures > 0) {
-    console.error(`\nSelf-test failed: ${failures} case(s) failed.`);
+    console.error(`\n${BOLD}${RED}Self-test failed:${RESET} ${failures} case(s) failed.`);
     process.exit(1);
   } else {
-    console.log('\nAll contract validator self-tests passed.');
+    console.log(`\n${BOLD}${GREEN}All contract validator self-tests passed.${RESET}`);
     process.exit(0);
   }
 }

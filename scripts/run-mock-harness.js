@@ -15,6 +15,13 @@
 
 const fs = require('fs');
 const path = require('path');
+
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
 const { validateContract } = require('./validate-contracts');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -65,7 +72,9 @@ function createMockContract(specialist, mode = 'scaffold') {
     'fuzzing-pilot-agent': 'Fuzz Testing Harnesses',
     'toolchain-pilot-agent': 'Cross-Compilation Toolchains',
     'formal-methods-pilot-agent': 'Formal Model Verification',
-    'ai-robustness-pilot-agent': 'AI Input/Output Guardrails'
+    'ai-robustness-pilot-agent': 'AI Input/Output Guardrails',
+    'react-performance-pilot-agent': 'React Performance Auditing',
+    'state-sanitizer-agent': 'State Sanitization Auditing'
   };
 
   const toolMap = {
@@ -86,7 +95,9 @@ function createMockContract(specialist, mode = 'scaffold') {
     'fuzzing-pilot-agent': 'cargo-fuzz',
     'toolchain-pilot-agent': 'riscv-gcc',
     'formal-methods-pilot-agent': 'kani',
-    'ai-robustness-pilot-agent': 'llm-guard'
+    'ai-robustness-pilot-agent': 'llm-guard',
+    'react-performance-pilot-agent': 'react-scan',
+    'state-sanitizer-agent': 'eslint-plugin-react-hooks'
   };
 
   const contract = {
@@ -150,7 +161,7 @@ function runMockOrchestration(targetRepoDir, executionMode = 'scaffold') {
   const wizardDir = path.join(targetRepoDir, '.repo-wizard');
   const agentsDir = path.join(wizardDir, 'agents');
 
-  console.log(`Simulating orchestration sweep for repository: "${repoName}" (${executionMode} mode)`);
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Simulating orchestration sweep for repository: "${repoName}" (${executionMode} mode)${RESET}`);
 
   // Create directories if missing
   if (!fs.existsSync(agentsDir)) {
@@ -167,7 +178,7 @@ function runMockOrchestration(targetRepoDir, executionMode = 'scaffold') {
     // Validate the contract payload
     const errors = validateContract(contract);
     if (errors.length > 0) {
-      console.error(`  ✗ Contract validation failed for ${specialist}:`, errors);
+      console.error(`  ${RED}✗${RESET} Contract validation failed for ${specialist}:`, errors);
       contractErrorsCount += errors.length;
     } else {
       // Simulate writing observations
@@ -176,10 +187,10 @@ function runMockOrchestration(targetRepoDir, executionMode = 'scaffold') {
     }
   }
 
-  console.log(`  ✓ Validated and dispatched ${observationsWritten} contracts successfully.`);
+  console.log(`  ${GREEN}✓${RESET} Validated and dispatched ${observationsWritten} contracts successfully.`);
   
   if (contractErrorsCount > 0) {
-    console.error(`  ✗ Failed: ${contractErrorsCount} parameter contract schema errors.`);
+    console.error(`  ${RED}✗${RESET} Failed: ${contractErrorsCount} parameter contract schema errors.`);
     return false;
   }
 
@@ -187,48 +198,38 @@ function runMockOrchestration(targetRepoDir, executionMode = 'scaffold') {
   const files = fs.readdirSync(agentsDir);
   const expectedFilesCount = SPECIALISTS.length;
   if (files.length !== expectedFilesCount) {
-    console.error(`  ✗ Naming check failed: Expected ${expectedFilesCount} files under DIRS, found ${files.length}`);
+    console.error(`  ${RED}✗${RESET} Naming check failed: Expected ${expectedFilesCount} files under DIRS, found ${files.length}`);
     return false;
   }
 
-  console.log(`  ✓ Observations format check: all ${files.length} files exist and match suffix observations-<agent>-<repo>.md.`);
+  console.log(`  ${GREEN}✓${RESET} Observations format check: all ${files.length} files exist and match suffix observations-<agent>-<repo>.md.`);
   return true;
 }
 
 function main() {
-  const tempRepo = path.join(__dirname, 'temp_mock_repo');
-  if (!fs.existsSync(tempRepo)) {
-    fs.mkdirSync(tempRepo, { recursive: true });
-  }
-
+  const tempRepo = path.join(ROOT, 'temp_mock_repo');
   let success = false;
   try {
+    if (!fs.existsSync(tempRepo)) {
+      fs.mkdirSync(tempRepo, { recursive: true });
+    }
     const scaffoldSuccess = runMockOrchestration(tempRepo, 'scaffold');
     const backlogSuccess = runMockOrchestration(tempRepo, 'backlog');
     success = scaffoldSuccess && backlogSuccess;
   } catch (err) {
-    console.error('Mock harness crashed:', err.message);
+    console.error(`  ${RED}✗${RESET} Mock harness crashed:`, err.message);
   } finally {
-    // Cleanup temp files
+    // Cleanup temp files safely using recursive rmSync
     if (fs.existsSync(tempRepo)) {
-      const wizardDir = path.join(tempRepo, '.repo-wizard');
-      if (fs.existsSync(wizardDir)) {
-        const agentsDir = path.join(wizardDir, 'agents');
-        if (fs.existsSync(agentsDir)) {
-          fs.readdirSync(agentsDir).forEach(f => fs.unlinkSync(path.join(agentsDir, f)));
-          fs.rmdirSync(agentsDir);
-        }
-        fs.rmdirSync(wizardDir);
-      }
-      fs.rmdirSync(tempRepo);
+      fs.rmSync(tempRepo, { recursive: true, force: true });
     }
   }
 
   if (success) {
-    console.log('\nSubagent Mocking Harness run: PASSED.');
+    console.log(`\n${BOLD}${GREEN}Subagent Mocking Harness run: PASSED.${RESET}`);
     process.exit(0);
   } else {
-    console.error('\nSubagent Mocking Harness run: FAILED.');
+    console.error(`\n${BOLD}${RED}Subagent Mocking Harness run: FAILED.${RESET}`);
     process.exit(1);
   }
 }

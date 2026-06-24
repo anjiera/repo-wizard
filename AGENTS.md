@@ -20,6 +20,7 @@ This repository is designed to be consumed as a plugin. Agents must automaticall
 6. **Mandatory Design Documentation**: When implementing an interesting, novel, or complex system feature (such as custom orchestration runners, parsing/AST layers, evaluation loops, or zero-dependency CLI utilities), you must write a dedicated technical design document under the `docs/design/` directory using lowercase-hyphenated naming (e.g., `docs/design/hybrid-orchestration.md`).
 7. **Design Approval Gate**: All draft design documents must be presented to the user first for explicit review and approval (e.g., via implementation plans or feedback prompts) before staging or committing them.
 8. **Design Document Legal Neutrality Check**: Anytime you create or edit a design document, you must perform a self-audit against the [legal-neutrality-scanner](skills/legal-neutrality-scanner/SKILL.md) checklist to make all terminology legally neutral (avoiding absolute claims or guarantees like 'ensure', 'prevent', 'guarantee', and 'safety' in favor of mitigation, verification, or threshold-based phrasing) before presenting it to the user for review.
+9. **Colorized CLI Output:** Standard CLI scripts and validator utilities must use cross-platform ANSI color escape codes (e.g. green checkmarks `✓`, red cross marks `✗`, blue step banners `==>`) to enhance readability in terminal environments, while maintaining strict zero-dependency execution.
 
 ### Intent-to-Skill Mapping
 

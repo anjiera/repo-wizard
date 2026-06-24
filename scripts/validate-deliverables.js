@@ -15,6 +15,13 @@
 const fs = require('fs');
 const path = require('path');
 
+// ANSI escape codes for premium console styling
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+
 const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
 
 // Expected CSV Columns
@@ -278,7 +285,7 @@ function runValidation(targetDir) {
   const files = fs.readdirSync(targetDir);
   let totalErrors = 0;
 
-  console.log(`Auditing deliverables in directory: ${targetDir}`);
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Auditing deliverables in directory: ${targetDir}${RESET}`);
 
   for (const file of files) {
     const fullPath = path.join(targetDir, file);
@@ -290,9 +297,9 @@ function runValidation(targetDir) {
       console.log(`  Auditing CSV: ${file}`);
       const csvErrors = validateCSV(fullPath);
       if (csvErrors.length === 0) {
-        console.log(`    ✓ Passed`);
+        console.log(`    ${GREEN}✓ Passed${RESET}`);
       } else {
-        csvErrors.forEach(err => console.log(`    ✗ Error: ${err}`));
+        csvErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
         totalErrors += csvErrors.length;
       }
     } else if (file.endsWith('.md') || file.endsWith('.html')) {
@@ -301,9 +308,9 @@ function runValidation(targetDir) {
         console.log(`  Auditing report: ${file}`);
         const reportErrors = validateFile(fullPath);
         if (reportErrors.length === 0) {
-          console.log(`    ✓ Passed`);
+          console.log(`    ${GREEN}✓ Passed${RESET}`);
         } else {
-          reportErrors.forEach(err => console.log(`    ✗ Error: ${err}`));
+          reportErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
           totalErrors += reportErrors.length;
         }
       }
@@ -398,10 +405,10 @@ Para 1.
   fs.rmdirSync(tempDir);
 
   if (testFailures > 0) {
-    console.error('Self-test completed with failures.');
+    console.error(`\n${BOLD}${RED}Self-test completed with failures.${RESET}`);
     process.exit(1);
   } else {
-    console.log('Self-test PASSED.');
+    console.log(`\n${BOLD}${GREEN}Self-test PASSED.${RESET}`);
   }
 }
 
@@ -419,11 +426,12 @@ function main() {
   }
 
   const errorsCount = runValidation(targetDir);
-  console.log(`\nDeliverables check complete: ${errorsCount} error(s) found.`);
-
+  
   if (errorsCount > 0) {
+    console.log(`\n${BOLD}${RED}Deliverables check complete: ${errorsCount} error(s) found.${RESET}`);
     process.exit(1);
   } else {
+    console.log(`\n${BOLD}${GREEN}Deliverables check complete: ${errorsCount} error(s) found.${RESET}`);
     process.exit(0);
   }
 }
