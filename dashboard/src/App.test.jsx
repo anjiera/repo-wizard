@@ -1,23 +1,30 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import App from './App';
 
-// Mock fetch globally
-global.fetch = vi.fn().mockImplementation(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({ reports: [] })
-  })
-);
+const originalFetch = global.fetch;
 
 describe('App Component Workflow', () => {
-  it('renders landing page options correctly', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ reports: [] })
+      })
+    );
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    vi.restoreAllMocks();
+  });
+  it('renders landing page options correctly', async () => {
     render(<App />);
     expect(screen.getByText(/Repo Wizard Dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/start new alignment audit/i)).toBeInTheDocument();
     expect(screen.getByText(/resume previous setup/i)).toBeInTheDocument();
-    expect(screen.getByText(/view compiled reports/i)).toBeInTheDocument();
+    await screen.findByText(/View Existing Reports \(0\)/i);
   });
 
   it('can navigate to target picker and questionnaire steps', async () => {
