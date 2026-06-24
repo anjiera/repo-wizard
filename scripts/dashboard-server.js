@@ -69,10 +69,12 @@ function getFileETag(filePath) {
  * Serves static files from dashboard/dist directory
  */
 function serveStaticFile(res, reqPath, correlationId) {
-  let filePath = path.join(ROOT, 'dashboard', 'dist', reqPath === '/' ? 'index.html' : reqPath);
+  const distDir = path.resolve(ROOT, 'dashboard', 'dist');
+  const safePrefix = distDir + path.sep;
+  const filePath = path.resolve(distDir, reqPath === '/' ? 'index.html' : reqPath);
   
-  // Clean path to prevent directory traversal
-  if (!filePath.startsWith(path.join(ROOT, 'dashboard', 'dist'))) {
+  // Clean path to prevent directory traversal securely
+  if (filePath !== distDir && !filePath.startsWith(safePrefix)) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     res.end('Forbidden');
     return;
