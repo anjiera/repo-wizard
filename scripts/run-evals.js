@@ -263,7 +263,7 @@ async function run() {
 
   // Write report artifact
   try {
-    const reportsDir = path.join(ROOT, 'evals', 'reports');
+    const reportsDir = path.join(EVALS_DIR, 'reports');
     if (!fs.existsSync(reportsDir)) {
       fs.mkdirSync(reportsDir, { recursive: true });
     }

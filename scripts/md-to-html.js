@@ -24,7 +24,9 @@ function escapeHtml(text) {
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /**
@@ -129,6 +131,18 @@ function parseMarkdown(md) {
 }
 
 /**
+ * Safely sanitizes a URL to prevent javascript: or protocol-based XSS
+ */
+function sanitizeUrl(url) {
+  if (!url) return '#';
+  const cleaned = url.replace(/[\s\x00-\x1f\x7f]/g, '').toLowerCase();
+  if (/^(javascript|data|vbscript):/i.test(cleaned)) {
+    return '#';
+  }
+  return url;
+}
+
+/**
  * Parses inline formatting like bold, code, links
  */
 function inlineParse(text) {
@@ -141,7 +155,9 @@ function inlineParse(text) {
   clean = clean.replace(/`(.*?)`/g, '<code>$1</code>');
 
   // Links: [text](url)
-  clean = clean.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+  clean = clean.replace(/\[(.*?)\]\((.*?)\)/g, (match, linkText, url) => {
+    return `<a href="${sanitizeUrl(url)}">${linkText}</a>`;
+  });
 
   return clean;
 }

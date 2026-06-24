@@ -36,7 +36,9 @@ const SPECIALISTS = [
   'fuzzing-pilot-agent',
   'toolchain-pilot-agent',
   'formal-methods-pilot-agent',
-  'ai-robustness-pilot-agent'
+  'ai-robustness-pilot-agent',
+  'react-performance-pilot-agent',
+  'state-sanitizer-agent'
 ];
 
 const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';

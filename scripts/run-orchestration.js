@@ -149,8 +149,9 @@ async function main() {
       const obsPath = path.join(OBSERVATIONS_DIR, `observations-${agentName}-${repoName}.md`);
       
       if (isTTY) {
-        const pct = Math.round((completed / total) * 10);
-        process.stdout.write(`\rProgress: [${'█'.repeat(pct)}${'░'.repeat(10 - pct)}] ${Math.round((completed / total) * 100)}% (${completed}/${total}) - running ${agentName}`);
+        const pct = total > 0 ? Math.round((completed / total) * 10) : 10;
+        const percentValue = total > 0 ? Math.round((completed / total) * 100) : 100;
+        process.stdout.write(`\rProgress: [${'█'.repeat(pct)}${'░'.repeat(10 - pct)}] ${percentValue}% (${completed}/${total}) - running ${agentName}`);
       } else {
         console.log(`[INFO] Spawning ${agentName}...`);
       }
@@ -217,6 +218,21 @@ async function main() {
       child.stderr.on('data', (data) => {
         stderrData += data.toString();
       });
+      let resolved = false;
+      const safeResolve = () => {
+        if (!resolved) {
+          resolved = true;
+          resolve();
+        }
+      };
+
+      child.on('error', (err) => {
+        errors.push({ agent: agentName, code: -1, stderr: `Failed to spawn process: ${err.message}` });
+        if (!isTTY) {
+          console.error(`[ERROR] ${agentName} failed to spawn: ${err.message}`);
+        }
+        safeResolve();
+      });
 
       child.on('close', (code) => {
         if (code === 0) {
@@ -232,7 +248,7 @@ async function main() {
             console.error(`[ERROR] ${agentName} exited with code ${code}`);
           }
         }
-        resolve();
+        safeResolve();
       });
     });
   };
@@ -244,8 +260,9 @@ async function main() {
   let progressInterval;
   if (isTTY) {
     progressInterval = setInterval(() => {
-      const pct = Math.round((completed / total) * 10);
-      process.stdout.write(`\rProgress: [${'█'.repeat(pct)}${'░'.repeat(10 - pct)}] ${Math.round((completed / total) * 100)}% (${completed}/${total})`);
+      const pct = total > 0 ? Math.round((completed / total) * 10) : 10;
+      const percentValue = total > 0 ? Math.round((completed / total) * 100) : 100;
+      process.stdout.write(`\rProgress: [${'█'.repeat(pct)}${'░'.repeat(10 - pct)}] ${percentValue}% (${completed}/${total})`);
     }, 200);
   }
 

@@ -69,9 +69,14 @@ function getFileETag(filePath) {
  * Serves static files from dashboard/dist directory
  */
 function serveStaticFile(res, reqPath, correlationId) {
+  if (reqPath.includes('\0') || reqPath.includes('%00')) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('Bad Request');
+    return;
+  }
   const distDir = path.resolve(ROOT, 'dashboard', 'dist');
   const safePrefix = distDir + path.sep;
-  const filePath = path.resolve(distDir, reqPath === '/' ? 'index.html' : reqPath);
+  let filePath = path.resolve(distDir, reqPath === '/' ? 'index.html' : reqPath);
   
   // Clean path to prevent directory traversal securely
   if (filePath !== distDir && !filePath.startsWith(safePrefix)) {
@@ -159,11 +164,33 @@ const server = http.createServer((req, res) => {
   // 2. POST /api/session - Create or update alignment state
   if (req.method === 'POST' && url.pathname === '/api/session') {
     let body = '';
-    req.on('data', chunk => { body += chunk; });
+    let tooLarge = false;
+    const MAX_SIZE = 100 * 1024; // 100KB limit
+    req.on('data', chunk => {
+      if (tooLarge) return;
+      body += chunk;
+      if (body.length > MAX_SIZE) {
+        tooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload Too Large' }));
+        req.destroy();
+      }
+    });
     req.on('end', () => {
+      if (tooLarge) return;
       try {
         const payload = JSON.parse(body);
-        fs.writeFileSync(SESSION_FILE, JSON.stringify(payload, null, 2), 'utf8');
+        
+        // Schema validation to prevent prototype pollution or session corruption
+        const cleanPayload = {};
+        if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') cleanPayload.targetPath = payload.targetPath;
+        if (payload.status !== undefined && typeof payload.status === 'string') cleanPayload.status = payload.status;
+        if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') cleanPayload.currentStep = payload.currentStep;
+        if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) cleanPayload.answers = payload.answers;
+        if (payload.sections !== undefined && typeof payload.sections === 'object' && payload.sections !== null) cleanPayload.sections = payload.sections;
+        if (payload.mode !== undefined && typeof payload.mode === 'string') cleanPayload.mode = payload.mode;
+
+        fs.writeFileSync(SESSION_FILE, JSON.stringify(cleanPayload, null, 2), 'utf8');
         writeLog('info', 'Successfully updated session state', correlationId);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'success', message: 'Session updated.' }));
@@ -194,8 +221,20 @@ const server = http.createServer((req, res) => {
   // 4. POST /api/compile-html - Run md-to-html compiler securely in-process
   if (req.method === 'POST' && url.pathname === '/api/compile-html') {
     let body = '';
-    req.on('data', chunk => { body += chunk; });
+    let tooLarge = false;
+    const MAX_SIZE = 10 * 1024; // 10KB limit
+    req.on('data', chunk => {
+      if (tooLarge) return;
+      body += chunk;
+      if (body.length > MAX_SIZE) {
+        tooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload Too Large' }));
+        req.destroy();
+      }
+    });
     req.on('end', () => {
+      if (tooLarge) return;
       try {
         const { markdownFile } = JSON.parse(body);
         if (typeof markdownFile !== 'string' || !markdownFile.endsWith('.md')) {
