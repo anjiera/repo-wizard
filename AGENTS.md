@@ -50,7 +50,7 @@ This workflow applies strictly to tasks that involve writing, modifying, or refa
 
 Before declaring any programming or code-writing task as finished:
 1. **Run Local Checks:** Run the workspace's tests, linters, and compilers (e.g., `npm run test`, `eslint .`, `pytest`). Resolve any errors or warnings.
-2. **Spawn a Reviewer Subagent:** Use `define_subagent` and `invoke_subagent` to spin up a fresh-context reviewer:
+2. **Spawn a Reviewer Subagent:** Use `define_subagent` and `invoke_subagent` to spin up a fresh-context reviewer. **Graceful Fallback:** If subagent tools (`define_subagent` / `invoke_subagent`) are not supported or fail in this environment, perform the adversarial code review yourself in this session:
    * **Role:** Lead Code Reviewer
    * **Prompt:**
      ```text
