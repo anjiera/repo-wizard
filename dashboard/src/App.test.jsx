@@ -7,12 +7,34 @@ const originalFetch = global.fetch;
 
 describe('App Component Workflow', () => {
   beforeEach(() => {
-    global.fetch = vi.fn().mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ reports: [] })
-      })
-    );
+    global.fetch = vi.fn().mockImplementation((url) => {
+      if (url.includes('/api/consent')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ consented: true, data: { agreed: true } })
+        });
+      }
+      if (url.includes('/api/reports')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ reports: [] })
+        });
+      }
+      if (url.includes('/api/session')) {
+        // Return a 200 OK to indicate an active session exists
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            targetPath: '',
+            status: 'paused',
+            currentStep: 0,
+            answers: { compliance: [] },
+            sections: {}
+          })
+        });
+      }
+      return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+    });
   });
 
   afterEach(() => {
@@ -55,5 +77,34 @@ describe('App Component Workflow', () => {
 
     // Expect Questionnaire Step 2 (Technical Stack)
     expect(screen.getByRole('heading', { name: /technical stack/i })).toBeInTheDocument();
+  });
+
+  it('renders consent page if not consented and allows acceptance', async () => {
+    // Override fetch to mock unconsented status
+    global.fetch.mockImplementation((url) => {
+      if (url.includes('/api/consent')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ consented: false })
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ reports: [] })
+      });
+    });
+
+    render(<App />);
+
+    // Expect Consent screen terms and accept button
+    const heading = await screen.findByText(/Terms of Service & Developer Consent/i);
+    expect(heading).toBeInTheDocument();
+    const acceptBtn = screen.getByRole('button', { name: /i accept the terms/i });
+    
+    // Accept consent
+    fireEvent.click(acceptBtn);
+
+    // After accepting, it transitions to landing screen
+    await screen.findByText(/start new alignment audit/i);
   });
 });

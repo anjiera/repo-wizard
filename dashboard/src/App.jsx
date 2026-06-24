@@ -48,9 +48,29 @@ export default function App() {
   const [logs, setLogs] = useState([]);
   const [hasSession, setHasSession] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [hasConsented, setHasConsented] = useState(false);
+
+  // Check consent status on startup
+  useEffect(() => {
+    fetch('/api/consent')
+      .then(res => res.ok ? res.json() : { consented: false })
+      .then(data => {
+        setHasConsented(data.consented);
+        if (!data.consented) {
+          setScreen('consent');
+        }
+      })
+      .catch(() => {
+        setHasConsented(false);
+        setScreen('consent');
+      });
+  }, []);
 
   // Fetch reports and active session state on startup/screen change
   useEffect(() => {
+    if (!hasConsented && screen !== 'consent') {
+      return;
+    }
     // Clear active timeouts when screen changes to prevent background redirects/updates
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
@@ -72,7 +92,7 @@ export default function App() {
       setHasSession(sessionOk);
 
       // Skip landing page on initial load if no session and no reports exist
-      if (isInitialLoad && screen === 'landing' && !sessionOk && reportsList.length === 0) {
+      if (hasConsented && isInitialLoad && screen === 'landing' && !sessionOk && reportsList.length === 0) {
         setScreen('picker');
       }
       
@@ -82,7 +102,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, [screen]);
+  }, [screen, hasConsented]);
 
   // Handle Resume
   const handleResume = () => {
@@ -297,20 +317,22 @@ export default function App() {
           </div>
           <span className="font-extrabold text-xl tracking-tight text-white">Repo Wizard Dashboard</span>
         </div>
-        <div className="flex gap-4">
-          <button 
-            className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
-            onClick={() => setScreen('landing')}
-          >
-            Home
-          </button>
-          <button 
-            className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
-            onClick={() => setScreen('reports')}
-          >
-            View Reports
-          </button>
-        </div>
+        {hasConsented && (
+          <div className="flex gap-4">
+            <button 
+              className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
+              onClick={() => setScreen('landing')}
+            >
+              Home
+            </button>
+            <button 
+              className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
+              onClick={() => setScreen('reports')}
+            >
+              View Reports
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Main Container */}
@@ -318,6 +340,76 @@ export default function App() {
         {errorMsg && (
           <div className="w-full max-w-xl bg-red-950/50 border border-red-500/50 text-red-200 p-4 rounded-xl mb-6 text-center animate-fade-in">
             {errorMsg}
+          </div>
+        )}
+
+        {/* 0. Consent Screen */}
+        {screen === 'consent' && (
+          <div className="w-full max-w-xl glass-panel p-8 rounded-2xl shadow-xl animate-fade-in space-y-6">
+            <h2 className="text-2xl font-bold mb-4 text-white text-center">Terms of Service & Developer Consent</h2>
+            <div className="bg-[#0d1117] border border-brand-border rounded-xl p-4 text-sm text-[#8b949e] h-60 overflow-y-auto space-y-4 leading-relaxed">
+              <p className="text-white font-semibold">Please read and accept the following terms before proceeding with any codebase analysis or modifications.</p>
+              
+              <p>
+                <strong>1. Developer Ownership & Responsibility:</strong> Repo Wizard is an AI-driven tool configuration assistant. 
+                It makes recommendations and can generate scaffolding configurations, security rules, and lint configurations. 
+                However, you acknowledge and agree that you retain absolute and final responsibility for reviewing all generated files, security configurations, and licensing, and for performing code integration or changes.
+              </p>
+
+              <div className="border-l-4 border-yellow-500 bg-yellow-500/10 p-3 rounded text-yellow-200 text-xs">
+                <strong>Disclaimer:</strong> Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
+              </div>
+
+              <p>
+                <strong>2. Data Privacy:</strong> By proceeding, you authorize Repo Wizard to scan selected directories on your local disk or fetch remote repositories for scanning. 
+                All scan actions run locally on your system, and report summaries are stored in the local workspace directory.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-brand-border/40">
+              <button
+                type="button"
+                onClick={() => {
+                  fetch('/api/consent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agreed: false })
+                  })
+                    .then(() => {
+                      setHasConsented(false);
+                      setErrorMsg('You must accept the terms to use the dashboard.');
+                    });
+                }}
+                className="flex-1 bg-red-950/40 hover:bg-red-950/60 text-red-300 border border-red-500/30 font-semibold py-3 rounded-xl transition"
+              >
+                Decline
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  fetch('/api/consent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agreed: true, agreed_by: 'dev-user' })
+                  })
+                    .then(res => {
+                      if (!res.ok) throw new Error('Failed to record consent.');
+                      return res.json();
+                    })
+                    .then(() => {
+                      setHasConsented(true);
+                      setErrorMsg('');
+                      setScreen('landing');
+                    })
+                    .catch(err => {
+                      setErrorMsg(err.message || 'Failed to save consent.');
+                    });
+                }}
+                className="flex-1 bg-[#2ea44f] hover:bg-[#2c974b] text-white font-semibold py-3 rounded-xl transition shadow-lg"
+              >
+                I Accept the Terms
+              </button>
+            </div>
           </div>
         )}
 

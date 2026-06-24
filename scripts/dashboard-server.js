@@ -21,6 +21,7 @@ const { convertMdToHtml } = require('./md-to-html');
 const ROOT = path.resolve(__dirname, '..');
 const PORT_START = 3000;
 const SESSION_FILE = path.join(ROOT, '.repo-wizard', 'session.json');
+const TOS_FILE = path.join(ROOT, '.repo-wizard', '.tos_agreed');
 
 // Ensure reports directory exists
 const REPORTS_DIR = path.join(ROOT, '.repo-wizard');
@@ -191,6 +192,69 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
   writeLog('info', `Received request: ${req.method} ${url.pathname}`, correlationId);
+
+  // 0a. GET /api/consent - Check TOS consent status
+  if (req.method === 'GET' && url.pathname === '/api/consent') {
+    if (!fs.existsSync(TOS_FILE)) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ consented: false }));
+      return;
+    }
+    try {
+      const data = JSON.parse(fs.readFileSync(TOS_FILE, 'utf8'));
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ consented: true, data }));
+    } catch (err) {
+      writeLog('error', 'Failed to read TOS consent file', correlationId, { error: err.message });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ consented: false }));
+    }
+    return;
+  }
+
+  // 0b. POST /api/consent - Save or revoke TOS consent
+  if (req.method === 'POST' && url.pathname === '/api/consent') {
+    let body = '';
+    let tooLarge = false;
+    req.on('data', chunk => {
+      body += chunk;
+      if (body.length > 2048) {
+        tooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload Too Large' }));
+        req.destroy();
+      }
+    });
+    req.on('end', () => {
+      if (tooLarge) return;
+      try {
+        const payload = JSON.parse(body);
+        if (payload.agreed === true) {
+          const consentData = {
+            agreed: true,
+            agreed_by: payload.agreed_by || 'dev-user',
+            timestamp: new Date().toISOString()
+          };
+          fs.writeFileSync(TOS_FILE, JSON.stringify(consentData, null, 2), 'utf8');
+          writeLog('info', 'TOS Consent saved successfully', correlationId);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ status: 'success', message: 'TOS accepted.' }));
+        } else {
+          if (fs.existsSync(TOS_FILE)) {
+            fs.unlinkSync(TOS_FILE);
+          }
+          writeLog('info', 'TOS Consent declined / revoked', correlationId);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ status: 'declined', message: 'TOS declined.' }));
+        }
+      } catch (err) {
+        writeLog('error', 'Malformed payload in consent update', correlationId, { error: err.message });
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
+      }
+    });
+    return;
+  }
 
   // 1. GET /api/session - Read alignment questionnaire state
   if (req.method === 'GET' && url.pathname === '/api/session') {
