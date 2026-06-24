@@ -117,7 +117,7 @@ function scanForEmojis(dir) {
   for (const entry of entries) {
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === '.git' || entry.name === '.repo-wizard' || entry.name === 'node_modules' || entry.name === 'temp_e2e_sandbox') {
+      if (entry.name === '.git' || entry.name === '.repo-wizard' || entry.name === 'node_modules' || entry.name === 'temp_e2e_sandbox' || entry.name === 'dist') {
         continue;
       }
       scanForEmojis(fullPath);
