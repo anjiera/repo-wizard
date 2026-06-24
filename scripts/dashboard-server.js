@@ -815,3 +815,29 @@ findOpenPort(PORT_START, (err, openPort) => {
     writeLog('info', `Dashboard server started successfully on port ${openPort}`);
   });
 });
+
+function cleanupActiveScan() {
+  if (activeScanProcess) {
+    try {
+      activeScanProcess.kill('SIGKILL');
+      writeLog('info', 'Successfully terminated active scan child process on server exit.');
+    } catch (err) {
+      console.error('Failed to terminate active scan process on exit:', err.message);
+    }
+    activeScanProcess = null;
+  }
+}
+
+process.on('exit', cleanupActiveScan);
+process.on('SIGINT', () => {
+  cleanupActiveScan();
+  process.exit(0);
+});
+process.on('SIGTERM', () => {
+  cleanupActiveScan();
+  process.exit(0);
+});
+process.on('SIGHUP', () => {
+  cleanupActiveScan();
+  process.exit(0);
+});
