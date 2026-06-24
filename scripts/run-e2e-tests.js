@@ -91,20 +91,9 @@ function setupSandbox() {
 }
 
 function cleanupSandbox() {
-  const deleteFolderRecursive = (folderPath) => {
-    if (fs.existsSync(folderPath)) {
-      fs.readdirSync(folderPath).forEach((file) => {
-        const curPath = path.join(folderPath, file);
-        if (fs.lstatSync(curPath).isDirectory()) {
-          deleteFolderRecursive(curPath);
-        } else {
-          fs.unlinkSync(curPath);
-        }
-      });
-      fs.rmdirSync(folderPath);
-    }
-  };
-  deleteFolderRecursive(SANDBOX_DIR);
+  if (fs.existsSync(SANDBOX_DIR)) {
+    fs.rmSync(SANDBOX_DIR, { recursive: true, force: true });
+  }
 }
 
 function testGitignoreAppend() {
