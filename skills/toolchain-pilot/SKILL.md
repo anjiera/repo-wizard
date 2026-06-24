@@ -40,7 +40,7 @@ Draft all configurations, CMake toolchain configs, and setup wrappers in coordin
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending compiler settings, creating toolchain folders, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing build configurations. Do **NOT** overwrite, alter, or remove configurations added by other build or test agents (such as testing setups, coverage rules, or appsec hardeners).
 3. **Interactive Code Review:** Display generated `.cmake` toolchain files, compiler flags (`-march`, `-mabi`), linker script arguments, or Cargo target configurations to the developer, prompting them for review and confirmation.
-4. **Decoupled Reference Use:** Use [Cross-Compilation & Toolchain Standards](../../references/toolchain-standards.md) as the source of truth for CMake compiler files, cargo targets, emcmake setups, and flags.
+4. **Decoupled Reference Use:** Use [Cross-Compilation & Toolchain Standards](../../references/coding-standards/toolchain-standards.md) as the source of truth for CMake compiler files, cargo targets, emcmake setups, and flags.
 5. **README Integration:** Append setup instructions, environment variables, compiler prerequisites, and execution commands (e.g. how to build using the toolchain file) to `README.md` or setup guides.
 
 ### Phase 4: Verification & Validation

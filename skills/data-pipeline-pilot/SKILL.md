@@ -40,7 +40,7 @@ Audit the repository to locate database connections and data sync paths:
 Draft all specifications, DAG files, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating DAG files, or modifying existing configuration scripts.
 2. **Interactive Code Review:** Display generated Pandera schemas, Airflow DAG templates, or database connection pool engines to the developer, prompting them for review and confirmation.
-3. **Decoupled Reference Use:** Use [Data Pipeline & Quality Standards](../../references/data-pipeline-standards.md) as the source of truth for validation rules, pooling parameters, and orchestrator configs.
+3. **Decoupled Reference Use:** Use [Data Pipeline & Quality Standards](../../references/coding-standards/data-pipeline-standards.md) as the source of truth for validation rules, pooling parameters, and orchestrator configs.
 4. **README & Setup Integration:** Once verified, add pipeline run instructions or scheduled trigger setups to the project's onboarding files (`README.md` or setup guides) for developer review.
 
 ### Phase 4: Verification & Validation

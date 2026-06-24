@@ -36,7 +36,7 @@ Audit the codebase to check current React performance configurations:
 Draft all configurations, tests, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying configuration files.
 2. **Interactive Code Review:** Display generated React hooks, style adjustments, or page event listeners to the user and prompt them for review and confirmation.
-3. **Decoupled Reference Use:** Use [React Web Performance Patterns](../../references/react-performance-patterns.md) as the source of truth for yielding hooks, CSS styles, and event cleaners.
+3. **Decoupled Reference Use:** Use [React Web Performance Patterns](../../references/performance-patterns/performance-patterns-react.md) as the source of truth for yielding hooks, CSS styles, and event cleaners.
 
 ### Phase 4: Verification & Validation
 1. **Component Verification:** Verify that modified React files compile without warnings and render correctly.

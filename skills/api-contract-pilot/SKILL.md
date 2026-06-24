@@ -41,7 +41,7 @@ Audit the repository to locate active endpoint declarations and contract paramet
 Draft all specifications, validator files, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating spec files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenAPI YAML templates, Protobuf service schemas, or GraphQL Inspector configurations to the developer, prompting them for review and confirmation.
-3. **Decoupled Reference Use:** Use [API Contract & Schema Standards](../../references/api-contract-standards.md) as the source of truth for schema syntax rules, linter options, and breaking-change configurations.
+3. **Decoupled Reference Use:** Use [API Contract & Schema Standards](../../references/coding-standards/api-contract-standards.md) as the source of truth for schema syntax rules, linter options, and breaking-change configurations.
 4. **README & Setup Integration:** Once verified, add spec generation and schema linting commands (e.g. `buf lint` or `spectral lint`) to the project's onboarding files (`README.md` or setup guides) for developer review.
 
 ### Phase 4: Verification & Validation

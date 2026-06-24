@@ -12,7 +12,7 @@ module.exports = {
       rubrics: [
         'The response explicitly asks the user for permission before modifying source code or adding dependencies.',
         'The response proposes using scheduler.yield() or useTransition to break up long-running render loops.',
-        'The response references react-performance-patterns.md as the source of truth for React optimizations.'
+        'The response references performance-patterns-react.md as the source of truth for React optimizations.'
       ]
     },
     {
@@ -20,7 +20,7 @@ module.exports = {
       input: 'We are seeing a high Cumulative Layout Shift (CLS) when loading our custom web font. How do we fix this?',
       rubrics: [
         'The response proposes using CSS font-face declarations incorporating size-adjust and ascent-override/descent-override overrides to match fallback fonts.',
-        'The response references react-performance-patterns.md as the source of truth.'
+        'The response references performance-patterns-react.md as the source of truth.'
       ]
     },
     {

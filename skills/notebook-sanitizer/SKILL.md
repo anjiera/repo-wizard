@@ -41,7 +41,7 @@ Draft all configurations, manifests, and scripts in coordination with `tool-scaf
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating environment manifests, or modifying existing configuration scripts.
 2. **Strict Inter-Agent Boundaries:** Respect existing hook files (like Husky hooks, pre-commit config YAML files, or custom scripts). You must **NOT** overwrite, alter, or remove configurations added by other agents. Always request developer consent and provide options to append filters cleanly without disrupting existing tools.
 3. **Interactive Code Review:** Display generated `.gitattributes` snippets, hgrc settings, nbstripout configs, and environment dependencies to the developer, prompting them for review and confirmation.
-4. **Decoupled Reference Use:** Use [Jupyter Notebook & Data Science Standards](../../references/notebook-standards.md) as the source of truth for VCS attributes, hgrc config files, nbstripout commands, and environment setups.
+4. **Decoupled Reference Use:** Use [Jupyter Notebook & Data Science Standards](../../references/coding-standards/notebook-standards.md) as the source of truth for VCS attributes, hgrc config files, nbstripout commands, and environment setups.
 5. **README & Setup Integration:** Once verified, add environment activation and notebook run instructions to the project's onboarding files (`README.md` or setup guides) for developer review.
 
 ### Phase 4: Verification & Validation

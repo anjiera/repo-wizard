@@ -38,7 +38,7 @@ Scan the codebase to evaluate current documentation patterns:
 Draft all documentation and configuration templates. Adhere strictly to these rules:
 1. **Explicit Consent:** Ask the user for permission before creating directories or writing helper scripts.
 2. **Interactive Code Review:** Display generated script files, diagrams, and templates to the user and prompt them to guide or review changes.
-3. **Decoupled Reference Use:** Refer to [Repository Documentation & Architecture Standards](../../references/documentation-standards.md) as the source of truth for all schemas (ADR, Post-Mortems, Retrospectives, and GFM Mermaid styles).
+3. **Decoupled Reference Use:** Refer to [Repository Documentation & Architecture Standards](../../references/coding-standards/documentation-standards.md) as the source of truth for all schemas (ADR, Post-Mortems, Retrospectives, and GFM Mermaid styles).
 4. **Build/Onboarding Integration:** Once documentation paths and tools are scaffolded, automatically append setup commands or usage examples to the repository's onboarding instructions (`README.md` or setup scripts) for developer review.
 
 ### Phase 4: Verification & Validation

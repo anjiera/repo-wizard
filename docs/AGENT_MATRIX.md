@@ -19,8 +19,8 @@ This document provides a clean taxonomy mapping of the agent personas, skill fol
 | `legal-neutrality-agent` | `legal-neutrality-scanner` | `/rw-legal-neutrality` | `legal-phrasing-dictionary.md` |
 | `notebook-sanitizer-agent` | `notebook-sanitizer` | `/rw-notebook-sanitizer` | `notebook-standards.md` |
 | `observability-pilot-agent` | `observability-pilot` | `/rw-observability` | `observability-patterns.md` |
-| `performance-pilot-agent` | `performance-pilot` | `/rw-performance` | `performance-patterns.md` |
-| `react-performance-pilot-agent` | `react-performance-pilot` | `/rw-react-performance` | `react-performance-patterns.md` |
+| `performance-pilot-agent` | `performance-pilot` | `/rw-performance` | `performance-patterns/performance-patterns.md` |
+| `react-performance-pilot-agent` | `react-performance-pilot` | `/rw-react-performance` | `performance-patterns/performance-patterns-react.md` |
 | `privacy-guardian-agent` | `privacy-guardian` | `/rw-privacy-guardian` | `data-privacy-checklist.md` |
 | `resilience-pilot-agent` | `resilience-pilot` | `/rw-resilience` | `resilience-patterns.md` |
 | *None* | `rw-code-review` | `/rw-code-review` | *None* |
