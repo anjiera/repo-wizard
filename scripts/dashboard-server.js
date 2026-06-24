@@ -15,8 +15,8 @@ const http = require('http');
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
 const crypto = require('crypto');
+const { convertMdToHtml } = require('./md-to-html');
 
 const ROOT = path.resolve(__dirname, '..');
 const PORT_START = 3000;
@@ -189,20 +189,29 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 4. POST /api/compile-html - Run md-to-html compiler
+  // 4. POST /api/compile-html - Run md-to-html compiler securely in-process
   if (req.method === 'POST' && url.pathname === '/api/compile-html') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
     req.on('end', () => {
       try {
         const { markdownFile } = JSON.parse(body);
-        if (!markdownFile) {
+        if (typeof markdownFile !== 'string' || !markdownFile.endsWith('.md')) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Missing markdownFile path.' }));
+          res.end(JSON.stringify({ error: 'Invalid markdownFile path. Must end with .md.' }));
           return;
         }
 
-        const inputPath = path.join(ROOT, '.repo-wizard', markdownFile);
+        const inputPath = path.resolve(ROOT, '.repo-wizard', markdownFile);
+        const reportsDir = path.resolve(ROOT, '.repo-wizard');
+
+        // Enforce boundary check to prevent Directory Traversal
+        if (!inputPath.startsWith(reportsDir + path.sep)) {
+          res.writeHead(403, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Access denied.' }));
+          return;
+        }
+
         const outputPath = inputPath.replace(/\.md$/, '.html');
 
         if (!fs.existsSync(inputPath)) {
@@ -212,18 +221,21 @@ const server = http.createServer((req, res) => {
         }
 
         writeLog('info', `Compiling markdown to HTML: ${markdownFile}`, correlationId);
-        
-        exec(`node scripts/md-to-html.js "${inputPath}" "${outputPath}"`, (err) => {
-          if (err) {
-            writeLog('error', 'Failed to run md-to-html compilation', correlationId, { error: err.message });
-            res.writeHead(500, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'HTML compilation failed.' }));
-          } else {
-            writeLog('info', `Successfully compiled HTML: ${path.basename(outputPath)}`, correlationId);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ status: 'success', htmlFile: path.basename(outputPath) }));
-          }
-        });
+
+        try {
+          const mdContent = fs.readFileSync(inputPath, 'utf8');
+          const title = path.basename(inputPath, '.md');
+          const htmlContent = convertMdToHtml(mdContent, title);
+          fs.writeFileSync(outputPath, htmlContent, 'utf8');
+
+          writeLog('info', `Successfully compiled HTML: ${path.basename(outputPath)}`, correlationId);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ status: 'success', htmlFile: path.basename(outputPath) }));
+        } catch (err) {
+          writeLog('error', 'Failed to run md-to-html compilation in-process', correlationId, { error: err.message });
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'HTML compilation failed.' }));
+        }
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
