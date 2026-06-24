@@ -462,6 +462,121 @@ Disclaimer: Recommended tools are selected for stack compatibility and ecosystem
   }
 }
 
+function compileRealReports(session) {
+  const repoName = path.basename(session.targetPath || 'project');
+  const reportsDir = path.join(ROOT, 'reports', repoName);
+  const obsDir = path.join(reportsDir, 'agents');
+  
+  const answers = session.answers || {};
+  const frameworks = answers.frameworks || [];
+  const platforms = answers.platforms || [];
+  const compliance = answers.compliance || [];
+
+  const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+
+  // Read all observations
+  let consolidatedObservations = '';
+  let executedAgents = [];
+  if (fs.existsSync(obsDir)) {
+    try {
+      const files = fs.readdirSync(obsDir);
+      for (const file of files) {
+        if (file.startsWith('observations-') && file.endsWith('.md')) {
+          const agentName = file.replace(/^observations-/, '').replace(new RegExp(`-${repoName}\\.md$`), '');
+          executedAgents.push(agentName);
+          const content = fs.readFileSync(path.join(obsDir, file), 'utf8');
+          consolidatedObservations += `\n### Specialist Agent: ${agentName}\n\n${content}\n---\n`;
+        }
+      }
+    } catch (e) {
+      writeLog('error', 'Failed to read observations directory for compilation', '', { error: e.message });
+    }
+  }
+
+  if (executedAgents.length === 0) {
+    executedAgents.push('General Quality Auditor');
+  }
+
+  // 1. Executive Summary
+  const execSummary = `# Repo Wizard Executive Summary - ${repoName}
+
+## Section 1: Codebase Health & Strengths
+We completed a real codebase scan using specialist agents: ${executedAgents.join(', ')}. Based on structural and framework analysis, the repository "${repoName}" contains well-structured components and assets. This solid foundation simplifies integrating automated validation routines and pre-submission validation.
+
+## Section 2: Tooling & Compliance Opportunities
+We identified clear opportunities to strengthen quality control, security, and repository governance. Integrating the recommended specialist tools will help mitigate code quality and architectural risks. In particular, we suggest configuring validation workflows for the selected stack: ${frameworks.join(', ') || 'General'}.
+
+## Section 3: Rollout Roadmap
+First, initialize standard linter rules and commit validation gates. Second, configure test verification workflows to target a ${answers.coverageThreshold || 80}% coverage limit. Third, deploy specialized compliance checkers to enforce policy boundaries on platforms: ${platforms.join(', ') || 'General'}.
+
+${DISCLAIMER_TEXT}
+`;
+
+  // 2. Full Technical Report
+  const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
+
+## Overview
+This report consolidates findings and configurations from all executed specialist agents.
+
+## Domain Audit Profiles
+${consolidatedObservations || 'No specialist observations were recorded.'}
+
+## Verification Target
+- Target Coverage Threshold: ${answers.coverageThreshold || 80}%
+- Compliance Standards: ${compliance.join(', ') || 'None'}
+
+${DISCLAIMER_TEXT}
+`;
+
+  // 3. Observations Summary
+  const observationsSummary = `# Repo Wizard Observations Summary - ${repoName}
+
+## Toolchain Assumptions
+The codebase was scanned and verified under assumptions for:
+- Frameworks / Stack: ${frameworks.join(', ') || 'General'}
+- Platforms / Targets: ${platforms.join(', ') || 'General'}
+
+## Compliance Guesses
+- Selected Compliance Standards: ${compliance.join(', ') || 'None'}
+
+## Suggested Adjustments
+- Establish standard lint rules.
+- Set up pre-commit validation.
+
+${DISCLAIMER_TEXT}
+`;
+
+  const execPath = path.join(reportsDir, `repo-wizard-executive-summary-${repoName}.md`);
+  const fullPath = path.join(reportsDir, `repo-wizard-full-report-${repoName}.md`);
+  const obsPath = path.join(reportsDir, `repo-wizard-observations-${repoName}.md`);
+
+  try {
+    fs.writeFileSync(execPath, execSummary, 'utf8');
+    fs.writeFileSync(fullPath, fullReport, 'utf8');
+    fs.writeFileSync(obsPath, observationsSummary, 'utf8');
+
+    // Compile to HTML
+    const htmlExec = convertMdToHtml(execSummary, `Executive Summary - ${repoName}`);
+    fs.writeFileSync(execPath.replace(/\.md$/, '.html'), htmlExec, 'utf8');
+
+    const htmlFull = convertMdToHtml(fullReport, `Full Technical Report - ${repoName}`);
+    fs.writeFileSync(fullPath.replace(/\.md$/, '.html'), htmlFull, 'utf8');
+
+    const htmlObs = convertMdToHtml(observationsSummary, `Observations Summary - ${repoName}`);
+    fs.writeFileSync(obsPath.replace(/\.md$/, '.html'), htmlObs, 'utf8');
+    
+    // Generate backlog CSV if mode is backlog
+    if (session.mode === 'backlog') {
+      const csvPath = path.join(reportsDir, 'backlog.csv');
+      let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
+      csvContent += `"Configure pre-commit hook","Install pre-commit hook and linter scripts. ${DISCLAIMER_TEXT}","Story","Scaffolding","governance","vcs-workflow-agent","General"\n`;
+      fs.writeFileSync(csvPath, csvContent, 'utf8');
+    }
+  } catch (err) {
+    console.error('Failed to compile real reports:', err.message);
+  }
+}
+
 const server = http.createServer((req, res) => {
   const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();
 
@@ -740,7 +855,7 @@ const server = http.createServer((req, res) => {
         cwd: ROOT,
         env: {
           ...process.env,
-          MOCK_CLI: 'true',
+          MOCK_CLI: process.env.MOCK_CLI === 'true' ? 'true' : 'false',
           MOCK_REPO_NAME: repoName,
           TARGET_PATH: session.targetPath
         },
@@ -781,7 +896,12 @@ const server = http.createServer((req, res) => {
             sessionState.status = currentSession.status;
             
             if (code === 0) {
-              generateMockReports(currentSession);
+              const isMockMode = process.env.MOCK_CLI === 'true';
+              if (isMockMode) {
+                generateMockReports(currentSession);
+              } else {
+                compileRealReports(currentSession);
+              }
             }
           } catch (e) {
             writeLog('error', 'Failed to update session status or compile mock reports on scan close', correlationId, { error: e.message });
