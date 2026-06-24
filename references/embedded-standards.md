@@ -213,6 +213,6 @@ bool Log_Read(uint8_t *data) {
 
 C/C++ firmware projects must maintain clear layout readability. Style validation should be integrated into pre-commit filters using `clang-format` configured according to the Google C++ Style Guide:
 
-- Save the standard Google Style `.clang-format` configuration file at the repository root. See details in [google-style-rules.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/google-style-rules.md).
+- Save the standard Google Style `.clang-format` configuration file at the repository root. See details in [google-style-rules.md](google-style-rules.md).
 - Integrate formatting runs into your build process or pre-commit hooks to automate cleanup.
 

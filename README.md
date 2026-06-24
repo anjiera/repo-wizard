@@ -9,21 +9,21 @@ It packages instructions, checklists, and persona configurations that can be loa
 ## Documentation & Navigation Map
 
 To help you get started quickly, please refer to the following guides:
-* **[AGENT_MATRIX.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/AGENT_MATRIX.md)** — The multi-agent taxonomy matrix mapping personas, skills, commands, and standards.
-* **[getting-started.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/getting-started.md)** — Core concepts and cybersecurity color-wheel categorization.
-* **[GLOSSARY.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/GLOSSARY.md)** — Definitions for compliance frameworks, software engineering, and AI agent terms.
-* **[scripts-guide.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/scripts-guide.md)** — Detailed manual for helper, compilation, and testing scripts.
-* **[TESTING.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/TESTING.md)** — Testing philosophy, LLM-as-a-judge evals, and troubleshooting guide.
-* **[usage-tutorial.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/usage-tutorial.md)** — Scenario guides for Greenfield vs. Brownfield repos, and interactive vs. headless execution.
-* **[references/README.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/README.md)** — Alphabetized and domain-mapped catalog of the 23 checklist and pattern standards.
-* **[hybrid-orchestration.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/hybrid-orchestration.md)** — Architectural design of the manifest-driven hybrid runner and TTY execution model.
-* **[passive-data-boundaries.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
-* **[prompt-evaluations.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
-* **[zero-dependency-scripting.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
-* **[dashboard-architecture.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/dashboard-architecture.md)** — Architectural layout of the local SPA client dashboard and Express backend.
-* **[scaffolding-and-rollback-safety.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
-* **[meta-agent-alignment.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
-* **[legal-consent-gate.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
+* **[AGENT_MATRIX.md](docs/AGENT_MATRIX.md)** — The multi-agent taxonomy matrix mapping personas, skills, commands, and standards.
+* **[getting-started.md](docs/getting-started.md)** — Core concepts and cybersecurity color-wheel categorization.
+* **[GLOSSARY.md](docs/GLOSSARY.md)** — Definitions for compliance frameworks, software engineering, and AI agent terms.
+* **[scripts-guide.md](docs/scripts-guide.md)** — Detailed manual for helper, compilation, and testing scripts.
+* **[TESTING.md](docs/TESTING.md)** — Testing philosophy, LLM-as-a-judge evals, and troubleshooting guide.
+* **[usage-tutorial.md](docs/usage-tutorial.md)** — Scenario guides for Greenfield vs. Brownfield repos, and interactive vs. headless execution.
+* **[references/README.md](references/README.md)** — Alphabetized and domain-mapped catalog of the 23 checklist and pattern standards.
+* **[hybrid-orchestration.md](docs/design/hybrid-orchestration.md)** — Architectural design of the manifest-driven hybrid runner and TTY execution model.
+* **[passive-data-boundaries.md](docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
+* **[prompt-evaluations.md](docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
+* **[zero-dependency-scripting.md](docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
+* **[dashboard-architecture.md](docs/design/dashboard-architecture.md)** — Architectural layout of the local SPA client dashboard and Express backend.
+* **[scaffolding-and-rollback-safety.md](docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
+* **[meta-agent-alignment.md](docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
+* **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
 
 ---
 
@@ -53,11 +53,11 @@ graph TD
 * **Purpose:** Scans codebases for high-risk phrases, promises, or claims (e.g. guaranteeing security, offering unregulated fitness/health guidance) that expose the company to legal liability.
 * **Specialist Agent:** `agents/legal-neutrality-agent.md`
 * **Skill:** `skills/legal-neutrality-scanner/SKILL.md`
-* **Reference Lookup:** [references/legal-phrasing-dictionary.md](file:///d:/DevSandbox/agy-projects/repo-wizard/references/legal-phrasing-dictionary.md)
+* **Reference Lookup:** [references/legal-phrasing-dictionary.md](references/legal-phrasing-dictionary.md)
 
 ### 2. Repo Wizard (`/repo-wizard`)
 * **Purpose:** Runs an interactive onboarding interview with developers, dynamically recommends tailored QA, testing, security, accessibility, and compliance tools based on budget/stack constraints, and guides specialist subagents to scaffold them safely.
-* **Orchestrator Specification:** Located in the [repo-wizard-planning/](file:///d:/DevSandbox/agy-projects/repo-wizard/repo-wizard-planning/) directory.
+* **Orchestrator Specification:** Located in the [repo-wizard-planning/](repo-wizard-planning) directory.
 
 ### 3. Agent Alignment Pilot (`/rw-agent-align`)
 * **Purpose:** Audits agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and scaffolds rubric-based evaluation suites and validation checks.
@@ -66,8 +66,8 @@ graph TD
 
 ### 4. Helper & Validation Scripts
 To verify repository quality and facilitate testing of AI agent workflows:
-* **Markdown-to-HTML Compiler ([scripts/md-to-html.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/md-to-html.js)):** A zero-dependency utility that compiles standard markdown documentation into responsive, styled HTML pages with light/dark theme support.
-* **Static Linters:** Scripts to validate agent formatting ([validate-agents.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-agents.js)), command parity ([validate-commands.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-commands.js)), and skill layouts ([validate-skills.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/validate-skills.js)).
+* **Markdown-to-HTML Compiler ([scripts/md-to-html.js](scripts/md-to-html.js)):** A zero-dependency utility that compiles standard markdown documentation into responsive, styled HTML pages with light/dark theme support.
+* **Static Linters:** Scripts to validate agent formatting ([validate-agents.js](scripts/validate-agents.js)), command parity ([validate-commands.js](scripts/validate-commands.js)), and skill layouts ([validate-skills.js](scripts/validate-skills.js)).
 * **Test Runners:** Integration, contract schema checking, subagent mocking, and sandbox E2E test suites.
 
 ---
@@ -100,10 +100,10 @@ To automatically configure your local environment, install pre-commit git hooks,
 ```
 
 For detailed setup instructions on different client environments, see:
-* [getting-started.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/getting-started.md) — General overview.
-* [antigravity-setup.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/antigravity-setup.md) — Installing as an Antigravity plugin.
-* [claude-setup.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/claude-setup.md) — Loading into Claude Code.
-* [copilot-setup.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/copilot-setup.md) — Importing into GitHub Copilot.
+* [getting-started.md](docs/getting-started.md) — General overview.
+* [antigravity-setup.md](docs/antigravity-setup.md) — Installing as an Antigravity plugin.
+* [claude-setup.md](docs/claude-setup.md) — Loading into Claude Code.
+* [copilot-setup.md](docs/copilot-setup.md) — Importing into GitHub Copilot.
 
 ---
 
@@ -116,5 +116,5 @@ For detailed setup instructions on different client environments, see:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](file:///d:/DevSandbox/agy-projects/repo-wizard/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

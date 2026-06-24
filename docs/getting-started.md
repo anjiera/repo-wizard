@@ -128,11 +128,11 @@ Once set up, developers can run individual validation and utility scripts:
   - `node scripts/validate-commands.js` (validates command synchronization)
   - `node scripts/validate-skills.js` (validates skill folder properties)
 * **Markdown-to-HTML Documentation Compiler**:
-  - The zero-dependency helper utility [md-to-html.js](file:///d:/DevSandbox/agy-projects/repo-wizard/scripts/md-to-html.js) compiles standard Markdown documentation files into responsive HTML pages with native dark-mode stylesheet support:
+  - The zero-dependency helper utility [md-to-html.js](../scripts/md-to-html.js) compiles standard Markdown documentation files into responsive HTML pages with native dark-mode stylesheet support:
     ```bash
     node scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
     ```
-    *(Note: Locally generated `.html` files in the `docs/` directory are excluded from Git via [.gitignore](file:///d:/DevSandbox/agy-projects/repo-wizard/.gitignore) to prevent duplicate source code conflicts).*
+    *(Note: Locally generated `.html` files in the `docs/` directory are excluded from Git via [.gitignore](../.gitignore) to prevent duplicate source code conflicts).*
 
 ---
 
