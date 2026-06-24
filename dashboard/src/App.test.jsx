@@ -45,6 +45,12 @@ describe('App Component Workflow', () => {
           json: () => Promise.resolve({ status: 'success' })
         });
       }
+      if (url.includes('/api/analyze-target')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ status: 'success', warnings: ['Mock warning: Language mismatch detected.'] })
+        });
+      }
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
   });

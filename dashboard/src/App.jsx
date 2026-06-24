@@ -59,6 +59,7 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState('');
   const [scanMessage, setScanMessage] = useState('');
   const [logs, setLogs] = useState([]);
+  const [warnings, setWarnings] = useState([]);
   const [hasSession, setHasSession] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [hasConsented, setHasConsented] = useState(false);
@@ -139,7 +140,20 @@ export default function App() {
                   if (sess) {
                     setSession(sess);
                     if (sess.status === 'completed') {
-                      setScreen('success');
+                      fetch('/api/analyze-target', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ targetPath: sess.targetPath })
+                      })
+                        .then(res => res.ok ? res.json() : { warnings: [] })
+                        .then(data => {
+                          setWarnings(data.warnings || []);
+                          setScreen('success');
+                        })
+                        .catch(() => {
+                          setWarnings([]);
+                          setScreen('success');
+                        });
                     } else {
                       setErrorMsg('Scan failed or was aborted.');
                       setScreen('landing');
@@ -257,6 +271,7 @@ export default function App() {
 
     setScreen('running');
     setLogs(['[System] Initializing backend scan...']);
+    setWarnings([]);
     setScanMessage('Sizing repository and running agents...');
 
     fetch('/api/scan', {
@@ -1017,6 +1032,18 @@ export default function App() {
             <p className="text-[#8b949e] text-sm">
               All audits have completed successfully. Check the reports folder inside your codebase to see results.
             </p>
+            {warnings.length > 0 && (
+              <div className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-left p-4 rounded-xl space-y-2 animate-fade-in text-xs">
+                <div className="font-bold flex items-center gap-1.5 text-sm">
+                  <span>⚠️</span> Technical Stack Mismatches Detected
+                </div>
+                <ul className="list-disc pl-4 space-y-1 font-medium text-[#c9d1d9]">
+                  {warnings.map((warning, idx) => (
+                    <li key={idx}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="flex gap-4">
               <button 
                 onClick={() => setScreen('reports')}

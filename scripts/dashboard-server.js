@@ -308,6 +308,42 @@ function generateManifestFromSession(session) {
   };
 }
 
+function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFiles = 1000) {
+  if (fileLimit.count >= maxFiles) return;
+
+  let files;
+  try {
+    files = fs.readdirSync(dir);
+  } catch (err) {
+    return;
+  }
+
+  const ignoreDirs = ['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents'];
+
+  for (const file of files) {
+    if (fileLimit.count >= maxFiles) break;
+
+    const fullPath = path.join(dir, file);
+    let stat;
+    try {
+      stat = fs.statSync(fullPath);
+    } catch (err) {
+      continue;
+    }
+
+    if (stat.isDirectory()) {
+      if (ignoreDirs.includes(file)) continue;
+      scanDirectoryExtensions(fullPath, extCounts, fileLimit, maxFiles);
+    } else if (stat.isFile()) {
+      fileLimit.count++;
+      const ext = path.extname(file).toLowerCase();
+      if (ext) {
+        extCounts[ext] = (extCounts[ext] || 0) + 1;
+      }
+    }
+  }
+}
+
 const server = http.createServer((req, res) => {
   const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();
 
@@ -635,9 +671,9 @@ const server = http.createServer((req, res) => {
   if (req.method === 'POST' && url.pathname === '/api/cancel-scan') {
     if (activeScanProcess) {
       try {
-        activeScanProcess.kill('SIGKILL');
+        killProcessTree(activeScanProcess);
       } catch (err) {
-        writeLog('error', 'Failed to terminate scan process', correlationId, { error: err.message });
+        writeLog('error', 'Failed to terminate scan process tree', correlationId, { error: err.message });
       }
       scanLogs.push(`[${new Date().toLocaleTimeString()}] [CANCEL] Scan cancelled by user request.`);
       isScanning = false;
@@ -661,6 +697,81 @@ const server = http.createServer((req, res) => {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'No active scan process to cancel.' }));
     }
+    return;
+  }
+
+  // 2e. POST /api/analyze-target - Analyze target directory for language mismatches
+  if (req.method === 'POST' && url.pathname === '/api/analyze-target') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        const targetPath = payload.targetPath || (sessionState && sessionState.targetPath);
+        
+        if (!targetPath || !fs.existsSync(targetPath)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid or missing target directory path.' }));
+          return;
+        }
+
+        const extCounts = {};
+        const fileLimit = { count: 0 };
+        scanDirectoryExtensions(targetPath, extCounts, fileLimit, 1000);
+
+        // Fetch selected frameworks from current sessionState
+        const selectedFrameworks = (sessionState && sessionState.answers && sessionState.answers.frameworks) || [];
+
+        const warnings = [];
+
+        // Check for selected but missing
+        const langMap = {
+          'react': { name: 'React / Node.js', extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+          'rust': { name: 'Rust (Cargo)', extensions: ['.rs'] },
+          '.net': { name: '.NET Core (C#)', extensions: ['.cs'] },
+          'swift': { name: 'Swift', extensions: ['.swift'] },
+          'unity': { name: 'Unity (C#)', extensions: ['.cs', '.meta'] },
+          'godot': { name: 'Godot (GDScript)', extensions: ['.gd', '.tscn'] },
+          'cobol': { name: 'COBOL', extensions: ['.cob', '.cbl'] },
+          'php': { name: 'PHP', extensions: ['.php'] }
+        };
+
+        for (const [key, spec] of Object.entries(langMap)) {
+          if (selectedFrameworks.includes(key)) {
+            const hasAny = spec.extensions.some(ext => (extCounts[ext] || 0) > 0);
+            if (!hasAny) {
+              warnings.push(`You selected "${spec.name}" but no matching files (${spec.extensions.join(', ')}) were detected.`);
+            }
+          }
+        }
+
+        // Check for unselected but present
+        const unselectedChecks = {
+          '.php': { key: 'php', name: 'PHP' },
+          '.rs': { key: 'rust', name: 'Rust' },
+          '.gd': { key: 'godot', name: 'Godot (GDScript)' },
+          '.cob': { key: 'cobol', name: 'COBOL' },
+          '.swift': { key: 'swift', name: 'Swift' }
+        };
+
+        for (const [ext, info] of Object.entries(unselectedChecks)) {
+          if (!selectedFrameworks.includes(info.key)) {
+            const count = extCounts[ext] || 0;
+            if (count > 5) {
+              warnings.push(`We detected ${count} files with extension "${ext}" (${info.name}) which was not selected in your technical stack.`);
+            }
+          }
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'success', warnings }));
+
+      } catch (err) {
+        writeLog('error', 'Exception in analyze-target handler', correlationId, { error: err.message });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: `Analysis failed: ${err.message}` }));
+      }
+    });
     return;
   }
 
@@ -816,11 +927,34 @@ findOpenPort(PORT_START, (err, openPort) => {
   });
 });
 
+function killProcessTree(proc) {
+  if (!proc) return;
+  const pid = proc.pid;
+  if (process.platform === 'win32') {
+    const { exec } = require('child_process');
+    try {
+      exec(`taskkill /pid ${pid} /T /F`, (err) => {
+        if (err) {
+          writeLog('error', `Failed to taskkill process tree for pid ${pid}`, '', { error: err.message });
+        }
+      });
+    } catch (e) {
+      writeLog('error', `Exception running taskkill for pid ${pid}`, '', { error: e.message });
+    }
+  } else {
+    try {
+      proc.kill('SIGKILL');
+    } catch (err) {
+      // Ignore
+    }
+  }
+}
+
 function cleanupActiveScan() {
   if (activeScanProcess) {
     try {
-      activeScanProcess.kill('SIGKILL');
-      writeLog('info', 'Successfully terminated active scan child process on server exit.');
+      killProcessTree(activeScanProcess);
+      writeLog('info', 'Successfully terminated active scan process tree on server exit.');
     } catch (err) {
       console.error('Failed to terminate active scan process on exit:', err.message);
     }
