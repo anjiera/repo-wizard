@@ -41,7 +41,7 @@ Instead of importing a heavy Markdown engine, `scripts/md-to-html.js` uses a cle
 Instead of using schema libraries like `Ajv` or `Joi`, contract validation is written using descriptive JS assertions. This allows the system to output highly contextual error messages tailored specifically to agent contracts (e.g., `task_metadata.language must be a non-empty string`), making debugging intuitive for human developers and LLM debuggers alike.
 
 ### C. Isolated Sandboxing (`run-e2e-tests.js`)
-To verify workspace transformations safely:
+To verify workspace transformations securely:
 * The runner creates temporary sandboxes inside the project workspace directory (e.g. `temp_e2e_sandbox/`).
 * It executes and validates Git changes by spawning native commands via `child_process.execSync` and cleans up filesystem state using `fs.rmdirSync` and `fs.unlinkSync`.
 * This isolates testing from the host repository state.

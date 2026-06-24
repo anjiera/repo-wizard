@@ -20,6 +20,10 @@ To help you get started quickly, please refer to the following guides:
 * **[passive-data-boundaries.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
 * **[prompt-evaluations.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
 * **[zero-dependency-scripting.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
+* **[dashboard-architecture.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/dashboard-architecture.md)** — Architectural layout of the local SPA client dashboard and Express backend.
+* **[scaffolding-and-rollback-safety.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
+* **[meta-agent-alignment.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
+* **[legal-consent-gate.md](file:///d:/DevSandbox/agy-projects/repo-wizard/docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
 
 ---
 

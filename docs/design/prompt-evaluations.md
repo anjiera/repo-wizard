@@ -10,7 +10,7 @@ AI agent personas are written in natural language prompts. Traditional unit test
 * **Non-Determinism**: Model outputs vary slightly across runs (phrasing, structure, formatting).
 * **Subjectivity**: Asserting that an agent's advice is "accurate" or "compliant" requires semantic evaluation, which is difficult for standard regex assertions.
 
-To catch prompt regressions and ensure specialist agents maintain safety guardrails, `repo-wizard` implements a fully automated **LLM-as-a-Judge** testing pipeline.
+To identify prompt regressions and verify that specialist agents align with alignment guidelines, `repo-wizard` implements a fully automated **LLM-as-a-Judge** testing pipeline.
 
 ---
 
@@ -58,7 +58,7 @@ The Judge outputs a structured JSON object containing a boolean `passed` flag an
 
 ## 3. The Rubric Parity Rule
 
-To ensure that no agent prompt is modified or created without automated test coverage, the static linter (`scripts/validate-agents.js`) enforces the **Rubric Parity Rule**:
+To verify that agent prompts are not modified or created without automated test coverage, the static linter (`scripts/validate-agents.js`) enforces the **Rubric Parity Rule**:
 * Every agent persona file in the `agents/` directory (e.g., `my-agent-agent.md`) **must** have a corresponding evaluation script in the `evals/` directory (e.g., `evals/my-agent-agent.js`).
 * The linter runs on pre-commit hooks and CI gates. If a developer adds a new agent but forgets to create its evaluation rubrics, the build/commit is blocked.
 

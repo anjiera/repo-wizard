@@ -74,7 +74,7 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
   * The script spawns the specialist agents concurrently using Node's `child_process.spawn`.
   * **TTY Auto-Detection**: The script inspects `process.stdout.isTTY` to detect the environment type:
     * *TTY (CLI Shell)*: Renders a live, animated progress bar smoothly updating in-place.
-    * *Non-TTY (Antigravity UI / CI)*: Prints clean, line-by-line logging milestones to prevent control characters from cluttering scroll windows.
+    * *Non-TTY (Antigravity UI / CI)*: Prints clean, line-by-line logging milestones to avoid control characters from cluttering scroll windows.
   * Writes reports to `.repo-wizard/agents/observations-<agent>-<repo>.md` and updates the manifest to `completed`.
 * **CLI Absent (Graceful Fallback)**:
   * The script prints an execution notice.
@@ -90,6 +90,6 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
 
 ## 3. Design Patterns Showcased
 
-1. **Graceful Degradation / Fallback**: Ensures the system remains 100% portable across headless servers, local terminals, and IDE extensions without code modification.
+1. **Graceful Degradation / Fallback**: Enables the system to remain 100% portable across headless servers, local terminals, and IDE extensions without code modification.
 2. **Pre-flight Contracts**: Validates arguments before invoking AI agents, protecting against late-stage run failures and token wastage.
 3. **Environment Feature Detection**: Dynamically determines capability (binary presence and TTY support) to optimize performance and rendering.
