@@ -823,15 +823,36 @@ export default function App() {
                     />
                   </div>
                   {session.answers.testing && (
-                    <div>
-                      <label className="block text-sm text-[#8b949e] mb-2">Coverage Threshold (%)</label>
-                      <input 
-                        type="number" 
-                        value={session.answers.coverageThreshold}
-                        onChange={(e) => setSession({...session, answers: {...session.answers, coverageThreshold: parseInt(e.target.value) || 80}})}
-                        className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-3 text-white focus:outline-none"
-                        min="0" max="100"
-                      />
+                    <div className="space-y-3">
+                      <label className="block text-sm text-[#8b949e] mb-1">Coverage Threshold (%)</label>
+                      <div className="flex items-center gap-4 bg-[#0d1117]/30 border border-brand-border/60 p-4 rounded-xl">
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max="100"
+                          value={session.answers.coverageThreshold}
+                          onChange={(e) => setSession({...session, answers: {...session.answers, coverageThreshold: parseInt(e.target.value) || 0}})}
+                          className="flex-grow h-2 bg-[#161b22] rounded-lg appearance-none cursor-pointer accent-[#2ea44f]"
+                        />
+                        <input 
+                          type="number" 
+                          min="0" 
+                          max="100"
+                          value={session.answers.coverageThreshold}
+                          onChange={(e) => {
+                            let val = parseInt(e.target.value);
+                            if (isNaN(val)) val = 0;
+                            val = Math.max(0, Math.min(100, val));
+                            setSession({...session, answers: {...session.answers, coverageThreshold: val}});
+                          }}
+                          className="w-20 text-center bg-[#0d1117] border border-brand-border rounded-xl py-2 px-3 text-white focus:outline-none focus:border-[#58a6ff] transition font-semibold"
+                        />
+                      </div>
+                      {session.answers.coverageThreshold === 100 && (
+                        <p className="text-xs text-yellow-500 font-medium leading-normal bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 animate-fade-in">
+                          ⚠️ Warning: Setting a 100% coverage threshold is a target threshold and does not guarantee complete absence of defects or absolute software safety.
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
