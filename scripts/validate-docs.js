@@ -24,6 +24,8 @@ const MATRIX_FILE = path.join(ROOT, 'docs', 'AGENT_MATRIX.md');
 const SKILLS_DIR = path.join(ROOT, 'skills');
 const DOCS_DIR = path.join(ROOT, 'docs');
 const README_FILE = path.join(ROOT, 'README.md');
+const AGENTS_MD_FILE = path.join(ROOT, 'AGENTS.md');
+const MAX_AGENTS_MD_LINES = 300;
 
 let totalErrors = 0;
 
@@ -146,12 +148,29 @@ function validateNoUnapprovedEmojis() {
   scanForEmojis(ROOT);
 }
 
+function validateAgentsMdLength() {
+  console.log('Checking AGENTS.md rule length...');
+  if (!fs.existsSync(AGENTS_MD_FILE)) {
+    return;
+  }
+
+  const content = fs.readFileSync(AGENTS_MD_FILE, 'utf8');
+  const lines = content.split(/\r?\n/).length;
+
+  if (lines > MAX_AGENTS_MD_LINES) {
+    reportError(`AGENTS.md has ${lines} lines, which exceeds the threshold of ${MAX_AGENTS_MD_LINES} lines. Please refactor detailed rules, guidelines, or checklists into separate files in references/ or skills/ to avoid agent cognitive overload.`);
+  } else {
+    console.log(`  ✓ AGENTS.md length is within limits (${lines}/${MAX_AGENTS_MD_LINES} lines).`);
+  }
+}
+
 function main() {
   validateReferencesIndex();
   validateAgentMatrix();
   validateSkillMatrix();
   validateReadmeNavigation();
   validateNoUnapprovedEmojis();
+  validateAgentsMdLength();
 
   console.log(`\nDocumentation check complete: ${totalErrors} error(s) found.`);
   if (totalErrors > 0) {

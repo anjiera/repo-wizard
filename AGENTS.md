@@ -44,3 +44,27 @@ Before running full sweeps, the Lead Agent dispatches a relevance check to each 
 
 For details on the architecture, see the specifications in the [repo-wizard-planning/](repo-wizard-planning/) folder.
 
+## Workflow: Mandatory Verification & Review Gate for Programming Tasks
+
+This workflow applies strictly to tasks that involve writing, modifying, or refactoring code. It does NOT apply to planning, brainstorming, research, or exploratory tasks.
+
+Before declaring any programming or code-writing task as finished:
+1. **Run Local Checks:** Run the workspace's tests, linters, and compilers (e.g., `npm run test`, `eslint .`, `pytest`). Resolve any errors or warnings.
+2. **Spawn a Reviewer Subagent:** Use `define_subagent` and `invoke_subagent` to spin up a fresh-context reviewer:
+   * **Role:** Lead Code Reviewer
+   * **Prompt:**
+     ```text
+     Adversarial code review. Analyze the changes in the active workspace.
+     Evaluate the code against these five axes:
+     1. Correctness: Are edge cases and error paths handled?
+     2. Simplicity & Readability: Is the code clean? Is it over-engineered?
+     3. Architecture: Does it respect module boundaries?
+     4. Security: Are inputs validated? Are secrets hidden?
+     5. Performance: Are there N+1 queries or unbounded loops?
+
+     List all issues found and label them by severity: [Critical], [Important], [Nit], [FYI]. 
+     Do not summarize or validate; only list issues.
+     ```
+3. **Reconcile Findings:** You must address all [Critical] and [Important] issues. If code changes are made, run tests and lints again.
+4. **Auto-Commit:** Once all tests, linters, and the code review pass, you are authorized to automatically commit the changes using the Conventional Commits format, unless the user has explicitly requested in the prompt not to auto-commit.
+
