@@ -232,7 +232,7 @@ const server = http.createServer((req, res) => {
         if (payload.agreed === true) {
           const consentData = {
             agreed: true,
-            agreed_by: payload.agreed_by || 'dev-user',
+            agreed_by: typeof payload.agreed_by === 'string' ? payload.agreed_by : 'dev-user',
             timestamp: new Date().toISOString()
           };
           fs.writeFileSync(TOS_FILE, JSON.stringify(consentData, null, 2), 'utf8');

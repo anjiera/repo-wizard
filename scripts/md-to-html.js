@@ -173,9 +173,6 @@ function parseMarkdown(md) {
   return html;
 }
 
-/**
- * Safely sanitizes a URL to prevent javascript: or protocol-based XSS
- */
 function sanitizeUrl(url) {
   if (!url) return '#';
   
@@ -195,8 +192,25 @@ function sanitizeUrl(url) {
       .replace(/&amp;/ig, '&')
       .replace(/&#([0-9]+);/g, (match, dec) => String.fromCharCode(parseInt(dec, 10)))
       .replace(/&#x([0-9a-f]+);/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+      
+    // Check intermediate decoded state to block deep or nested obfuscation early
+    const lowerState = decoded.toLowerCase();
+    if (/^(javascript|data|vbscript|file):/i.test(lowerState)) {
+      return '#';
+    }
+    const protocolMatch = lowerState.match(/^([a-z0-9\-\.\+]+):/);
+    if (protocolMatch) {
+      const proto = protocolMatch[1];
+      if (proto !== 'http' && proto !== 'https' && proto !== 'mailto' && proto !== 'tel') {
+        return '#';
+      }
+    }
     limit++;
   } while (decoded !== prev && limit < 10);
+  
+  if (limit >= 10 && decoded !== prev) {
+    return '#'; // Block excessively nested entities
+  }
   
   const lower = decoded.toLowerCase();
   
@@ -214,6 +228,7 @@ function sanitizeUrl(url) {
   
   return url;
 }
+
 
 /**
  * Parses inline formatting like bold, code, links

@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+const complianceFrameworks = [
+  { id: 'GDPR', fullName: 'GDPR (General Data Protection Regulation)', hint: 'Required for applications processing EU citizen data.' },
+  { id: 'SOC 2', fullName: 'SOC 2 (Systems and Organization Controls 2)', hint: 'Required for cloud and SaaS systems handling customer data.' },
+  { id: 'ISO 27001', fullName: 'ISO 27001 (Information Security Management)', hint: 'International framework for information security systems.' },
+  { id: 'HIPAA', fullName: 'HIPAA (Health Insurance Portability and Accountability Act)', hint: 'Required for US healthcare applications storing patient data.' },
+  { id: 'PCI-DSS', fullName: 'PCI-DSS (Payment Card Industry Data Security Standard)', hint: 'Required for apps processing credit card transactions.' },
+  { id: 'CCPA / CPRA', fullName: 'CCPA / CPRA (California Consumer Privacy Act / CPRA)', hint: 'Applies to businesses handling California resident data.' },
+  { id: 'FIPS', fullName: 'FIPS (Federal Information Processing Standards)', hint: 'Required for US federal agency cryptography standards.' },
+  { id: 'FedRAMP', fullName: 'FedRAMP (Federal Risk and Authorization Management Program)', hint: 'Required for cloud vendors supplying US federal agencies.' }
+];
+
 export default function App() {
   const [screen, setScreen] = useState('landing'); // 'landing', 'picker', 'questionnaire', 'reports', 'running', 'success'
   const timeoutsRef = useRef([]);
@@ -861,21 +872,31 @@ export default function App() {
               {session.currentStep === 3 && (
                 <div className="space-y-4">
                   <label className="block text-sm text-[#c9d1d9] mb-2">Required Framework Profiles</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {['GDPR', 'SOC 2', 'ISO 27001', 'HIPAA'].map(framework => (
-                      <div key={framework} className="flex items-center gap-3 bg-[#0d1117] border border-brand-border p-4 rounded-xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {complianceFrameworks.map(fw => (
+                      <div key={fw.id} className="relative flex items-center gap-3 bg-[#0d1117] border border-brand-border p-4 rounded-xl transition-all duration-200 hover:border-[#30363d]">
                         <input 
                           type="checkbox" 
-                          checked={session.answers.compliance.includes(framework)}
+                          id={`compliance-${fw.id}`}
+                          checked={session.answers.compliance.includes(fw.id)}
                           onChange={(e) => {
                             const newCompliance = e.target.checked
-                              ? [...session.answers.compliance, framework]
-                              : session.answers.compliance.filter(c => c !== framework);
+                              ? [...session.answers.compliance, fw.id]
+                              : session.answers.compliance.filter(c => c !== fw.id);
                             setSession({...session, answers: {...session.answers, compliance: newCompliance}});
                           }}
-                          className="w-5 h-5 accent-[#2ea44f]"
+                          className="w-5 h-5 accent-[#2ea44f] cursor-pointer rounded border-[#30363d] focus:ring-0 focus:ring-offset-0"
                         />
-                        <span className="font-semibold text-white">{framework}</span>
+                        <label htmlFor={`compliance-${fw.id}`} className="flex flex-col cursor-pointer select-none pr-8">
+                          <span className="font-semibold text-white text-sm">{fw.id}</span>
+                          <span className="text-xs text-[#8b949e]">{fw.fullName.substring(fw.id.length + 2, fw.fullName.length - 1)}</span>
+                        </label>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-help text-[#8b949e] hover:text-white group">
+                          <span className="text-[10px] w-4.5 h-4.5 flex items-center justify-center bg-[#161b22] rounded-full border border-brand-border font-bold">i</span>
+                          <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-[#161b22] text-[#c9d1d9] text-xs rounded-xl border border-brand-border opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 shadow-2xl z-50 leading-normal font-normal">
+                            {fw.hint}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
