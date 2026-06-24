@@ -46,7 +46,7 @@ if (cleanMsg.startsWith('Merge branch') || cleanMsg.startsWith('Merge pull reque
 }
 
 // Regex for Conventional Commits
-const CONVENTIONAL_COMMIT_REGEXP = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\([a-z0-9_.\-\/]+\))?!?: .{1,100}/;
+const CONVENTIONAL_COMMIT_REGEXP = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\([a-z0-9_.\-\/]+\))?!?: .{1,100}$/;
 
 if (!CONVENTIONAL_COMMIT_REGEXP.test(cleanMsg.split('\n')[0])) {
   console.error('\n✗ Invalid commit message format.');

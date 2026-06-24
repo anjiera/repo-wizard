@@ -240,7 +240,11 @@ function inlineParse(text) {
 
   // Restore and safely format URLs and link text
   parsed = parsed.replace(/__LINK_PLACEHOLDER_(\d+)__/g, (match, id) => {
-    const link = links[parseInt(id, 10)];
+    const linkIndex = parseInt(id, 10);
+    if (linkIndex < 0 || linkIndex >= links.length) {
+      return match;
+    }
+    const link = links[linkIndex];
     let safeText = escapeHtml(link.linkText);
     // Allow bold and code formatting inside link text
     safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');

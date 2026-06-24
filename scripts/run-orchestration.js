@@ -20,7 +20,14 @@ const { validateContract } = require('./validate-contracts');
 
 const ROOT = path.resolve(__dirname, '..');
 const targetPath = process.env.TARGET_PATH || ROOT;
-const repoName = process.env.MOCK_REPO_NAME || path.basename(targetPath);
+const resolvedTarget = path.resolve(targetPath);
+let repoName = process.env.MOCK_REPO_NAME;
+if (!repoName) {
+  repoName = path.basename(resolvedTarget).replace(/[^a-zA-Z0-9_\-\.]/g, '');
+  if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase() === 'reports') {
+    repoName = 'project';
+  }
+}
 const REPORTS_DIR = path.join(ROOT, 'reports', repoName);
 const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
 

@@ -27,6 +27,17 @@ if (!fs.existsSync(REPORTS_ROOT)) {
   fs.mkdirSync(REPORTS_ROOT, { recursive: true });
 }
 
+function getSafeRepoName(targetPath) {
+  if (!targetPath || typeof targetPath !== 'string') return 'project';
+  const resolved = path.resolve(targetPath);
+  let name = path.basename(resolved);
+  name = name.replace(/[^a-zA-Z0-9_\-\.]/g, '');
+  if (!name || name === '.' || name === '..' || name.toLowerCase() === 'reports') {
+    return 'project';
+  }
+  return name;
+}
+
 const LAST_SESSION_POINTER = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
 let currentSessionFile = path.join(ROOT, '.repo-wizard', 'session.json');
 
@@ -361,7 +372,7 @@ async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 },
 }
 
 function generateMockReports(session) {
-  const repoName = path.basename(session.targetPath || 'project');
+  const repoName = getSafeRepoName(session.targetPath);
   const answers = session.answers || {};
   const frameworks = answers.frameworks || [];
   const platforms = answers.platforms || [];
@@ -463,7 +474,7 @@ Disclaimer: Recommended tools are selected for stack compatibility and ecosystem
 }
 
 function compileRealReports(session) {
-  const repoName = path.basename(session.targetPath || 'project');
+  const repoName = getSafeRepoName(session.targetPath);
   const reportsDir = path.join(ROOT, 'reports', repoName);
   const obsDir = path.join(reportsDir, 'agents');
   
@@ -748,9 +759,9 @@ const server = http.createServer((req, res) => {
         let repoName = 'project';
         if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
           sessionState.targetPath = payload.targetPath;
-          repoName = path.basename(payload.targetPath);
+          repoName = getSafeRepoName(payload.targetPath);
         } else if (sessionState.targetPath) {
-          repoName = path.basename(sessionState.targetPath);
+          repoName = getSafeRepoName(sessionState.targetPath);
         }
 
         if (payload.status !== undefined && typeof payload.status === 'string') sessionState.status = payload.status;
@@ -837,7 +848,7 @@ const server = http.createServer((req, res) => {
 
       const session = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
       const manifest = generateManifestFromSession(session);
-      const repoName = path.basename(session.targetPath || 'repo');
+      const repoName = getSafeRepoName(session.targetPath);
       const manifestPath = path.join(ROOT, 'reports', repoName, 'manifest.json');
       
       // Ensure directory exists
@@ -1060,7 +1071,13 @@ function scanReports(dir, baseDir, fileList = []) {
   const files = fs.readdirSync(dir);
   for (const file of files) {
     const fullPath = path.join(dir, file);
-    const stat = fs.statSync(fullPath);
+    let stat;
+    try {
+      stat = fs.lstatSync(fullPath);
+    } catch (e) {
+      continue;
+    }
+    if (stat.isSymbolicLink()) continue;
     if (stat.isDirectory()) {
       if (file !== 'agents' && file !== 'history') {
         scanReports(fullPath, baseDir, fileList);

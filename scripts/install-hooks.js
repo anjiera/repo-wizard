@@ -59,7 +59,7 @@ function main() {
 
   try {
     // Write pre-commit hook
-    fs.writeFileSync(PRE_COMMIT_HOOK, preCommitContent, { mode: 0o755 });
+    fs.writeFileSync(PRE_COMMIT_HOOK, preCommitContent.replace(/\r\n/g, '\n'), { mode: 0o755 });
     if (process.platform !== 'win32') {
       try {
         fs.chmodSync(PRE_COMMIT_HOOK, '755');
@@ -68,7 +68,7 @@ function main() {
     console.log('✓ Native git pre-commit hook installed successfully at .git/hooks/pre-commit');
 
     // Write commit-msg hook
-    fs.writeFileSync(COMMIT_MSG_HOOK, commitMsgContent, { mode: 0o755 });
+    fs.writeFileSync(COMMIT_MSG_HOOK, commitMsgContent.replace(/\r\n/g, '\n'), { mode: 0o755 });
     if (process.platform !== 'win32') {
       try {
         fs.chmodSync(COMMIT_MSG_HOOK, '755');
