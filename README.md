@@ -24,6 +24,7 @@ To help you get started quickly, please refer to the following guides:
 * **[scaffolding-and-rollback-safety.md](docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
 * **[meta-agent-alignment.md](docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
 * **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
+* **[papercut-tracking.md](docs/design/papercut-tracking.md)** — Design of the subagent papercut logging and frequency tracking system.
 
 ---
 
@@ -74,16 +75,21 @@ To verify repository quality and facilitate testing of AI agent workflows:
 
 ## Directory Structure
 
-```
-repo-wizard/
-├── .claude/commands/ # Claude Code slash command configurations
-├── .gemini/commands/ # Gemini CLI slash command configurations
-├── agents/           # Reusable agent persona instructions
-├── commands/         # Antigravity CLI slash command configurations
-├── docs/             # User-facing onboarding guides
-├── references/       # Detailed checklists and dictionaries
-└── skills/           # Core workflows (SKILL.md per folder)
-```
+To keep the repository modular, the files are separated into the **Product Plugin** (what the end-user runs) and the **Developer Infrastructure** (the Builder tools used to write and validate the project):
+
+### 1. Product Plugin (The Runtime)
+These folders contain the code, configurations, and skills packaged and shipped as the `repo-wizard` tool:
+*   `skills/` — The core audit and scaffolding workflows (copied into user codebases).
+*   `agents/` — Reusable agent persona instructions (used during scans).
+*   `commands/`, `.claude/`, `.gemini/` — CLI slash command configurations for different client environments.
+*   `dashboard/` — The local visual dashboard UI and server.
+
+### 2. Developer Infrastructure (The Builder)
+These folders and files are used locally by developers and AI coding assistants to build, test, and maintain `repo-wizard`:
+*   `scripts/` — Zero-dependency Node.js linters, compilers, and test suites.
+*   `evals/` — LLM-as-a-judge prompt evaluation configurations.
+*   [AGENTS.md](file:///d:/DevSandbox/agy-projects/repo-wizard/AGENTS.md) / `CLAUDE.md` — Workflow rules instructing coding assistants.
+*   `docs/` — Onboarding, testing, glossary, and design specifications.
 
 ---
 

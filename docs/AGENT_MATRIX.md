@@ -23,6 +23,7 @@ This document provides a clean taxonomy mapping of the agent personas, skill fol
 | `react-performance-pilot-agent` | `react-performance-pilot` | `/rw-react-performance` | `react-performance-patterns.md` |
 | `privacy-guardian-agent` | `privacy-guardian` | `/rw-privacy-guardian` | `data-privacy-checklist.md` |
 | `resilience-pilot-agent` | `resilience-pilot` | `/rw-resilience` | `resilience-patterns.md` |
+| *None* | `rw-code-review` | `/rw-code-review` | *None* |
 | `state-sanitizer-agent` | `state-sanitizer` | `/rw-state-sanitizer` | `state-sanitization-rules.md` |
 | `supply-chain-scanner-agent` | `supply-chain-scanner` | `/rw-supply-chain-scanner` | `supply-chain-audit-checklist.md` |
 | `technical-scribe-agent` | `technical-scribe` | `/rw-technical-scribe` | `documentation-standards.md` |

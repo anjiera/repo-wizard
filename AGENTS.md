@@ -31,6 +31,8 @@ Map user queries to skills according to this matrix:
   - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*
 - **Query / Intent:** Auditing agent prompts, checking prompt consistency, configuring agent rubric evaluations, or running `/rw-agent-align`.
   - **Skill:** [agent-alignment-pilot](skills/agent-alignment-pilot/SKILL.md)
+- **Query / Intent:** Code review, verification checks, blast radius gating, triage papercuts, papercut checkup, or running `/rw-code-review`.
+  - **Skill:** [rw-code-review](skills/rw-code-review/SKILL.md)
 
 ## Orchestration & Scanning Modes
 
@@ -54,17 +56,15 @@ Before declaring any programming or code-writing task as finished:
    * **Role:** Lead Code Reviewer
    * **Prompt:**
      ```text
-     Adversarial code review. Analyze the changes in the active workspace.
-     Evaluate the code against these five axes:
-     1. Correctness: Are edge cases and error paths handled?
-     2. Simplicity & Readability: Is the code clean? Is it over-engineered?
-     3. Architecture: Does it respect module boundaries?
-     4. Security: Are inputs validated? Are secrets hidden?
-     5. Performance: Are there N+1 queries or unbounded loops?
-
+     Adversarial code review. Analyze the changes in the active workspace according to the guidelines in [rw-code-review](skills/rw-code-review/SKILL.md).
+     Evaluate the code against the Solo-Developer axes:
+     1. Correctness (handling of boundaries, error paths, and edge cases)
+     2. Security (validation at boundaries, secrets, injection prevention)
+     3. Performance (unbounded loops, database queries, hot-path allocations)
+     
+     Follow the Blast-Radius Gating guidelines and verify high-risk code using Active Disproof Testing.
      List all issues found and label them by severity: [Critical], [Important], [Nit], [FYI]. 
      Do not summarize or validate; only list issues.
      ```
 3. **Reconcile Findings:** You must address all [Critical] and [Important] issues. If code changes are made, run tests and lints again.
 4. **Auto-Commit:** Once all tests, linters, and the code review pass, you are authorized to automatically commit the changes using the Conventional Commits format, unless the user has explicitly requested in the prompt not to auto-commit.
-
