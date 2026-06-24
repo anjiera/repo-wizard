@@ -260,6 +260,29 @@ export default function App() {
       });
   };
 
+  const handlePrevStep = () => {
+    if (session.currentStep > 0) {
+      const updatedSession = {
+        ...session,
+        currentStep: session.currentStep - 1
+      };
+      setSession(updatedSession);
+      
+      // Save session step backward progress
+      fetch('/api/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedSession)
+      })
+        .catch(err => {
+          setErrorMsg(err.message || 'Failed to save step progress.');
+          safeSetTimeout(() => setErrorMsg(''), 3000);
+        });
+    } else {
+      setScreen('picker');
+    }
+  };
+
   return (
     <div className="bg-[#0b0f17] bg-gradient-brand min-h-screen text-[#e6edf3] p-6 flex flex-col items-center">
       {/* Header */}
@@ -360,7 +383,17 @@ export default function App() {
 
         {/* 2. Target Codebase Picker */}
         {screen === 'picker' && (
-          <div className="w-full max-w-xl glass-panel p-8 rounded-2xl shadow-xl animate-fade-in">
+          <div className="w-full max-w-xl glass-panel p-8 rounded-2xl shadow-xl animate-fade-in relative pt-12">
+            <button 
+              type="button"
+              onClick={() => setScreen('landing')}
+              className="absolute left-6 top-6 text-[#8b949e] hover:text-white transition flex items-center gap-1.5 text-xs font-semibold"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back</span>
+            </button>
             <h2 className="text-2xl font-bold mb-6 text-white text-center">Select Target Codebase</h2>
             <form onSubmit={handleTargetSubmit} className="space-y-6">
               <div>
@@ -441,7 +474,17 @@ export default function App() {
 
         {/* 3. Questionnaire Stepper */}
         {screen === 'questionnaire' && (
-          <div className="w-full max-w-2xl glass-panel p-8 rounded-2xl shadow-xl animate-fade-in">
+          <div className="w-full max-w-2xl glass-panel p-8 rounded-2xl shadow-xl animate-fade-in relative pt-12">
+            <button 
+              type="button"
+              onClick={handlePrevStep}
+              className="absolute left-6 top-6 text-[#8b949e] hover:text-white transition flex items-center gap-1.5 text-xs font-semibold"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back</span>
+            </button>
             {/* Step Indicators */}
             <div className="flex justify-between items-center mb-8 border-b border-brand-border pb-4">
               {steps.map((step, idx) => (
@@ -569,7 +612,7 @@ export default function App() {
             <div className="flex justify-between items-center gap-4">
               <button 
                 type="button"
-                onClick={() => setScreen('picker')}
+                onClick={handlePrevStep}
                 className="bg-[#30363d] hover:bg-[#8b949e]/20 text-[#c9d1d9] border border-brand-border font-semibold py-3 px-6 rounded-xl transition"
               >
                 Back
@@ -638,7 +681,20 @@ export default function App() {
 
         {/* 6. Reports View Screen */}
         {screen === 'reports' && (
-          <div className="w-full max-w-6xl glass-panel p-6 rounded-2xl shadow-xl flex flex-col md:flex-row gap-6 min-h-[500px] animate-fade-in">
+          <div className="w-full max-w-6xl glass-panel p-6 rounded-2xl shadow-xl flex flex-col md:flex-row gap-6 min-h-[500px] animate-fade-in relative pt-14">
+            <button 
+              type="button"
+              onClick={() => {
+                setScreen('landing');
+                setActiveReport(null);
+              }}
+              className="absolute left-6 top-6 text-[#8b949e] hover:text-white transition flex items-center gap-1.5 text-xs font-semibold"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Home</span>
+            </button>
             {/* Sidebar with report file listing */}
             <div className="w-full md:w-1/3 border-r border-brand-border pr-6 flex flex-col justify-between">
               <div>
