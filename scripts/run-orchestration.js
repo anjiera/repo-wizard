@@ -106,7 +106,10 @@ function detectAgentCLI() {
     return null;
   }
   if (process.env.AGENT_CLI) {
-    return process.env.AGENT_CLI;
+    const val = process.env.AGENT_CLI;
+    if (/^[a-zA-Z0-9_\-\.\\\/:]+$/.test(val)) {
+      return val;
+    }
   }
   
   const candidates = ['antigravity', 'agy', 'claude'];
@@ -229,9 +232,7 @@ async function main() {
       console.log('\n[SUCCESS] All specialists completed successfully.');
     }
 
-    manifest.status = 'completed';
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
-    process.exit(0);
+    completeOrchestration(manifest);
   }
 
   // Real Subprocess Execution
@@ -278,7 +279,7 @@ async function main() {
       ], {
         cwd: ROOT,
         env: { ...process.env, PAGER: 'cat' },
-        detached: process.platform !== 'win32'
+        detached: false
       });
 
       activeChildren.add(child);
@@ -449,9 +450,7 @@ async function main() {
   }
 
   console.log('\n[SUCCESS] All specialists completed successfully.');
-  manifest.status = 'completed';
-  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
-  process.exit(0);
+  completeOrchestration(manifest);
 }
 
 main().catch(err => {
@@ -619,3 +618,101 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   // Default is relevant
   return { relevance: 'High', rationale: 'Relevant to requested workspace features' };
 }
+
+function completeOrchestration(manifest) {
+  manifest.status = 'completed';
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
+
+  // Redaction pipeline if requested
+  const isRedact = process.argv.includes('--redact') || process.env.REDACT === 'true';
+  if (isRedact) {
+    console.log('Anonymize Reports flag detected. Redacting target repository metadata inside reports...');
+    redactReportFiles(REPORTS_DIR, repoName, targetPath);
+  }
+
+  process.exit(0);
+}
+
+function redactGitUrls(text) {
+  const gitUrlRegex = /(https?:\/\/|git@)([a-zA-Z0-9\-._~]+)([\/:][a-zA-Z0-9\-._~]+)\/([a-zA-Z0-9\-._~]+)/gi;
+  return text.replace(gitUrlRegex, (match, p1, p2, p3, p4) => {
+    const prefix = p3.charAt(0);
+    const suffix = match.endsWith('.git') ? '.git' : '';
+    return `${p1}${p2}${prefix}redacted-org/redacted-repo${suffix}`;
+  });
+}
+
+function redactPaths(text, targetPath) {
+  if (!targetPath) return text;
+  const absPath = path.resolve(targetPath);
+  const isRoot = absPath === path.resolve(absPath, '..');
+  if (isRoot) return text;
+
+  const forwardSlashPath = absPath.replace(/\\/g, '/');
+  const backslashPath = absPath.replace(/\//g, '\\');
+  const doubleBackslashPath = backslashPath.replace(/\\/g, '\\\\');
+  
+  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  
+  const patterns = [
+    new RegExp(escapeRegExp(forwardSlashPath), 'gi'),
+    new RegExp(escapeRegExp(backslashPath), 'gi'),
+    new RegExp(escapeRegExp(doubleBackslashPath), 'gi')
+  ];
+  
+  let result = text;
+  for (const pattern of patterns) {
+    result = result.replace(pattern, 'target-workspace-path');
+  }
+  return result;
+}
+
+function redactRepoName(text, repoName) {
+  if (!repoName || repoName === 'project') return text;
+  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapeRegExp(repoName), 'gi');
+  return text.replace(regex, 'target-repository');
+}
+
+function redactReportText(text, repoName, targetPath) {
+  if (!text || typeof text !== 'string') return text;
+  let redacted = text;
+  redacted = redactGitUrls(redacted);
+  if (targetPath) {
+    redacted = redactPaths(redacted, targetPath);
+  }
+  if (repoName) {
+    redacted = redactRepoName(redacted, repoName);
+  }
+  return redacted;
+}
+
+function redactReportFiles(reportsDir, repoName, targetPath) {
+  if (!fs.existsSync(reportsDir)) return;
+  const traverse = (dir) => {
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      const stat = fs.statSync(fullPath);
+      if (stat.isDirectory()) {
+        traverse(fullPath);
+      } else if (stat.isFile()) {
+        if (file === 'manifest.json' || file === 'session.json') {
+          continue;
+        }
+        const ext = path.extname(file).toLowerCase();
+        if (['.md', '.html', '.csv'].includes(ext)) {
+          try {
+            const content = fs.readFileSync(fullPath, 'utf8');
+            const redacted = redactReportText(content, repoName, targetPath);
+            fs.writeFileSync(fullPath, redacted, 'utf8');
+          } catch (e) {
+            console.error(`Failed to redact file ${fullPath}:`, e.message);
+          }
+        }
+      }
+    }
+  };
+  traverse(reportsDir);
+}
+

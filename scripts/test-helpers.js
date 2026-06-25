@@ -364,6 +364,40 @@ function testRunOrchestration() {
     assert(fallbackManifest.status === 'fallback_to_agent', 'manifest status updated to fallback_to_agent');
     assert(fallbackManifest.contracts[0].status === 'pending_agent_fallback', 'contract status updated to pending_agent_fallback');
 
+    // Test 4: Redaction pipeline works on mock execution
+    fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
+    const testRepoDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
+    if (!fs.existsSync(testRepoDir)) fs.mkdirSync(testRepoDir, { recursive: true });
+    
+    const dummyPath = path.join(testRepoDir, 'dummy-report.md');
+    fs.writeFileSync(dummyPath, 'Target repo is test-repo located at D:\\Sandbox\\test-repo. Git URL is git@github.com:test-org/test-repo.git', 'utf8');
+
+    const redactRun = (() => {
+      try {
+        const stdout = execSync(`node "${scriptPath}"`, {
+          cwd: ROOT,
+          stdio: 'pipe',
+          env: {
+            ...process.env,
+            MOCK_CLI: 'true',
+            MOCK_REPO_NAME: 'test-repo',
+            TARGET_PATH: 'D:\\Sandbox\\test-repo',
+            REDACT: 'true'
+          }
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return { code: err.status || 1, stdout: err.stdout ? err.stdout.toString() : '', stderr: err.stderr ? err.stderr.toString() : '' };
+      }
+    })();
+
+    assert(redactRun.code === 0, 'run-orchestration.js exits with 0 on successful redact run');
+    const dummyContent = fs.readFileSync(dummyPath, 'utf8');
+    assert(dummyContent.includes('Target repo is target-repository located at target-workspace-path'), 'repo name and path redacted');
+    assert(dummyContent.includes('Git URL is git@github.com:redacted-org/redacted-repo.git'), 'git url redacted');
+    
+    if (fs.existsSync(dummyPath)) fs.unlinkSync(dummyPath);
+
   } finally {
     // Restore original manifest
     if (originalManifestContent !== null) {

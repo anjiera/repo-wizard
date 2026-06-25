@@ -36,6 +36,7 @@ export default function App() {
     targetPath: '',
     status: 'paused',
     currentStep: 0,
+    redact: false,
     answers: {
       goals: 'greenfield',
       team: 'junior',
@@ -213,6 +214,7 @@ export default function App() {
       targetPath: '',
       status: 'active',
       currentStep: 0,
+      redact: false,
       answers: {
         goals: 'greenfield',
         team: 'junior',
@@ -596,6 +598,19 @@ export default function App() {
                   className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-3 text-white placeholder-[#484f58] focus:outline-none focus:border-[#58a6ff] transition"
                   required
                 />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input 
+                  type="checkbox"
+                  id="redactCheckbox"
+                  checked={session.redact || false}
+                  onChange={(e) => setSession({ ...session, redact: e.target.checked })}
+                  className="w-4 h-4 rounded bg-[#0d1117] border border-brand-border text-[#58a6ff] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                />
+                <label htmlFor="redactCheckbox" className="text-sm font-medium text-[#8b949e] cursor-pointer select-none hover:text-white transition">
+                  Anonymize Reports (Scrub absolute paths, repository names, and Git URL details)
+                </label>
               </div>
 
               {/* Option A: Interactive Wizard */}

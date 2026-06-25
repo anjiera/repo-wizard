@@ -764,6 +764,13 @@ const server = http.createServer((req, res) => {
     req.on('end', () => {
       if (tooLarge) return;
       try {
+        // Reload from disk to prevent concurrency race conditions
+        if (fs.existsSync(currentSessionFile)) {
+          try {
+            sessionState = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+          } catch (e) { /* ignore */ }
+        }
+
         const payload = JSON.parse(body);
         
         let repoName = 'project';
@@ -792,6 +799,7 @@ const server = http.createServer((req, res) => {
         if (payload.status !== undefined && typeof payload.status === 'string') sessionState.status = payload.status;
         if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') sessionState.currentStep = payload.currentStep;
         if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
+        if (payload.redact !== undefined) sessionState.redact = !!payload.redact;
 
         // Nested validation for answers
         if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {
@@ -895,7 +903,8 @@ const server = http.createServer((req, res) => {
           ...process.env,
           MOCK_CLI: process.env.MOCK_CLI === 'true' ? 'true' : 'false',
           MOCK_REPO_NAME: repoName,
-          TARGET_PATH: session.targetPath
+          TARGET_PATH: session.targetPath,
+          REDACT: session.redact ? 'true' : 'false'
         },
         detached: process.platform !== 'win32'
       });
@@ -941,6 +950,12 @@ const server = http.createServer((req, res) => {
                 generateMockReports(currentSession);
               } else {
                 compileRealReports(currentSession);
+              }
+              if (currentSession.redact) {
+                writeLog('info', 'Redaction is enabled. Scrubbing report files...', correlationId);
+                const repoName = getSafeRepoName(currentSession.targetPath);
+                const reportsDir = path.join(REPORTS_ROOT, repoName);
+                redactReportFiles(reportsDir, repoName, currentSession.targetPath);
               }
             }
           } catch (e) {
@@ -1333,3 +1348,86 @@ process.on('SIGHUP', () => {
   cleanupActiveScan();
   process.exit(0);
 });
+
+function redactGitUrls(text) {
+  const gitUrlRegex = /(https?:\/\/|git@)([a-zA-Z0-9\-._~]+)([\/:][a-zA-Z0-9\-._~]+)\/([a-zA-Z0-9\-._~]+)/gi;
+  return text.replace(gitUrlRegex, (match, p1, p2, p3, p4) => {
+    const prefix = p3.charAt(0);
+    const suffix = match.endsWith('.git') ? '.git' : '';
+    return `${p1}${p2}${prefix}redacted-org/redacted-repo${suffix}`;
+  });
+}
+
+function redactPaths(text, targetPath) {
+  if (!targetPath) return text;
+  const absPath = path.resolve(targetPath);
+  const isRoot = absPath === path.resolve(absPath, '..');
+  if (isRoot) return text;
+
+  const forwardSlashPath = absPath.replace(/\\/g, '/');
+  const backslashPath = absPath.replace(/\//g, '\\');
+  const doubleBackslashPath = backslashPath.replace(/\\/g, '\\\\');
+  
+  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  
+  const patterns = [
+    new RegExp(escapeRegExp(forwardSlashPath), 'gi'),
+    new RegExp(escapeRegExp(backslashPath), 'gi'),
+    new RegExp(escapeRegExp(doubleBackslashPath), 'gi')
+  ];
+  
+  let result = text;
+  for (const pattern of patterns) {
+    result = result.replace(pattern, 'target-workspace-path');
+  }
+  return result;
+}
+
+function redactRepoName(text, repoName) {
+  if (!repoName || repoName === 'project') return text;
+  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapeRegExp(repoName), 'gi');
+  return text.replace(regex, 'target-repository');
+}
+
+function redactReportText(text, repoName, targetPath) {
+  if (!text || typeof text !== 'string') return text;
+  let redacted = text;
+  redacted = redactGitUrls(redacted);
+  if (targetPath) {
+    redacted = redactPaths(redacted, targetPath);
+  }
+  if (repoName) {
+    redacted = redactRepoName(redacted, repoName);
+  }
+  return redacted;
+}
+
+function redactReportFiles(reportsDir, repoName, targetPath) {
+  if (!fs.existsSync(reportsDir)) return;
+  const traverse = (dir) => {
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      const stat = fs.statSync(fullPath);
+      if (stat.isDirectory()) {
+        traverse(fullPath);
+      } else if (stat.isFile()) {
+        if (file === 'manifest.json' || file === 'session.json') {
+          continue;
+        }
+        const ext = path.extname(file).toLowerCase();
+        if (['.md', '.html', '.csv'].includes(ext)) {
+          try {
+            const content = fs.readFileSync(fullPath, 'utf8');
+            const redacted = redactReportText(content, repoName, targetPath);
+            fs.writeFileSync(fullPath, redacted, 'utf8');
+          } catch (e) {
+            console.error(`Failed to redact file ${fullPath}:`, e.message);
+          }
+        }
+      }
+    }
+  };
+  traverse(reportsDir);
+}
