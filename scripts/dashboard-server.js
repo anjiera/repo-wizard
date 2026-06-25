@@ -1110,6 +1110,115 @@ const server = http.createServer((req, res) => {
     });
   }
 
+  // 2f. POST /api/browse-directory - Browse local directory tree
+  if (req.method === 'POST' && url.pathname === '/api/browse-directory') {
+    let body = '';
+    let tooLarge = false;
+    const MAX_SIZE = 10 * 1024; // 10KB limit
+    req.on('data', chunk => {
+      if (tooLarge) return;
+      body += chunk;
+      if (body.length > MAX_SIZE) {
+        tooLarge = true;
+        res.writeHead(413, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Payload Too Large' }));
+        req.destroy();
+      }
+    });
+    req.on('end', () => {
+      if (tooLarge) return;
+      try {
+        const payload = JSON.parse(body);
+        let target = payload.currentPath;
+
+        function getWindowsDrives() {
+          const drives = [];
+          if (process.platform === 'win32') {
+            for (let charCode = 67; charCode <= 90; charCode++) {
+              const drive = String.fromCharCode(charCode) + ':\\';
+              try {
+                if (fs.existsSync(drive)) {
+                  drives.push(drive);
+                }
+              } catch (e) { /* ignore */ }
+            }
+          }
+          return drives;
+        }
+        
+        if (target === 'drives') {
+          const drives = getWindowsDrives();
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            currentPath: 'drives',
+            parentPath: null,
+            directories: drives
+          }));
+          return;
+        }
+
+        let resolved = target ? path.resolve(target) : ROOT;
+        
+        if (!fs.existsSync(resolved)) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: `Path does not exist: ${target}` }));
+          return;
+        }
+
+        const stat = fs.statSync(resolved);
+        if (!stat.isDirectory()) {
+          resolved = path.dirname(resolved);
+        }
+
+        let parent = path.dirname(resolved);
+        if (parent === resolved) {
+          parent = process.platform === 'win32' ? 'drives' : null;
+        }
+
+        const directories = [];
+        try {
+          const files = fs.readdirSync(resolved);
+          for (const file of files) {
+            if (['.git', 'System Volume Information', '$RECYCLE.BIN'].includes(file)) {
+              continue;
+            }
+            try {
+              const fullPath = path.join(resolved, file);
+              const fileStat = fs.statSync(fullPath);
+              if (fileStat.isDirectory()) {
+                directories.push(file);
+              }
+            } catch (e) { /* ignore */ }
+          }
+        } catch (err) {
+          res.writeHead(403, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ 
+            error: `Permission denied or folder inaccessible: ${resolved}`,
+            currentPath: resolved,
+            parentPath: parent,
+            directories: []
+          }));
+          return;
+        }
+
+        directories.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          currentPath: resolved,
+          parentPath: parent,
+          directories: directories
+        }));
+
+      } catch (err) {
+        writeLog('error', 'Exception in browse-directory handler', correlationId, { error: err.message });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: `Internal server error: ${err.message}` }));
+      }
+    });
+    return;
+  }
+
 function scanReports(dir, baseDir, fileList = []) {
   if (!fs.existsSync(dir)) return fileList;
   const files = fs.readdirSync(dir);
