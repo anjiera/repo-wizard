@@ -4,8 +4,11 @@
 
 @layer base {
   body {
-    @apply bg-[#0b0f17] text-[#e6edf3] font-sans antialiased;
+    @apply bg-[#f4f6f9] text-[#1f2328] font-sans antialiased transition-colors duration-200;
     font-family: 'Inter', sans-serif;
+  }
+  .dark body {
+    @apply bg-[#0b0f17] text-[#e6edf3];
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
@@ -14,14 +17,24 @@
 
 /* Glassmorphism utility */
 .glass-panel {
-  background: rgba(22, 27, 34, 0.65);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 205, 215, 0.6);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.dark .glass-panel {
+  background: rgba(22, 27, 34, 0.65);
   border: 1px solid rgba(48, 54, 61, 0.45);
 }
 
 /* Dynamic Gradients */
 .bg-gradient-brand {
+  background: radial-gradient(circle at top right, rgba(24, 114, 250, 0.06), transparent 45%),
+              radial-gradient(circle at bottom left, rgba(46, 164, 79, 0.04), transparent 45%),
+              #f4f6f9;
+}
+.dark .bg-gradient-brand {
   background: radial-gradient(circle at top right, rgba(88, 166, 255, 0.12), transparent 45%),
               radial-gradient(circle at bottom left, rgba(46, 164, 79, 0.08), transparent 45%),
               #0b0f17;
@@ -36,3 +49,42 @@
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
 }
+
+/* Light mode overrides for specific text & bg colors inside App.jsx */
+html:not(.dark) .text-white {
+  color: #1f2328 !important;
+}
+html:not(.dark) .text-\[\#8b949e\] {
+  color: #57606a !important;
+}
+html:not(.dark) .text-\[\#c9d1d9\] {
+  color: #24292f !important;
+}
+html:not(.dark) .bg-\[\#0d1117\] {
+  background-color: #ffffff !important;
+}
+html:not(.dark) .bg-\[\#161b22\] {
+  background-color: #f6f8fa !important;
+}
+html:not(.dark) .bg-\[\#0d1117\]\/30 {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+html:not(.dark) .bg-\[\#0d1117\]\/50 {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+html:not(.dark) .bg-\[\#0b0f17\] {
+  background-color: #f4f6f9 !important;
+}
+html:not(.dark) .border-\[\#30363d\] {
+  border-color: #d0d7de !important;
+}
+html:not(.dark) .border-brand-border {
+  border-color: rgba(200, 205, 215, 0.6) !important;
+}
+html:not(.dark) .border-brand-border\/60 {
+  border-color: rgba(200, 205, 215, 0.4) !important;
+}
+html:not(.dark) .placeholder-\[\#484f58\]::placeholder {
+  color: #8c959f !important;
+}
+

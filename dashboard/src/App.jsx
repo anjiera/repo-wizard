@@ -31,6 +31,21 @@ export default function App() {
       timeoutsRef.current.forEach(clearTimeout);
     };
   }, []);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : true;
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
+
   const [targetPath, setTargetPath] = useState('');
   const [session, setSession] = useState({
     targetPath: '',
@@ -402,7 +417,7 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#0b0f17] bg-gradient-brand min-h-screen text-[#e6edf3] p-6 flex flex-col items-center">
+    <div className="bg-gradient-brand min-h-screen text-[#e6edf3] p-6 flex flex-col items-center">
       {/* Header */}
       <header className="w-full max-w-6xl flex justify-between items-center py-6 border-b border-brand-border mb-10">
         <div className="flex items-center gap-3">
@@ -412,22 +427,43 @@ export default function App() {
           </div>
           <span className="font-extrabold text-xl tracking-tight text-white">Repo Wizard Dashboard</span>
         </div>
-        {hasConsented && (
-          <div className="flex gap-4">
-            <button 
-              className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
-              onClick={() => setScreen('landing')}
-            >
-              Home
-            </button>
-            <button 
-              className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
-              onClick={() => setScreen('reports')}
-            >
-              View Reports
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-6">
+          {hasConsented && (
+            <div className="flex gap-4">
+              <button 
+                className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
+                onClick={() => setScreen('landing')}
+              >
+                Home
+              </button>
+              <button 
+                className="text-sm font-semibold hover:text-white text-[#8b949e] transition"
+                onClick={() => setScreen('reports')}
+              >
+                View Reports
+              </button>
+            </div>
+          )}
+          
+          {/* Theme Toggler */}
+          <button 
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-xl bg-brand-border/20 border border-brand-border hover:bg-brand-border/40 transition text-sm font-semibold flex items-center justify-center gap-1.5"
+            aria-label="Toggle Theme"
+          >
+            {darkMode ? (
+              <>
+                <span className="text-yellow-400">☀️</span>
+                <span className="text-xs text-[#8b949e] hover:text-white hidden sm:inline">Light</span>
+              </>
+            ) : (
+              <>
+                <span className="text-blue-400">🌙</span>
+                <span className="text-xs text-[#57606a] hover:text-[#1f2328] hidden sm:inline">Dark</span>
+              </>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* Main Container */}
