@@ -152,7 +152,7 @@ function writeMockObservation(agentsDir, specialist, repoName) {
 
 ${DISCLAIMER_TEXT}
 `;
-  const fileName = `observations-${specialist}-${repoName}.md`;
+  const fileName = `${repoName}-observations-${specialist}.md`;
   fs.writeFileSync(path.join(agentsDir, fileName), content);
 }
 
@@ -202,7 +202,7 @@ function runMockOrchestration(targetRepoDir, executionMode = 'scaffold') {
     return false;
   }
 
-  console.log(`  ${GREEN}✓${RESET} Observations format check: all ${files.length} files exist and match suffix observations-<agent>-<repo>.md.`);
+  console.log(`  ${GREEN}✓${RESET} Observations format check: all ${files.length} files exist and match suffix <repo>-observations-<agent>.md.`);
   return true;
 }
 

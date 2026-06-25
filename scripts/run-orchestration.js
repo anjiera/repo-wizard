@@ -19,6 +19,7 @@ const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
 
 const activeChildren = new Set();
+const runningAgents = new Map();
 
 function cleanupChildren() {
   for (const child of activeChildren) {
@@ -234,14 +235,30 @@ async function main() {
 
   const runAgentPromise = (entry) => {
     return new Promise((resolve) => {
+      const agentName = entry.agent_name;
+      const obsPath = path.join(OBSERVATIONS_DIR, `${repoName}-observations-${agentName}.md`);
+
+      // Run the fast codebase relevance check
+      const { relevance, rationale } = checkAgentRelevance(agentName, resolvedTarget, entry.contract);
+      if (relevance === 'Low') {
+        const skippedContent = `# Observations for ${agentName}\n\nSkipped: Low relevance to the workspace.\n\nRationale: ${rationale}\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`;
+        fs.writeFileSync(obsPath, skippedContent, 'utf8');
+        
+        entry.status = 'completed';
+        completed++;
+        
+        if (!isTTY) {
+          console.log(`[SKIPPED] ${agentName} (Low relevance: ${rationale})`);
+        }
+        resolve();
+        return;
+      }
+
       if (entry.status === 'completed') {
         completed++;
         resolve();
         return;
       }
-
-      const agentName = entry.agent_name;
-      const obsPath = path.join(OBSERVATIONS_DIR, `${repoName}-observations-${agentName}.md`);
 
       if (!isTTY) {
         console.log(`[INFO] Spawning ${agentName}...`);
@@ -260,6 +277,7 @@ async function main() {
       });
 
       activeChildren.add(child);
+      runningAgents.set(agentName, Date.now());
 
       let stdoutData = '';
       let stderrData = '';
@@ -306,6 +324,7 @@ async function main() {
       };
 
       child.on('error', (err) => {
+        runningAgents.delete(agentName);
         activeChildren.delete(child);
         errors.push({ agent: agentName, code: -1, stderr: `Failed to spawn process: ${err.message}` });
         if (!isTTY) {
@@ -315,6 +334,7 @@ async function main() {
       });
 
       child.on('close', (code) => {
+        runningAgents.delete(agentName);
         activeChildren.delete(child);
         if (!isTTY) {
           if (stdoutBuffer.trim()) {
@@ -353,6 +373,21 @@ async function main() {
       const percentValue = total > 0 ? Math.round((completed / total) * 100) : 100;
       process.stdout.write(`\rProgress: [${'█'.repeat(pct)}${'░'.repeat(10 - pct)}] ${percentValue}% (${completed}/${total})`);
     }, 200);
+  } else {
+    progressInterval = setInterval(() => {
+      const BLUE = '\x1b[34m';
+      const BOLD = '\x1b[1m';
+      const RESET = '\x1b[0m';
+      const activeList = [];
+      const now = Date.now();
+      for (const [name, start] of runningAgents.entries()) {
+        const elapsed = Math.round((now - start) / 1000);
+        activeList.push(`${name} (elapsed: ${elapsed}s)`);
+      }
+      const activeStr = activeList.length > 0 ? activeList.join(', ') : 'none';
+      const percentValue = total > 0 ? Math.round((completed / total) * 100) : 100;
+      console.log(`${BOLD}${BLUE}==>${RESET} ${BOLD}[Progress]${RESET} ${percentValue}% completed (${completed}/${total}). Active specialists: ${activeStr}`);
+    }, 15000);
   }
 
   let concurrencyLimit = 4;
@@ -393,3 +428,140 @@ main().catch(err => {
   console.error(`Fatal error: ${err.message}`);
   process.exit(1);
 });
+
+function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new Set()) {
+  if (depth > maxDepth) return false;
+  const absPath = path.resolve(dir);
+  if (visited.has(absPath)) return false;
+  visited.add(absPath);
+
+  let files;
+  try {
+    files = fs.readdirSync(absPath);
+  } catch (err) {
+    return false;
+  }
+
+  const subdirs = [];
+  for (const file of files) {
+    // Ignore heavy directories
+    if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'].includes(file)) {
+      continue;
+    }
+    if (predicate(file)) {
+      return true;
+    }
+    try {
+      const fullPath = path.join(absPath, file);
+      const stat = fs.statSync(fullPath);
+      if (stat.isDirectory()) {
+        subdirs.push(fullPath);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  for (const subdir of subdirs) {
+    if (checkFilesExist(subdir, predicate, depth + 1, maxDepth, visited)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function checkAgentRelevance(agentName, targetDir, contract) {
+  // Always relevant core agents
+  if (['supply-chain-scanner-agent', 'vcs-workflow-agent', 'technical-scribe-agent'].includes(agentName)) {
+    return { relevance: 'High', rationale: 'Core governance/VCS agent' };
+  }
+
+  const hasExtension = (dir, ext) => {
+    return checkFilesExist(dir, (file) => file.endsWith(ext));
+  };
+
+  const hasFile = (dir, name) => {
+    return checkFilesExist(dir, (file) => file === name);
+  };
+
+  const hasAnyFileOf = (dir, names) => {
+    return checkFilesExist(dir, (file) => names.includes(file));
+  };
+
+  // Notebook Sanitizer
+  if (agentName === 'notebook-sanitizer-agent') {
+    if (!hasExtension(targetDir, '.ipynb')) {
+      return { relevance: 'Low', rationale: 'No Jupyter Notebook (.ipynb) files found in workspace' };
+    }
+    return { relevance: 'High', rationale: 'Jupyter Notebooks detected' };
+  }
+
+  // React Performance / State Sanitizer
+  if (['react-performance-pilot-agent', 'state-sanitizer-agent'].includes(agentName)) {
+    let hasReact = false;
+    const pkgJsonPath = path.join(targetDir, 'package.json');
+    if (fs.existsSync(pkgJsonPath)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf8'));
+        if ((pkg.dependencies && pkg.dependencies.react) || (pkg.devDependencies && pkg.devDependencies.react)) {
+          hasReact = true;
+        }
+      } catch (e) { /* ignore */ }
+    }
+    if (!hasReact) {
+      hasReact = hasExtension(targetDir, '.jsx') || hasExtension(targetDir, '.tsx');
+    }
+    if (!hasReact) {
+      return { relevance: 'Low', rationale: 'No React dependency or JSX/TSX files found in workspace' };
+    }
+    return { relevance: 'High', rationale: 'React elements detected in workspace' };
+  }
+
+  // Embedded Systems
+  if (agentName === 'embedded-systems-pilot-agent') {
+    const isFirmware = hasAnyFileOf(targetDir, ['CMakeLists.txt', 'Makefile']) || hasExtension(targetDir, '.ino');
+    if (!isFirmware) {
+      return { relevance: 'Low', rationale: 'No firmware build files (CMakeLists.txt, Makefile) or Arduino files found' };
+    }
+    return { relevance: 'High', rationale: 'Firmware build configurations detected' };
+  }
+
+  // Toolchain / Formal Methods / Fuzzing
+  if (['toolchain-pilot-agent', 'formal-methods-pilot-agent', 'fuzzing-pilot-agent'].includes(agentName)) {
+    const hasRust = hasFile(targetDir, 'Cargo.toml');
+    const hasCpp = hasExtension(targetDir, '.cpp') || hasExtension(targetDir, '.c') || hasExtension(targetDir, '.h');
+    const hasGo = hasFile(targetDir, 'go.mod');
+    
+    if (agentName === 'formal-methods-pilot-agent' || agentName === 'fuzzing-pilot-agent') {
+      if (!hasRust && !hasCpp && !hasGo) {
+        return { relevance: 'Low', rationale: 'No Rust, Go, or C/C++ files found for formal verification or fuzzing' };
+      }
+    } else { // toolchain-pilot-agent
+      const hasToolchainStack = hasRust || hasCpp || hasFile(targetDir, 'CMakeLists.txt');
+      if (!hasToolchainStack) {
+        return { relevance: 'Low', rationale: 'No compiled language toolchain files (Cargo.toml, C/C++ source) found' };
+      }
+    }
+    return { relevance: 'Medium', rationale: 'Compiled language files detected' };
+  }
+
+  // Data Pipeline
+  if (agentName === 'data-pipeline-pilot-agent') {
+    const hasDataStack = hasAnyFileOf(targetDir, ['dags', 'airflow', 'prefect']) || hasExtension(targetDir, '.py');
+    if (!hasDataStack) {
+      return { relevance: 'Low', rationale: 'No Python scripts or Airflow DAG folders found' };
+    }
+    return { relevance: 'Medium', rationale: 'Python or data pipeline files present' };
+  }
+
+  // Deployment Pilot
+  if (agentName === 'deployment-pilot-agent') {
+    const hasDocker = hasAnyFileOf(targetDir, ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']);
+    if (!hasDocker) {
+      return { relevance: 'Low', rationale: 'No Dockerfile or docker-compose files found in workspace' };
+    }
+    return { relevance: 'High', rationale: 'Container configurations detected' };
+  }
+
+  // Default is relevant
+  return { relevance: 'High', rationale: 'Relevant to requested workspace features' };
+}

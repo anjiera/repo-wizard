@@ -758,6 +758,21 @@ const server = http.createServer((req, res) => {
         
         let repoName = 'project';
         if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
+          const oldPath = sessionState.targetPath;
+          if (payload.targetPath !== oldPath) {
+            repoName = getSafeRepoName(payload.targetPath);
+            const targetSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
+            if (fs.existsSync(targetSessionFile)) {
+              try {
+                sessionState = JSON.parse(fs.readFileSync(targetSessionFile, 'utf8'));
+              } catch (e) {
+                sessionState = {};
+              }
+            } else {
+              sessionState = {};
+            }
+            sessionState.targetPath = payload.targetPath;
+          }
           sessionState.targetPath = payload.targetPath;
           repoName = getSafeRepoName(payload.targetPath);
         } else if (sessionState.targetPath) {

@@ -126,14 +126,23 @@ function validateFile(filePath) {
   // 2. Check for "upgrade" keyword violation in mismatch hook
   // The mismatch hook shouldn't suggest "upgrading" via a command, but rather "improving"
   const lowercaseContent = content.toLowerCase();
-  if (lowercaseContent.includes('mismatch') || lowercaseContent.includes('weekend vibe')) {
-    // If the mismatch hook is present, check if it contains 'upgrade' or 'upgrade command'
-    const hookIndex = lowercaseContent.indexOf('mismatch') !== -1 
-      ? lowercaseContent.indexOf('mismatch') 
-      : lowercaseContent.indexOf('weekend vibe');
-    const hookContext = lowercaseContent.slice(hookIndex, hookIndex + 300);
+  const hookIndices = [];
+  let idx = lowercaseContent.indexOf('mismatch');
+  while (idx !== -1) {
+    hookIndices.push(idx);
+    idx = lowercaseContent.indexOf('mismatch', idx + 1);
+  }
+  idx = lowercaseContent.indexOf('weekend vibe');
+  while (idx !== -1) {
+    hookIndices.push(idx);
+    idx = lowercaseContent.indexOf('weekend vibe', idx + 1);
+  }
+
+  for (const startIdx of hookIndices) {
+    const hookContext = lowercaseContent.slice(startIdx, startIdx + 300);
     if (hookContext.includes('upgrade')) {
       errors.push(`Mismatch hook contains banned word 'upgrade'. Use 'improve' instead.`);
+      break;
     }
   }
 
@@ -175,7 +184,10 @@ function validateFile(filePath) {
           }
 
           // Total word count for section
-          const textOnly = sectionContent.replace(/<[^>]*>/g, ' ');
+          let textOnly = sectionContent
+            .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, ' ')
+            .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, ' ');
+          textOnly = textOnly.replace(/<[^>]*>/g, ' ');
           const words = countWords(textOnly);
           if (words > 450) {
             errors.push(`HTML Section "${headings[i].title}" word count is ${words} (limit is 450).`);

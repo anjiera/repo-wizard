@@ -42,12 +42,21 @@ function parseMarkdown(md) {
   let tableHeaderParsed = false;
   let codeBlockLang = '';
   let codeLines = [];
+  let paragraphLines = [];
+
+  const flushParagraph = () => {
+    if (paragraphLines.length > 0) {
+      html += `<p>${inlineParse(paragraphLines.join(' '))}</p>\n`;
+      paragraphLines = [];
+    }
+  };
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
 
     // 1. Code Block Handler
     if (line.trim().startsWith('```')) {
+      flushParagraph();
       if (inCodeBlock) {
         // End code block
         inCodeBlock = false;
@@ -69,6 +78,7 @@ function parseMarkdown(md) {
     // 1b. Table Handler
     const isTableRow = line.trim().startsWith('|') && line.trim().endsWith('|');
     if (isTableRow) {
+      flushParagraph();
       const rawCells = line.split(/(?<!\\)\|/);
       const cells = rawCells
         .map(c => c.trim().replace(/\\\|/g, '|'))
@@ -109,6 +119,7 @@ function parseMarkdown(md) {
     // 2. Unordered List Handler
     const listMatch = line.match(/^([ \t]*)[-\*\+]\s+(.*)$/);
     if (listMatch) {
+      flushParagraph();
       if (!inList) {
         html += '<ul>\n';
         inList = true;
@@ -131,6 +142,7 @@ function parseMarkdown(md) {
 
     // 3. Empty lines
     if (line.trim() === '') {
+      flushParagraph();
       continue;
     }
 
@@ -142,16 +154,20 @@ function parseMarkdown(md) {
     const h2 = line.match(/^##\s+(.*)$/);
     const h1 = line.match(/^#\s+(.*)$/);
 
-    if (h1) { html += `<h1>${inlineParse(h1[1])}</h1>\n`; continue; }
-    if (h2) { html += `<h2>${inlineParse(h2[1])}</h2>\n`; continue; }
-    if (h3) { html += `<h3>${inlineParse(h3[1])}</h3>\n`; continue; }
-    if (h4) { html += `<h4>${inlineParse(h4[1])}</h4>\n`; continue; }
-    if (h5) { html += `<h5>${inlineParse(h5[1])}</h5>\n`; continue; }
-    if (h6) { html += `<h6>${inlineParse(h6[1])}</h6>\n`; continue; }
+    if (h1 || h2 || h3 || h4 || h5 || h6) {
+      flushParagraph();
+      if (h1) { html += `<h1>${inlineParse(h1[1])}</h1>\n`; continue; }
+      if (h2) { html += `<h2>${inlineParse(h2[1])}</h2>\n`; continue; }
+      if (h3) { html += `<h3>${inlineParse(h3[1])}</h3>\n`; continue; }
+      if (h4) { html += `<h4>${inlineParse(h4[1])}</h4>\n`; continue; }
+      if (h5) { html += `<h5>${inlineParse(h5[1])}</h5>\n`; continue; }
+      if (h6) { html += `<h6>${inlineParse(h6[1])}</h6>\n`; continue; }
+    }
 
     // 5. Blockquote
     const bq = line.match(/^>\s*(.*)$/);
     if (bq) {
+      flushParagraph();
       let bqContent = inlineParse(bq[1]);
       // Support alert boxes
       if (bqContent.startsWith('[!NOTE]')) bqContent = '<strong>Note:</strong>' + bqContent.slice(7);
@@ -164,9 +180,10 @@ function parseMarkdown(md) {
     }
 
     // 6. Standard Paragraph
-    html += `<p>${inlineParse(line)}</p>\n`;
+    paragraphLines.push(line.trim());
   }
 
+  flushParagraph();
   if (inList) html += '</ul>\n';
   if (inTable) html += '  </tbody>\n</table>\n';
   if (inCodeBlock) {
@@ -227,7 +244,7 @@ function sanitizeUrl(url) {
 function inlineParse(text) {
   const links = [];
   // Extract links from raw text first to prevent double HTML escaping of URL parameters
-  let parsed = (text || '').replace(/\[(.*?)\]\((.*?)\)/g, (match, linkText, url) => {
+  let parsed = (text || '').replace(/\[([^\]]*?)\]\(((?:[^)\s]+|\([^)\s]*\))+)\)/g, (match, linkText, url) => {
     const id = links.length;
     links.push({ linkText, url });
     return `__LINK_PLACEHOLDER_${id}__`;
