@@ -27,6 +27,7 @@ Before running the tool or performing any codebase profiling, checks, or session
 1. **Parameter Routing Check**: Parse the command parameters:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Step 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+   - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
 2. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
    - Estimate LOC, count files, detect primary languages and build systems.
@@ -57,7 +58,8 @@ Begin the questionnaire by presenting the mandatory disclaimer. Sequentially pre
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment:
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
-2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.
+2. **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
+3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.
 3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts.
 4. **Collect and Read Observations**:
    - If execution status in `manifest.json` is `completed`, directly read and consolidate their mini-reports.

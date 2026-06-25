@@ -43,6 +43,7 @@ Before performing codebase analysis, sizing, or session resume operations:
 1. **Parameter Routing Check**: Parse the command parameters:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+   - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
 2. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
 3. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
@@ -57,6 +58,7 @@ Before performing codebase analysis, sizing, or session resume operations:
 1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select scaffolding vs backlog mode.
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
+   - **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
    - **Coordinate Headless Scans**: Dispatch the best-guess parameter contract to High/Medium relevance subagents. Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
    - **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 
@@ -119,8 +121,8 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback safety checks.
-- [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/repo-wizard-observations-<repo-name-here>.md` & `.html` are generated (in headless modes).
-- [ ] Full Technical Report `.repo-wizard/repo-wizard-full-report-<repo-name-here>.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
-- [ ] Constructive `.repo-wizard/repo-wizard-executive-summary-<repo-name-here>.md` & `.html` are generated (3 sections, each under 3 paragraphs and 450 words).
+- [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless modes).
+- [ ] Full Technical Report `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
+- [ ] Constructive `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html` are generated (3 sections, each under 3 paragraphs and 450 words).
 - [ ] Mismatch hook with updated wording (no "upgrade" command) is appended to all generated reports when a weekend vibe project style handles complex sensitive/compliance operations.
 - [ ] All Markdown and HTML reports have the Developer Empowerment Disclaimer blockquote appended.
