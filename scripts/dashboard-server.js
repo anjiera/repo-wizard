@@ -331,12 +331,22 @@ function generateManifestFromSession(session) {
   };
 }
 
-async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFiles = 1000) {
-  if (fileLimit.count >= maxFiles) return;
+async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 }, maxFiles = 1000, visited = new Set(), depth = 0) {
+  if (fileLimit.count >= maxFiles || depth > 10) return;
+
+  let realDir;
+  try {
+    realDir = await fs.promises.realpath(dir);
+  } catch (err) {
+    realDir = path.resolve(dir);
+  }
+
+  if (visited.has(realDir)) return;
+  visited.add(realDir);
 
   let files;
   try {
-    files = await fs.promises.readdir(dir);
+    files = await fs.promises.readdir(realDir);
   } catch (err) {
     return;
   }
@@ -346,7 +356,7 @@ async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 },
   for (const file of files) {
     if (fileLimit.count >= maxFiles) break;
 
-    const fullPath = path.join(dir, file);
+    const fullPath = path.join(realDir, file);
     let stat;
     try {
       stat = await fs.promises.lstat(fullPath);
@@ -360,7 +370,7 @@ async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 },
 
     if (stat.isDirectory()) {
       if (ignoreDirs.includes(file)) continue;
-      await scanDirectoryExtensions(fullPath, extCounts, fileLimit, maxFiles);
+      await scanDirectoryExtensions(fullPath, extCounts, fileLimit, maxFiles, visited, depth + 1);
     } else if (stat.isFile()) {
       fileLimit.count++;
       const ext = path.extname(file).toLowerCase();
@@ -791,6 +801,8 @@ const server = http.createServer((req, res) => {
           if (pAnswers.goals !== undefined && typeof pAnswers.goals === 'string') cleanAnswers.goals = pAnswers.goals;
           if (pAnswers.team !== undefined && typeof pAnswers.team === 'string') cleanAnswers.team = pAnswers.team;
           if (pAnswers.budget !== undefined && typeof pAnswers.budget === 'string') cleanAnswers.budget = pAnswers.budget;
+          if (pAnswers.projectGoal !== undefined && typeof pAnswers.projectGoal === 'string') cleanAnswers.projectGoal = pAnswers.projectGoal;
+          if (pAnswers.expertiseLevel !== undefined && typeof pAnswers.expertiseLevel === 'string') cleanAnswers.expertiseLevel = pAnswers.expertiseLevel;
           
           if (pAnswers.platforms !== undefined && Array.isArray(pAnswers.platforms)) {
             cleanAnswers.platforms = pAnswers.platforms.filter(x => typeof x === 'string');
@@ -1277,13 +1289,9 @@ function killProcessTree(proc) {
   if (!proc) return;
   const pid = proc.pid;
   if (process.platform === 'win32') {
-    const { exec } = require('child_process');
+    const { execSync } = require('child_process');
     try {
-      exec(`taskkill /pid ${pid} /T /F`, (err) => {
-        if (err) {
-          writeLog('error', `Failed to taskkill process tree for pid ${pid}`, '', { error: err.message });
-        }
-      });
+      execSync(`taskkill /pid ${pid} /T /F`, { stdio: 'ignore' });
     } catch (e) {
       writeLog('error', `Exception running taskkill for pid ${pid}`, '', { error: e.message });
     }

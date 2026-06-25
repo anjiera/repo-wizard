@@ -461,7 +461,14 @@ main().catch(err => {
 
 function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new Set()) {
   if (depth > maxDepth) return false;
-  const absPath = path.resolve(dir);
+  
+  let absPath;
+  try {
+    absPath = fs.realpathSync(dir);
+  } catch (err) {
+    absPath = path.resolve(dir);
+  }
+
   if (visited.has(absPath)) return false;
   visited.add(absPath);
 
@@ -478,12 +485,15 @@ function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new 
     if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'].includes(file)) {
       continue;
     }
-    if (predicate(file)) {
+    const fullPath = path.join(absPath, file);
+    if (predicate(file, fullPath)) {
       return true;
     }
     try {
-      const fullPath = path.join(absPath, file);
-      const stat = fs.statSync(fullPath);
+      const stat = fs.lstatSync(fullPath);
+      if (stat.isSymbolicLink()) {
+        continue;
+      }
       if (stat.isDirectory()) {
         subdirs.push(fullPath);
       }
@@ -505,8 +515,8 @@ function checkAgentRelevance(agentName, targetDir, contract) {
     return { relevance: 'High', rationale: 'Core governance/VCS agent' };
   }
 
-  const hasExtension = (dir, ext) => {
-    return checkFilesExist(dir, (file) => file.endsWith(ext));
+  const hasExtension = (dir, ext, maxDepth = 4) => {
+    return checkFilesExist(dir, (file) => file.endsWith(ext), 0, maxDepth);
   };
 
   const hasFile = (dir, name) => {
@@ -520,7 +530,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   // Notebook Sanitizer
   if (agentName === 'notebook-sanitizer-agent') {
     if (!hasExtension(targetDir, '.ipynb')) {
-      return { relevance: 'Low', rationale: 'No Jupyter Notebook (.ipynb) files found in workspace' };
+      return { relevance: 'Low', rationale: 'No Jupyter Notebooks (.ipynb) found in workspace' };
     }
     return { relevance: 'High', rationale: 'Jupyter Notebooks detected' };
   }
@@ -538,7 +548,21 @@ function checkAgentRelevance(agentName, targetDir, contract) {
       } catch (e) { /* ignore */ }
     }
     if (!hasReact) {
-      hasReact = hasExtension(targetDir, '.jsx') || hasExtension(targetDir, '.tsx');
+      // Check nested package.json files up to depth 5
+      hasReact = checkFilesExist(targetDir, (file, fullPath) => {
+        if (file === 'package.json') {
+          try {
+            const pkg = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+            if ((pkg.dependencies && pkg.dependencies.react) || (pkg.devDependencies && pkg.devDependencies.react)) {
+              return true;
+            }
+          } catch (e) { /* ignore */ }
+        }
+        return false;
+      }, 0, 5);
+    }
+    if (!hasReact) {
+      hasReact = hasExtension(targetDir, '.jsx', 8) || hasExtension(targetDir, '.tsx', 8);
     }
     if (!hasReact) {
       return { relevance: 'Low', rationale: 'No React dependency or JSX/TSX files found in workspace' };

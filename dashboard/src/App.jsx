@@ -40,6 +40,8 @@ export default function App() {
       goals: 'greenfield',
       team: 'junior',
       budget: 'free',
+      projectGoal: 'personal',
+      expertiseLevel: 'intermediate',
       platforms: ['web'],
       frameworks: ['react'],
       testing: true,
@@ -215,6 +217,8 @@ export default function App() {
         goals: 'greenfield',
         team: 'junior',
         budget: 'free',
+        projectGoal: 'personal',
+        expertiseLevel: 'intermediate',
         platforms: ['web'],
         frameworks: ['react'],
         testing: true,
@@ -715,6 +719,30 @@ export default function App() {
                     >
                       <option value="free">Free / Open Source Tools Only</option>
                       <option value="premium">Premium / Enterprise Tolerant</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-[#c9d1d9] mb-2">Project Goal / Standard</label>
+                    <select 
+                      value={session.answers.projectGoal || 'personal'}
+                      onChange={(e) => setSession({...session, answers: {...session.answers, projectGoal: e.target.value}})}
+                      className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-3 text-white focus:outline-none"
+                    >
+                      <option value="personal">Personal / Hobbyist</option>
+                      <option value="release">Product Release</option>
+                      <option value="enterprise">Enterprise Grade</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-[#c9d1d9] mb-2">Developer Expertise Level</label>
+                    <select 
+                      value={session.answers.expertiseLevel || 'intermediate'}
+                      onChange={(e) => setSession({...session, answers: {...session.answers, expertiseLevel: e.target.value}})}
+                      className="w-full bg-[#0d1117] border border-brand-border rounded-xl px-4 py-3 text-white focus:outline-none"
+                    >
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced / Expert</option>
                     </select>
                   </div>
                 </div>
