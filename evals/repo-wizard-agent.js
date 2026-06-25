@@ -26,7 +26,7 @@ module.exports = {
       name: 'History Archiving On Fresh Start',
       input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, we have an active session found on disk. I would like to choose "Start Fresh". Let\'s begin.',
       rubrics: [
-        'The response explicitly states that the previous session.json and repo-wizard-full-report.md configurations will be archived to history/ with a timestamp before clearing.'
+        'The response explicitly states that the previous session.json and <repo-name>-full-report.md configurations will be archived to history/ with a timestamp before clearing.'
       ]
     },
     {
@@ -34,7 +34,7 @@ module.exports = {
       input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, let\'s start. I would like to configure my repository using the "backlog" execution mode. I want granular task stories and we use Scrum.',
       rubrics: [
         'The response acknowledges the backlog execution mode toggle.',
-        'The response mentions exporting a CSV backlog (.repo-wizard/backlog.csv), a full technical report (.repo-wizard/repo-wizard-full-report.md / .html), and a constructive 3-section executive summary (.repo-wizard/repo-wizard-executive-summary.md / .html).',
+        'The response mentions exporting a CSV backlog (.repo-wizard/reports/<repo-name>/backlog.csv), a full technical report (<repo-name>-full-report.md / .html), and a constructive 3-section executive summary (<repo-name>-executive-summary.md / .html).',
         'The response acknowledges the Scrum planning framework and granularity.'
       ]
     },
@@ -58,8 +58,8 @@ module.exports = {
       name: 'Headless Mode observations-<repo-name-here> deliverables & mismatch hook',
       input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, we are running in headless mode on a remote repo named myproject. It has weekend hobby code and lacks testing frameworks but handles sensitive payment data. What reports will you generate?',
       rubrics: [
-        'The response states it will generate observations, full report, and executive summary reports suffixed with the repository name (e.g. repo-wizard-observations-myproject.md / .html).',
-        'The response mentions that agent mini-reports are saved using the suffix format observations-<agent-name>-myproject.md.',
+        'The response states it will generate observations, full report, and executive summary reports prefixed with the repository name (e.g. myproject-observations.md / .html).',
+        'The response mentions that agent mini-reports are saved using the prefix format myproject-observations-<agent-name>.md.',
         'The response includes the mismatch hook recommending copying locally and running /repo-wizard, using the updated wording without the word upgrade.'
       ]
     }

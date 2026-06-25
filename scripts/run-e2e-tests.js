@@ -63,9 +63,10 @@ function appendGitignore(workspacePath) {
 function archiveSession(workspacePath) {
   const wizardDir = path.join(workspacePath, '.repo-wizard');
   const historyDir = path.join(wizardDir, 'history');
+  const repoName = path.basename(workspacePath);
   
   const sessionPath = path.join(wizardDir, 'session.json');
-  const reportPath = path.join(wizardDir, 'repo-wizard-full-report.md');
+  const reportPath = path.join(wizardDir, `${repoName}-full-report.md`);
 
   if (!fs.existsSync(historyDir)) {
     fs.mkdirSync(historyDir, { recursive: true });
@@ -83,7 +84,7 @@ function archiveSession(workspacePath) {
   }
 
   if (fs.existsSync(reportPath)) {
-    const archiveReportPath = path.join(historyDir, `repo-wizard-full-report_${timestamp}.md`);
+    const archiveReportPath = path.join(historyDir, `${repoName}-full-report_${timestamp}.md`);
     fs.copyFileSync(reportPath, archiveReportPath);
   }
 }
@@ -131,8 +132,9 @@ function testSessionArchiving() {
   const sessionContent = '{"tools":["semgrep","husky"],"status":"completed"}';
   const reportContent = `# Full Technical Report\nSome mock audit logs here\n\n${DISCLAIMER_TEXT}\n`;
 
+  const repoName = path.basename(SANDBOX_DIR);
   fs.writeFileSync(path.join(wizardDir, 'session.json'), sessionContent);
-  fs.writeFileSync(path.join(wizardDir, 'repo-wizard-full-report.md'), reportContent);
+  fs.writeFileSync(path.join(wizardDir, `${repoName}-full-report.md`), reportContent);
 
   // Trigger archiving
   archiveSession(SANDBOX_DIR);
@@ -144,17 +146,17 @@ function testSessionArchiving() {
   assert(files.length === 2, 'Archived session and report files exist in history');
 
   const sessionArchiveFile = files.find(f => f.startsWith('session_') && f.endsWith('.json'));
-  const reportArchiveFile = files.find(f => f.startsWith('repo-wizard-full-report_') && f.endsWith('.md'));
+  const reportArchiveFile = files.find(f => f.startsWith(`${repoName}-full-report_`) && f.endsWith('.md'));
 
   assert(sessionArchiveFile !== undefined, 'Session archive matches prefix session_YYYYMMDD_HHMMSS.json');
-  assert(reportArchiveFile !== undefined, 'Report archive matches prefix repo-wizard-full-report_YYYYMMDD_HHMMSS.md');
+  assert(reportArchiveFile !== undefined, `Report archive matches prefix ${repoName}-full-report_YYYYMMDD_HHMMSS.md`);
 
   // Verify contents match
   const sessionArchivedContent = fs.readFileSync(path.join(historyDir, sessionArchiveFile), 'utf8');
   const reportArchivedContent = fs.readFileSync(path.join(historyDir, reportArchiveFile), 'utf8');
 
   assert(sessionArchivedContent === sessionContent, 'Archived session.json content is correct');
-  assert(reportArchivedContent === reportContent, 'Archived repo-wizard-full-report.md content is correct');
+  assert(reportArchivedContent === reportContent, `Archived ${repoName}-full-report.md content is correct`);
 }
 
 function testE2EDeliverablesValidator() {
@@ -162,6 +164,7 @@ function testE2EDeliverablesValidator() {
   const validatorScript = path.join(ROOT, 'scripts', 'validate-deliverables.js');
   
   const wizardDir = path.join(SANDBOX_DIR, '.repo-wizard');
+  const repoName = path.basename(SANDBOX_DIR);
   
   // 1. Create a compliant executive summary
   const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
@@ -183,7 +186,7 @@ Roadmap paragraph 2.
 
 ${DISCLAIMER_TEXT}
 `;
-  fs.writeFileSync(path.join(wizardDir, 'repo-wizard-executive-summary-mock.md'), execSummaryContent);
+  fs.writeFileSync(path.join(wizardDir, `${repoName}-executive-summary.md`), execSummaryContent);
 
   // 2. Run the validator tool against the sandbox
   try {

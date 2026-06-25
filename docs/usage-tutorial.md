@@ -80,12 +80,12 @@ To optimize token usage and avoid redundant analyses on large codebases, the lea
 
 ## 4. Understanding Deliverables
 
-Every successful scan compiles deliverables under the `.repo-wizard/` directory (automatically added to your gitignore):
+Every successful scan compiles deliverables under the `.repo-wizard/reports/<repo-name>/` directory (automatically added to your gitignore):
 
-### 1. Full Technical Report (`repo-wizard-full-report.md` & `.html`)
+### 1. Full Technical Report (`<repo-name>-full-report.md` & `.html`)
 A comprehensive audit log detailing detected stack size, candidate tools evaluated, final selections, and detailed implementation rationales.
 
-### 2. Executive Summary (`repo-wizard-executive-summary.md` & `.html`)
+### 2. Executive Summary (`<repo-name>-executive-summary.md` & `.html`)
 A high-level summary designed for engineering leads and stakeholders. It follows a strict layout:
 * **Section 1: Codebase Health & Strengths:** Positively frames clean patterns already present in the codebase.
 * **Section 2: Tooling & Compliance Opportunities:** Suggests constructive additions (e.g. CCPA data purging) in a neutral, non-blaming tone.

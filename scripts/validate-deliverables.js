@@ -384,7 +384,7 @@ Roadmap paragraph 2.
 
 ${DISCLAIMER_TEXT}
 `;
-  fs.writeFileSync(path.join(tempDir, 'repo-wizard-executive-summary-myrepo.md'), validExecMd);
+  fs.writeFileSync(path.join(tempDir, 'myrepo-executive-summary.md'), validExecMd);
 
   // 2. Invalid Executive Summary (too many paragraphs, missing disclaimer)
   const invalidExecMd = `
@@ -402,7 +402,7 @@ Para 1.
 ## Section 3: Roadmap
 Para 1.
 `;
-  fs.writeFileSync(path.join(tempDir, 'repo-wizard-executive-summary-bad.md'), invalidExecMd);
+  fs.writeFileSync(path.join(tempDir, 'bad-executive-summary.md'), invalidExecMd);
 
   // 3. Valid Backlog CSV
   const validCsv = `Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals

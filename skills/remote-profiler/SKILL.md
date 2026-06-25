@@ -43,10 +43,10 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 
 ### Phase 4: Report Amalgamation & Compilation
 1. **Consolidate Observations:** The orchestrator reads all agent mini-reports and consolidates them into the final reports.
-2. **Target File Outputs:** Generate the following files in the local `.repo-wizard/` directory:
-   - `repo-wizard-observations-<repo-name-here>.md` & `.html`
-   - `repo-wizard-full-report-<repo-name-here>.md` & `.html`
-   - `repo-wizard-executive-summary-<repo-name-here>.md` & `.html`
+2. **Target File Outputs:** Generate the following files in the local `.repo-wizard/reports/<repo-name-here>/` directory:
+   - `<repo-name-here>-observations.md` & `.html`
+   - `<repo-name-here>-full-report.md` & `.html`
+   - `<repo-name-here>-executive-summary.md` & `.html`
 3. **Wording Hook Tweak:** If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
    > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
 4. **Enforce Honest-Boundaries:** Under Approach B, verify that all unobservable files return `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` instead of hallucinated findings.

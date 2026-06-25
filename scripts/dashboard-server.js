@@ -450,9 +450,9 @@ Disclaimer: Recommended tools are selected for stack compatibility and ecosystem
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
-  const execPath = path.join(reportsDir, `repo-wizard-executive-summary-${repoName}.md`);
-  const fullPath = path.join(reportsDir, `repo-wizard-full-report-${repoName}.md`);
-  const obsPath = path.join(reportsDir, `repo-wizard-observations-${repoName}.md`);
+  const execPath = path.join(reportsDir, `${repoName}-executive-summary.md`);
+  const fullPath = path.join(reportsDir, `${repoName}-full-report.md`);
+  const obsPath = path.join(reportsDir, `${repoName}-observations.md`);
 
   try {
     fs.writeFileSync(execPath, execSummary, 'utf8');
@@ -557,9 +557,9 @@ The codebase was scanned and verified under assumptions for:
 ${DISCLAIMER_TEXT}
 `;
 
-  const execPath = path.join(reportsDir, `repo-wizard-executive-summary-${repoName}.md`);
-  const fullPath = path.join(reportsDir, `repo-wizard-full-report-${repoName}.md`);
-  const obsPath = path.join(reportsDir, `repo-wizard-observations-${repoName}.md`);
+  const execPath = path.join(reportsDir, `${repoName}-executive-summary.md`);
+  const fullPath = path.join(reportsDir, `${repoName}-full-report.md`);
+  const obsPath = path.join(reportsDir, `${repoName}-observations.md`);
 
   try {
     fs.writeFileSync(execPath, execSummary, 'utf8');
@@ -1100,7 +1100,7 @@ function scanReports(dir, baseDir, fileList = []) {
         scanReports(fullPath, baseDir, fileList);
       }
     } else {
-      if (file === 'backlog.csv' || (file.startsWith('repo-wizard-') && (file.endsWith('.md') || file.endsWith('.html')))) {
+      if (file === 'backlog.csv' || file.endsWith('.md') || file.endsWith('.html')) {
         const relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
         fileList.push(relativePath);
       }
@@ -1200,7 +1200,14 @@ function scanReports(dir, baseDir, fileList = []) {
       }
 
       const baseName = path.basename(fileName);
-      if (baseName !== 'backlog.csv' && !baseName.startsWith('repo-wizard-')) {
+      const isAllowedFile = baseName === 'backlog.csv' || 
+                            baseName.endsWith('-executive-summary.md') || 
+                            baseName.endsWith('-executive-summary.html') || 
+                            baseName.endsWith('-full-report.md') || 
+                            baseName.endsWith('-full-report.html') || 
+                            baseName.endsWith('-observations.md') || 
+                            baseName.endsWith('-observations.html');
+      if (!isAllowedFile) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid file name pattern.' }));
         return;

@@ -70,15 +70,15 @@ For each capability needed, recommend candidate tools dynamically after screenin
 ### Phase 6: Reports & Deliverables Compilation
 Generate the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
 
-1. **Observations Summary (`.repo-wizard/reports/<repo-name-here>/repo-wizard-observations-<repo-name-here>.md` & `.html` - Headless Modes Only)**:
+1. **Observations Summary (`.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` - Headless Modes Only)**:
   - Document assumptions about what toolchain clues currently exist in the codebase.
   - Highlight guesses about what kinds of compliance standards may or may not be involved.
   - Detail suggested linter, config tweaks, or pre-commit hooks to improve codebase robustness.
-2. **The Full Technical Report (`.repo-wizard/repo-wizard-full-report-<repo-name-here>.md` & `.html`)**:
+2. **The Full Technical Report (`.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html`)**:
   - Profile the codebase (LOC, file counts, structure).
   - Log capability mappings, evaluator screening outputs, and the selection ledger (using default recommendations in headless mode).
   - In backlog mode, append a high-level summary of the generated issues and recommending agents.
-3. **The Executive Summary (`.repo-wizard/repo-wizard-executive-summary-<repo-name-here>.md` & `.html`)**:
+3. **The Executive Summary (`.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html`)**:
   - Write a constructive, positive high-level overview in Markdown and HTML.
   - Structure strictly into 3 sections, each under 3 paragraphs and 450 words total: Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
 4. **Upgrade Mismatch Hook**: If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
