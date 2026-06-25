@@ -35,7 +35,7 @@ Scan the codebase to evaluate current observability configurations:
 3. **Framework Scan:** Identify routing libraries (e.g., Express, FastAPI, Actix-web, Gin) to know which auto-instrumentation plugins are needed.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-observability-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-observability-pilot-agent.md`.
 Draft all SDK configurations, dashboard JSONs, and alerting rules in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenTelemetry setup files, dashboard layouts, and alert rules to the user and prompt them for review and confirmation.

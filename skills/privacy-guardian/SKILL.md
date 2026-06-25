@@ -42,7 +42,7 @@ Scan the codebase to evaluate existing privacy controls:
 3. **Account Routes:** Look for account registration or deletion routes.
 
 ### Phase 3: Deliverables Scaffolding
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-privacy-guardian-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-privacy-guardian-agent.md`.
 Coordinate with the environment configurer to scaffold controls:
 1. **PII Logging Scrubbers:** Recommend and scaffold filters to mask or redact sensitive terms (emails, passwords, API tokens) before logs write to output.
 2. **Route Templates & Placeholders:** Draft stubs and controllers for data deletion (Right to be Forgotten) and data export (Portability) requests.

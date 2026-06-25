@@ -34,7 +34,7 @@ Scan the codebase to evaluate current documentation patterns:
 3. **VCS Check:** Verify the active version control system configuration to know how to integrate hooks or setup scripts.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-technical-scribe-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe-agent.md`.
 Draft all documentation and configuration templates. Adhere strictly to these rules:
 1. **Explicit Consent:** Ask the user for permission before creating directories or writing helper scripts.
 2. **Interactive Code Review:** Display generated script files, diagrams, and templates to the user and prompt them to guide or review changes.

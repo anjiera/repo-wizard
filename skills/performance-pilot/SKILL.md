@@ -34,7 +34,7 @@ Scan the codebase to evaluate current performance configurations:
 3. **Module Profile:** Identify the key entry points, server routers, and database setups to locate critical code pathways.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-performance-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-performance-pilot-agent.md`.
 Draft all configurations, tests, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying CI/CD configurations.
 2. **Interactive Code Review:** Display generated load-test scripts, benchmark configurations, and budget specifications to the user and prompt them for review and confirmation.

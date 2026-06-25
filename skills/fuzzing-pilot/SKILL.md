@@ -51,7 +51,7 @@ Scan the repository to map inputs:
 3. **Compiler Checks:** Verify that `clang`, `gcc`, or `cargo` are available in the local execution path.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-fuzzing-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-fuzzing-pilot-agent.md`.
 Draft all configurations, harness templates, and launch scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing compiler configurations, creating fuzzing directories, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing test structures. Do **NOT** overwrite, alter, or remove configurations added by other testing agents (such as Jest, Vitest, or JUnit configurations).

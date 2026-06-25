@@ -38,7 +38,7 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 
 ### Phase 3: Headless Subagent Audit
 1. **Non-blocking Run:** Relevant subagents run in headless mode (following Section 10 of the protocol), skipping interactive inputs and scaffolding/modifications.
-2. **Observations Output:** Each subagent saves its observations report to `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
+2. **Observations Output:** Each subagent saves its observations report to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 3. **Caching & Resumability:** If an agent's mini-report already exists from a previous run, reuse it to support resuming halted scans.
 
 ### Phase 4: Report Amalgamation & Compilation

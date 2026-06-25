@@ -44,7 +44,7 @@ Scan the codebase to evaluate current configuration setups:
 3. **File Header Scan:** Sample files to check if copyright blocks or standard headers are already present.
 
 ### Phase 3: VCS Hook Scaffolding
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-vcs-workflow-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-vcs-workflow-agent.md`.
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations and config edits (e.g., husky, lint-staged, commitlint, or hgrc hook setups) only after receiving explicit developer permission.
 2. **Interactive Options & Nuances:** Explain configuration options and tradeoff decisions (e.g. local pre-commit hook validation speeds vs build server pipelines). Ask the developer to guide the configuration file modifications.

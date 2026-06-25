@@ -36,7 +36,7 @@ Audit the repository to locate active notebooks and manifests:
 4. **Inter-Agent Checks:** Scan for pre-commit hooks configured by other agents (e.g. `vcs-workflow` or `compliance-pilot` setups).
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-notebook-sanitizer-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-notebook-sanitizer-agent.md`.
 Draft all configurations, manifests, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating environment manifests, or modifying existing configuration scripts.
 2. **Strict Inter-Agent Boundaries:** Respect existing hook files (like Husky hooks, pre-commit config YAML files, or custom scripts). You must **NOT** overwrite, alter, or remove configurations added by other agents. Always request developer consent and provide options to append filters cleanly without disrupting existing tools.

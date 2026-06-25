@@ -34,7 +34,7 @@ Scan the codebase to evaluate AI/ML components:
 3. **Dependencies:** Scan package manifests (`package.json`, `Cargo.toml`, `pyproject.toml`) for AI SDKs or validation frameworks.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-ai-robustness-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-ai-robustness-pilot-agent.md`.
 Draft all configurations and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Explain Options & Tradeoffs:** Present guardrail options (e.g., regex/semantic PII scrubbing, structured JSON parser formats) and explain their performance and latency trade-offs.

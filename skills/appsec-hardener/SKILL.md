@@ -36,7 +36,7 @@ Audit the codebase to check current configurations:
 4. **Package Scan:** Check manifests for existing security, rate-limiting, or linter dependencies.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-appsec-hardener-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-appsec-hardener-agent.md`.
 Draft all configurations, middlewares, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or performing package installations, writing new middleware files, or modifying server configuration scripts.
 2. **Interactive Code Review:** Display generated CORS settings, helmet integrations, and rate limit rules to the developer and prompt them for review and confirmation.

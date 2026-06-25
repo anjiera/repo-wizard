@@ -102,7 +102,7 @@ if (fs.existsSync(SKILLS_DIR)) {
       const agentName = dir + '-agent';
       content = content.replace(
         /^(### Phase 3: [^\r\n]*)/m,
-        `$1\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at \`.repo-wizard/agents/observations-${agentName}-<repo-name-here>.md\`.`
+        `$1\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at \`.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-${agentName}.md\`.`
       );
 
       fs.writeFileSync(filePath, content, 'utf8');

@@ -128,7 +128,7 @@ If the incoming parameter contract specifies `execution_mode: "headless_remote"`
 3. **Conduct Best-Guess Scanning:** Perform a structural or metadata sweep depending on the scan approach (A or B). Identify existing tools, inferred configurations, and standards that are likely relevant.
 4. **Honest-Boundaries (Approach B):** If the scan approach is `B` (GraphQL & metadata-only), enforce strict honest boundaries. If any detail is physically unobservable from metadata (e.g. test file content, detailed code paths, inline comments), you MUST output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` in your report sections instead of guessing or hallucinating.
 5. **No File Modifications:** Do NOT make any package installations, write configuration files, or modify files in the active workspace.
-6. **Generate Observations Report:** Write a structured markdown section of your findings and save it to `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`. Include:
+6. **Generate Observations Report:** Write a structured markdown section of your findings and save it to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`. Include:
    - What was surmised from the code.
    - Any assumptions made and the technical reasoning behind them.
    - What tools are already in place.

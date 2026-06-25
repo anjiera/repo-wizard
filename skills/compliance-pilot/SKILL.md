@@ -43,7 +43,7 @@ Scan the codebase to evaluate existing security controls:
 4. **Logging Infrastructure:** Identify if there are dedicated logger configurations (e.g., winston, logback, log4js).
 
 ### Phase 3: Deliverables Scaffolding
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-compliance-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-compliance-pilot-agent.md`.
 Coordinate with the environment configurer to scaffold controls:
 1. **Tool Recommendations:** Recommend specific tools (e.g. Checkov for IaC, GitLeaks/TruffleHog for secrets, GPG signing hooks).
 2. **Consent & Nuances:** Explain setting choices and security tradeoffs (e.g. checkov strictness, commit signing local friction). Ask the user to guide the setup.

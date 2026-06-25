@@ -36,7 +36,7 @@ Audit the repository to locate database connections and data sync paths:
 4. **Data Tools Audit:** Check manifested dependencies to identify existing data processing or validation packages.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-data-pipeline-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-data-pipeline-pilot-agent.md`.
 Draft all specifications, DAG files, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating DAG files, or modifying existing configuration scripts.
 2. **Interactive Code Review:** Display generated Pandera schemas, Airflow DAG templates, or database connection pool engines to the developer, prompting them for review and confirmation.

@@ -42,7 +42,7 @@ Scan the codebase to evaluate accessibility conformance for the selected standar
 3. **Aria Role Verification:** Check if custom interactive components use WAI-ARIA role structures.
 
 ### Phase 3: Accessibility Scaffolding Handoff
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-accessibility-auditor-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-accessibility-auditor-agent.md`.
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., eslint-plugin-jsx-a11y, axe-core CLI) to the scaffolder.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (ruleset strictness levels, pre-commit local execution speed vs CI robustness). Ask the developer to guide the configuration file modifications.

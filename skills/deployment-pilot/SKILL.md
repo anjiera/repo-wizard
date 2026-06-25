@@ -36,7 +36,7 @@ Audit the codebase to assess current infrastructure setups:
 4. **Script & Tool Scan:** Check for existing backup utility scripts, cron definitions, or recovery routines.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-deployment-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-deployment-pilot-agent.md`.
 Draft all configurations, manifests, and scripts in coordination with `tool-scaffolder.agent`, adhering to these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated Compose multi-replica blocks, Kubernetes probe sections, and database backup scripts to the developer, prompting them for review and confirmation.

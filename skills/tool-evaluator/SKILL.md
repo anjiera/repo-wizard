@@ -32,7 +32,7 @@ Evaluate the target package:
 4. **Reputation Assessment:** Confirm community trust via download volumes and GitHub stars.
 
 ### Phase 3: Verdict Formatting
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-tool-evaluator-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tool-evaluator-agent.md`.
 Construct and return a strict JSON output matching:
 ```json
 {

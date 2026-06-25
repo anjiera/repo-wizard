@@ -113,7 +113,11 @@ function detectAgentCLI() {
   for (const cmd of candidates) {
     try {
       execSync(`${cmd} --version`, { stdio: 'ignore' });
-      return cmd;
+      // Verify that the CLI supports the run-agent subcommand
+      const helpOutput = execSync(`${cmd} --help`, { encoding: 'utf8', timeout: 2000, stdio: ['ignore', 'pipe', 'ignore'] });
+      if (helpOutput && helpOutput.includes('run-agent')) {
+        return cmd;
+      }
     } catch (e) {
       // Binary not found or failed, try next candidate
     }
@@ -273,7 +277,8 @@ async function main() {
         `Evaluate repository metadata and configure targets matching parameter contract: ${contractStr}`
       ], {
         cwd: ROOT,
-        env: { ...process.env, PAGER: 'cat' }
+        env: { ...process.env, PAGER: 'cat' },
+        detached: process.platform !== 'win32'
       });
 
       activeChildren.add(child);
@@ -315,10 +320,35 @@ async function main() {
           }
         }
       });
+      const timeoutMs = process.env.AGENT_TIMEOUT ? parseInt(process.env.AGENT_TIMEOUT, 10) : 120000;
+      const timer = setTimeout(() => {
+        if (!resolved) {
+          console.error(`[TIMEOUT] ${agentName} run timed out after ${timeoutMs / 1000}s. Terminating process...`);
+          try {
+            if (process.platform === 'win32') {
+              execSync(`taskkill /pid ${child.pid} /t /f`, { stdio: 'ignore' });
+            } else {
+              process.kill(-child.pid, 'SIGKILL');
+            }
+          } catch (e) {
+            try {
+              child.kill('SIGKILL');
+            } catch (err) {
+              // ignore
+            }
+          }
+          runningAgents.delete(agentName);
+          activeChildren.delete(child);
+          errors.push({ agent: agentName, code: -99, stderr: `Process timed out after ${timeoutMs / 1000}s` });
+          safeResolve();
+        }
+      }, timeoutMs);
+
       let resolved = false;
       const safeResolve = () => {
         if (!resolved) {
           resolved = true;
+          clearTimeout(timer);
           resolve();
         }
       };

@@ -43,7 +43,7 @@ Scan the codebase to evaluate current testing structures:
 3. **Mocking Boundaries:** Identify if API queries or network requests are executed directly in tests without mock protection.
 
 ### Phase 3: Testing Scaffolding Handoff
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-testing-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-testing-pilot-agent.md`.
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., vitest, jest, msw, @testing-library/react) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., local pre-commit test runner execution speeds vs CI robustness, mock strictness). Ask the developer to guide the configuration file modifications.

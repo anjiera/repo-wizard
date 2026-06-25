@@ -37,7 +37,7 @@ Audit the repository to locate active endpoint declarations and contract paramet
 4. **Linter Config Scan:** Search for existing Spectral, Buf, or GraphQL linter configurations.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-api-contract-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-api-contract-pilot-agent.md`.
 Draft all specifications, validator files, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating spec files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenAPI YAML templates, Protobuf service schemas, or GraphQL Inspector configurations to the developer, prompting them for review and confirmation.

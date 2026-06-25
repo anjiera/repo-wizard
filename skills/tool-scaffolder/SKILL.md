@@ -29,7 +29,7 @@ Use this skill when:
 3. **Nuance Explanation:** Explain the configuration parameters being created or modified, highlighting tradeoffs (e.g. strictness settings).
 
 ### Phase 3: Verification & Documentation Integration
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-tool-scaffolder-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tool-scaffolder-agent.md`.
 1. **Verification Command:** Run the designated verification check (e.g. `npm run build`, `cargo check`, `npm test`) to ensure the build compiles cleanly.
 2. **Setup Integration:** Search for and append setup/install instructions to onboarding guides (`README.md`, `setup.sh`, `install.sh`) to support onboarding.
 

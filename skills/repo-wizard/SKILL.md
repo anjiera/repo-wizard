@@ -51,26 +51,26 @@ Before performing codebase analysis, sizing, or session resume operations:
 
 ### Phase 2: Resumability & Session State Check
 1. **Interactive Mode**: Check for `.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Archive historical configs in `.repo-wizard/history/` before overwriting.
-2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md` to allow resuming halted scans.
+2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
 ### Phase 3: Core Profiling & Alignment
 1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select scaffolding vs backlog mode.
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
    - **Coordinate Headless Scans**: Dispatch the best-guess parameter contract to High/Medium relevance subagents. Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
-   - **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
+   - **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 
 ### Phase 4: Dynamic Screening & Tool Selection
 For each capability needed, recommend candidate tools dynamically after screening them via `tool-evaluator.agent` to check vulnerabilities, activity/maintenance, and license compliance.
 
 ### Phase 5: Optimization & Handoff
 1. **Local Interactive Mode**: Finish the interview first, deduplicate candidates, and dispatch parameters contract to `tool-scaffolder.agent` or subagents (backlog mode). Run verification and VCS rollback on failure.
-2. **Headless Mode**: Do NOT make any package installations or write files in the targeted repository. Read and consolidate all subagents' mini-reports from `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`.
+2. **Headless Mode**: Do NOT make any package installations or write files in the targeted repository. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 
 ### Phase 6: Reports & Deliverables Compilation
 Generate the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
 
-1. **Observations Summary (`.repo-wizard/repo-wizard-observations-<repo-name-here>.md` & `.html` - Headless Modes Only)**:
+1. **Observations Summary (`.repo-wizard/reports/<repo-name-here>/repo-wizard-observations-<repo-name-here>.md` & `.html` - Headless Modes Only)**:
   - Document assumptions about what toolchain clues currently exist in the codebase.
   - Highlight guesses about what kinds of compliance standards may or may not be involved.
   - Detail suggested linter, config tweaks, or pre-commit hooks to improve codebase robustness.
@@ -119,7 +119,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback safety checks.
-- [ ] Headless observations `.repo-wizard/repo-wizard-observations-<repo-name-here>.md` & `.html` are generated (in headless modes).
+- [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/repo-wizard-observations-<repo-name-here>.md` & `.html` are generated (in headless modes).
 - [ ] Full Technical Report `.repo-wizard/repo-wizard-full-report-<repo-name-here>.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
 - [ ] Constructive `.repo-wizard/repo-wizard-executive-summary-<repo-name-here>.md` & `.html` are generated (3 sections, each under 3 paragraphs and 450 words).
 - [ ] Mismatch hook with updated wording (no "upgrade" command) is appended to all generated reports when a weekend vibe project style handles complex sensitive/compliance operations.

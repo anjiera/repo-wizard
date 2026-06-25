@@ -34,7 +34,7 @@ Scan the repository to target verification:
 3. **State Variable Audit:** Scan module entry points to map out variable ranges.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/agents/observations-formal-methods-pilot-agent-<repo-name-here>.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-formal-methods-pilot-agent.md`.
 Draft all specifications, proof harnesses, and SMT solver configurations in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending model checks, creating formal files, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing test and build configurations. Do **NOT** overwrite, alter, or remove configurations added by other agents.

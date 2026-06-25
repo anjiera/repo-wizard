@@ -893,6 +893,7 @@ const server = http.createServer((req, res) => {
         const lines = text.split('\n');
         for (const line of lines) {
           if (line.trim()) {
+            console.log(`[Scan stdout] ${line.trim()}`);
             scanLogs.push(`[${new Date().toLocaleTimeString()}] ${line.trim()}`);
           }
         }
@@ -903,6 +904,7 @@ const server = http.createServer((req, res) => {
         const lines = text.split('\n');
         for (const line of lines) {
           if (line.trim()) {
+            console.error(`[Scan stderr] ${line.trim()}`);
             scanLogs.push(`[${new Date().toLocaleTimeString()}] [ERROR] ${line.trim()}`);
           }
         }
