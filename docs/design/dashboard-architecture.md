@@ -77,7 +77,7 @@ All choices made in the React SPA are sent as JSON payloads to the Express serve
 
 ```json
 {
-  "repo_path": "d:/DevSandbox/my-app",
+  "repo_path": "/absolute/path/to/my-app",
   "onboarding_completed": false,
   "answers": {
     "context": "enterprise",

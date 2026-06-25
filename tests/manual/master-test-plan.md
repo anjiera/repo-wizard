@@ -119,7 +119,7 @@ graph TD
     - No console errors are present in your browser's Developer Tools.
 
 - [ ] **3.3 Onboarding Questionnaire & Session State Sync**
-  - Paste the absolute path of your active repository (e.g. `d:/DevSandbox/agy-projects/repo-wizard` or similar) in the Workspace input and click **Select**.
+  - Paste the absolute path of your active repository (e.g., `/absolute/path/to/your/repo-wizard` or similar) in the Workspace input and click **Select**.
   - Click through steps: select operational context, compliance targets, adjust the friction slider, and save settings.
   - *Expected Outcome*:
     - UI confirms settings are saved.

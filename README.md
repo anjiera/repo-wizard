@@ -88,7 +88,7 @@ These folders contain the code, configurations, and skills packaged and shipped 
 These folders and files are used locally by developers and AI coding assistants to build, test, and maintain `repo-wizard`:
 *   `scripts/` — Zero-dependency Node.js linters, compilers, and test suites.
 *   `evals/` — LLM-as-a-judge prompt evaluation configurations.
-*   [AGENTS.md](file:///d:/DevSandbox/agy-projects/repo-wizard/AGENTS.md) / `CLAUDE.md` — Workflow rules instructing coding assistants.
+*   [AGENTS.md](AGENTS.md) / `CLAUDE.md` — Workflow rules instructing coding assistants.
 *   `docs/` — Onboarding, testing, glossary, and design specifications.
 
 ---
