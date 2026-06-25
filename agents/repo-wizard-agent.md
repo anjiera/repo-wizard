@@ -45,7 +45,7 @@ For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
 3. **Execute Actions**: Resume, Revisit, Report, or Start Fresh.
 4. **Archiving History**: Before overwriting or starting fresh, copy `session.json` and `.repo-wizard/repo-wizard-full-report.md` to `.repo-wizard/history/` with YYYYMMDD_HHMMSS timestamp suffixes.
 
-For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md` to allow resuming halted scans.
+For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
 ---
 
@@ -61,7 +61,7 @@ Bypass the questionnaire and live alignment:
 3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts.
 4. **Collect and Read Observations**:
    - If execution status in `manifest.json` is `completed`, directly read and consolidate their mini-reports.
-   - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md`, and then consolidate.
+   - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
 
 ---
 
@@ -77,17 +77,14 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 ## Step 5: Scaffolding, Optimization & Handoff
 
 ### A. Local Interactive Mode
-1. Complete interview first.
-2. Deduplicate candidates.
-3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.
-4. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`.
-5. **Handle Fallback Execution**:
-   - If execution status in the manifest is `fallback_to_agent`, sequentially invoke the subagents flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their scaffolding reports, and then continue.
-6. Run verification and VCS rollback on failure.
+1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`.
+2. **Handle Fallback Execution**:
+   - If execution status in the manifest is `fallback_to_agent`, sequentially invoke the subagents flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their scaffolding reports to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then continue.
+3. Run verification and VCS rollback on failure.
 
 ### B. Headless Mode
 1. Do NOT make any package installations or write files in the targeted repository.
-2. Read and consolidate all subagents' mini-reports from `.repo-wizard/agents/observations-<agent-name>-<repo-name-here>.md` (either written by the runtime or the fallback manual execution loop).
+2. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` (either written by the runtime or the fallback manual execution loop).
 
 ---
 
@@ -95,20 +92,20 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 
 Write the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
 
-1. **Observations Summary (`.repo-wizard/repo-wizard-observations-<repo-name-here>.md` & `.html` - Headless Modes Only)**:
+1. **Observations Summary (`.repo-wizard/reports/<repo-name-here>/repo-wizard-observations-<repo-name-here>.md` & `.html` - Headless Modes Only)**:
   - Document assumptions about what toolchain clues currently exist in the codebase.
   - Highlight guesses about what kinds of compliance standards may or may not be involved.
   - Detail suggested linter, config tweaks, or pre-commit hooks to improve codebase robustness.
-2. **The Full Technical Report (`.repo-wizard/repo-wizard-full-report-<repo-name-here>.md` & `.html`)**:
+2. **The Full Technical Report (`.repo-wizard/reports/<repo-name-here>/repo-wizard-full-report-<repo-name-here>.md` & `.html`)**:
   - Profile the codebase (LOC, file counts, structure).
   - Log capability mappings, evaluator screening outputs, and the selection ledger (using default recommendations in headless mode).
-3. **The Executive Summary (`.repo-wizard/repo-wizard-executive-summary-<repo-name-here>.md` & `.html`)**:
+3. **The Executive Summary (`.repo-wizard/reports/<repo-name-here>/repo-wizard-executive-summary-<repo-name-here>.md` & `.html`)**:
   - Write a constructive, positive high-level overview in Markdown and HTML.
   - Structure strictly into 3 sections, each under 3 paragraphs and 450 words total: Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
 4. **Upgrade Mismatch Hook**: If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
   > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
 5. **Backlog CSV & Toolchain Summary**:
-  - Write JIRA backlog CSV (`.repo-wizard/backlog.csv` - Backlog Mode only).
+  - Write JIRA backlog CSV (`.repo-wizard/reports/<repo-name-here>/backlog.csv` - Backlog Mode only).
   - Write toolchain doc (`docs/TOOLCHAIN.md` - Scaffolding Mode only).
 
 ---

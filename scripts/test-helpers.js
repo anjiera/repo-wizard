@@ -297,8 +297,8 @@ function testRunOrchestration() {
     assert(updatedManifest.contracts[0].status === 'completed', 'contract status updated to completed');
     
     // Check observations generated
-    const reportsDir = path.join(ROOT, 'reports', 'test-repo');
-    const obsPath = path.join(reportsDir, 'agents', 'observations-privacy-guardian-agent-test-repo.md');
+    const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
+    const obsPath = path.join(reportsDir, 'agents', 'test-repo-observations-privacy-guardian-agent.md');
     assert(fs.existsSync(obsPath), 'mock observations file created successfully');
     if (fs.existsSync(reportsDir)) {
       fs.rmSync(reportsDir, { recursive: true, force: true });

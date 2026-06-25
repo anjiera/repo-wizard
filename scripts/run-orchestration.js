@@ -63,7 +63,7 @@ if (!repoName) {
     repoName = 'project';
   }
 }
-const REPORTS_DIR = path.join(ROOT, 'reports', repoName);
+const REPORTS_DIR = path.join(ROOT, '.repo-wizard', 'reports', repoName);
 const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
 
 let manifestPath = path.join(REPORTS_DIR, 'manifest.json');
@@ -197,8 +197,7 @@ async function main() {
       }
       
       const agentName = entry.agent_name;
-      const repoName = process.env.MOCK_REPO_NAME || 'mock-repo';
-      const obsPath = path.join(OBSERVATIONS_DIR, `observations-${agentName}-${repoName}.md`);
+      const obsPath = path.join(OBSERVATIONS_DIR, `${repoName}-observations-${agentName}.md`);
       
       if (isTTY) {
         const pct = total > 0 ? Math.round((completed / total) * 10) : 10;
@@ -242,8 +241,7 @@ async function main() {
       }
 
       const agentName = entry.agent_name;
-      const repoName = process.env.MOCK_REPO_NAME || path.basename(ROOT);
-      const obsPath = path.join(OBSERVATIONS_DIR, `observations-${agentName}-${repoName}.md`);
+      const obsPath = path.join(OBSERVATIONS_DIR, `${repoName}-observations-${agentName}.md`);
 
       if (!isTTY) {
         console.log(`[INFO] Spawning ${agentName}...`);

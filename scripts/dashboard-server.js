@@ -22,7 +22,7 @@ const ROOT = path.resolve(__dirname, '..');
 const PORT_START = 3000;
 const TOS_FILE = path.join(ROOT, '.repo-wizard', '.tos_agreed');
 
-const REPORTS_ROOT = path.join(ROOT, 'reports');
+const REPORTS_ROOT = path.join(ROOT, '.repo-wizard', 'reports');
 if (!fs.existsSync(REPORTS_ROOT)) {
   fs.mkdirSync(REPORTS_ROOT, { recursive: true });
 }
@@ -446,7 +446,7 @@ Based on static file analysis, we assume the repository uses:
 Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
 `;
 
-  const reportsDir = path.join(ROOT, 'reports', repoName);
+  const reportsDir = path.join(REPORTS_ROOT, repoName);
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
@@ -475,7 +475,7 @@ Disclaimer: Recommended tools are selected for stack compatibility and ecosystem
 
 function compileRealReports(session) {
   const repoName = getSafeRepoName(session.targetPath);
-  const reportsDir = path.join(ROOT, 'reports', repoName);
+  const reportsDir = path.join(REPORTS_ROOT, repoName);
   const obsDir = path.join(reportsDir, 'agents');
   
   const answers = session.answers || {};
@@ -492,8 +492,8 @@ function compileRealReports(session) {
     try {
       const files = fs.readdirSync(obsDir);
       for (const file of files) {
-        if (file.startsWith('observations-') && file.endsWith('.md')) {
-          const agentName = file.replace(/^observations-/, '').replace(new RegExp(`-${repoName}\\.md$`), '');
+        if (file.startsWith(`${repoName}-observations-`) && file.endsWith('.md')) {
+          const agentName = file.replace(`${repoName}-observations-`, '').replace(/\.md$/, '');
           executedAgents.push(agentName);
           const content = fs.readFileSync(path.join(obsDir, file), 'utf8');
           consolidatedObservations += `\n### Specialist Agent: ${agentName}\n\n${content}\n---\n`;
@@ -810,7 +810,7 @@ const server = http.createServer((req, res) => {
         }
 
         // Select the correct output session file
-        const newSessionFile = path.join(ROOT, 'reports', repoName, 'session.json');
+        const newSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
         fs.mkdirSync(path.dirname(newSessionFile), { recursive: true });
         currentSessionFile = newSessionFile;
 
@@ -849,7 +849,7 @@ const server = http.createServer((req, res) => {
       const session = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
       const manifest = generateManifestFromSession(session);
       const repoName = getSafeRepoName(session.targetPath);
-      const manifestPath = path.join(ROOT, 'reports', repoName, 'manifest.json');
+      const manifestPath = path.join(REPORTS_ROOT, repoName, 'manifest.json');
       
       // Ensure directory exists
       fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
