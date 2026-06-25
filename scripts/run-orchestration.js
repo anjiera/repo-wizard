@@ -357,8 +357,14 @@ async function main() {
     }, 200);
   }
 
-  const CONCURRENCY_LIMIT = 4;
-  await runWithLimit(CONCURRENCY_LIMIT, manifest.contracts, runAgentPromise);
+  let concurrencyLimit = 4;
+  if (process.env.MAX_CONCURRENCY) {
+    const parsed = parseInt(process.env.MAX_CONCURRENCY, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      concurrencyLimit = parsed;
+    }
+  }
+  await runWithLimit(concurrencyLimit, manifest.contracts, runAgentPromise);
 
   if (progressInterval) {
     clearInterval(progressInterval);

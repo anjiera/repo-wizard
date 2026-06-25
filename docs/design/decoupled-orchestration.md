@@ -1,0 +1,58 @@
+# Decoupled Agent Orchestration
+
+This document outlines the design and lifecycle of the contract-based decoupled agent orchestration system inside the `repo-wizard` system.
+
+---
+
+## 1. Background & Context
+
+In legacy systems, coordinating specialist subagents relied on platform-specific nested sandboxes and API calls (`define_subagent` and `invoke_subagent`). This model created tight coupling between the planning logic and the runtime host environment, reducing portability and causing execution halts when subagents encountered security permission gates.
+
+This decoupled architecture separates **planning** (conducted by the Lead Agent) from **execution** (coordinated by the host runtime script and standard CLI).
+
+---
+
+## 2. Architectural Design
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant L as Lead Agent
+    participant D as Dashboard Server
+    participant O as Orchestrator Runner
+    participant S as Specialist Agent CLI
+    
+    L->>D: Save Session & Mode (full / backlog)
+    L->>D: Write Contract Manifest (manifest.json)
+    D->>O: Spawn run-orchestration.js
+    Note over O: Detect CLI (agy) & Concurrency
+    loop Every Contract
+        O->>S: Spawn agy --dangerously-skip-permissions
+        S-->>O: Stream Output & Observations (Markdown)
+        O-->>D: Stream Log Lines in Real-Time
+    end
+    O-->>D: Completed State & Exit 0
+    D->>D: compileRealReports()
+```
+
+### Key Elements:
+1. **Contract Manifest (`manifest.json`)**: A structured JSON block containing the schema and parameters for every specialist agent run.
+2. **Runtime Orchestrator (`run-orchestration.js`)**: A lightweight host script that reads the contracts, validates them against schema definitions, and spawns the subagents.
+3. **Log Streamer**: Line-buffered listeners that capture the stdout and stderr of subagents, prefixing output with the agent's name, and pipe it back to the active console and session log file.
+
+---
+
+## 3. Concurrency & Resource Controls
+
+To mitigate system slowdowns and avoid triggering rate limits on API keys, the orchestrator implements a worker pool pattern:
+- **Default Threshold**: Spawns up to a maximum of **4** concurrent processes.
+- **Configurability**: Reads `process.env.MAX_CONCURRENCY` to adjust the limit based on system capability and API quotas.
+
+---
+
+## 4. Security & Sandbox Boundary Mitigations
+
+Spawning LLM-based agents headlessly requires skipping permission prompts, which introduces security risks. We mitigate these risks using the following design guidelines:
+- **Passive Data Principle**: All codebase files read by specialist subagents are treated strictly as passive static text. Subagents do not execute scripts found within target repositories.
+- **Directory Confinement**: Child processes are confined to the target directory. They are blocked from writing configurations outside the scope of the target repository.
+- **Read-Only / Backlog Scoping**: If the user selects "Generate Backlog Only", the backend limits operations to observations gathering and compiles findings without writing setup configurations or executing packages.
