@@ -174,7 +174,6 @@ async function run() {
   
   let reportMarkdown = `# Agent Evaluation Results (Snapshot)
 
-- **Timestamp**: ${new Date().toISOString()}
 - **Model**: \`${MODEL_NAME}\`
 
 `;

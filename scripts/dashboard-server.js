@@ -16,10 +16,16 @@ const net = require('net');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { convertMdToHtml } = require('./md-to-html');
+const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 
 const ROOT = path.resolve(__dirname, '..');
-const PORT_START = 3000;
+
+const SessionStatus = Object.freeze({
+  PAUSED: 'paused',
+  COMPLETED: 'completed',
+  FAILED: 'failed'
+});
+let currentPort = 3000;
 const TOS_FILE = path.join(ROOT, '.repo-wizard', '.tos_agreed');
 
 const REPORTS_ROOT = path.join(ROOT, '.repo-wizard', 'reports');
@@ -96,6 +102,29 @@ if (fs.existsSync(currentSessionFile)) {
   }
 }
 
+// Concurrency queue to serialize session updates
+let sessionPromiseChain = Promise.resolve();
+
+async function fileExists(filePath) {
+  try {
+    await fs.promises.access(filePath);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Generates ETag for cache validation (asynchronous version)
+ */
+async function getFileETagAsync(filePath) {
+  try {
+    const stats = await fs.promises.stat(filePath);
+    return `W/"${stats.size}-${stats.mtimeMs}"`;
+  } catch (err) {
+    return '';
+  }
+}
 
 /**
  * Generates ETag for cache validation
@@ -601,6 +630,15 @@ ${DISCLAIMER_TEXT}
 const server = http.createServer((req, res) => {
   const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();
 
+  // Validate Host Header to prevent DNS Rebinding
+  const host = req.headers.host || '';
+  const isLocalhost = /^localhost(:\d+)?$/i.test(host) || /^127\.0\.0\.1(:\d+)?$/i.test(host);
+  if (!isLocalhost) {
+    res.writeHead(400, { 'Content-Type': 'text/plain' });
+    res.end('Bad Request: Invalid Host header.');
+    return;
+  }
+
   // Prevent crash via null byte injection
   if (req.url.includes('\0') || req.url.includes('%00')) {
     res.writeHead(400, { 'Content-Type': 'text/plain' });
@@ -652,20 +690,23 @@ const server = http.createServer((req, res) => {
 
   // 0a. GET /api/consent - Check TOS consent status
   if (req.method === 'GET' && url.pathname === '/api/consent') {
-    if (!fs.existsSync(TOS_FILE)) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ consented: false }));
-      return;
-    }
-    try {
-      const data = JSON.parse(fs.readFileSync(TOS_FILE, 'utf8'));
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ consented: true, data }));
-    } catch (err) {
-      writeLog('error', 'Failed to read TOS consent file', correlationId, { error: err.message });
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ consented: false }));
-    }
+    (async () => {
+      const exists = await fileExists(TOS_FILE);
+      if (!exists) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ consented: false }));
+        return;
+      }
+      try {
+        const data = JSON.parse(await fs.promises.readFile(TOS_FILE, 'utf8'));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ consented: true, data }));
+      } catch (err) {
+        writeLog('error', 'Failed to read TOS consent file', correlationId, { error: err.message });
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ consented: false }));
+      }
+    })();
     return;
   }
 
@@ -684,65 +725,71 @@ const server = http.createServer((req, res) => {
     });
     req.on('end', () => {
       if (tooLarge) return;
-      try {
-        const payload = JSON.parse(body);
-        if (payload.agreed === true) {
-          const consentData = {
-            agreed: true,
-            agreed_by: typeof payload.agreed_by === 'string' ? payload.agreed_by : 'dev-user',
-            timestamp: new Date().toISOString()
-          };
-          fs.writeFileSync(TOS_FILE, JSON.stringify(consentData, null, 2), 'utf8');
-          writeLog('info', 'TOS Consent saved successfully', correlationId);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ status: 'success', message: 'TOS accepted.' }));
-        } else {
-          if (fs.existsSync(TOS_FILE)) {
-            fs.unlinkSync(TOS_FILE);
+      (async () => {
+        try {
+          const payload = JSON.parse(body);
+          if (payload.agreed === true) {
+            const consentData = {
+              agreed: true,
+              agreed_by: typeof payload.agreed_by === 'string' ? payload.agreed_by : 'dev-user',
+              timestamp: new Date().toISOString()
+            };
+            await fs.promises.writeFile(TOS_FILE, JSON.stringify(consentData, null, 2), 'utf8');
+            writeLog('info', 'TOS Consent saved successfully', correlationId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'success', message: 'TOS accepted.' }));
+          } else {
+            const exists = await fileExists(TOS_FILE);
+            if (exists) {
+              await fs.promises.unlink(TOS_FILE);
+            }
+            writeLog('info', 'TOS Consent declined / revoked', correlationId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'declined', message: 'TOS declined.' }));
           }
-          writeLog('info', 'TOS Consent declined / revoked', correlationId);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ status: 'declined', message: 'TOS declined.' }));
+        } catch (err) {
+          writeLog('error', 'Malformed payload in consent update', correlationId, { error: err.message });
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
         }
-      } catch (err) {
-        writeLog('error', 'Malformed payload in consent update', correlationId, { error: err.message });
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
-      }
+      })();
     });
     return;
   }
 
   // 1. GET /api/session - Read alignment questionnaire state
   if (req.method === 'GET' && url.pathname === '/api/session') {
-    if (!fs.existsSync(currentSessionFile)) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ status: 'not_found', message: 'No active session exists.' }));
-      return;
-    }
+    (async () => {
+      const exists = await fileExists(currentSessionFile);
+      if (!exists) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'not_found', message: 'No active session exists.' }));
+        return;
+      }
 
-    const etag = getFileETag(currentSessionFile);
-    const clientEtag = req.headers['if-none-match'];
+      const etag = await getFileETagAsync(currentSessionFile);
+      const clientEtag = req.headers['if-none-match'];
 
-    if (clientEtag && clientEtag === etag) {
-      writeLog('info', 'Session ETag matched. Returning 304 Not Modified', correlationId);
-      res.writeHead(304);
-      res.end();
-      return;
-    }
+      if (clientEtag && clientEtag === etag) {
+        writeLog('info', 'Session ETag matched. Returning 304 Not Modified', correlationId);
+        res.writeHead(304);
+        res.end();
+        return;
+      }
 
-    try {
-      const data = fs.readFileSync(currentSessionFile, 'utf8');
-      res.writeHead(200, { 
-        'Content-Type': 'application/json',
-        'ETag': etag
-      });
-      res.end(data);
-    } catch (err) {
-      writeLog('error', 'Failed to read session file', correlationId, { error: err.message });
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Failed to read session file.' }));
-    }
+      try {
+        const data = await fs.promises.readFile(currentSessionFile, 'utf8');
+        res.writeHead(200, { 
+          'Content-Type': 'application/json',
+          'ETag': etag
+        });
+        res.end(data);
+      } catch (err) {
+        writeLog('error', 'Failed to read session file', correlationId, { error: err.message });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to read session file.' }));
+      }
+    })();
     return;
   }
 
@@ -763,105 +810,114 @@ const server = http.createServer((req, res) => {
     });
     req.on('end', () => {
       if (tooLarge) return;
-      try {
-        // Reload from disk to prevent concurrency race conditions
-        if (fs.existsSync(currentSessionFile)) {
-          try {
-            sessionState = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
-          } catch (e) { /* ignore */ }
-        }
 
-        const payload = JSON.parse(body);
-        
-        let repoName = 'project';
-        if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
-          const oldPath = sessionState.targetPath;
-          if (payload.targetPath !== oldPath) {
-            repoName = getSafeRepoName(payload.targetPath);
-            const targetSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
-            if (fs.existsSync(targetSessionFile)) {
-              try {
-                sessionState = JSON.parse(fs.readFileSync(targetSessionFile, 'utf8'));
-              } catch (e) {
+      sessionPromiseChain = sessionPromiseChain.then(async () => {
+        try {
+          // Reload from disk to prevent concurrency race conditions
+          const exists = await fileExists(currentSessionFile);
+          if (exists) {
+            try {
+              sessionState = JSON.parse(await fs.promises.readFile(currentSessionFile, 'utf8'));
+            } catch (e) { /* ignore */ }
+          }
+
+          const payload = JSON.parse(body);
+          
+          let repoName = 'project';
+          if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
+            const oldPath = sessionState.targetPath;
+            if (payload.targetPath !== oldPath) {
+              repoName = getSafeRepoName(payload.targetPath);
+              const targetSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
+              const targetExists = await fileExists(targetSessionFile);
+              if (targetExists) {
+                try {
+                  sessionState = JSON.parse(await fs.promises.readFile(targetSessionFile, 'utf8'));
+                } catch (e) {
+                  sessionState = {};
+                }
+              } else {
                 sessionState = {};
               }
-            } else {
-              sessionState = {};
+              sessionState.targetPath = payload.targetPath;
             }
             sessionState.targetPath = payload.targetPath;
+            repoName = getSafeRepoName(payload.targetPath);
+          } else if (sessionState.targetPath) {
+            repoName = getSafeRepoName(sessionState.targetPath);
           }
-          sessionState.targetPath = payload.targetPath;
-          repoName = getSafeRepoName(payload.targetPath);
-        } else if (sessionState.targetPath) {
-          repoName = getSafeRepoName(sessionState.targetPath);
-        }
 
-        if (payload.status !== undefined && typeof payload.status === 'string') sessionState.status = payload.status;
-        if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') sessionState.currentStep = payload.currentStep;
-        if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
-        if (payload.redact !== undefined) sessionState.redact = !!payload.redact;
+          if (payload.status !== undefined && typeof payload.status === 'string') sessionState.status = payload.status;
+          if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') sessionState.currentStep = payload.currentStep;
+          if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
+          if (payload.redact !== undefined) sessionState.redact = !!payload.redact;
 
-        // Nested validation for answers
-        if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {
-          const cleanAnswers = sessionState.answers || {};
-          const pAnswers = payload.answers;
-          
-          if (pAnswers.goals !== undefined && typeof pAnswers.goals === 'string') cleanAnswers.goals = pAnswers.goals;
-          if (pAnswers.team !== undefined && typeof pAnswers.team === 'string') cleanAnswers.team = pAnswers.team;
-          if (pAnswers.budget !== undefined && typeof pAnswers.budget === 'string') cleanAnswers.budget = pAnswers.budget;
-          if (pAnswers.projectGoal !== undefined && typeof pAnswers.projectGoal === 'string') cleanAnswers.projectGoal = pAnswers.projectGoal;
-          if (pAnswers.expertiseLevel !== undefined && typeof pAnswers.expertiseLevel === 'string') cleanAnswers.expertiseLevel = pAnswers.expertiseLevel;
-          
-          if (pAnswers.platforms !== undefined && Array.isArray(pAnswers.platforms)) {
-            cleanAnswers.platforms = pAnswers.platforms.filter(x => typeof x === 'string');
+          // Nested validation for answers
+          if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {
+            const cleanAnswers = sessionState.answers || {};
+            const pAnswers = payload.answers;
+            
+            if (pAnswers.goals !== undefined && typeof pAnswers.goals === 'string') cleanAnswers.goals = pAnswers.goals;
+            if (pAnswers.team !== undefined && typeof pAnswers.team === 'string') cleanAnswers.team = pAnswers.team;
+            if (pAnswers.budget !== undefined && typeof pAnswers.budget === 'string') cleanAnswers.budget = pAnswers.budget;
+            if (pAnswers.projectGoal !== undefined && typeof pAnswers.projectGoal === 'string') cleanAnswers.projectGoal = pAnswers.projectGoal;
+            if (pAnswers.expertiseLevel !== undefined && typeof pAnswers.expertiseLevel === 'string') cleanAnswers.expertiseLevel = pAnswers.expertiseLevel;
+            
+            if (pAnswers.platforms !== undefined && Array.isArray(pAnswers.platforms)) {
+              cleanAnswers.platforms = pAnswers.platforms.filter(x => typeof x === 'string');
+            }
+            if (pAnswers.frameworks !== undefined && Array.isArray(pAnswers.frameworks)) {
+              cleanAnswers.frameworks = pAnswers.frameworks.filter(x => typeof x === 'string');
+            }
+            if (pAnswers.testing !== undefined && typeof pAnswers.testing === 'boolean') cleanAnswers.testing = pAnswers.testing;
+            if (pAnswers.coverageThreshold !== undefined && typeof pAnswers.coverageThreshold === 'number') {
+              cleanAnswers.coverageThreshold = pAnswers.coverageThreshold;
+            }
+            if (pAnswers.compliance !== undefined && Array.isArray(pAnswers.compliance)) {
+              cleanAnswers.compliance = pAnswers.compliance.filter(x => typeof x === 'string');
+            }
+            sessionState.answers = cleanAnswers;
           }
-          if (pAnswers.frameworks !== undefined && Array.isArray(pAnswers.frameworks)) {
-            cleanAnswers.frameworks = pAnswers.frameworks.filter(x => typeof x === 'string');
-          }
-          if (pAnswers.testing !== undefined && typeof pAnswers.testing === 'boolean') cleanAnswers.testing = pAnswers.testing;
-          if (pAnswers.coverageThreshold !== undefined && typeof pAnswers.coverageThreshold === 'number') {
-            cleanAnswers.coverageThreshold = pAnswers.coverageThreshold;
-          }
-          if (pAnswers.compliance !== undefined && Array.isArray(pAnswers.compliance)) {
-            cleanAnswers.compliance = pAnswers.compliance.filter(x => typeof x === 'string');
-          }
-          sessionState.answers = cleanAnswers;
-        }
 
-        // Nested validation for sections
-        if (payload.sections !== undefined && typeof payload.sections === 'object' && payload.sections !== null) {
-          const cleanSections = sessionState.sections || {};
-          const pSections = payload.sections;
-          const validSections = ['context', 'stack', 'gates', 'compliance'];
-          
-          for (const key of validSections) {
-            if (pSections[key] !== undefined && typeof pSections[key] === 'object' && pSections[key] !== null) {
-              if (pSections[key].status !== undefined && typeof pSections[key].status === 'string') {
-                cleanSections[key] = { status: pSections[key].status };
+          // Nested validation for sections
+          if (payload.sections !== undefined && typeof payload.sections === 'object' && payload.sections !== null) {
+            const cleanSections = sessionState.sections || {};
+            const pSections = payload.sections;
+            const validSections = ['context', 'stack', 'gates', 'compliance'];
+            
+            for (const key of validSections) {
+              if (pSections[key] !== undefined && typeof pSections[key] === 'object' && pSections[key] !== null) {
+                if (pSections[key].status !== undefined && typeof pSections[key].status === 'string') {
+                  cleanSections[key] = { status: pSections[key].status };
+                }
               }
             }
+            sessionState.sections = cleanSections;
           }
-          sessionState.sections = cleanSections;
+
+          // Select the correct output session file
+          const newSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
+          await fs.promises.mkdir(path.dirname(newSessionFile), { recursive: true });
+          currentSessionFile = newSessionFile;
+
+          // Save pointer
+          await fs.promises.writeFile(LAST_SESSION_POINTER, JSON.stringify({ lastSessionPath: currentSessionFile }, null, 2), 'utf8');
+
+          // Write atomic updates to disk
+          await fs.promises.writeFile(currentSessionFile, JSON.stringify(sessionState, null, 2), 'utf8');
+          writeLog('info', 'Successfully updated session state', correlationId);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ status: 'success', message: 'Session updated.' }));
+        } catch (err) {
+          writeLog('error', 'Malformed payload in session update', correlationId, { error: err.message });
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
         }
-
-        // Select the correct output session file
-        const newSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
-        fs.mkdirSync(path.dirname(newSessionFile), { recursive: true });
-        currentSessionFile = newSessionFile;
-
-        // Save pointer
-        fs.writeFileSync(LAST_SESSION_POINTER, JSON.stringify({ lastSessionPath: currentSessionFile }, null, 2), 'utf8');
-
-        // Write atomic updates to disk
-        fs.writeFileSync(currentSessionFile, JSON.stringify(sessionState, null, 2), 'utf8');
-        writeLog('info', 'Successfully updated session state', correlationId);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'success', message: 'Session updated.' }));
-      } catch (err) {
-        writeLog('error', 'Malformed payload in session update', correlationId, { error: err.message });
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
-      }
+      }).catch(err => {
+        writeLog('error', 'Critical queue exception during session update', correlationId, { error: err.message });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server queue error.' }));
+      });
     });
     return;
   }
@@ -940,9 +996,11 @@ const server = http.createServer((req, res) => {
         if (fs.existsSync(currentSessionFile)) {
           try {
             const currentSession = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
-            currentSession.status = code === 0 ? 'completed' : 'failed';
-            fs.writeFileSync(currentSessionFile, JSON.stringify(currentSession, null, 2), 'utf8');
-            sessionState.status = currentSession.status;
+            if (currentSession.status !== SessionStatus.PAUSED) {
+              currentSession.status = code === 0 ? SessionStatus.COMPLETED : SessionStatus.FAILED;
+              fs.writeFileSync(currentSessionFile, JSON.stringify(currentSession, null, 2), 'utf8');
+              sessionState.status = currentSession.status;
+            }
             
             if (code === 0) {
               const isMockMode = process.env.MOCK_CLI === 'true';
@@ -1000,10 +1058,10 @@ const server = http.createServer((req, res) => {
       // Update session status to paused on disk
       if (fs.existsSync(currentSessionFile)) {
         try {
-          const currentSession = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
-          currentSession.status = 'paused';
-          fs.writeFileSync(currentSessionFile, JSON.stringify(currentSession, null, 2), 'utf8');
-          sessionState.status = 'paused';
+           const currentSession = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+           currentSession.status = SessionStatus.PAUSED;
+           fs.writeFileSync(currentSessionFile, JSON.stringify(currentSession, null, 2), 'utf8');
+           sessionState.status = SessionStatus.PAUSED;
         } catch (e) {
           writeLog('error', 'Failed to update session status on scan cancel', correlationId, { error: e.message });
         }
@@ -1125,29 +1183,34 @@ const server = http.createServer((req, res) => {
         req.destroy();
       }
     });
-    req.on('end', () => {
+    req.on('end', async () => {
       if (tooLarge) return;
       try {
         const payload = JSON.parse(body);
         let target = payload.currentPath;
 
-        function getWindowsDrives() {
+        async function getWindowsDrives() {
           const drives = [];
           if (process.platform === 'win32') {
+            const promises = [];
             for (let charCode = 67; charCode <= 90; charCode++) {
               const drive = String.fromCharCode(charCode) + ':\\';
-              try {
-                if (fs.existsSync(drive)) {
-                  drives.push(drive);
-                }
-              } catch (e) { /* ignore */ }
+              const checkPromise = fs.promises.access(drive, fs.constants.F_OK)
+                .then(() => drive)
+                .catch(() => null);
+              const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 200));
+              promises.push(Promise.race([checkPromise, timeoutPromise]));
+            }
+            const results = await Promise.all(promises);
+            for (const res of results) {
+              if (res) drives.push(res);
             }
           }
           return drives;
         }
         
         if (target === 'drives') {
-          const drives = getWindowsDrives();
+          const drives = await getWindowsDrives();
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
             currentPath: 'drives',
@@ -1287,7 +1350,8 @@ function scanReports(dir, baseDir, fileList = []) {
         const inputPath = path.resolve(REPORTS_ROOT, markdownFile);
 
         // Enforce boundary check to prevent Directory Traversal
-        if (!inputPath.startsWith(REPORTS_ROOT + path.sep)) {
+        const relative = path.relative(REPORTS_ROOT, inputPath);
+        if (relative.startsWith('..') || path.isAbsolute(relative)) {
           res.writeHead(403, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Access denied.' }));
           return;
@@ -1352,7 +1416,8 @@ function scanReports(dir, baseDir, fileList = []) {
       const filePath = path.resolve(REPORTS_ROOT, fileName);
 
       // Enforce boundary check to prevent Directory Traversal
-      if (!filePath.startsWith(REPORTS_ROOT + path.sep)) {
+      const relative = path.relative(REPORTS_ROOT, filePath);
+      if (relative.startsWith('..') || path.isAbsolute(relative)) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Access denied.' }));
         return;
@@ -1392,22 +1457,35 @@ function scanReports(dir, baseDir, fileList = []) {
   res.end('Not Found');
 });
 
-// Run port scan
-findOpenPort(PORT_START, (err, openPort) => {
-  if (err) {
-    writeLog('error', `Failed to find open port: ${err.message}`);
-    process.exit(1);
-  }
-  server.listen(openPort, () => {
+// Start server trying sequentially higher ports to avoid TOCTOU race conditions
+function startServer(port) {
+  server.listen(port, () => {
     console.log(`\n\x1b[1m\x1b[32m==================================================\x1b[0m`);
     console.log(`\x1b[1m\x1b[35m   ^   \x1b[0m`);
     console.log(`\x1b[1m\x1b[35m   R   \x1b[0m  \x1b[1m\x1b[36mRepo Wizard Interactive Dashboard is Live!\x1b[0m`);
-    console.log(`\x1b[1m\x1b[34m  Access URL:\x1b[0m \x1b[4mhttp://localhost:${openPort}\x1b[0m`);
+    console.log(`\x1b[1m\x1b[34m  Access URL:\x1b[0m \x1b[4mhttp://localhost:${port}\x1b[0m`);
     console.log(`\x1b[1m\x1b[32m==================================================\x1b[0m\n`);
     
-    writeLog('info', `Dashboard server started successfully on port ${openPort}`);
+    writeLog('info', `Dashboard server started successfully on port ${port}`);
   });
+}
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    writeLog('info', `Port ${currentPort} in use, trying next port...`);
+    currentPort++;
+    if (currentPort > 65535) {
+      writeLog('error', 'No open ports found in range 3000-65535');
+      process.exit(1);
+    }
+    startServer(currentPort);
+  } else {
+    writeLog('error', `Server error: ${err.message}`);
+    process.exit(1);
+  }
 });
+
+startServer(currentPort);
 
 function killProcessTree(proc) {
   if (!proc) return;
@@ -1518,7 +1596,10 @@ function redactReportFiles(reportsDir, repoName, targetPath) {
     const files = fs.readdirSync(dir);
     for (const file of files) {
       const fullPath = path.join(dir, file);
-      const stat = fs.statSync(fullPath);
+      const stat = fs.lstatSync(fullPath);
+      if (stat.isSymbolicLink()) {
+        continue;
+      }
       if (stat.isDirectory()) {
         traverse(fullPath);
       } else if (stat.isFile()) {

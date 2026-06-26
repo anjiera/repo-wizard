@@ -32,7 +32,7 @@ This approach satisfies three design constraints:
 By leveraging standard, native Node.js core libraries (like `fs`, `path`, `child_process`, and `readline`), `repo-wizard` replicates common library capabilities with simple, readable algorithms.
 
 ### A. Zero-Dependency Markdown-to-HTML Compiler (`md-to-html.js`)
-Instead of importing a heavy Markdown engine, `scripts/md-to-html.js` uses a clean line-by-line state machine parser:
+Instead of importing a heavy Markdown engine, `solo-dev-toolkit/scripts/md-to-html.js` uses a clean line-by-line state machine parser:
 * **Headers**: Checked using regex matches (e.g. `/^(#{1,6})\s+(.*)$/`).
 * **Lists & Code Blocks**: Parsed by tracking state flags (e.g., `inList`, `inCodeBlock`).
 * **Aesthetics**: Embedded with a premium native dark-mode styling layer directly inside the output header, creating a clean, modern user interface for reports without loading external CSS sheets.

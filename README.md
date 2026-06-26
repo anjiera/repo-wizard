@@ -67,7 +67,7 @@ graph TD
 
 ### 4. Helper & Validation Scripts
 To verify repository quality and facilitate testing of AI agent workflows:
-* **Markdown-to-HTML Compiler ([scripts/md-to-html.js](scripts/md-to-html.js)):** A zero-dependency utility that compiles standard markdown documentation into responsive, styled HTML pages with light/dark theme support.
+* **Markdown-to-HTML Compiler ([solo-dev-toolkit/scripts/md-to-html.js](solo-dev-toolkit/scripts/md-to-html.js)):** A zero-dependency utility that compiles standard markdown documentation into responsive, styled HTML pages with light/dark theme support.
 * **Static Linters:** Scripts to validate agent formatting ([validate-agents.js](scripts/validate-agents.js)), command parity ([validate-commands.js](scripts/validate-commands.js)), and skill layouts ([validate-skills.js](scripts/validate-skills.js)).
 * **Test Runners:** Integration, contract schema checking, subagent mocking, and sandbox E2E test suites.
 
@@ -86,7 +86,8 @@ These folders contain the code, configurations, and skills packaged and shipped 
 
 ### 2. Developer Infrastructure (The Builder)
 These folders and files are used locally by developers and AI coding assistants to build, test, and maintain `repo-wizard`:
-*   `scripts/` — Zero-dependency Node.js linters, compilers, and test suites.
+*   `scripts/` — Local setup, orchestration, E2E tests, and validation scripts.
+*   `solo-dev-toolkit/scripts/` — Reusable, decoupled developer tools (markdown compiler and commit message validator).
 *   `evals/` — LLM-as-a-judge prompt evaluation configurations.
 *   [AGENTS.md](AGENTS.md) / `CLAUDE.md` — Workflow rules instructing coding assistants.
 *   `docs/` — Onboarding, testing, glossary, and design specifications.

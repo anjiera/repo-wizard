@@ -113,62 +113,13 @@ function validateReadmeNavigation() {
   }
 }
 
-const emojiRegex = /[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F7E0}-\u{1F7E9}]/gu;
-const approvedSymbols = [
-  '🟢', '🔵', '⚪', '🟡', '🔴', '⚫',
-  '✓', '✗', '⚠',
-  '\u2713', '\u2717', '\u26A0'
-];
+const { execSync } = require('child_process');
 
-function scanForEmojis(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (entry.name === '.git' || entry.name === '.repo-wizard' || entry.name === 'node_modules' || entry.name === 'temp_e2e_sandbox' || entry.name === 'dist') {
-        continue;
-      }
-      scanForEmojis(fullPath);
-    } else if (entry.isFile()) {
-      const ext = path.extname(entry.name);
-      if (ext === '.md' || ext === '.js' || ext === '.sh' || ext === '.ps1' || ext === '.json' || ext === '.toml') {
-        let content;
-        try {
-          content = fs.readFileSync(fullPath, 'utf8');
-        } catch (err) {
-          continue;
-        }
-        const matches = content.match(emojiRegex);
-        if (matches) {
-          const offenders = matches.filter(m => !approvedSymbols.includes(m));
-          if (offenders.length > 0) {
-            const relPath = path.relative(ROOT, fullPath);
-            reportError(`File '${relPath}' contains unapproved emojis: ${Array.from(new Set(offenders)).join(', ')}. Emojis are disallowed except for approved color circles.`);
-          }
-        }
-      }
-    }
-  }
-}
-
-function validateNoUnapprovedEmojis() {
-  console.log('Checking for unapproved emojis in codebase...');
-  scanForEmojis(ROOT);
-}
-
-function validateAgentsMdLength() {
-  console.log('Checking AGENTS.md rule length...');
-  if (!fs.existsSync(AGENTS_MD_FILE)) {
-    return;
-  }
-
-  const content = fs.readFileSync(AGENTS_MD_FILE, 'utf8');
-  const lines = content.split(/\r?\n/).length;
-
-  if (lines > MAX_AGENTS_MD_LINES) {
-    reportError(`AGENTS.md has ${lines} lines, which exceeds the threshold of ${MAX_AGENTS_MD_LINES} lines. Please refactor detailed rules, guidelines, or checklists into separate files in references/ or skills/ to avoid agent cognitive overload.`);
-  } else {
-    console.log(`  ${GREEN}✓${RESET} AGENTS.md length is within limits (${lines}/${MAX_AGENTS_MD_LINES} lines).`);
+function runGenericValidateDocs() {
+  try {
+    execSync('node solo-dev-toolkit/scripts/validate-docs.js', { stdio: 'inherit', cwd: ROOT });
+  } catch (err) {
+    totalErrors++;
   }
 }
 
@@ -177,8 +128,7 @@ function main() {
   validateAgentMatrix();
   validateSkillMatrix();
   validateReadmeNavigation();
-  validateNoUnapprovedEmojis();
-  validateAgentsMdLength();
+  runGenericValidateDocs();
 
   if (totalErrors > 0) {
     console.log(`\n${BOLD}${RED}Documentation check complete: ${totalErrors} error(s) found.${RESET}`);

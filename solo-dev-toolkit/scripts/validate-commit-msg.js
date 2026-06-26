@@ -21,7 +21,7 @@ if (!commitMsgFile) {
   process.exit(1);
 }
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.resolve(__dirname, '..', '..');
 const msgPath = path.isAbsolute(commitMsgFile) ? commitMsgFile : path.join(ROOT, commitMsgFile);
 
 if (!fs.existsSync(msgPath)) {

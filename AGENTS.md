@@ -33,7 +33,7 @@ Map user queries to skills according to this matrix:
 - **Query / Intent:** Auditing agent prompts, checking prompt consistency, configuring agent rubric evaluations, or running `/rw-agent-align`.
   - **Skill:** [agent-alignment-pilot](skills/agent-alignment-pilot/SKILL.md)
 - **Query / Intent:** Code review, verification checks, blast radius gating, triage papercuts, papercut checkup, or running `/rw-code-review`.
-  - **Skill:** [rw-code-review](skills/rw-code-review/SKILL.md)
+  - **Skill:** [sdt-code-review](solo-dev-toolkit/skills/sdt-code-review/SKILL.md)
 
 ## Orchestration & Scanning Modes
 
@@ -57,7 +57,7 @@ Before declaring any programming or code-writing task as finished:
    * **Role:** Lead Code Reviewer
    * **Prompt:**
      ```text
-     Adversarial code review. Analyze the changes in the active workspace according to the guidelines in [rw-code-review](skills/rw-code-review/SKILL.md).
+     Adversarial code review. Analyze the changes in the active workspace according to the guidelines in [sdt-code-review](solo-dev-toolkit/skills/sdt-code-review/SKILL.md).
      Evaluate the code against the Solo-Developer axes:
      1. Correctness (handling of boundaries, error paths, and edge cases)
      2. Security (validation at boundaries, secrets, injection prevention)

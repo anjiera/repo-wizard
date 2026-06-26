@@ -58,7 +58,7 @@ graph TD
 - [ ] **1.3 Zero-Dependency Markdown-to-HTML Compiler**
   - Compile a test guide to HTML:
     ```bash
-    node scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
+    node solo-dev-toolkit/scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
     ```
   - *Expected Outcome*:
     - Terminal prints: `Successfully compiled: TESTING.md -> TESTING.html`.

@@ -12,11 +12,11 @@ This guide details the purpose, parameters, and side-effects of each script.
 Compiles standard Markdown documentation into responsive HTML files. It automatically bundles responsive light/dark stylesheets, highlights code blocks, and retains link references.
 * **Usage:**
   ```bash
-  node scripts/md-to-html.js <input-markdown-file> <output-html-file>
+  node solo-dev-toolkit/scripts/md-to-html.js <input-markdown-file> <output-html-file>
   ```
 * **Example:**
   ```bash
-  node scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
+  node solo-dev-toolkit/scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
   ```
 * **Side-Effects:** Generates an HTML file at the specified output path. (Note: Locally compiled HTML files in `docs/` are git-ignored to prevent duplicate source files).
 

@@ -70,7 +70,11 @@ export default function App() {
     })
       .then(res => {
         if (!res.ok) {
-          return res.json().then(data => { throw new Error(data.error || 'Failed to read directory.'); });
+          return res.json().then(data => {
+            const errorObj = new Error(data.error || 'Failed to read directory.');
+            errorObj.data = data;
+            throw errorObj;
+          });
         }
         return res.json();
       })
@@ -81,6 +85,28 @@ export default function App() {
       })
       .catch(err => {
         setBrowserError(err.message || 'Failed to read directory.');
+        setBrowserDirectories([]);
+        if (err.data) {
+          if (err.data.currentPath !== undefined) setBrowserCurrentPath(err.data.currentPath);
+          if (err.data.parentPath !== undefined) setBrowserParentPath(err.data.parentPath);
+        } else {
+          if (pathStr && pathStr !== 'drives') {
+            const normalized = pathStr.replace(/\\/g, '/');
+            if (/^[a-zA-Z]:\/?$/.test(normalized)) {
+              setBrowserParentPath('drives');
+            } else {
+              const parts = normalized.split('/');
+              if (parts.length > 1) {
+                parts.pop();
+                const parent = parts.join('/');
+                setBrowserParentPath(parent || '/');
+              } else {
+                setBrowserParentPath(null);
+              }
+            }
+            setBrowserCurrentPath(pathStr);
+          }
+        }
       });
   };
 
@@ -1251,7 +1277,7 @@ export default function App() {
                       <li key={report}>
                         <button
                           onClick={() => {
-                            fetch(`/api/report-content?file=${report}`)
+                            fetch(`/api/report-content?file=${encodeURIComponent(report)}`)
                               .then(res => {
                                 if (!res.ok) throw new Error();
                                 return res.json();

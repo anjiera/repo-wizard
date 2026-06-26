@@ -279,7 +279,7 @@ async function main() {
       ], {
         cwd: ROOT,
         env: { ...process.env, PAGER: 'cat' },
-        detached: false
+        detached: process.platform !== 'win32'
       });
 
       activeChildren.add(child);
@@ -327,7 +327,8 @@ async function main() {
           console.error(`[TIMEOUT] ${agentName} run timed out after ${timeoutMs / 1000}s. Terminating process...`);
           try {
             if (process.platform === 'win32') {
-              execSync(`taskkill /pid ${child.pid} /t /f`, { stdio: 'ignore' });
+              const { exec } = require('child_process');
+              exec(`taskkill /pid ${child.pid} /t /f`, { stdio: 'ignore' });
             } else {
               process.kill(-child.pid, 'SIGKILL');
             }
@@ -365,6 +366,7 @@ async function main() {
       });
 
       child.on('close', (code) => {
+        if (resolved) return;
         runningAgents.delete(agentName);
         activeChildren.delete(child);
         if (!isTTY) {
@@ -458,53 +460,67 @@ main().catch(err => {
   process.exit(1);
 });
 
-function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new Set()) {
-  if (depth > maxDepth) return false;
-  
-  let absPath;
-  try {
-    absPath = fs.realpathSync(dir);
-  } catch (err) {
-    absPath = path.resolve(dir);
-  }
+let fileCache = null;
 
-  if (visited.has(absPath)) return false;
-  visited.add(absPath);
+function buildFileCache(targetDir) {
+  if (fileCache) return;
+  fileCache = [];
+  const visited = new Set();
 
-  let files;
-  try {
-    files = fs.readdirSync(absPath);
-  } catch (err) {
-    return false;
-  }
-
-  const subdirs = [];
-  for (const file of files) {
-    // Ignore heavy directories
-    if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'].includes(file)) {
-      continue;
-    }
-    const fullPath = path.join(absPath, file);
-    if (predicate(file, fullPath)) {
-      return true;
-    }
+  const traverse = (dir, depth = 0) => {
+    if (depth > 8) return;
+    let absPath;
     try {
-      const stat = fs.lstatSync(fullPath);
-      if (stat.isSymbolicLink()) {
+      absPath = fs.realpathSync(dir);
+    } catch (e) {
+      absPath = path.resolve(dir);
+    }
+    if (visited.has(absPath)) return;
+    visited.add(absPath);
+
+    let files;
+    try {
+      files = fs.readdirSync(absPath);
+    } catch (e) {
+      return;
+    }
+
+    for (const file of files) {
+      if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'].includes(file)) {
         continue;
       }
-      if (stat.isDirectory()) {
-        subdirs.push(fullPath);
-      }
-    } catch (e) { /* ignore */ }
-  }
+      const fullPath = path.join(absPath, file);
+      try {
+        const stat = fs.lstatSync(fullPath);
+        if (stat.isSymbolicLink()) {
+          continue;
+        }
+        fileCache.push({ name: file, path: fullPath, isDir: stat.isDirectory() });
+        if (stat.isDirectory()) {
+          traverse(fullPath, depth + 1);
+        }
+      } catch (e) { /* ignore */ }
+    }
+  };
 
-  for (const subdir of subdirs) {
-    if (checkFilesExist(subdir, predicate, depth + 1, maxDepth, visited)) {
-      return true;
+  traverse(targetDir);
+}
+
+function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new Set()) {
+  buildFileCache(resolvedTarget);
+  const resolvedDir = path.resolve(dir);
+  for (const item of fileCache) {
+    if (item.path.startsWith(resolvedDir)) {
+      const relativePath = path.relative(resolvedDir, item.path);
+      const parts = relativePath.split(path.sep);
+      const relativeDepth = parts.length - 1;
+      if (relativeDepth <= maxDepth) {
+        if (predicate(item.name, item.path)) {
+          return true;
+        }
+      }
     }
   }
-
   return false;
 }
 
@@ -693,7 +709,10 @@ function redactReportFiles(reportsDir, repoName, targetPath) {
     const files = fs.readdirSync(dir);
     for (const file of files) {
       const fullPath = path.join(dir, file);
-      const stat = fs.statSync(fullPath);
+      const stat = fs.lstatSync(fullPath);
+      if (stat.isSymbolicLink()) {
+        continue;
+      }
       if (stat.isDirectory()) {
         traverse(fullPath);
       } else if (stat.isFile()) {

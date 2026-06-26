@@ -11,7 +11,7 @@ All architectural decisions must be recorded in sequential Markdown files under 
 ```markdown
 # [Number]. [Short Title of Decision]
 
-* **Status:** [ Proposed | Accepted | Rejected | Deprecated | Superseded by [ADR-XXXX](file:///path/to/ADR) ]
+* **Status:** [ Proposed | Accepted | Rejected | Deprecated | Superseded by [ADR-XXXX](path/to/ADR) ]
 * **Deciders:** [ List of team members / roles involved ]
 * **Date:** [ YYYY-MM-DD ]
 
@@ -289,8 +289,8 @@ Define trackable issues to prevent this incident class from occurring again.
 
 | Action Item | Owner | Target Date | Ticket / Issue Link |
 | :--- | :--- | :--- | :--- |
-| [e.g. Add integration test for boundary case X] | [Name] | [YYYY-MM-DD] | [#1234](file:///path/to/issue) |
-| [e.g. Configure health check alerts for endpoint Y] | [Name] | [YYYY-MM-DD] | [#1235](file:///path/to/issue) |
+| [e.g. Add integration test for boundary case X] | [Name] | [YYYY-MM-DD] | [#1234](path/to/issue) |
+| [e.g. Configure health check alerts for endpoint Y] | [Name] | [YYYY-MM-DD] | [#1235](path/to/issue) |
 ```
 
 ---
@@ -350,7 +350,7 @@ Concrete improvements to apply in the next cycle:
 
 | Continuous Improvement Task | Owner | Target Cycle / Date | Ticket / PR Link |
 | :--- | :--- | :--- | :--- |
-| [e.g., Scaffold default Github PR description template] | [Name] | Next Sprint | [#567](file:///path/to/pr) |
+| [e.g., Scaffold default Github PR description template] | [Name] | Next Sprint | [#567](path/to/pr) |
 ```
 
 ---

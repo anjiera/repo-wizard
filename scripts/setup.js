@@ -67,6 +67,7 @@ function installHooks() {
   logStep('Installing Git hooks...');
   try {
     execSync('node scripts/install-hooks.js', { stdio: 'inherit', cwd: ROOT });
+    execSync('node solo-dev-toolkit/scripts/sdt-install-hooks.js', { stdio: 'inherit', cwd: ROOT });
   } catch (err) {
     logError('Failed to install Git hooks.');
     process.exit(1);
@@ -82,6 +83,7 @@ function runValidationsAndTests() {
     { name: 'validate-agents.js', cmd: 'node scripts/validate-agents.js' },
     { name: 'validate-docs.js', cmd: 'node scripts/validate-docs.js' },
     { name: 'test-helpers.js', cmd: 'node scripts/test-helpers.js' },
+    { name: 'sdt-test-helpers.js', cmd: 'node solo-dev-toolkit/scripts/sdt-test-helpers.js' },
     { name: 'run-e2e-tests.js', cmd: 'node scripts/run-e2e-tests.js' }
   ];
 

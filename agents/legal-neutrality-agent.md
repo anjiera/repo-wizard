@@ -57,7 +57,7 @@ Present the findings using the template below:
 
 | File / Location | Original Phrasing | Legal Neutrality Risk / Rationale | Suggested Alternatives (Up to 5) |
 | :--- | :--- | :--- | :--- |
-| `[file_basename](file:///path/to/file#L12)` | "Original phrase text" | *Why it carries liability / advice risk* | 1. Alternative A<br>2. Alternative B<br>3. Alternative C |
+| `[file_basename](path/to/file#L12)` | "Original phrase text" | *Why it carries liability / advice risk* | 1. Alternative A<br>2. Alternative B<br>3. Alternative C |
 
 ---
 

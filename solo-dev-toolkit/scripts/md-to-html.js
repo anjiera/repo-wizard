@@ -217,14 +217,18 @@ function sanitizeUrl(url) {
     
     // Check intermediate decoded state to block deep or nested obfuscation early
     const lowerState = decoded.toLowerCase();
-    if (/^(javascript|data|vbscript|file):/i.test(lowerState)) {
+    if (/^(javascript|data|vbscript):/i.test(lowerState)) {
       return '#';
     }
-    const protocolMatch = lowerState.match(/^([a-z0-9\-\.\+]+):/);
+    const protocolMatch = lowerState.match(/^([a-z][a-z0-9\-\.\+]*):(.*)$/);
     if (protocolMatch) {
       const proto = protocolMatch[1];
-      if (proto !== 'http' && proto !== 'https' && proto !== 'mailto' && proto !== 'tel') {
-        return '#';
+      const rest = protocolMatch[2];
+      // If it looks like a port number (digits followed by slash or end of string), it's a port, not a scheme
+      if (!/^\d+(?:\/|$)/.test(rest)) {
+        if (proto !== 'http' && proto !== 'https' && proto !== 'mailto' && proto !== 'tel' && proto !== 'file' && proto.length !== 1) {
+          return '#';
+        }
       }
     }
     limit++;
@@ -244,7 +248,7 @@ function sanitizeUrl(url) {
 function inlineParse(text) {
   const links = [];
   // Extract links from raw text first to prevent double HTML escaping of URL parameters
-  let parsed = (text || '').replace(/\[([^\]]*?)\]\(((?:[^)\s]+|\([^)\s]*\))+)\)/g, (match, linkText, url) => {
+  let parsed = (text || '').replace(/\[([^\]]*?)\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g, (match, linkText, url) => {
     const id = links.length;
     links.push({ linkText, url });
     return `__LINK_PLACEHOLDER_${id}__`;

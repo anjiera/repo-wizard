@@ -1,9 +1,9 @@
 ---
-name: rw-code-review
+name: sdt-code-review
 description: Conducts solo-developer-optimized code reviews, applying blast-radius risk gating, change sizing checks, active disproof testing, and papercut frequency tracking. Use to review and audit code changes before commit or merge.
 ---
 
-# Code Review & Verification (rw-code-review)
+# Code Review & Verification (sdt-code-review)
 
 ## Overview
 

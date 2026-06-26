@@ -8,7 +8,7 @@ This design document outlines a lightweight, file-based mechanism to log, track,
 
 ## Architecture & Data Flow
 
-The papercut tracking feature is integrated directly into the `rw-code-review` subagent loop.
+The papercut tracking feature is integrated directly into the `sdt-code-review` subagent loop.
 
 ```mermaid
 sequenceDiagram

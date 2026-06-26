@@ -35,7 +35,7 @@ Evaluate target agent configurations:
 ### Phase 3: Validation & Test Scaffolding
 - **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file.
 Configure quality gates for the agent files:
-1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`evals/<agent-name>-agent.js`) containing concrete test cases and verification rubrics.
+1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`../../evals/<agent-name>-agent.js`) containing concrete test cases and verification rubrics.
 2. **Structural Validators:** Add structural validators (e.g., extending `validate-agents.js`) to check prompt syntax and required headers.
 3. **CI/CD Hook Integration:** Configure hooks to run validation and evaluations on pre-commit or CI pipelines, integrating VCS rollback mechanisms.
 
@@ -45,7 +45,7 @@ Configure quality gates for the agent files:
 - *"A router agent is clean for dispatching commands."* - Orchestration belongs in the CLI/command layer, not inside individual persona prompts. Personas should remain single-perspective.
 
 ## Red Flags
-- Creating a new agent file without a corresponding evaluation suite in `evals/`.
+- Creating a new agent file without a corresponding evaluation suite in `../../evals/`.
 - Introducing a persona that acts as a router/meta-orchestrator (Composition violation).
 - Leaving out standard safety disclaimers or rollback procedures for execution agents.
 - Modifying prompt files without running validation tests to verify no regressions occur.
