@@ -184,11 +184,7 @@ function validateFile(filePath) {
           }
 
           // Total word count for section
-          let textOnly = sectionContent
-            .replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, ' ')
-            .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, ' ');
-          textOnly = textOnly.replace(/<[^>]*>/g, ' ');
-          const words = countWords(textOnly);
+          const words = countWords(sectionContent);
           if (words > 450) {
             errors.push(`HTML Section "${headings[i].title}" word count is ${words} (limit is 450).`);
           }
@@ -196,7 +192,9 @@ function validateFile(filePath) {
       }
     } else {
       // Markdown Validation
-      const lines = content.split('\n');
+      // Strip comments first to avoid matching headings in comments
+      const cleanContent = content.replace(/<!--[\s\S]*?-->/g, ' ');
+      const lines = cleanContent.split('\n');
       const sections = [];
       let currentSection = null;
 

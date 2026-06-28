@@ -43,7 +43,7 @@ function scanDirectory(dir) {
     const relPath = path.relative(ROOT, fullPath).replace(/\\/g, '/');
 
     if (entry.isDirectory()) {
-      if (['.git', '.repo-wizard', 'node_modules', 'temp_e2e_sandbox', 'dist', 'build', 'history'].includes(entry.name)) {
+      if (['.git', '.repo-wizard', '.gemini', '.claude', '.agents', 'node_modules', 'temp_e2e_sandbox', 'dist', 'build', 'history'].includes(entry.name)) {
         continue;
       }
       scanDirectory(fullPath);

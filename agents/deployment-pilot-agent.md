@@ -40,7 +40,7 @@ Audit the repository's current containerization and deployment configurations:
 
 ## Step 3: Interactive Scaffolding Guidance
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, output suggested configs, linter rules, or hook configurations directly in your report section.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, write suggested additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-deployment-pilot-agent.md`.
 
 Coordinate with the `tool-scaffolder.agent` to deploy deployment manifests and backup utilities, adhering to these rules:
 

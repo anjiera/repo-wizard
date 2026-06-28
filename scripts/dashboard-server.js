@@ -1393,7 +1393,7 @@ function scanReports(dir, baseDir, fileList = []) {
   if (req.method === 'GET' && url.pathname === '/api/report-content') {
     try {
       const fileName = url.searchParams.get('file');
-      if (!fileName || (!fileName.endsWith('.md') && !fileName.endsWith('.html') && !fileName.endsWith('.csv'))) {
+      if (!fileName || fileName.includes('\0') || fileName.includes('%00') || (!fileName.endsWith('.md') && !fileName.endsWith('.html') && !fileName.endsWith('.csv'))) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Invalid or missing file name.' }));
         return;

@@ -321,7 +321,13 @@ async function main() {
           }
         }
       });
-      const timeoutMs = process.env.AGENT_TIMEOUT ? parseInt(process.env.AGENT_TIMEOUT, 10) : 120000;
+      let timeoutMs = 120000;
+      if (process.env.AGENT_TIMEOUT) {
+        const parsedTimeout = parseInt(process.env.AGENT_TIMEOUT, 10);
+        if (!isNaN(parsedTimeout) && parsedTimeout > 0) {
+          timeoutMs = parsedTimeout;
+        }
+      }
       const timer = setTimeout(() => {
         if (!resolved) {
           console.error(`[TIMEOUT] ${agentName} run timed out after ${timeoutMs / 1000}s. Terminating process...`);
@@ -427,7 +433,7 @@ async function main() {
   if (process.env.MAX_CONCURRENCY) {
     const parsed = parseInt(process.env.MAX_CONCURRENCY, 10);
     if (!isNaN(parsed) && parsed > 0) {
-      concurrencyLimit = parsed;
+      concurrencyLimit = Math.min(parsed, 16);
     }
   }
   await runWithLimit(concurrencyLimit, manifest.contracts, runAgentPromise);
@@ -509,8 +515,9 @@ function buildFileCache(targetDir) {
 function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new Set()) {
   buildFileCache(resolvedTarget);
   const resolvedDir = path.resolve(dir);
+  const resolvedDirWithSep = resolvedDir.endsWith(path.sep) ? resolvedDir : resolvedDir + path.sep;
   for (const item of fileCache) {
-    if (item.path.startsWith(resolvedDir)) {
+    if (item.path === resolvedDir || item.path.startsWith(resolvedDirWithSep)) {
       const relativePath = path.relative(resolvedDir, item.path);
       const parts = relativePath.split(path.sep);
       const relativeDepth = parts.length - 1;

@@ -36,7 +36,7 @@ Audit the codebase to check current state configurations:
 
 ## Step 3: Interactive Scaffolding Guidance
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, output suggested configs, linter rules, or hook configurations directly in your report section.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, write suggested additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-state-sanitizer-agent.md`.
 
 Coordinate with the `tool-scaffolder.agent` to deploy configurations and scripts, adhering to these rules:
 

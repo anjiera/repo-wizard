@@ -44,42 +44,58 @@ Options:
 }
 
 function parseCSV(text) {
-  const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
-  if (lines.length === 0) return [];
-  
-  const headers = parseCSVLine(lines[0]);
   const rows = [];
+  let currentRow = [];
+  let currentField = '';
+  let inQuotes = false;
   
-  for (let i = 1; i < lines.length; i++) {
-    const values = parseCSVLine(lines[i]);
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentField += '"';
+        i++; // skip next quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      currentRow.push(currentField.trim());
+      currentField = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++; // skip \n
+      }
+      currentRow.push(currentField.trim());
+      rows.push(currentRow);
+      currentRow = [];
+      currentField = '';
+    } else {
+      currentField += char;
+    }
+  }
+  
+  if (currentField !== '' || currentRow.length > 0) {
+    currentRow.push(currentField.trim());
+    rows.push(currentRow);
+  }
+  
+  if (rows.length === 0) return [];
+  
+  const headers = rows[0];
+  const parsedRows = [];
+  for (let i = 1; i < rows.length; i++) {
+    const values = rows[i];
     if (values.length === headers.length) {
       const row = {};
       for (let j = 0; j < headers.length; j++) {
         row[headers[j]] = values[j];
       }
-      rows.push(row);
+      parsedRows.push(row);
     }
   }
-  return rows;
-}
-
-function parseCSVLine(line) {
-  const result = [];
-  let current = '';
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-  result.push(current.trim());
-  return result;
+  return parsedRows;
 }
 
 function writeCSV(headers, rows) {

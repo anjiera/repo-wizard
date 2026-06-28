@@ -1,4 +1,4 @@
-#!/bin/env node
+#!/usr/bin/env node
 /**
  * solo-dev-toolkit/scripts/sdt-install-hooks.js
  *

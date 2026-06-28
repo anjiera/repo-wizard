@@ -13,6 +13,8 @@ You must refer to the [Legal Phrasing Dictionary & Reference Guide](../reference
 
 ## ️ Step 1: Interactive Alignment (Mandatory)
 
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standard guidelines and stack from the codebase using best-guess heuristics.
+
 Before conducting any file search or scanning operations, you **MUST** initiate an interactive alignment dialogue with the user. If the developer has no preference or is unsure of the target languages, file extensions, or keywords, suggest candidate defaults dynamically. Output a message that does the following:
 
 1. **Confirm Spoken & Programming Languages**: Ask the user which spoken language (e.g. English, Spanish, Japanese) and programming language/framework target (e.g. Kotlin/XML for Android, Swift for iOS, TypeScript/React for Web) to prioritize.
@@ -31,6 +33,8 @@ Before conducting any file search or scanning operations, you **MUST** initiate 
 
 ## Step 2: Codebase Scanning & Filtering
 
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+
 Once the user approves the setup parameters:
 1. **Search Targets**: Run text-search queries (using codebase search/grep tools) for the approved keyword list across the designated file extensions.
 2. **Exclusion Check**: Ignore non-text or binary files. Exclude technical identifiers, variable names, database queries, and private code symbols that are not visible to the end-user in the UI, widgets, terminal CLI, or system notification banners.
@@ -38,6 +42,8 @@ Once the user approves the setup parameters:
 ---
 
 ## Step 3: Analysis & Batching
+
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes in the codebase. Instead, write the completed scanned findings table directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-legal-neutrality-agent.md`.
 
 For each flagged user-facing string:
 1. **Legal Neutrality Risk / Rationale**: Explain why the phrase may carry liability risk (e.g. making objective safety/health claims or implying professional guidelines).

@@ -27,6 +27,7 @@ A specialized engineering workflow designed to audit user-facing UI elements, me
 ## Core Process
 
 ### Phase 1: Interactive Alignment
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standard guidelines and stack from the codebase using best-guess heuristics.
 You **MUST** initiate an interactive discussion with the user before executing any file reads or keyword searches. If the developer has no preference or is unsure of the target languages, file extensions, or keywords, suggest candidate defaults dynamically.
 1. **Target Language(s)**: Ask which spoken language (e.g., English, Spanish, Japanese) and programming filetypes (e.g., Kotlin, XML, Swift) you should prioritize.
 2. **Exclusion Check**: State which file extensions you plan to analyze by default based on the programming language, and explicitly ask the user if there are any specific file extensions they want to include or ignore.
@@ -38,12 +39,14 @@ You **MUST** initiate an interactive discussion with the user before executing a
 5. **Wait for Approval**: Stop and wait for the user's response before proceeding.
 
 ### Phase 2: Codebase Scanning
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Once parameters are approved:
 1. **Search Execution**: Run search/grep queries for the final customized list of keywords in the permitted text file extensions.
 2. **Binary Filtering**: Ensure you ignore non-text or binary files (PDFs, ZIPs, images, executables).
 3. **Variable/Symbol Filter**: Ignore database queries, internal configuration keys, or code symbols that do not get rendered in the UI.
 
 ### Phase 3: Analysis & Batching
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes in the codebase. Instead, write the completed scanned findings table directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-legal-neutrality-agent.md`.
 For each match found:
 1. **Assess Legal Risk**: Evaluate why the phrasing lacks neutrality (e.g., "Telling the user the weather is 'Safe & Pleasant' could be construed as a health or safety guarantee, exposing the app to liability if the user experiences heat stress"), referring to the [Legal Phrasing Dictionary & Reference Guide](../../references/legal-phrasing-dictionary.md) as your source of truth for high-liability phrases and recommended alternatives.
 2. **Suggest Alternatives**: Provide up to **5 alternative phrasings** that use subjective, comfort-based language (e.g., "Safe Now" $\rightarrow$ "Within Comfort Range", "Conditions Met", "Temp: OK").
