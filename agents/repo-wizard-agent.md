@@ -44,7 +44,7 @@ For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
    - *Incomplete Session*: *"We found an active wizard session. Would you like to: [Resume, Revisit previous answers, Report selected choices, Start Fresh]"*
    - *Completed Session*: *"We found a completed setup session. Would you like to: [Revisit previous answers, Report selected choices, Start Fresh]"*
 3. **Execute Actions**: Resume, Revisit, Report, or Start Fresh.
-4. **Archiving History**: Before overwriting or starting fresh, copy `session.json` and `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` to `.repo-wizard/history/` with YYYYMMDD_HHMMSS timestamp suffixes.
+4. **Archiving History**: Before overwriting or starting fresh, copy `session.json` and `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` to `.repo-wizard/history/` with YYYYMMDD_HHMMSS timestamp suffixes representing the original file's last modified/edited time (not the current system time) to preserve accurate file age.
 
 For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
@@ -53,7 +53,7 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 ## Step 3: Core Profiling & Questionnaire
 
 ### A. Local Interactive Alignment (`MODE=INTERACTIVE_LOCAL`)
-Begin the questionnaire by presenting the mandatory disclaimer. Sequentially present questions for Context, Compliance, Stack, and Friction with section skip controls. Promote user-owned thresholds and select scaffolding vs backlog mode.
+Begin the questionnaire by presenting the mandatory disclaimer. Sequentially present questions for Context, Compliance, Stack, and Friction with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). When asking about project management tools, avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment:

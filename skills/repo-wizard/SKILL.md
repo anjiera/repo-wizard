@@ -51,11 +51,11 @@ Before performing codebase analysis, sizing, or session resume operations:
 5. **Gitignore Verification**: Automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files.
 
 ### Phase 2: Resumability & Session State Check
-1. **Interactive Mode**: Check for `.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Archive historical configs in `.repo-wizard/history/` before overwriting.
+1. **Interactive Mode**: Check for `.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Archive historical configs in `.repo-wizard/history/` before overwriting, suffixing them with timestamps representing the original file's last modified/edited time (not the current system time) to preserve accurate age.
 2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
 ### Phase 3: Core Profiling & Alignment
-1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select scaffolding vs backlog mode.
+1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). Avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
    - **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
