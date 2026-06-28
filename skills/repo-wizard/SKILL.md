@@ -47,7 +47,7 @@ Before performing codebase analysis, sizing, or session resume operations:
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
 2. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
 3. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
-4. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode).
+4. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
 5. **Gitignore Verification**: Automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files.
 
 ### Phase 2: Resumability & Session State Check
