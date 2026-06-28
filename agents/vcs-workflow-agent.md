@@ -44,7 +44,7 @@ Coordinate with the `tool-scaffolder.agent` to deploy VCS and style controls, ad
 
 ### 3.1 Developer Consent & Interactive Review
 1. **Shared Robustness Protocol:** Follow the **Interactive Consultation & Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Welcomingly answer any questions before prompting for decisions.
-2. **Interactive Option Explanation:** Explain setting choices and tradeoffs (e.g., local pre-commit hook validation speeds vs build server pipelines). Ask the developer to guide the configuration file modifications.
+2. **Interactive Option Explanation:** Explain setting choices and tradeoffs (e.g., local pre-commit hook validation speeds vs build server pipelines). Use generic time and performance descriptions (e.g. noting that partial checks are faster than running full test suites) rather than guaranteeing explicit execution durations in seconds, since test sizes vary by repository. Ask the developer to guide the configuration file modifications.
 3. **Post-Installation Review:** Once installed, offer to review any modified configuration files that differ from default settings.
 4. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append installation and execution commands to the project's existing setup scripts (e.g. `setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`), and present these changes to the user for review.
 
