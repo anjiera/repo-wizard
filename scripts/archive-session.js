@@ -51,6 +51,7 @@ function archiveSession(workspacePath = process.cwd()) {
       const destPath = path.join(historyDir, `${base}_${timestamp}${ext}`);
       
       fs.copyFileSync(srcPath, destPath);
+      fs.unlinkSync(srcPath);
       archivedFiles.push({
         original: path.relative(workspacePath, srcPath),
         archived: path.relative(workspacePath, destPath)
@@ -74,6 +75,18 @@ function archiveSession(workspacePath = process.cwd()) {
           archiveFile(itemPath);
         }
       }
+    }
+    // Clean up empty directories
+    try {
+      if (fs.readdirSync(reportsDir).length === 0) {
+        fs.rmdirSync(reportsDir);
+        const reportsParent = path.dirname(reportsDir);
+        if (fs.readdirSync(reportsParent).length === 0) {
+          fs.rmdirSync(reportsParent);
+        }
+      }
+    } catch (e) {
+      // Ignore cleanup error
     }
   }
 
