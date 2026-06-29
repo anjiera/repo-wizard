@@ -44,7 +44,7 @@ For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
    - *Incomplete Session*: *"We found an active wizard session. Would you like to: [Resume, Revisit previous answers, Report selected choices, Start Fresh]"*
    - *Completed Session*: *"We found a completed setup session. Would you like to: [Revisit previous answers, Report selected choices, Start Fresh]"*
 3. **Execute Actions**: Resume, Revisit, Report, or Start Fresh.
-4. **Archiving History**: Before overwriting or starting fresh, locate and archive all prior session files and compiled reports to `.repo-wizard/history/`. Specifically, copy `session.json`, `manifest.json`, and all `.md` and `.html` reports under `.repo-wizard/reports/<repo-name-here>/` (including full-report, executive-summary, and observations files). Suffix each archived file with `_YYYYMMDD_HHMMSS` using the original file's last modified/edited date (not the current system time) to preserve accurate file age.
+4. **Archiving History**: Before overwriting or starting fresh, run the utility script `node scripts/archive-session.js` to backup all prior session files and compiled reports to `.repo-wizard/history/`. This script copies `session.json`, `manifest.json`, and all `.md` and `.html` reports under `.repo-wizard/reports/<repo-name-here>/` (including full-report, executive-summary, and observations files), suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate file age.
 
 For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
