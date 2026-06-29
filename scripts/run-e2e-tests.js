@@ -65,28 +65,48 @@ function archiveSession(workspacePath) {
   const historyDir = path.join(wizardDir, 'history');
   const repoName = path.basename(workspacePath);
   
-  const sessionPath = path.join(wizardDir, 'session.json');
-  const reportPath = path.join(wizardDir, `${repoName}-full-report.md`);
-
   if (!fs.existsSync(historyDir)) {
     fs.mkdirSync(historyDir, { recursive: true });
   }
 
-  // Generate timestamp string YYYYMMDD_HHMMSS
-  const now = new Date();
-  const pad = (n) => String(n).padStart(2, '0');
-  const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_` +
-                    `${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const formatTimestamp = (date) => {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_` +
+           `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+  };
 
-  if (fs.existsSync(sessionPath)) {
-    const archiveSessionPath = path.join(historyDir, `session_${timestamp}.json`);
-    fs.copyFileSync(sessionPath, archiveSessionPath);
+  const archiveFile = (srcPath) => {
+    if (fs.existsSync(srcPath)) {
+      const stat = fs.statSync(srcPath);
+      const timestamp = formatTimestamp(stat.mtime);
+      const ext = path.extname(srcPath);
+      const base = path.basename(srcPath, ext);
+      const destPath = path.join(historyDir, `${base}_${timestamp}${ext}`);
+      fs.copyFileSync(srcPath, destPath);
+    }
+  };
+
+  // Archive session.json & manifest.json
+  archiveFile(path.join(wizardDir, 'session.json'));
+  archiveFile(path.join(wizardDir, 'manifest.json'));
+
+  // Archive all reports in reports/<repoName>/
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  if (fs.existsSync(reportsDir)) {
+    const items = fs.readdirSync(reportsDir);
+    for (const item of items) {
+      const itemPath = path.join(reportsDir, item);
+      if (fs.statSync(itemPath).isFile()) {
+        const ext = path.extname(item);
+        if (ext === '.md' || ext === '.html') {
+          archiveFile(itemPath);
+        }
+      }
+    }
   }
 
-  if (fs.existsSync(reportPath)) {
-    const archiveReportPath = path.join(historyDir, `${repoName}-full-report_${timestamp}.md`);
-    fs.copyFileSync(reportPath, archiveReportPath);
-  }
+  // Also support legacy root report path used in tests
+  archiveFile(path.join(wizardDir, `${repoName}-full-report.md`));
 }
 
 function setupSandbox() {
@@ -134,7 +154,13 @@ function testSessionArchiving() {
 
   const repoName = path.basename(SANDBOX_DIR);
   fs.writeFileSync(path.join(wizardDir, 'session.json'), sessionContent);
+  fs.writeFileSync(path.join(wizardDir, 'manifest.json'), '{"manifest":true}');
   fs.writeFileSync(path.join(wizardDir, `${repoName}-full-report.md`), reportContent);
+
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  fs.mkdirSync(reportsDir, { recursive: true });
+  fs.writeFileSync(path.join(reportsDir, `${repoName}-executive-summary.md`), reportContent);
+  fs.writeFileSync(path.join(reportsDir, `${repoName}-observations.html`), '<html></html>');
 
   // Trigger archiving
   archiveSession(SANDBOX_DIR);
@@ -143,13 +169,19 @@ function testSessionArchiving() {
   assert(fs.existsSync(historyDir), 'history/ directory created successfully');
 
   const files = fs.readdirSync(historyDir);
-  assert(files.length === 2, 'Archived session and report files exist in history');
+  assert(files.length === 5, 'All session, manifest, and report files exist in history');
 
   const sessionArchiveFile = files.find(f => f.startsWith('session_') && f.endsWith('.json'));
+  const manifestArchiveFile = files.find(f => f.startsWith('manifest_') && f.endsWith('.json'));
   const reportArchiveFile = files.find(f => f.startsWith(`${repoName}-full-report_`) && f.endsWith('.md'));
+  const execSummaryArchiveFile = files.find(f => f.startsWith(`${repoName}-executive-summary_`) && f.endsWith('.md'));
+  const obsArchiveFile = files.find(f => f.startsWith(`${repoName}-observations_`) && f.endsWith('.html'));
 
   assert(sessionArchiveFile !== undefined, 'Session archive matches prefix session_YYYYMMDD_HHMMSS.json');
+  assert(manifestArchiveFile !== undefined, 'Manifest archive matches prefix manifest_YYYYMMDD_HHMMSS.json');
   assert(reportArchiveFile !== undefined, `Report archive matches prefix ${repoName}-full-report_YYYYMMDD_HHMMSS.md`);
+  assert(execSummaryArchiveFile !== undefined, `Executive summary archive matches prefix ${repoName}-executive-summary_YYYYMMDD_HHMMSS.md`);
+  assert(obsArchiveFile !== undefined, `Observations HTML archive matches prefix ${repoName}-observations_YYYYMMDD_HHMMSS.html`);
 
   // Verify contents match
   const sessionArchivedContent = fs.readFileSync(path.join(historyDir, sessionArchiveFile), 'utf8');
@@ -157,6 +189,17 @@ function testSessionArchiving() {
 
   assert(sessionArchivedContent === sessionContent, 'Archived session.json content is correct');
   assert(reportArchivedContent === reportContent, `Archived ${repoName}-full-report.md content is correct`);
+
+  // Clean up mock files created during this test to keep the sandbox clean for subsequent tests
+  fs.rmSync(path.join(wizardDir, 'session.json'), { force: true });
+  fs.rmSync(path.join(wizardDir, 'manifest.json'), { force: true });
+  fs.rmSync(path.join(wizardDir, `${repoName}-full-report.md`), { force: true });
+  if (fs.existsSync(reportsDir)) {
+    fs.rmSync(reportsDir, { recursive: true, force: true });
+  }
+  if (fs.existsSync(historyDir)) {
+    fs.rmSync(historyDir, { recursive: true, force: true });
+  }
 }
 
 function testE2EDeliverablesValidator() {

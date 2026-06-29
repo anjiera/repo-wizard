@@ -51,7 +51,7 @@ Before performing codebase analysis, sizing, or session resume operations:
 5. **Gitignore Verification**: Automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files.
 
 ### Phase 2: Resumability & Session State Check
-1. **Interactive Mode**: Check for `.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Archive historical configs in `.repo-wizard/history/` before overwriting, suffixing them with timestamps representing the original file's last modified/edited time (not the current system time) to preserve accurate age.
+1. **Interactive Mode**: Check for `.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Archive historical configs (including `session.json`, `manifest.json`, and all compiled markdown/HTML reports under `.repo-wizard/reports/<repo-name-here>/`) in `.repo-wizard/history/` before overwriting, suffixing them with timestamps representing the original file's last modified/edited time (not the current system time) to preserve accurate age.
 2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
 ### Phase 3: Core Profiling & Alignment
