@@ -67,6 +67,8 @@ if (!repoName) {
 const REPORTS_DIR = path.join(ROOT, '.repo-wizard', 'reports', repoName);
 const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
 
+let fileCache = null;
+
 let manifestPath = path.join(REPORTS_DIR, 'manifest.json');
 if (!fs.existsSync(manifestPath)) {
   const legacyPath = path.join(ROOT, '.repo-wizard', 'manifest.json');
@@ -133,6 +135,9 @@ async function main() {
     console.error(`ERROR: Manifest file not found at ${manifestPath}`);
     process.exit(1);
   }
+
+  // Pre-populate file cache asynchronously to avoid blocking event loop
+  await buildFileCache(resolvedTarget);
 
   let manifest;
   try {
@@ -466,18 +471,17 @@ main().catch(err => {
   process.exit(1);
 });
 
-let fileCache = null;
 
-function buildFileCache(targetDir) {
+async function buildFileCache(targetDir) {
   if (fileCache) return;
   fileCache = [];
   const visited = new Set();
 
-  const traverse = (dir, depth = 0) => {
+  const traverse = async (dir, depth = 0) => {
     if (depth > 8) return;
     let absPath;
     try {
-      absPath = fs.realpathSync(dir);
+      absPath = await fs.promises.realpath(dir);
     } catch (e) {
       absPath = path.resolve(dir);
     }
@@ -486,7 +490,7 @@ function buildFileCache(targetDir) {
 
     let files;
     try {
-      files = fs.readdirSync(absPath);
+      files = await fs.promises.readdir(absPath);
     } catch (e) {
       return;
     }
@@ -497,19 +501,19 @@ function buildFileCache(targetDir) {
       }
       const fullPath = path.join(absPath, file);
       try {
-        const stat = fs.lstatSync(fullPath);
+        const stat = await fs.promises.lstat(fullPath);
         if (stat.isSymbolicLink()) {
           continue;
         }
         fileCache.push({ name: file, path: fullPath, isDir: stat.isDirectory() });
         if (stat.isDirectory()) {
-          traverse(fullPath, depth + 1);
+          await traverse(fullPath, depth + 1);
         }
       } catch (e) { /* ignore */ }
     }
   };
 
-  traverse(targetDir);
+  await traverse(targetDir);
 }
 
 function checkFilesExist(dir, predicate, maxDepth = 4) {

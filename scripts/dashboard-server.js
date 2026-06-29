@@ -39,7 +39,7 @@ function getSafeRepoName(targetPath) {
   const resolved = path.resolve(targetPath);
   let name = path.basename(resolved);
   name = name.replace(/[^a-zA-Z0-9_\-\.]/g, '');
-  if (!name || name === '.' || name === '..' || name.toLowerCase() === 'reports') {
+  if (!name || name === '.' || name === '..' || name.toLowerCase() === 'reports' || name.toLowerCase() === 'history') {
     return 'project';
   }
   return name;
@@ -448,13 +448,11 @@ ${dummyOverview}
 ${dummyText}
 
 ## Section 4: Conclusions
-This section provides a final high-level synthesis of the codebase baseline and the strategic path forward.
+The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.
 
-### Current Codebase Standing
-The repository is built on a highly clean, modular React 18 and Vite 5 foundation with excellent ignore rules and version control hygiene. This strong starting baseline greatly simplifies the task of layering on automated testing and governance.
+Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
 
-### Strategic Plan & Hope
-By adopting a phased, asynchronous rollout of the recommended quality gates, the team can address critical exposures without hurting developer velocity. Focusing first on the manageable set of high-leverage Quick Wins guarantees immediate security and stability gains, paving a reliable path toward long-term project maturity.
+Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping project momentum high.
 
 ${DISCLAIMER_TEXT}
 `;
@@ -1089,7 +1087,7 @@ const server = http.createServer((req, res) => {
 
   // Validate Host Header to prevent DNS Rebinding
   const host = req.headers.host || '';
-  const isLocalhost = /^localhost(:\d+)?$/i.test(host) || /^127\.0\.0\.1(:\d+)?$/i.test(host);
+  const isLocalhost = /^localhost(:\d+)?$/i.test(host) || /^127\.0\.0\.1(:\d+)?$/i.test(host) || /^\[::1\](:\d+)?$/i.test(host);
   if (!isLocalhost) {
     res.writeHead(400, { 'Content-Type': 'text/plain' });
     res.end('Bad Request: Invalid Host header.');
@@ -1116,8 +1114,8 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const isLocalOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-    const isLocalReferer = !referer || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/.test(referer);
+    const isLocalOrigin = !origin || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
+    const isLocalReferer = !referer || /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?(\/.*)?$/.test(referer);
     
     if (!isLocalOrigin || !isLocalReferer) {
       writeLog('warning', 'CSRF validation failed for POST request', correlationId, { origin, referer });
@@ -1127,9 +1125,9 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  // Secure CORS Headers: only allow requests from localhost/127.0.0.1
+  // Secure CORS Headers: only allow requests from localhost/127.0.0.1/[::1]
   const origin = req.headers.origin;
-  if (origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+  if (origin && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -1269,6 +1267,16 @@ const server = http.createServer((req, res) => {
       if (tooLarge) return;
 
       sessionPromiseChain = sessionPromiseChain.then(async () => {
+        let payload;
+        try {
+          payload = JSON.parse(body);
+        } catch (jsonErr) {
+          writeLog('error', 'Malformed payload in session update', correlationId, { error: jsonErr.message });
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
+          return;
+        }
+
         try {
           // Reload from disk to prevent concurrency race conditions
           const exists = await fileExists(currentSessionFile);
@@ -1278,8 +1286,6 @@ const server = http.createServer((req, res) => {
             } catch (e) { /* ignore */ }
           }
 
-          const payload = JSON.parse(body);
-          
           let repoName = 'project';
           if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
             const oldPath = sessionState.targetPath;
@@ -1357,18 +1363,23 @@ const server = http.createServer((req, res) => {
           await fs.promises.mkdir(path.dirname(newSessionFile), { recursive: true });
           currentSessionFile = newSessionFile;
 
-          // Save pointer
-          await fs.promises.writeFile(LAST_SESSION_POINTER, JSON.stringify({ lastSessionPath: currentSessionFile }, null, 2), 'utf8');
+          // Save pointer atomically
+          const tempPointer = LAST_SESSION_POINTER + '.tmp';
+          await fs.promises.writeFile(tempPointer, JSON.stringify({ lastSessionPath: currentSessionFile }, null, 2), 'utf8');
+          await fs.promises.rename(tempPointer, LAST_SESSION_POINTER);
 
-          // Write atomic updates to disk
-          await fs.promises.writeFile(currentSessionFile, JSON.stringify(sessionState, null, 2), 'utf8');
+          // Write session file atomically
+          const tempSession = currentSessionFile + '.tmp';
+          await fs.promises.writeFile(tempSession, JSON.stringify(sessionState, null, 2), 'utf8');
+          await fs.promises.rename(tempSession, currentSessionFile);
+
           writeLog('info', 'Successfully updated session state', correlationId);
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ status: 'success', message: 'Session updated.' }));
-        } catch (err) {
-          writeLog('error', 'Malformed payload in session update', correlationId, { error: err.message });
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
+        } catch (fsErr) {
+          writeLog('error', 'Failed to update session file on disk', correlationId, { error: fsErr.message });
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Internal server error updating session state.' }));
         }
       }).catch(err => {
         writeLog('error', 'Critical queue exception during session update', correlationId, { error: err.message });
