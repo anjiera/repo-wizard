@@ -153,7 +153,7 @@ function validateFile(filePath) {
       // In HTML, sections are typically separated by headings (<h2> or <h3>)
       // Strip comments first to avoid matching headings in comments
       const cleanContent = content.replace(/<!--[\s\S]*?-->/g, ' ');
-      const hRegex = /<(h[2-3])\b[^>]*>([\s\S]*?)<\/\1>/gi;
+      const hRegex = /<(h2)\b[^>]*>([\s\S]*?)<\/h2>/gi;
       const headings = [];
       let match;
       while ((match = hRegex.exec(cleanContent)) !== null) {
@@ -177,16 +177,40 @@ function validateFile(filePath) {
             paragraphs.push(pMatch[1].trim());
           }
 
-          if (paragraphs.length === 0) {
-            errors.push(`HTML Section "${headings[i].title}" has no paragraphs.`);
-          } else if (paragraphs.length > 3) {
-            errors.push(`HTML Section "${headings[i].title}" has ${paragraphs.length} paragraphs (limit is 3).`);
-          }
+          if (paragraphs.length < 3) {
+            errors.push(`HTML Section "${headings[i].title}" must have at least 3 paragraphs (found ${paragraphs.length}).`);
+          } else {
+            // Check BLUF
+            const bluf = paragraphs[0];
+            if (!bluf.includes('BLUF:')) {
+              errors.push(`HTML Section "${headings[i].title}" first paragraph must contain 'BLUF:'.`);
+            }
+            // Check Overview
+            const overview = paragraphs[1];
+            if (!overview.includes('Overview:')) {
+              errors.push(`HTML Section "${headings[i].title}" second paragraph must contain 'Overview:'.`);
+            }
 
-          // Total word count for section
-          const words = countWords(sectionContent);
-          if (words < 1000 || words > 3000) {
-            errors.push(`HTML Section "${headings[i].title}" word count is ${words} (must be between 1000 and 3000).`);
+            // Word count of the remaining text (excluding the first two paragraphs)
+            let technicalContent = sectionContent;
+            let count = 0;
+            let idx = 0;
+            const pCloseRegex = /<\/p>/gi;
+            let pCloseMatch;
+            while ((pCloseMatch = pCloseRegex.exec(sectionContent)) !== null) {
+              count++;
+              if (count === 2) {
+                idx = pCloseMatch.index + 5; // length of </p>
+                break;
+              }
+            }
+            if (idx > 0) {
+              technicalContent = sectionContent.slice(idx);
+            }
+            const words = countWords(technicalContent);
+            if (words < 1000 || words > 3000) {
+              errors.push(`HTML Section "${headings[i].title}" Technical Overview word count is ${words} (must be between 1000 and 3000).`);
+            }
           }
         }
       }
@@ -200,7 +224,7 @@ function validateFile(filePath) {
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        if (line.startsWith('## ') || line.startsWith('### ')) {
+        if (line.startsWith('## ')) {
           if (currentSection) {
             sections.push(currentSection);
           }
@@ -228,17 +252,27 @@ function validateFile(filePath) {
         errors.push(`Executive Summary Markdown must have exactly 3 headings/sections, found ${sections.length}.`);
       } else {
         for (const sec of sections) {
-          if (sec.paragraphs.length === 0) {
-            errors.push(`Section "${sec.heading}" has no paragraphs.`);
-          } else if (sec.paragraphs.length > 3) {
-            errors.push(`Section "${sec.heading}" has ${sec.paragraphs.length} paragraphs (limit is 3).`);
-          }
+          if (sec.paragraphs.length < 3) {
+            errors.push(`Section "${sec.heading}" must have at least 3 paragraphs (found ${sec.paragraphs.length}).`);
+          } else {
+            // Check BLUF
+            const bluf = sec.paragraphs[0];
+            if (!bluf.includes('BLUF:')) {
+              errors.push(`Section "${sec.heading}" first paragraph must contain 'BLUF:'.`);
+            }
+            // Check Overview
+            const overview = sec.paragraphs[1];
+            if (!overview.includes('Overview:')) {
+              errors.push(`Section "${sec.heading}" second paragraph must contain 'Overview:'.`);
+            }
 
-          // Enforce word limits
-          const totalText = sec.paragraphs.join(' ');
-          const words = countWords(totalText);
-          if (words < 1000 || words > 3000) {
-            errors.push(`Section "${sec.heading}" word count is ${words} (must be between 1000 and 3000).`);
+            // Word count of the remaining paragraphs
+            const technicalParagraphs = sec.paragraphs.slice(2);
+            const totalText = technicalParagraphs.join(' ');
+            const words = countWords(totalText);
+            if (words < 1000 || words > 3000) {
+              errors.push(`Section "${sec.heading}" Technical Overview word count is ${words} (must be between 1000 and 3000).`);
+            }
           }
         }
       }
@@ -369,16 +403,31 @@ function runSelfTest() {
 # Executive Summary
 
 ## Section 1: Codebase Health & Strengths
+**BLUF:** A single sentence summary here.
+
+**Overview:** A CEO-level overview in three sentences or less.
+
+### Technical Overview
 ${dummyText}
 ${dummyText}
 ${dummyText}
 
 ## Section 2: Tooling & Compliance Opportunities
+**BLUF:** A single sentence summary here.
+
+**Overview:** A CEO-level overview in three sentences or less.
+
+### Technical Overview
 ${dummyText}
 ${dummyText}
 ${dummyText}
 
 ## Section 3: Rollout Roadmap
+**BLUF:** A single sentence summary here.
+
+**Overview:** A CEO-level overview in three sentences or less.
+
+### Technical Overview
 ${dummyText}
 ${dummyText}
 ${dummyText}

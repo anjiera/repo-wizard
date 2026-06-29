@@ -512,7 +512,7 @@ function buildFileCache(targetDir) {
   traverse(targetDir);
 }
 
-function checkFilesExist(dir, predicate, depth = 0, maxDepth = 4, visited = new Set()) {
+function checkFilesExist(dir, predicate, maxDepth = 4) {
   buildFileCache(resolvedTarget);
   const resolvedDir = path.resolve(dir);
   const resolvedDirWithSep = resolvedDir.endsWith(path.sep) ? resolvedDir : resolvedDir + path.sep;
@@ -538,7 +538,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   const hasExtension = (dir, ext, maxDepth = 4) => {
-    return checkFilesExist(dir, (file) => file.endsWith(ext), 0, maxDepth);
+    return checkFilesExist(dir, (file) => file.endsWith(ext), maxDepth);
   };
 
   const hasFile = (dir, name) => {
@@ -581,7 +581,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
           } catch (e) { /* ignore */ }
         }
         return false;
-      }, 0, 5);
+      }, 5);
     }
     if (!hasReact) {
       hasReact = hasExtension(targetDir, '.jsx', 8) || hasExtension(targetDir, '.tsx', 8);

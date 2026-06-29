@@ -140,6 +140,13 @@ function parseMarkdown(md) {
       inList = false;
     }
 
+    // Horizontal Rule Handler
+    if (line.trim() === '---') {
+      flushParagraph();
+      html += '<hr />\n';
+      continue;
+    }
+
     // 3. Empty lines
     if (line.trim() === '') {
       flushParagraph();
@@ -251,18 +258,20 @@ function inlineParse(text) {
   let parsed = (text || '').replace(/\[([^\]]*?)\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g, (match, linkText, url) => {
     const id = links.length;
     links.push({ linkText, url });
-    return `__LINK_PLACEHOLDER_${id}__`;
+    return `@@LINKPLACEHOLDER${id}@@`;
   });
 
   // Escape HTML on the rest of the text content
   parsed = escapeHtml(parsed);
 
-  // Parse bold and inline code on the escaped text
+  // Parse bold, italics and inline code on the escaped text
   parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  parsed = parsed.replace(/_([^_]+)_/g, '<em>$1</em>');
   parsed = parsed.replace(/`(.*?)`/g, '<code>$1</code>');
 
   // Restore and safely format URLs and link text
-  parsed = parsed.replace(/__LINK_PLACEHOLDER_(\d+)__/g, (match, id) => {
+  parsed = parsed.replace(/@@LINKPLACEHOLDER(\d+)@@/g, (match, id) => {
     const linkIndex = parseInt(id, 10);
     if (linkIndex < 0 || linkIndex >= links.length) {
       return match;

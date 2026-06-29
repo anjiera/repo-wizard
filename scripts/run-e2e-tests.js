@@ -166,29 +166,32 @@ function testE2EDeliverablesValidator() {
   const repoName = path.basename(SANDBOX_DIR);
   
   const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
-  const dummyParagraph1 = 'word '.repeat(350);
-  const dummyParagraph2 = 'word '.repeat(650);
+  const dummyBluf = 'BLUF: ' + 'word '.repeat(350);
+  const dummyOverview = 'Overview: ' + 'word '.repeat(350);
+  const dummyBody = 'word '.repeat(1200);
   const execSummaryContent = `
 # Executive Summary
 
 ## Section 1: Codebase Health & Strengths
-${dummyParagraph1}
+${dummyBluf}
 
-${dummyParagraph1}
+${dummyOverview}
 
-${dummyParagraph1}
+${dummyBody}
 
 ## Section 2: Tooling & Compliance Opportunities
-${dummyParagraph1}
+${dummyBluf}
 
-${dummyParagraph1}
+${dummyOverview}
 
-${dummyParagraph1}
+${dummyBody}
 
 ## Section 3: Rollout Roadmap
-${dummyParagraph1}
+${dummyBluf}
 
-${dummyParagraph2}
+${dummyOverview}
+
+${dummyBody}
 
 ${DISCLAIMER_TEXT}
 `;
