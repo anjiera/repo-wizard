@@ -53,7 +53,13 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 ## Step 3: Core Profiling & Questionnaire
 
 ### A. Local Interactive Alignment (`MODE=INTERACTIVE_LOCAL`)
-Begin the questionnaire by presenting the mandatory disclaimer. Sequentially present questions for Context, Compliance, Stack, and Friction with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). When asking about project management tools, avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
+1. **Disclaimer**: Begin the questionnaire by presenting the mandatory disclaimer.
+2. **Questionnaire**: Sequentially present questions for Context, Compliance, Stack, and Friction with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). When asking about project management tools, avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
+3. **End-of-Interview Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. 
+   - Summarize the answers provided in a clear, formatted summary block.
+   - List the specialist sub-agents selected to run based on these answers, along with a brief 1-sentence description of what each sub-agent does.
+   - Ask the user if they would like to review/update their answers, or if they would like to proceed with the analysis.
+   - Only launch Step 5 (Scaffolding, Optimization & Handoff) and call `run-orchestration.js` after the user explicitly confirms they want to proceed.
 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment:
@@ -109,6 +115,10 @@ Write the deliverables upon scan completion, ensuring all Markdown/HTML reports 
 5. **Backlog CSV & Toolchain Summary**:
   - Write JIRA backlog CSV (`.repo-wizard/reports/<repo-name-here>/backlog.csv` - Backlog Mode only).
   - Write toolchain doc (`docs/TOOLCHAIN.md` - Scaffolding Mode only).
+6. **Post-Execution Output Summary**:
+  - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
+  - List each generated file with clickable absolute file URLs (using the file scheme with forward slashes, e.g. formatting the absolute path to the report as a file URL: [Executive Summary]\(file:///path/to/repo-wizard-executive-summary.md\) using an escaped parenthesis).
+  - Provide a brief 1-sentence explanation of what each report contains and what the developer's next step should be with it (e.g. reviewing recommendations, importing backlog tickets, or verifying configurations).
 
 ---
 
