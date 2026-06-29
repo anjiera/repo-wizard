@@ -185,8 +185,8 @@ function validateFile(filePath) {
 
           // Total word count for section
           const words = countWords(sectionContent);
-          if (words > 450) {
-            errors.push(`HTML Section "${headings[i].title}" word count is ${words} (limit is 450).`);
+          if (words < 1000 || words > 3000) {
+            errors.push(`HTML Section "${headings[i].title}" word count is ${words} (must be between 1000 and 3000).`);
           }
         }
       }
@@ -237,8 +237,8 @@ function validateFile(filePath) {
           // Enforce word limits
           const totalText = sec.paragraphs.join(' ');
           const words = countWords(totalText);
-          if (words > 450) {
-            errors.push(`Section "${sec.heading}" word count is ${words} (limit is 450).`);
+          if (words < 1000 || words > 3000) {
+            errors.push(`Section "${sec.heading}" word count is ${words} (must be between 1000 and 3000).`);
           }
         }
       }
@@ -364,21 +364,24 @@ function runSelfTest() {
   let testFailures = 0;
 
   // 1. Valid Executive Summary (Markdown)
+  const dummyText = 'Word '.repeat(400); // 400 words per paragraph
   const validExecMd = `
 # Executive Summary
 
 ## Section 1: Codebase Health & Strengths
-Paragraph 1 of strengths. It is very healthy.
-Paragraph 2 of strengths. Yes indeed.
-Paragraph 3 of strengths. Outstanding code quality.
+${dummyText}
+${dummyText}
+${dummyText}
 
 ## Section 2: Tooling & Compliance Opportunities
-Opportunity paragraph 1.
-Opportunity paragraph 2.
+${dummyText}
+${dummyText}
+${dummyText}
 
 ## Section 3: Rollout Roadmap
-Roadmap paragraph 1.
-Roadmap paragraph 2.
+${dummyText}
+${dummyText}
+${dummyText}
 
 ${DISCLAIMER_TEXT}
 `;

@@ -158,23 +158,30 @@ function testE2EDeliverablesValidator() {
   const wizardDir = path.join(SANDBOX_DIR, '.repo-wizard');
   const repoName = path.basename(SANDBOX_DIR);
   
-  // 1. Create a compliant executive summary
   const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+  const dummyParagraph1 = 'word '.repeat(350);
+  const dummyParagraph2 = 'word '.repeat(650);
   const execSummaryContent = `
 # Executive Summary
 
 ## Section 1: Codebase Health & Strengths
-Paragraph 1 of strengths. It is very healthy.
-Paragraph 2 of strengths. Yes indeed.
-Paragraph 3 of strengths. Outstanding code quality.
+${dummyParagraph1}
+
+${dummyParagraph1}
+
+${dummyParagraph1}
 
 ## Section 2: Tooling & Compliance Opportunities
-Opportunity paragraph 1.
-Opportunity paragraph 2.
+${dummyParagraph1}
+
+${dummyParagraph1}
+
+${dummyParagraph1}
 
 ## Section 3: Rollout Roadmap
-Roadmap paragraph 1.
-Roadmap paragraph 2.
+${dummyParagraph1}
+
+${dummyParagraph2}
 
 ${DISCLAIMER_TEXT}
 `;
