@@ -23,16 +23,15 @@ const BLUE = '\x1b[34m';
  */
 function archiveSession(workspacePath = process.cwd()) {
   const wizardDir = path.join(workspacePath, '.repo-wizard');
-  const historyDir = path.join(wizardDir, 'history');
   const repoName = path.basename(workspacePath);
 
   if (!fs.existsSync(wizardDir)) {
     return;
   }
 
-  if (!fs.existsSync(historyDir)) {
-    fs.mkdirSync(historyDir, { recursive: true });
-  }
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  const rootSession = path.join(wizardDir, 'session.json');
+  const reportsSession = path.join(reportsDir, 'session.json');
 
   const formatTimestamp = (date) => {
     const pad = (n) => String(n).padStart(2, '0');
@@ -40,12 +39,24 @@ function archiveSession(workspacePath = process.cwd()) {
            `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
   };
 
+  let sessionTime = new Date();
+  if (fs.existsSync(rootSession)) {
+    sessionTime = fs.statSync(rootSession).mtime;
+  } else if (fs.existsSync(reportsSession)) {
+    sessionTime = fs.statSync(reportsSession).mtime;
+  }
+  const timestamp = formatTimestamp(sessionTime);
+
+  const historyDir = path.join(wizardDir, 'reports', 'history', repoName, timestamp);
+
+  if (!fs.existsSync(historyDir)) {
+    fs.mkdirSync(historyDir, { recursive: true });
+  }
+
   const archivedFiles = [];
 
   const archiveFile = (srcPath) => {
     if (fs.existsSync(srcPath)) {
-      const stat = fs.statSync(srcPath);
-      const timestamp = formatTimestamp(stat.mtime);
       const ext = path.extname(srcPath);
       const base = path.basename(srcPath, ext);
       const destPath = path.join(historyDir, `${base}_${timestamp}${ext}`);
@@ -60,14 +71,11 @@ function archiveSession(workspacePath = process.cwd()) {
   };
 
   // Ensure reportsDir exists
-  const reportsDir = path.join(wizardDir, 'reports', repoName);
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
 
   // Ensure we keep an unchanged copy of session.json and manifest.json in the reports folder
-  const rootSession = path.join(wizardDir, 'session.json');
-  const reportsSession = path.join(reportsDir, 'session.json');
   if (fs.existsSync(rootSession) && !fs.existsSync(reportsSession)) {
     fs.copyFileSync(rootSession, reportsSession);
   }

@@ -115,10 +115,16 @@ function testSessionArchiving() {
   // Trigger archiving
   archiveSession(SANDBOX_DIR);
 
-  const historyDir = path.join(wizardDir, 'history');
-  assert(fs.existsSync(historyDir), 'history/ directory created successfully');
+  const historyBaseDir = path.join(wizardDir, 'reports', 'history', repoName);
+  assert(fs.existsSync(historyBaseDir), 'history base directory for repo created successfully');
 
-  const files = fs.readdirSync(historyDir);
+  const historyDirs = fs.readdirSync(historyBaseDir);
+  assert(historyDirs.length === 1, 'Exactly one archived session directory exists');
+
+  const sessionDirName = historyDirs[0];
+  const sessionDirPath = path.join(historyBaseDir, sessionDirName);
+
+  const files = fs.readdirSync(sessionDirPath);
   assert(files.length === 5, 'All session, manifest, and report files exist in history');
 
   const sessionArchiveFile = files.find(f => f.startsWith('session_') && f.endsWith('.json'));
@@ -134,8 +140,8 @@ function testSessionArchiving() {
   assert(obsArchiveFile !== undefined, `Observations HTML archive matches prefix ${repoName}-observations_YYYYMMDD_HHMMSS.html`);
 
   // Verify contents match
-  const sessionArchivedContent = fs.readFileSync(path.join(historyDir, sessionArchiveFile), 'utf8');
-  const reportArchivedContent = fs.readFileSync(path.join(historyDir, reportArchiveFile), 'utf8');
+  const sessionArchivedContent = fs.readFileSync(path.join(sessionDirPath, sessionArchiveFile), 'utf8');
+  const reportArchivedContent = fs.readFileSync(path.join(sessionDirPath, reportArchiveFile), 'utf8');
 
   assert(sessionArchivedContent === sessionContent, 'Archived session.json content is correct');
   assert(reportArchivedContent === reportContent, `Archived ${repoName}-full-report.md content is correct`);
@@ -146,8 +152,9 @@ function testSessionArchiving() {
   if (fs.existsSync(reportsDir)) {
     fs.rmSync(reportsDir, { recursive: true, force: true });
   }
-  if (fs.existsSync(historyDir)) {
-    fs.rmSync(historyDir, { recursive: true, force: true });
+  const reportsHistoryDir = path.join(wizardDir, 'reports', 'history');
+  if (fs.existsSync(reportsHistoryDir)) {
+    fs.rmSync(reportsHistoryDir, { recursive: true, force: true });
   }
 }
 
