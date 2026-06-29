@@ -1074,8 +1074,6 @@ ${DISCLAIMER_TEXT}
       }
       
       fs.writeFileSync(csvPath, csvContent, 'utf8');
-      // Copy to .repo-wizard/backlog.csv too
-      fs.writeFileSync(path.join(ROOT, '.repo-wizard', 'backlog.csv'), csvContent, 'utf8');
     }
   } catch (err) {
     console.error('Failed to compile real reports:', err.message);
