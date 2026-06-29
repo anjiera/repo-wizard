@@ -126,8 +126,6 @@ function archiveSession(workspacePath = process.cwd()) {
     // Ignore
   }
 
-  // 5. Support legacy root report path (e.g. for backward compatibility / testing hooks)
-  archiveFile(path.join(wizardDir, `${repoName}-full-report.md`));
 
   if (archivedFiles.length > 0) {
     console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Archived prior wizard configurations and reports to history:${RESET}`);

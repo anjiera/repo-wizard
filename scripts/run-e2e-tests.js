@@ -106,10 +106,9 @@ function testSessionArchiving() {
   const repoName = path.basename(SANDBOX_DIR);
   fs.writeFileSync(path.join(wizardDir, 'session.json'), sessionContent);
   fs.writeFileSync(path.join(wizardDir, 'manifest.json'), '{"manifest":true}');
-  fs.writeFileSync(path.join(wizardDir, `${repoName}-full-report.md`), reportContent);
-
   const reportsDir = path.join(wizardDir, 'reports', repoName);
   fs.mkdirSync(reportsDir, { recursive: true });
+  fs.writeFileSync(path.join(reportsDir, `${repoName}-full-report.md`), reportContent);
   fs.writeFileSync(path.join(reportsDir, `${repoName}-executive-summary.md`), reportContent);
   fs.writeFileSync(path.join(reportsDir, `${repoName}-observations.html`), '<html></html>');
 
@@ -144,7 +143,6 @@ function testSessionArchiving() {
   // Clean up mock files created during this test to keep the sandbox clean for subsequent tests
   fs.rmSync(path.join(wizardDir, 'session.json'), { force: true });
   fs.rmSync(path.join(wizardDir, 'manifest.json'), { force: true });
-  fs.rmSync(path.join(wizardDir, `${repoName}-full-report.md`), { force: true });
   if (fs.existsSync(reportsDir)) {
     fs.rmSync(reportsDir, { recursive: true, force: true });
   }
