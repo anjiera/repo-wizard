@@ -59,12 +59,30 @@ function archiveSession(workspacePath = process.cwd()) {
     }
   };
 
-  // 1. Archive session.json & manifest.json
-  archiveFile(path.join(wizardDir, 'session.json'));
-  archiveFile(path.join(wizardDir, 'manifest.json'));
-
-  // 2. Archive all reports in reports/<repoName>/
+  // Ensure reportsDir exists
   const reportsDir = path.join(wizardDir, 'reports', repoName);
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true });
+  }
+
+  // Ensure we keep an unchanged copy of session.json and manifest.json in the reports folder
+  const rootSession = path.join(wizardDir, 'session.json');
+  const reportsSession = path.join(reportsDir, 'session.json');
+  if (fs.existsSync(rootSession) && !fs.existsSync(reportsSession)) {
+    fs.copyFileSync(rootSession, reportsSession);
+  }
+
+  const rootManifest = path.join(wizardDir, 'manifest.json');
+  const reportsManifest = path.join(reportsDir, 'manifest.json');
+  if (fs.existsSync(rootManifest) && !fs.existsSync(reportsManifest)) {
+    fs.copyFileSync(rootManifest, reportsManifest);
+  }
+
+  // 1. Archive session.json & manifest.json from the root
+  archiveFile(rootSession);
+  archiveFile(rootManifest);
+
+  // 2. Archive all reports in reports/<repoName>/ (.md and .html only)
   if (fs.existsSync(reportsDir)) {
     const items = fs.readdirSync(reportsDir);
     for (const item of items) {
@@ -76,21 +94,39 @@ function archiveSession(workspacePath = process.cwd()) {
         }
       }
     }
-    // Clean up empty directories
-    try {
-      if (fs.readdirSync(reportsDir).length === 0) {
-        fs.rmdirSync(reportsDir);
-        const reportsParent = path.dirname(reportsDir);
-        if (fs.readdirSync(reportsParent).length === 0) {
-          fs.rmdirSync(reportsParent);
-        }
+  }
+
+  // 3. Remove all files in the agent folder (reports/<repoName>/agents/)
+  const agentsDir = path.join(reportsDir, 'agents');
+  if (fs.existsSync(agentsDir)) {
+    const items = fs.readdirSync(agentsDir);
+    for (const item of items) {
+      const itemPath = path.join(agentsDir, item);
+      if (fs.statSync(itemPath).isFile()) {
+        fs.unlinkSync(itemPath);
       }
+    }
+    try {
+      fs.rmdirSync(agentsDir);
     } catch (e) {
-      // Ignore cleanup error
+      // Ignore
     }
   }
 
-  // 3. Support legacy root report path (e.g. for backward compatibility / testing hooks)
+  // 4. Clean up reports directory and parent if completely empty (though they shouldn't be since session.json & manifest.json remain there)
+  try {
+    if (fs.readdirSync(reportsDir).length === 0) {
+      fs.rmdirSync(reportsDir);
+      const reportsParent = path.dirname(reportsDir);
+      if (fs.readdirSync(reportsParent).length === 0) {
+        fs.rmdirSync(reportsParent);
+      }
+    }
+  } catch (e) {
+    // Ignore
+  }
+
+  // 5. Support legacy root report path (e.g. for backward compatibility / testing hooks)
   archiveFile(path.join(wizardDir, `${repoName}-full-report.md`));
 
   if (archivedFiles.length > 0) {
