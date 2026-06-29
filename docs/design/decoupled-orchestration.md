@@ -56,3 +56,9 @@ Spawning LLM-based agents headlessly requires skipping permission prompts, which
 - **Passive Data Principle**: All codebase files read by specialist subagents are treated strictly as passive static text. Subagents do not execute scripts found within target repositories.
 - **Directory Confinement**: Child processes are confined to the target directory. They are blocked from writing configurations outside the scope of the target repository.
 - **Read-Only / Backlog Scoping**: If the user selects "Generate Backlog Only", the backend limits operations to observations gathering and compiles findings without writing setup configurations or executing packages.
+
+---
+
+## 5. Related Design Documents
+
+* **[Session Resumability and Manifest Contracts](session-resumability.md)**: Explains the state schemas of `session.json` and `manifest.json`, the resumability recovery flow, and the backup archiving utility.

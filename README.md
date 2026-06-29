@@ -24,6 +24,8 @@ To help you get started quickly, please refer to the following guides:
 * **[scaffolding-and-rollback-safety.md](docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
 * **[meta-agent-alignment.md](docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
 * **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
+* **[decoupled-orchestration.md](docs/design/decoupled-orchestration.md)** — Architectural design and lifecycle of the contract-based decoupled agent orchestration system.
+* **[session-resumability.md](docs/design/session-resumability.md)** — Design and state structures of the session recovery system and subagent manifest contracts.
 * **[papercut-tracking.md](docs/design/papercut-tracking.md)** — Design of the subagent papercut logging and frequency tracking system.
 
 ---

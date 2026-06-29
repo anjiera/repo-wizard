@@ -93,3 +93,9 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
 1. **Graceful Degradation / Fallback**: Enables the system to remain 100% portable across headless servers, local terminals, and IDE extensions without code modification.
 2. **Pre-flight Contracts**: Validates arguments before invoking AI agents, protecting against late-stage run failures and token wastage.
 3. **Environment Feature Detection**: Dynamically determines capability (binary presence and TTY support) to optimize performance and rendering.
+
+---
+
+## 4. Related Design Documents
+
+* **[Session Resumability and Manifest Contracts](session-resumability.md)**: Explains the state schemas of `session.json` and `manifest.json`, the resumability recovery flow, and the backup archiving utility.
