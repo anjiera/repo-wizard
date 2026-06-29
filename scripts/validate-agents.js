@@ -27,6 +27,8 @@ const BLUE = '\x1b[34m';
 
 const AGENTS_DIR = path.resolve(__dirname, '..', 'agents');
 const EVALS_FILE = path.resolve(__dirname, 'run-evals.js');
+const MAPPINGS_FILE = path.resolve(__dirname, '..', 'agents', 'agent-quality-pillar-mappings.json');
+const { QUALITY_PILLARS, TEAM_COLORS } = require('./quality-pillars');
 
 function main() {
   if (!fs.existsSync(AGENTS_DIR)) {
@@ -79,6 +81,34 @@ function main() {
     }
 
     const errors = [];
+
+    // Quality Pillar & Team Color mapping validation
+    const agentKey = file.replace(/\.md$/, '');
+    if (!fs.existsSync(MAPPINGS_FILE)) {
+      errors.push('Missing agent-quality-pillar-mappings.json file.');
+    } else {
+      let mappings;
+      try {
+        mappings = JSON.parse(fs.readFileSync(MAPPINGS_FILE, 'utf8'));
+      } catch (err) {
+        errors.push(`Failed to parse agent-quality-pillar-mappings.json: ${err.message}`);
+      }
+
+      if (mappings) {
+        const mapping = mappings[agentKey];
+        if (!mapping) {
+          errors.push(`Missing entry in agent-quality-pillar-mappings.json for agent key "${agentKey}".`);
+        } else {
+          if (!mapping.pillar || !QUALITY_PILLARS[mapping.pillar]) {
+            errors.push(`Invalid or missing Quality Pillar key: "${mapping.pillar || 'none'}"`);
+          }
+          if (!mapping.color || !TEAM_COLORS[mapping.color]) {
+            errors.push(`Invalid or missing Cybersecurity Team Color key: "${mapping.color || 'none'}"`);
+          }
+        }
+      }
+    }
+
     if (!Array.isArray(matchingSuite.testCases) || matchingSuite.testCases.length === 0) {
       errors.push('No test cases defined in testCases array');
     } else {
