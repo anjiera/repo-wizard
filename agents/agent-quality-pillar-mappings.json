@@ -1,0 +1,110 @@
+{
+  "accessibility-auditor-agent": {
+    "pillar": "QUALITY",
+    "color": "WHITE"
+  },
+  "agent-alignment-pilot-agent": {
+    "pillar": "QUALITY",
+    "color": "WHITE"
+  },
+  "ai-robustness-pilot-agent": {
+    "pillar": "SECURITY",
+    "color": "YELLOW"
+  },
+  "api-contract-pilot-agent": {
+    "pillar": "ARCHITECTURE",
+    "color": "GREEN"
+  },
+  "appsec-hardener-agent": {
+    "pillar": "SECURITY",
+    "color": "GREEN"
+  },
+  "compliance-pilot-agent": {
+    "pillar": "SECURITY",
+    "color": "WHITE"
+  },
+  "data-pipeline-pilot-agent": {
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW"
+  },
+  "deployment-pilot-agent": {
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW"
+  },
+  "embedded-systems-pilot-agent": {
+    "pillar": "QUALITY",
+    "color": "YELLOW"
+  },
+  "formal-methods-pilot-agent": {
+    "pillar": "ARCHITECTURE",
+    "color": "WHITE"
+  },
+  "fuzzing-pilot-agent": {
+    "pillar": "QUALITY",
+    "color": "BLUE"
+  },
+  "legal-neutrality-agent": {
+    "pillar": "SECURITY",
+    "color": "WHITE"
+  },
+  "notebook-sanitizer-agent": {
+    "pillar": "QUALITY",
+    "color": "GREEN"
+  },
+  "observability-pilot-agent": {
+    "pillar": "PERFORMANCE",
+    "color": "BLUE"
+  },
+  "performance-pilot-agent": {
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW"
+  },
+  "privacy-guardian-agent": {
+    "pillar": "SECURITY",
+    "color": "BLUE"
+  },
+  "react-performance-pilot-agent": {
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW"
+  },
+  "repo-wizard-agent": {
+    "pillar": "ORCHESTRATOR",
+    "color": "WHITE"
+  },
+  "resilience-pilot-agent": {
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW"
+  },
+  "state-sanitizer-agent": {
+    "pillar": "QUALITY",
+    "color": "GREEN"
+  },
+  "supply-chain-scanner-agent": {
+    "pillar": "SECURITY",
+    "color": "GREEN"
+  },
+  "technical-scribe-agent": {
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW"
+  },
+  "testing-pilot-agent": {
+    "pillar": "QUALITY",
+    "color": "YELLOW"
+  },
+  "tool-evaluator-agent": {
+    "pillar": "HELPER",
+    "color": "WHITE"
+  },
+  "tool-scaffolder-agent": {
+    "pillar": "HELPER",
+    "color": "WHITE"
+  },
+  "toolchain-pilot-agent": {
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW"
+  },
+  "vcs-workflow-agent": {
+    "pillar": "QUALITY",
+    "color": "GREEN"
+  }
+}
