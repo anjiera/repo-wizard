@@ -15,6 +15,7 @@ const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const SANDBOX_DIR = path.join(ROOT, 'temp_e2e_sandbox');
+const { archiveSession } = require('./archive-session');
 
 // ANSI escape codes for premium console styling
 const RESET = '\x1b[0m';
@@ -57,57 +58,7 @@ function appendGitignore(workspacePath) {
   }
 }
 
-/**
- * Simulates the session version archiving logic from Step 2 / 1.4
- */
-function archiveSession(workspacePath) {
-  const wizardDir = path.join(workspacePath, '.repo-wizard');
-  const historyDir = path.join(wizardDir, 'history');
-  const repoName = path.basename(workspacePath);
-  
-  if (!fs.existsSync(historyDir)) {
-    fs.mkdirSync(historyDir, { recursive: true });
-  }
-
-  const formatTimestamp = (date) => {
-    const pad = (n) => String(n).padStart(2, '0');
-    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_` +
-           `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
-  };
-
-  const archiveFile = (srcPath) => {
-    if (fs.existsSync(srcPath)) {
-      const stat = fs.statSync(srcPath);
-      const timestamp = formatTimestamp(stat.mtime);
-      const ext = path.extname(srcPath);
-      const base = path.basename(srcPath, ext);
-      const destPath = path.join(historyDir, `${base}_${timestamp}${ext}`);
-      fs.copyFileSync(srcPath, destPath);
-    }
-  };
-
-  // Archive session.json & manifest.json
-  archiveFile(path.join(wizardDir, 'session.json'));
-  archiveFile(path.join(wizardDir, 'manifest.json'));
-
-  // Archive all reports in reports/<repoName>/
-  const reportsDir = path.join(wizardDir, 'reports', repoName);
-  if (fs.existsSync(reportsDir)) {
-    const items = fs.readdirSync(reportsDir);
-    for (const item of items) {
-      const itemPath = path.join(reportsDir, item);
-      if (fs.statSync(itemPath).isFile()) {
-        const ext = path.extname(item);
-        if (ext === '.md' || ext === '.html') {
-          archiveFile(itemPath);
-        }
-      }
-    }
-  }
-
-  // Also support legacy root report path used in tests
-  archiveFile(path.join(wizardDir, `${repoName}-full-report.md`));
-}
+// The archiveSession function is imported from scripts/archive-session.js above.
 
 function setupSandbox() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Setting up isolated workspace sandbox...${RESET}`);
