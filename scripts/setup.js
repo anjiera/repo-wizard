@@ -113,19 +113,32 @@ function checkGeminiKey() {
 }
 
 function checkAgyCli() {
-  let hasAgy = false;
+  let agyCmd = null;
   try {
     execSync('agy --version', { stdio: 'ignore' });
-    hasAgy = true;
+    agyCmd = 'agy';
   } catch (err) {
     // agy is not installed on path
   }
 
-  if (hasAgy) {
+  if (!agyCmd) {
+    const fallbackPath = 'D:\\agy\\bin\\agy.exe';
+    if (fs.existsSync(fallbackPath)) {
+      agyCmd = fallbackPath;
+    }
+  }
+
+  if (agyCmd) {
     logStep('Validating Antigravity plugin structure...');
     try {
-      execSync('agy plugin validate .', { stdio: 'inherit', cwd: ROOT });
+      execSync(`"${agyCmd}" plugin validate .`, { stdio: 'inherit', cwd: ROOT });
       logSuccess('Antigravity plugin structure is valid');
+      
+      if (agyCmd !== 'agy') {
+        console.log('');
+        logWarning(`Google Antigravity CLI (agy) is at ${CYAN}${agyCmd}${RESET} but is not on your system PATH.`);
+        console.log(`  To add it to your PATH on Windows, see the instructions below.`);
+      }
     } catch (err) {
       logWarning('Antigravity plugin validation returned warnings or errors.');
     }
@@ -134,7 +147,7 @@ function checkAgyCli() {
     logWarning('Google Antigravity CLI (agy) was not found in your environment path.');
     console.log(`  To use this repository as a native Antigravity plugin, make sure the CLI is installed.`);
     console.log(`  You can register this local plugin directory via:`);
-    console.log(`    ${CYAN}agy plugin install /path/to/repo-wizard${RESET}`);
+    console.log(`    node scripts/register-plugin.js`);
   }
 }
 
