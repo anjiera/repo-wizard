@@ -105,7 +105,7 @@ When the `repo-wizard` command is invoked, the orchestrator checks for the exist
      * *Revisit*: Inspect or modify answers from the last run.
      * *Report*: Output the locations of previously generated reports.
      * *Start Fresh*: Archive the active state and initialize a new questionnaire.
-3. **Archiving History**: When the user chooses to "Start Fresh" or modify configuration settings, the active state is backed up to avoid overwrites. The `scripts/archive-session.js` utility script copies `session.json`, `manifest.json`, and all Markdown/HTML reports to the `.repo-wizard/history/` directory. Each file is suffixed with `_YYYYMMDD_HHMMSS` based on its last modified timestamp to maintain accurate file age records.
+3. **Archiving History**: When the user chooses to "Start Fresh" or modify configuration settings, the active state is backed up to mitigate overwrites. The `scripts/reports-archive.js` utility script copies `session.json`, `manifest.json`, and all Markdown/HTML reports to the `.repo-wizard/reports/history/<repoName>/<timestamp>/` directory. Each file is suffixed with `_YYYYMMDD_HHMMSS` based on its last modified timestamp to maintain accurate file age records.
 
 ---
 

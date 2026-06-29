@@ -30,6 +30,19 @@ function escapeHtml(text) {
 }
 
 /**
+ * Slugifies heading text for HTML id attributes to support anchor links
+ */
+function slugify(text) {
+  if (!text) return '';
+  let clean = text.replace(/<[^>]*>/g, '');
+  let slug = clean.toLowerCase();
+  slug = slug.replace(/[.,:;'"?!()\[\]`{}&]/g, '');
+  slug = slug.replace(/[\s_]/g, '-');
+  slug = slug.replace(/^-+|-+$/g, '');
+  return slug;
+}
+
+/**
  * Basic regex-based Markdown parser
  */
 function parseMarkdown(md) {
@@ -163,12 +176,25 @@ function parseMarkdown(md) {
 
     if (h1 || h2 || h3 || h4 || h5 || h6) {
       flushParagraph();
-      if (h1) { html += `<h1>${inlineParse(h1[1])}</h1>\n`; continue; }
-      if (h2) { html += `<h2>${inlineParse(h2[1])}</h2>\n`; continue; }
-      if (h3) { html += `<h3>${inlineParse(h3[1])}</h3>\n`; continue; }
-      if (h4) { html += `<h4>${inlineParse(h4[1])}</h4>\n`; continue; }
-      if (h5) { html += `<h5>${inlineParse(h5[1])}</h5>\n`; continue; }
-      if (h6) { html += `<h6>${inlineParse(h6[1])}</h6>\n`; continue; }
+      const match = h1 || h2 || h3 || h4 || h5 || h6;
+      const headingText = match[1];
+      const id = slugify(headingText);
+      
+      let extraAnchor = '';
+      const matchSpecialist = headingText.match(/Specialist Agent:\s*(.*)/i);
+      if (matchSpecialist) {
+        const secondaryId = 'specialist-agent-' + slugify(matchSpecialist[1]);
+        extraAnchor = `<a id="${secondaryId}"></a>`;
+      }
+      
+      const contentText = `${extraAnchor}${inlineParse(headingText)}`;
+      
+      if (h1) { html += `<h1 id="${id}">${contentText}</h1>\n`; continue; }
+      if (h2) { html += `<h2 id="${id}">${contentText}</h2>\n`; continue; }
+      if (h3) { html += `<h3 id="${id}">${contentText}</h3>\n`; continue; }
+      if (h4) { html += `<h4 id="${id}">${contentText}</h4>\n`; continue; }
+      if (h5) { html += `<h5 id="${id}">${contentText}</h5>\n`; continue; }
+      if (h6) { html += `<h6 id="${id}">${contentText}</h6>\n`; continue; }
     }
 
     // 5. Blockquote

@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const SANDBOX_DIR = path.join(ROOT, 'temp_e2e_sandbox');
-const { archiveSession } = require('./archive-session');
+const { archiveSession } = require('./reports-archive');
 
 // ANSI escape codes for premium console styling
 const RESET = '\x1b[0m';
@@ -58,7 +58,7 @@ function appendGitignore(workspacePath) {
   }
 }
 
-// The archiveSession function is imported from scripts/archive-session.js above.
+// The archiveSession function is imported from scripts/reports-archive.js above.
 
 function setupSandbox() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Setting up isolated workspace sandbox...${RESET}`);
@@ -166,9 +166,13 @@ function testE2EDeliverablesValidator() {
   const repoName = path.basename(SANDBOX_DIR);
   
   const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
-  const dummyBluf = 'BLUF: ' + 'word '.repeat(350);
-  const dummyOverview = 'Overview: ' + 'word '.repeat(350);
-  const dummyBody = 'word '.repeat(1200);
+  const dummyBluf = '*This is a single sentence summary that serves as the BLUF.*';
+  const dummyOverview = 'Overview: This is a CEO-level overview in three sentences or less.';
+  const longSentence = 'This is a long sentence to ensure that we meet the required word count per section in the deliverables. ';
+  const p1 = longSentence.repeat(4) + 'word '.repeat(300);
+  const p2 = longSentence.repeat(4) + 'word '.repeat(300);
+  const p3 = longSentence.repeat(4) + 'word '.repeat(300);
+  const dummyBody = `${p1}\n\n${p2}\n\n${p3}`;
   const execSummaryContent = `
 # Executive Summary
 
@@ -192,6 +196,9 @@ ${dummyBluf}
 ${dummyOverview}
 
 ${dummyBody}
+
+## Section 4: Conclusions
+Some final conclusion paragraphs go here.
 
 ${DISCLAIMER_TEXT}
 `;

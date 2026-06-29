@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/archive-session.js
+ * scripts/reports-archive.js
  *
  * Reusable utility to archive prior wizard setup configurations and report deliverables
  * to the .repo-wizard/history/ directory before starting fresh or overwriting.

@@ -58,7 +58,7 @@ function testMdToHtml() {
   // 1. Basic HTML compilation
   const basicHtml = convertMdToHtml('# Test Header\n- List Item', 'Test Title');
   assert(basicHtml.includes('<title>Test Title</title>'), 'renders title tag');
-  assert(basicHtml.includes('<h1>Test Header</h1>'), 'compiles H1 tags');
+  assert(basicHtml.includes('<h1 id="test-header">Test Header</h1>'), 'compiles H1 tags');
   assert(basicHtml.includes('<li>List Item</li>'), 'compiles list items');
 
   // 2. Dark mode styling injection

@@ -139,3 +139,22 @@ Checks that the system meets node runtime versions, installs hooks, and runs sta
   ```bash
   node scripts/setup.js
   ```
+
+---
+
+## 5. Report & Archiving Utilities
+
+### Reports Archiver (`scripts/reports-archive.js`)
+Archives the user session, manifest contract parameters, and compiled report deliverables to the `.repo-wizard/reports/history/<repoName>/<timestamp>/` folder before starting fresh or updating.
+* **Usage:**
+  ```bash
+  node scripts/reports-archive.js [workspace-path]
+  ```
+
+### Reports Compiler (`scripts/reports-compile.js`)
+Consolidates specialist agent mini-reports (observations) and compiles final report deliverables (Executive Summary, Full Report, Observations, and Backlog CSV).
+* **Usage:**
+  ```bash
+  node scripts/reports-compile.js
+  ```
+
