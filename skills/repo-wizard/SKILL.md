@@ -31,9 +31,9 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ### Phase 0: Legal Terms & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
-1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the `.repo-wizard/` directory (i.e. `.repo-wizard/.tos_agreed`), or `.tos_agreed` at the workspace root.
+1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
 2. **Halt and Prompt if Missing**: If this file is missing, halt execution immediately. Present the exact **Terms of Service & Developer Agreement** (disclaimer) to the developer and prompt them to accept (y/N).
-3. **Save Agreement**: If accepted, write a JSON file to `.repo-wizard/.tos_agreed` containing:
+3. **Save Agreement**: If accepted, write a JSON file to the `repo-wizard` tool's `.repo-wizard/.tos_agreed` path containing:
    - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
    - `timestamp`: The current timestamp in ISO format.
 4. **Refuse if Declined**: If declined, halt execution, state that the agent cannot proceed without agreement, and do not write the file.
