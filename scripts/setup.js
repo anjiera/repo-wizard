@@ -122,9 +122,23 @@ function checkAgyCli() {
   }
 
   if (!agyCmd) {
-    const fallbackPath = 'D:\\agy\\bin\\agy.exe';
-    if (fs.existsSync(fallbackPath)) {
-      agyCmd = fallbackPath;
+    const fallbackPaths = [];
+    if (process.env.USERPROFILE) {
+      fallbackPaths.push(path.join(process.env.USERPROFILE, '.gemini', 'antigravity', 'bin', 'agy.exe'));
+    }
+    if (process.env.APPDATA) {
+      fallbackPaths.push(path.join(process.env.APPDATA, 'Antigravity', 'bin', 'agy.exe'));
+    }
+    if (process.env.LOCALAPPDATA) {
+      fallbackPaths.push(path.join(process.env.LOCALAPPDATA, 'Programs', 'Antigravity', 'bin', 'agy.exe'));
+    }
+    fallbackPaths.push('D:\\agy\\bin\\agy.exe');
+
+    for (const p of fallbackPaths) {
+      if (fs.existsSync(p)) {
+        agyCmd = p;
+        break;
+      }
     }
   }
 

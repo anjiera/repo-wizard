@@ -48,10 +48,23 @@ function findAgyCmd() {
     // Ignore and proceed to fallback
   }
 
-  // 2. Try the absolute path we know is configured in this sandbox environment
-  const windowsFallback = 'D:\\agy\\bin\\agy.exe';
-  if (fs.existsSync(windowsFallback)) {
-    return windowsFallback;
+  // 2. Try the fallback paths dynamically
+  const fallbackPaths = [];
+  if (process.env.USERPROFILE) {
+    fallbackPaths.push(path.join(process.env.USERPROFILE, '.gemini', 'antigravity', 'bin', 'agy.exe'));
+  }
+  if (process.env.APPDATA) {
+    fallbackPaths.push(path.join(process.env.APPDATA, 'Antigravity', 'bin', 'agy.exe'));
+  }
+  if (process.env.LOCALAPPDATA) {
+    fallbackPaths.push(path.join(process.env.LOCALAPPDATA, 'Programs', 'Antigravity', 'bin', 'agy.exe'));
+  }
+  fallbackPaths.push('D:\\agy\\bin\\agy.exe');
+
+  for (const p of fallbackPaths) {
+    if (fs.existsSync(p)) {
+      return p;
+    }
   }
 
   return null;
