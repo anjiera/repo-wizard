@@ -219,7 +219,11 @@ function compileRealReports(session) {
       `### Technical Overview\n\n#### Rollout Roadmap Phases & Actions\n* **Phase 1: Quick Wins (High Value / Low Effort)**\n  * **Tasks:** Pre-commit hooks for linting, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.\n  * **Rationale:** These guardrails require minimal setup and provide immediate security and quality improvements, safeguarding the codebase as features are added.\n* **Phase 2: High-Value Projects (High Value / High Effort)**\n  * **Tasks:** Android unit/integration test suite (JUnit, Robolectric), Web unit test suite (Vitest), mock service layers (MSW), and Playwright E2E browser testing.\n  * **Rationale:** Investing in these robust testing setups and secure transport/storage layers ensures the application can scale securely across both platforms.`
     ].join('\n\n');
 
-    conclusionText = `The target repository under review represents a hybrid native Android and modern React web application architecture. Its clean layouts, modern build systems (Gradle/Vite), and robust ignore configurations establish a solid codebase baseline that is modular and well-structured.`;
+    conclusionText = `The target repository under review represents a hybrid native Android and modern React web application architecture. Its clean layouts, modern build systems (Gradle/Vite), and robust ignore configurations establish a solid codebase baseline that is modular and well-structured.
+
+Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally across both Android and React environments. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
+
+Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation on both clients, stakeholders can confidently raise the quality baseline while keeping project momentum high.`;
   } else if (isAndroid) {
     sec1Text = [
       `*The repository features a modular, well-structured native Android codebase written in Kotlin, leveraging Gradle build tooling and Jetpack Compose modern UI components.*`,
@@ -241,7 +245,11 @@ function compileRealReports(session) {
       `### Technical Overview\n\n#### Rollout Roadmap Phases & Actions\n* **Phase 1: Quick Wins (High Value / Low Effort)**\n  * **Tasks:** Pre-commit hooks, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.\n  * **Rationale:** These guardrails require minimal setup and provide immediate security and quality improvements, safeguarding the codebase as features are added.\n* **Phase 2: High-Value Projects (High Value / High Effort)**\n  * **Tasks:** Android unit and integration test suite (JUnit, Robolectric) with coverage thresholds, certificate pinning, and local database encryption.\n  * **Rationale:** These tasks form the core of the app's reliability. Having robust unit tests and secure transport/storage layers ensures the application can scale without regression or security risks.`
     ].join('\n\n');
 
-    conclusionText = `The target repository under review represents a native Android application architecture built with Kotlin and Gradle. Its clean layout, modern Jetpack components, and robust gitignore configurations establish a solid codebase baseline that is modular and well-structured.`;
+    conclusionText = `The target repository under review represents a native Android application architecture built with Kotlin and Gradle. Its clean layout, modern Jetpack components, and robust gitignore configurations establish a solid codebase baseline that is modular and well-structured.
+
+Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and mobile testing tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical Android platform exposures without hurting day-to-day developer velocity or compilation performance.
+
+Transitioning toward complete mobile repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping mobile project momentum high.`;
   } else if (isReact) {
     // Vite / React Summaries
     sec1Text = [
@@ -264,7 +272,11 @@ function compileRealReports(session) {
       `### Technical Overview\n\n#### Rollout Roadmap Phases & Actions\n* **Phase 1: Quick Wins (High Value / Low Effort)**\n  * **Tasks:** Pre-commit hooks for linting, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.\n  * **Rationale:** These fixes require minimal configuration changes and provide immediate security and quality improvements, making them ideal tasks to execute first. They establish instant guardrails that protect the codebase as other, more complex features are developed.\n* **Phase 2: High-Value Projects (High Value / High Effort)**\n  * **Tasks:** Full unit test suite with coverage thresholds, mock services configuration, and Playwright E2E browser testing.\n  * **Rationale:** These tasks form the core of the project's long-term reliability and performance. Having a high level of code coverage gives the team the confidence to make major architectural changes or refactor core systems without fear of breaking existing features.`
     ].join('\n\n');
 
-    conclusionText = `The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.`;
+    conclusionText = `The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.
+
+Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and web performance tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical React and Vite exposures without hurting day-to-day developer velocity.
+
+Transitioning toward complete web repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping web project momentum high.`;
   } else {
     // Generic Fallback
     sec1Text = [
@@ -283,7 +295,11 @@ function compileRealReports(session) {
       `**Overview:** An asynchronous priority matrix balances developer bandwidth with project stability, allowing contributors to pick up tasks naturally without calendar constraints.`
     ].join('\n\n');
 
-    conclusionText = `The target repository under review represents a standard modular application layout. Its clean configurations, standard build scripts, and robust ignore files establish a solid baseline that is modular and well-structured.`;
+    conclusionText = `The target repository under review represents a standard modular application layout. Its clean configurations, standard build scripts, and robust ignore files establish a solid baseline that is modular and well-structured.
+
+Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
+
+Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping project momentum high.`;
   }
 
   const execSummary = `# Repo Wizard Executive Summary - ${repoName}
@@ -299,10 +315,6 @@ ${sec3Text}
 
 ## Section 4: Conclusions
 ${conclusionText}
-
-Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
-
-Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping project momentum high.
 
 ${DISCLAIMER_TEXT}
 `;
@@ -419,10 +431,6 @@ ${highValue.join('\n')}
 
 ## 6. Conclusions
 ${conclusionText}
-
-Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
-
-Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping project momentum high.
 
 ${DISCLAIMER_TEXT}
 `;
