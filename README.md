@@ -27,6 +27,7 @@ To help you get started quickly, please refer to the following guides:
 * **[decoupled-orchestration.md](docs/design/decoupled-orchestration.md)** — Architectural design and lifecycle of the contract-based decoupled agent orchestration system.
 * **[session-resumability.md](docs/design/session-resumability.md)** — Design and state structures of the session recovery system and subagent manifest contracts.
 * **[papercut-tracking.md](docs/design/papercut-tracking.md)** — Design of the subagent papercut logging and frequency tracking system.
+* **[phase-splitting-scaffolding.md](docs/design/phase-splitting-scaffolding.md)** — Architectural design of the phase-splitting execution boundary and versioned JSON scaffolding contracts.
 
 ---
 
