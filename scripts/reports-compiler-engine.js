@@ -473,6 +473,11 @@ ${DISCLAIMER_TEXT}
 `;
 
   // 3. Observations Summary
+  const suggestedAdjustmentsText = customReport.suggestedAdjustments || [
+    '- Establish standard lint rules.',
+    '- Set up pre-commit validation.'
+  ].join('\n');
+
   const observationsSummary = `# Repo Wizard Observations Summary - ${repoName}
 
 ## Toolchain Assumptions
@@ -484,8 +489,7 @@ The codebase was scanned and verified under assumptions for:
 - Selected Compliance Standards: ${compliance.join(', ') || 'None'}
 
 ## Suggested Adjustments
-- Establish standard lint rules.
-- Set up pre-commit validation.
+${suggestedAdjustmentsText}
 
 ${DISCLAIMER_TEXT}
 `;
@@ -517,10 +521,10 @@ ${DISCLAIMER_TEXT}
       const csvPath = path.join(reportsDir, 'backlog.csv');
       let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
       
-      const stories = [
+      const stories = customReport.backlog || [
         {
           summary: '[Supply Chain] Install and configure FOSSA for license scanning',
-          desc: `Install FOSSA locally and configure it in the CI pipeline to run license audits and prevent licensing incompatibilities on public open-source releases. Recommended by: repo-wizard supply-chain-scanner-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Install FOSSA locally and configure it in the CI pipeline to run license audits and prevent licensing incompatibilities on public open-source releases. Recommended by: repo-wizard supply-chain-scanner-agent.`,
           type: 'Story',
           epic: 'Licensing',
           agent: 'supply-chain-scanner-agent',
@@ -529,7 +533,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[VCS] Install and configure Husky and lint-staged',
-          desc: `Set up Husky git hooks and lint-staged to run linters, formatters, and unit tests on commit. Recommended by: repo-wizard vcs-workflow-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Set up Husky git hooks and lint-staged to run linters, formatters, and unit tests on commit. Recommended by: repo-wizard vcs-workflow-agent.`,
           type: 'Story',
           epic: 'Git Automation',
           agent: 'vcs-workflow-agent',
@@ -538,7 +542,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[VCS] Enforce Conventional Commits via commitlint',
-          desc: `Install and configure commitlint to validate that git commit messages follow the Conventional Commits specification. Recommended by: repo-wizard vcs-workflow-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Install and configure commitlint to validate that git commit messages follow the Conventional Commits specification. Recommended by: repo-wizard vcs-workflow-agent.`,
           type: 'Story',
           epic: 'Git Automation',
           agent: 'vcs-workflow-agent',
@@ -547,7 +551,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[VCS] Add PR size limit guardrail',
-          desc: `Set up a PR checker or local hook to block or warn on large changesets exceeding 250 lines of code. Recommended by: repo-wizard vcs-workflow-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Set up a PR checker or local hook to block or warn on large changesets exceeding 250 lines of code. Recommended by: repo-wizard vcs-workflow-agent.`,
           type: 'Story',
           epic: 'Git Automation',
           agent: 'vcs-workflow-agent',
@@ -556,7 +560,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[Testing] Configure Vitest and Playwright test runners',
-          desc: `Set up Vitest for React and Node.js unit testing, and Playwright for end-to-end browser tests of the dashboard. Recommended by: repo-wizard testing-pilot-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Set up Vitest for React and Node.js unit testing, and Playwright for end-to-end browser tests of the dashboard. Recommended by: repo-wizard testing-pilot-agent.`,
           type: 'Story',
           epic: 'Testing',
           agent: 'testing-pilot-agent',
@@ -565,7 +569,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[Testing] Enforce 80% code coverage threshold gate',
-          desc: `Configure Vitest coverage targets to block builds or commits if code coverage drops below the 80% threshold. Recommended by: repo-wizard testing-pilot-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Configure Vitest coverage targets to block builds or commits if code coverage drops below the 80% threshold. Recommended by: repo-wizard testing-pilot-agent.`,
           type: 'Story',
           epic: 'Testing',
           agent: 'testing-pilot-agent',
@@ -574,7 +578,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[Documentation] Scaffolding ADR template directory',
-          desc: `Set up Nygard-style Architecture Decision Record (ADR) templates and write lightweight creation helper scripts. Recommended by: repo-wizard technical-scribe-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Set up Nygard-style Architecture Decision Record (ADR) templates and write lightweight creation helper scripts. Recommended by: repo-wizard technical-scribe-agent.`,
           type: 'Story',
           epic: 'Documentation',
           agent: 'technical-scribe-agent',
@@ -583,7 +587,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[Documentation] Generate architecture diagrams using Mermaid',
-          desc: `Create architecture diagrams using Mermaid to document subagent execution flows and plugin structure. Recommended by: repo-wizard technical-scribe-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Create architecture diagrams using Mermaid to document subagent execution flows and plugin structure. Recommended by: repo-wizard technical-scribe-agent.`,
           type: 'Story',
           epic: 'Documentation',
           agent: 'technical-scribe-agent',
@@ -592,7 +596,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[React Performance] Install react-scan for rendering audits',
-          desc: `Install react-scan to monitor render frequencies and optimize dashboard React rendering cycles. Recommended by: repo-wizard react-performance-pilot-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Install react-scan to monitor render frequencies and optimize dashboard React rendering cycles. Recommended by: repo-wizard react-performance-pilot-agent.`,
           type: 'Story',
           epic: 'Performance',
           agent: 'react-performance-pilot-agent',
@@ -601,7 +605,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[React State] Add eslint-plugin-react-hooks rules',
-          desc: `Add eslint-plugin-react-hooks to enforce robust state management rules and fix warning alerts for React hook dependency arrays. Recommended by: repo-wizard state-sanitizer-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Add eslint-plugin-react-hooks to enforce robust state management rules and fix warning alerts for React hook dependency arrays. Recommended by: repo-wizard state-sanitizer-agent.`,
           type: 'Story',
           epic: 'State Sanitization',
           agent: 'state-sanitizer-agent',
@@ -610,7 +614,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[Security] Configure Gitleaks pre-commit hooks',
-          desc: `Install Gitleaks in the local pre-commit hook to prevent sensitive secrets from being committed. Recommended by: repo-wizard appsec-hardener-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Install Gitleaks in the local pre-commit hook to prevent sensitive secrets from being committed. Recommended by: repo-wizard appsec-hardener-agent.`,
           type: 'Story',
           epic: 'Security',
           agent: 'appsec-hardener-agent',
@@ -619,7 +623,7 @@ ${DISCLAIMER_TEXT}
         },
         {
           summary: '[Security] Configure Helmet middleware for dashboard server',
-          desc: `Configure secure HTTP headers using Helmet for the dashboard server middleware. Recommended by: repo-wizard appsec-hardener-agent. ${DISCLAIMER_TEXT}`,
+          desc: `Configure secure HTTP headers using Helmet for the dashboard server middleware. Recommended by: repo-wizard appsec-hardener-agent.`,
           type: 'Story',
           epic: 'Security',
           agent: 'appsec-hardener-agent',
@@ -629,7 +633,9 @@ ${DISCLAIMER_TEXT}
       ];
 
       for (const story of stories) {
-        csvContent += `"${story.summary}","${story.desc}","${story.type}","${story.epic}","repo-wizard,${story.priority}","${story.agent}","${story.goal}"\n`;
+        const descText = story.desc || '';
+        const cleanDesc = descText.includes(DISCLAIMER_TEXT) ? descText : `${descText} ${DISCLAIMER_TEXT}`;
+        csvContent += `"${story.summary}","${cleanDesc}","${story.type || 'Story'}","${story.epic || 'General'}","repo-wizard,${story.priority || 'quick-win'}","${story.agent || 'general'}","${story.goal || 'General'}"\n`;
       }
       
       fs.writeFileSync(csvPath, csvContent, 'utf8');
