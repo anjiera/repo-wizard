@@ -1460,13 +1460,15 @@ const server = http.createServer((req, res) => {
       scanLogs.push(`[${new Date().toLocaleTimeString()}] Sizing codebase: detected target directory at "${session.targetPath}"`);
 
       // Spawn run-orchestration.js in background
-      activeScanProcess = spawn('node', [path.join(ROOT, 'scripts', 'run-orchestration.js')], {
+      activeScanProcess = spawn('node', [
+        path.join(ROOT, 'scripts', 'run-orchestration.js'),
+        session.targetPath
+      ], {
         cwd: ROOT,
         env: {
           ...process.env,
           MOCK_CLI: process.env.MOCK_CLI === 'true' ? 'true' : 'false',
           MOCK_REPO_NAME: repoName,
-          TARGET_PATH: session.targetPath,
           REDACT: session.redact ? 'true' : 'false'
         },
         detached: process.platform !== 'win32'

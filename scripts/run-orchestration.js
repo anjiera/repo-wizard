@@ -55,7 +55,7 @@ process.on('exit', () => {
 });
 
 const ROOT = require('./root-resolver');
-let targetPath = process.env.TARGET_PATH;
+let targetPath = null;
 const targetIdx = process.argv.indexOf('--target-path');
 if (targetIdx !== -1 && process.argv[targetIdx + 1]) {
   targetPath = process.argv[targetIdx + 1];
@@ -67,7 +67,7 @@ if (targetIdx !== -1 && process.argv[targetIdx + 1]) {
   }
 }
 if (!targetPath) {
-  targetPath = ROOT;
+  targetPath = process.cwd();
 }
 const resolvedTarget = path.resolve(targetPath);
 let repoName = process.env.MOCK_REPO_NAME;
