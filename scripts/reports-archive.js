@@ -21,10 +21,21 @@ const BLUE = '\x1b[34m';
  * Archives the active session, manifest, and compiled reports for a workspace.
  * @param {string} workspacePath
  */
+function getSafeRepoName(targetPath) {
+  if (!targetPath || typeof targetPath !== 'string') return 'project';
+  const resolved = path.resolve(targetPath);
+  let name = path.basename(resolved);
+  name = name.replace(/[^a-zA-Z0-9_\-\.]/g, '');
+  if (!name || name === '.' || name === '..' || name.toLowerCase() === 'reports' || name.toLowerCase() === 'history') {
+    return 'project';
+  }
+  return name;
+}
+
 function archiveSession(workspacePath = process.cwd(), options = {}) {
   const opt = options || {};
   const wizardDir = path.join(workspacePath, '.repo-wizard');
-  const repoName = path.basename(workspacePath);
+  const repoName = getSafeRepoName(workspacePath);
 
   if (!fs.existsSync(wizardDir)) {
     return;

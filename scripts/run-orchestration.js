@@ -74,7 +74,7 @@ const resolvedTarget = path.resolve(targetPath);
 let repoName = process.env.MOCK_REPO_NAME;
 if (!repoName) {
   repoName = path.basename(resolvedTarget).replace(/[^a-zA-Z0-9_\-\.]/g, '');
-  if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase() === 'reports') {
+  if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase() === 'reports' || repoName.toLowerCase() === 'history') {
     repoName = 'project';
   }
 }
