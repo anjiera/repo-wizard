@@ -382,6 +382,35 @@ ${DISCLAIMER_TEXT}
         `- **Rendering audits:** [Install react-scan](#specialist-agent-react-performance-pilot-agent).`
       ];
 
+  const isInferred = session.answersInferred === true;
+  const profileTitle = isInferred ? '2.1 Inferred Interview Profile' : '2.1 Interview Profile';
+  let profileSection = `### ${profileTitle}\n\n`;
+  if (isInferred) {
+    profileSection += `*Note: The survey answers in this profile were dynamically inferred by the Repo Wizard orchestration agent using best-guess codebase sweeps rather than user input.*\n\n`;
+  }
+  
+  const answersList = [];
+  const addAnswer = (label, value) => {
+    if (value !== undefined && value !== null && value !== '') {
+      const valStr = Array.isArray(value) ? value.join(', ') : String(value);
+      answersList.push(`- **${label}:** ${valStr}`);
+    }
+  };
+
+  addAnswer('Target Frameworks', answers.frameworks);
+  addAnswer('Target Platforms', answers.platforms);
+  addAnswer('Compliance Standards', answers.compliance);
+  addAnswer('Scaffolding Mode', answers.scaffoldingMode || answers.mode);
+  addAnswer('Coverage Threshold Target', answers.coverageThreshold ? `${answers.coverageThreshold}%` : null);
+  addAnswer('Project Context / Target Audience', answers.context || answers.targetAudience);
+  addAnswer('Developer Friction Tolerance', answers.friction || answers.frictionTolerance);
+
+  if (answersList.length > 0) {
+    profileSection += answersList.join('\n') + '\n';
+  } else {
+    profileSection += '_No interview choices were recorded._\n';
+  }
+
   const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
 Run Date: ${currentDate}
 
@@ -393,6 +422,7 @@ This report is a compass, and not a scale. There are no scorecards involved, or 
 ## Table of Contents
 - [1. Executive Summary](#1-executive-summary)
 - [2. Audit Scope & Environment Profile](#2-audit-scope--environment-profile)
+  - [2.1 Interview Profile](#21-interview-profile)
 - [3. Maturity Model Guidance](#3-maturity-model-guidance)
 - [4. Detailed Quality Pillars Analysis](#4-detailed-quality-pillars-analysis)
   - [Security & Compliance](#security--compliance)
@@ -412,6 +442,8 @@ Refer to the separate [Executive Summary](${repoName}-executive-summary.html) fo
 - **Primary Languages:** ${detectPrimaryLanguages(frameworks)}
 - **Ignore Rules Enforced:** \`.gitignore\`, \`.agentignore\`
 - **Scope Exclusions:** ${detectScopeExclusions(frameworks)}
+
+${profileSection}
 
 ${maturityGuidance}
 
