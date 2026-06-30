@@ -121,6 +121,23 @@ function archiveSession(workspacePath = process.cwd()) {
     }
   }
 
+  // 3.5 Remove all files in the contracts folder (reports/<repoName>/contracts/)
+  const contractsDir = path.join(reportsDir, 'contracts');
+  if (fs.existsSync(contractsDir)) {
+    const items = fs.readdirSync(contractsDir);
+    for (const item of items) {
+      const itemPath = path.join(contractsDir, item);
+      if (fs.statSync(itemPath).isFile()) {
+        fs.unlinkSync(itemPath);
+      }
+    }
+    try {
+      fs.rmdirSync(contractsDir);
+    } catch (e) {
+      // Ignore
+    }
+  }
+
   // 4. Clean up reports directory and parent if completely empty (though they shouldn't be since session.json & manifest.json remain there)
   try {
     if (fs.readdirSync(reportsDir).length === 0) {
