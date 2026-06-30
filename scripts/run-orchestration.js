@@ -66,6 +66,7 @@ if (!repoName) {
 }
 const REPORTS_DIR = path.join(ROOT, '.repo-wizard', 'reports', repoName);
 const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
+const CONTRACTS_DIR = path.join(REPORTS_DIR, 'contracts');
 
 let fileCache = null;
 
@@ -194,6 +195,7 @@ async function main() {
 
   // 3. Execution Phase
   ensureDirExists(OBSERVATIONS_DIR);
+  ensureDirExists(CONTRACTS_DIR);
   const total = manifest.contracts.length;
   let completed = 0;
   const isTTY = process.stdout.isTTY && !process.env.CI;
@@ -223,6 +225,20 @@ async function main() {
       // Simulate a small process output
       fs.writeFileSync(obsPath, `# Observations for ${agentName}\n\nThis is a simulated observation report.\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`, 'utf8');
       
+      // Simulate writing a mock scaffolding contract
+      const contractPath = path.join(CONTRACTS_DIR, `${agentName}-contract.json`);
+      const mockContract = {
+        contract_version: '1.0.0',
+        packages: [
+          { name: 'mock-package', version: '^1.0.0', scope: 'devDependencies' }
+        ],
+        configs: [
+          { path: `mock-config-${agentName}.json`, content: '{\n  "mocked": true\n}' }
+        ],
+        verification_command: 'echo "Mock verification passed"'
+      };
+      fs.writeFileSync(contractPath, JSON.stringify(mockContract, null, 2), 'utf8');
+
       entry.status = 'completed';
       completed++;
       
@@ -390,6 +406,19 @@ async function main() {
         }
         if (code === 0) {
           fs.writeFileSync(obsPath, stdoutData || `# Observations for ${agentName}\n\nEmpty observations output.\n`, 'utf8');
+          
+          // Verify if the agent wrote a contract. If not, write an empty default contract
+          const contractPath = path.join(CONTRACTS_DIR, `${agentName}-contract.json`);
+          if (!fs.existsSync(contractPath)) {
+            const defaultContract = {
+              contract_version: '1.0.0',
+              packages: [],
+              configs: [],
+              verification_command: ''
+            };
+            fs.writeFileSync(contractPath, JSON.stringify(defaultContract, null, 2), 'utf8');
+          }
+
           entry.status = 'completed';
           completed++;
           if (!isTTY) {
