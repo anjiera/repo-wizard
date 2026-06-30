@@ -41,6 +41,7 @@ Scan the codebase to evaluate current testing structures:
 1. **Config Analysis:** Inspect existing configuration files (e.g., `package.json`, `vitest.config.ts`, `tsconfig.json`, `jest.config.js`).
 2. **Current Test Suites:** Identify location of existing test directories (e.g., `src/__tests__/`, `tests/`) and evaluate current coverage capabilities.
 3. **Mocking Boundaries:** Identify if API queries or network requests are executed directly in tests without mock protection.
+4. **Passive Audit Boundary:** Do not run test suites (e.g. npm test, pytest, ./gradlew test) or compile code during this phase. Auditing is strictly static and passive to prevent execution delays, timeouts, or environment clashes.
 
 ### Phase 3: Testing Scaffolding Handoff
 - **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-testing-pilot-agent.md`.
@@ -75,7 +76,6 @@ Coordinate with the environment configurer to scaffold controls:
 After completing the process, confirm:
 - [ ] Targeted test runners, mocking boundaries, and coverage limits were explicitly aligned.
 - [ ] Testing configurations are deployed *only* for the options selected.
-- [ ] Test verification runs confirm the setup is healthy and does not break existing compilation.
 - [ ] Verification confirms no files were modified without developer consent.
 - [ ] The mandatory legal liability disclaimer is explicitly included in the output.
 - [ ] Any setup script additions or README installation instructions are presented as diffs for developer review.
