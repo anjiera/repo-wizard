@@ -57,7 +57,18 @@ try {
   archiveSession(workspaceDir);
   
   compileRealReports(session);
-  console.log(`${GREEN}✓ Reports compiled successfully!${RESET}`);
+  console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);
+
+  const repoName = path.basename(workspaceDir).replace(/[^a-zA-Z0-9_\-\.]/g, '');
+  const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', repoName);
+  console.log(`${BOLD}Generated deliverables:${RESET}`);
+  console.log(`  - Executive Summary:  [${repoName}-executive-summary.md](file:///${path.join(reportsDir, repoName + '-executive-summary.md').replace(/\\/g, '/')})`);
+  console.log(`  - Full Tech Report:   [${repoName}-full-report.md](file:///${path.join(reportsDir, repoName + '-full-report.md').replace(/\\/g, '/')})`);
+  console.log(`  - Observations List:  [${repoName}-observations.md](file:///${path.join(reportsDir, repoName + '-observations.md').replace(/\\/g, '/')})`);
+  if (session.mode === 'backlog') {
+    console.log(`  - Backlog CSV:        [backlog.csv](file:///${path.join(reportsDir, 'backlog.csv').replace(/\\/g, '/')})`);
+  }
+  console.log('');
 } catch (err) {
   console.error(`${RED}✗ Error compiling reports:${RESET}`, err.stack);
   process.exit(1);

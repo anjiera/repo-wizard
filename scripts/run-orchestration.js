@@ -21,6 +21,13 @@ const { validateContract } = require('./validate-contracts');
 const activeChildren = new Set();
 const runningAgents = new Map();
 
+// ANSI escape codes for premium console formatting
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+
 function cleanupChildren() {
   for (const child of activeChildren) {
     try {
@@ -139,6 +146,8 @@ function detectAgentCLI() {
 }
 
 async function main() {
+  console.log(`\n${BLUE}==>${RESET} ${BOLD}Repo Wizard has started. This analysis conducts deep codebase diagnostics and runs specialist subagents. It may take 5+ minutes depending on the repository size.${RESET}\n`);
+
   if (!fs.existsSync(manifestPath)) {
     console.error(`ERROR: Manifest file not found at ${manifestPath}`);
     process.exit(1);
@@ -179,6 +188,7 @@ async function main() {
     process.exit(1);
   }
   console.log('✓ All parameter contracts passed pre-flight validation.\n');
+  console.log(`${GREEN}✓ Codebase Diagnostics & Sweep completed successfully.${RESET}\n`);
 
   // 2. Detect CLI Environment
   const cliCmd = detectAgentCLI();
@@ -207,6 +217,7 @@ async function main() {
   let completed = 0;
   const isTTY = process.stdout.isTTY && !process.env.CI;
 
+  console.log(`${BLUE}==>${RESET} ${BOLD}Coordinated Specialist Audits...${RESET}`);
   console.log(`Starting execution of ${total} specialist agents...`);
   
   if (isMock) {
