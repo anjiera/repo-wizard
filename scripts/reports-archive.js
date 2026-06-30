@@ -52,17 +52,26 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
   };
 
   let sessionTime = new Date();
-  if (fs.existsSync(rootSession)) {
-    sessionTime = fs.statSync(rootSession).mtime;
-  } else if (fs.existsSync(reportsSession)) {
-    sessionTime = fs.statSync(reportsSession).mtime;
+  try {
+    if (fs.existsSync(rootSession)) {
+      sessionTime = fs.statSync(rootSession).mtime;
+    } else if (fs.existsSync(reportsSession)) {
+      sessionTime = fs.statSync(reportsSession).mtime;
+    }
+  } catch (err) {
+    // Fallback to current date on file locking or transient ENOENT errors
   }
   const timestamp = formatTimestamp(sessionTime);
 
   const historyDir = path.join(wizardDir, 'reports', 'history', repoName, timestamp);
 
-  if (!fs.existsSync(historyDir)) {
-    fs.mkdirSync(historyDir, { recursive: true });
+  try {
+    if (!fs.existsSync(historyDir)) {
+      fs.mkdirSync(historyDir, { recursive: true });
+    }
+  } catch (err) {
+    console.error('Failed to create history directory:', err.message);
+    return;
   }
 
   const archivedFiles = [];
@@ -87,8 +96,13 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
   };
 
   // Ensure reportsDir exists
-  if (!fs.existsSync(reportsDir)) {
-    fs.mkdirSync(reportsDir, { recursive: true });
+  try {
+    if (!fs.existsSync(reportsDir)) {
+      fs.mkdirSync(reportsDir, { recursive: true });
+    }
+  } catch (err) {
+    console.error('Failed to create reports directory:', err.message);
+    return;
   }
 
   // Ensure we keep an unchanged copy of session.json and manifest.json in the reports folder
@@ -128,38 +142,46 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
     } catch (e) { /* ignore */ }
   }
 
-  // 3. Remove all files in the agent folder (reports/<repoName>/agents/)
+  // 3. Remove the agent folder (reports/<repoName>/agents/)
   const agentsDir = path.join(reportsDir, 'agents');
   if (fs.existsSync(agentsDir)) {
     try {
-      const items = fs.readdirSync(agentsDir);
-      for (const item of items) {
-        const itemPath = path.join(agentsDir, item);
-        try {
-          if (fs.statSync(itemPath).isFile()) {
-            fs.unlinkSync(itemPath);
-          }
-        } catch (e) { /* ignore */ }
-      }
-      fs.rmdirSync(agentsDir);
-    } catch (e) { /* ignore */ }
-  }
-
-  // 3.5 Remove all files in the contracts folder (reports/<repoName>/contracts/) only if pruneContracts is true
-  if (opt.pruneContracts === true) {
-    const contractsDir = path.join(reportsDir, 'contracts');
-    if (fs.existsSync(contractsDir)) {
-      try {
-        const items = fs.readdirSync(contractsDir);
+      if (fs.rmSync) {
+        fs.rmSync(agentsDir, { recursive: true, force: true });
+      } else {
+        const items = fs.readdirSync(agentsDir);
         for (const item of items) {
-          const itemPath = path.join(contractsDir, item);
+          const itemPath = path.join(agentsDir, item);
           try {
             if (fs.statSync(itemPath).isFile()) {
               fs.unlinkSync(itemPath);
             }
           } catch (e) { /* ignore */ }
         }
-        fs.rmdirSync(contractsDir);
+        fs.rmdirSync(agentsDir);
+      }
+    } catch (e) { /* ignore */ }
+  }
+
+  // 3.5 Remove the contracts folder (reports/<repoName>/contracts/) only if pruneContracts is true
+  if (opt.pruneContracts === true) {
+    const contractsDir = path.join(reportsDir, 'contracts');
+    if (fs.existsSync(contractsDir)) {
+      try {
+        if (fs.rmSync) {
+          fs.rmSync(contractsDir, { recursive: true, force: true });
+        } else {
+          const items = fs.readdirSync(contractsDir);
+          for (const item of items) {
+            const itemPath = path.join(contractsDir, item);
+            try {
+              if (fs.statSync(itemPath).isFile()) {
+                fs.unlinkSync(itemPath);
+              }
+            } catch (e) { /* ignore */ }
+          }
+          fs.rmdirSync(contractsDir);
+        }
       } catch (e) { /* ignore */ }
     }
   }

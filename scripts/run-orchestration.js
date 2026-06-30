@@ -17,6 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
+const { generateMockCustomReport } = require('./mock-report-generator');
 
 const activeChildren = new Set();
 const runningAgents = new Map();
@@ -713,50 +714,7 @@ function completeOrchestration(manifest) {
   session.answersInferred = session.answersInferred !== undefined ? session.answersInferred : true;
   
   if (!session.customReport) {
-    const makeMockSection = (title, summary, overviewText) => {
-      const paras = [
-        `*${summary}*`,
-        `**Overview: ${overviewText}**`,
-        `### Technical Overview`
-      ];
-      for (let i = 1; i <= 9; i++) {
-        paras.push(`This is paragraph number ${i} in the mock technical overview for ${title} designed to verify that the report compiler works correctly under all validation constraints. We are checking that the codebase metrics look stable, the dependencies do not introduce circular references, and the api limits are respected. This section provides detailed technical analysis on security compliance, digital accessibility audits, performance benchmarks, and version control hooks. Developers can refer to this analysis to understand the current state of repository governance. Let us also highlight that the automated test execution was verified across multiple target platforms, ensuring zero regressions on the main integration branch.`);
-      }
-      return paras.join('\n\n');
-    };
-
-    const defaultMaturity = `## 3. Maturity Model Guidance\n\n* **Security & Compliance:** Level 2\n* **Performance & Resilience:** Level 2\n* **Architecture & Design:** Level 2\n* **Code Quality & Testing:** Level 2`;
-    const defaultConclusion = `Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the baseline quality bar.`;
-    const defaultAdjustments = `- Establish standard lint rules.\n- Set up pre-commit validation.`;
-
-    session.customReport = {
-      section1: makeMockSection('Section 1', 'The repository features a modular codebase with modern build tooling.', 'Repo Wizard completed the automated sweep successfully.'),
-      section2: makeMockSection('Section 2', 'Opportunities exist to strengthen quality control and security gates.', 'Implementing these recommended tools will safeguard the codebase against vulnerabilities.'),
-      section3: makeMockSection('Section 3', 'We suggest prioritizing compliance tasks asynchronously.', 'An asynchronous rollout Roadmap balances bandwidth with quality.'),
-      maturityGuidance: defaultMaturity,
-      conclusion: defaultConclusion,
-      suggestedAdjustments: defaultAdjustments,
-      backlog: [
-        {
-          summary: '[Supply Chain] Install and configure FOSSA for license scanning',
-          desc: `Install FOSSA locally and configure it in the CI pipeline to run license audits and prevent licensing incompatibilities on public open-source releases. Recommended by: repo-wizard supply-chain-scanner-agent.`,
-          type: 'Story',
-          epic: 'Licensing',
-          agent: 'supply-chain-scanner-agent',
-          goal: 'Open Source',
-          priority: 'quick-win'
-        },
-        {
-          summary: '[VCS] Install and configure Husky and lint-staged',
-          desc: `Set up Husky git hooks and lint-staged to run linters, formatters, and unit tests on commit. Recommended by: repo-wizard vcs-workflow-agent.`,
-          type: 'Story',
-          epic: 'Git Automation',
-          agent: 'vcs-workflow-agent',
-          goal: 'General',
-          priority: 'quick-win'
-        }
-      ]
-    };
+    session.customReport = generateMockCustomReport(targetPath);
   }
   
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf8');

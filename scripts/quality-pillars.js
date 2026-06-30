@@ -16,7 +16,11 @@ const TEAM_COLORS = {
   YELLOW: '🟡 Yellow Team (System Builders & Deployment Lifecycle)'
 };
 
+const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+
 module.exports = {
   QUALITY_PILLARS,
-  TEAM_COLORS
+  TEAM_COLORS,
+  DISCLAIMER_TEXT
 };
+
