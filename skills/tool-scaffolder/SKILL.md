@@ -17,26 +17,28 @@ Use this skill when:
 
 ## Core Process
 
-### Phase 1: Pre-requisites Check & State Isolation
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
-1. **Developer Consent:** Prompt the developer and obtain explicit permission before executing installations or modifying files.
-2. **Clean State Check:** Run version control checks (e.g., `git status`, `hg status`, `p4 status`) to ensure the working tree is clean before modifying files.
+### Phase 1: Contract Ingestion & State Baseline
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment.
+1. **Contract Loading & Validation:** Read the stored JSON scaffolding contract file at `.repo-wizard/reports/<repoName>/contracts/<agentName>-contract.json` (where `<repoName>` is the folder name of the target repository being scanned).
+2. **Version Checking:** Verify that the contract's `contract_version` is supported and compatible. If there is a schema version mismatch or the format is obsolete, halt and report a clean version mismatch error.
+3. **Developer Consent:** Present the packages and configuration modifications from the contract to the developer and obtain explicit permission to proceed.
+4. **VCS State Baseline:** Immediately before making any modifications to target files, execute a VCS check (e.g. `git status` or `git diff`) to capture the active workspace baseline. This baseline state must be used to guide rollbacks if verification fails.
 
 ### Phase 2: Package Installation & Configuration
 - **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
-1. **Installation:** Run package manager commands securely.
-2. **Safe Merging:** Write new configurations or merge into existing configurations. Always use precise, AST-based edits or line replacements to prevent syntax syntax breakage.
+1. **Installation:** Run package manager commands specified in the scaffolding contract.
+2. **Safe Merging:** Write new configurations or merge into existing configurations as specified in the contract. Always use precise, AST-based edits or line replacements to prevent syntax breakage.
 3. **Nuance Explanation:** Explain the configuration parameters being created or modified, highlighting tradeoffs (e.g. strictness settings).
 
 ### Phase 3: Verification & Documentation Integration
 - **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tool-scaffolder-agent.md`.
-1. **Verification Command:** Run the designated verification check (e.g. `npm run build`, `cargo check`, `npm test`) to ensure the build compiles cleanly.
+1. **Verification Command:** Run the designated verification command from the contract (e.g. `npm run test`, `cargo check`) to ensure the build compiles cleanly.
 2. **Setup Integration:** Search for and append setup/install instructions to onboarding guides (`README.md`, `setup.sh`, `install.sh`) to support onboarding.
 
-### Phase 4: Rollback & Recovery
-1. **Build Safety Failures:** If verification fails, notify the developer. Attempt to resolve the issue first.
-2. **Developer Consent:** Ask the developer for explicit permission/consent before executing any VCS rollback.
-3. **VCS Rollback:** Run target VCS rollback commands (e.g. `git checkout -- .` and `git clean -fd`, `hg revert --all`, or `p4 revert`) if debugging fails or if approved.
+### Phase 4: VCS-Driven Rollback & Recovery
+1. **Build Safety Failures:** If verification fails, notify the developer and output the error. Attempt to resolve the issue first.
+2. **Developer Consent:** Ask the developer for explicit permission/consent before executing a VCS rollback.
+3. **VCS Rollback:** Run target VCS rollback commands (e.g. `git checkout` or `git clean` on the specific modified files) to restore the codebase back to the exact VCS State Baseline captured in Phase 1, preserving all other developer edits.
 
 ## Common Rationalizations
 - *"I don't need to run verification if the package was installed successfully."* - Package installation is only half the battle. Configuration files can introduce syntax errors or conflict with other setups. Always run verification.
