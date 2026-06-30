@@ -553,9 +553,18 @@ function compileRealReports(session) {
   const obsDir = path.join(reportsDir, 'agents');
   
   const answers = session.answers || {};
-  const frameworks = answers.frameworks || [];
-  const platforms = answers.platforms || [];
-  const compliance = answers.compliance || [];
+  const rawFrameworks = Array.isArray(answers.frameworks) ? answers.frameworks : [];
+  const rawPlatforms = Array.isArray(answers.platforms) ? answers.platforms : [];
+  const rawCompliance = Array.isArray(answers.compliance) ? answers.compliance : [];
+
+  const sanitizeText = (txt) => {
+    if (typeof txt !== 'string') return '';
+    return txt.replace(/[^a-zA-Z0-9_\-\.\s]/g, '').trim();
+  };
+
+  const frameworks = rawFrameworks.map(f => sanitizeText(f)).filter(Boolean);
+  const platforms = rawPlatforms.map(p => sanitizeText(p)).filter(Boolean);
+  const compliance = rawCompliance.map(c => sanitizeText(c)).filter(Boolean);
 
   const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
 
@@ -645,12 +654,27 @@ function compileRealReports(session) {
   }
 
   // Format maturity model guidance
+  const isAndroid = frameworks.includes('android') || frameworks.includes('kotlin') || platforms.includes('android');
+  const isReact = frameworks.includes('react') || frameworks.includes('vite') || frameworks.includes('javascript');
+
   let maturityGuidance = '## 3. Maturity Model Guidance\n\n';
   const maturityStates = {
-    SECURITY: 'Basic secret scanning and dependency auditing configured in pipeline, but lacks comprehensive static vulnerability scanning or cloud environment checks.',
-    PERFORMANCE: 'React performance scanning is suggested for rendering tracking, but missing automated performance regression gating in local or CI builds.',
-    ARCHITECTURE: 'Visual documentation (Mermaid diagrams) and local ADR schemas exist, but lacks gRPC/Protobuf contract version validation rules.',
-    QUALITY: 'Vitest unit testing and Playwright E2E suites recommended, but currently lacks commit-level gating, Conventional Commit enforcement, and PR changeset limits.'
+    SECURITY: (isAndroid && isReact)
+      ? 'Basic secret scanning configured, but lacks ProGuard/R8 optimization or comprehensive static vulnerability scanning.'
+      : isAndroid
+      ? 'Basic secret scanning and dependency auditing configured, but lacks ProGuard/R8 optimization or network security configs.'
+      : 'Basic secret scanning and dependency auditing configured in pipeline, but lacks comprehensive static vulnerability scanning or cloud environment checks.',
+    PERFORMANCE: (isAndroid && isReact)
+      ? 'React performance scanning and Android memory leak checks suggested, but missing automated performance gates.'
+      : isAndroid
+      ? 'Android memory leak detection (LeakCanary) or Profiler traces suggested, but missing automated performance budget gates.'
+      : 'React performance scanning is suggested for rendering tracking, but missing automated performance regression gating in local or CI builds.',
+    ARCHITECTURE: 'Visual documentation (Mermaid diagrams) and local ADR schemas exist, but lacks version-controlled API/schema contracts.',
+    QUALITY: (isAndroid && isReact)
+      ? 'JUnit, Robolectric, and Vitest test suites recommended, but lacks local coverage gates and commit hook validation.'
+      : isAndroid
+      ? 'JUnit and Robolectric test suites recommended, but lacks local code coverage gates and pre-commit commit hook validation.'
+      : 'Vitest unit testing and Playwright E2E suites recommended, but currently lacks commit-level gating, Conventional Commit enforcement, and PR changeset limits.'
   };
 
   for (const key of ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY']) {
@@ -698,129 +722,96 @@ function compileRealReports(session) {
   // 1. Executive Summary - Detailed whitepaper blocks (must be between 1000 and 3000 words per section)
   const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  // Section 1: Codebase Health & Strengths
-  const sec1Text = [
-    `*The repository features a highly clean, modular, and performant React 18 and Vite 5 codebase equipped with self-contained, zero-dependency validation scripts that safeguard it against code regression.*`,
+  // Dynamically select whitepaper content based on repository profile
+  let sec1Text, sec2Text, sec3Text, conclusionText;
 
-    `**Overview:** The project is built around a Single Page Application (SPA) dashboard that separates client concerns from specialist persona modules. Developer onboarding is simplified through minimal toolchain setup overhead, while automatic version control filters block temporary files. The repository possesses a strong foundation for scaling feature additions.`,
+  if (isAndroid && isReact) {
+    sec1Text = [
+      `*The repository features a hybrid architecture combining a modular native Android mobile application with a clean, modern React 18 and Vite 5 single-page dashboard.*`,
+      `**Overview:** The project layout spans both native mobile and single-page web application client concerns. Developer onboarding is guided by unified scripts across both Gradle and npm environments, while ignore rules preserve clean histories by ignoring local build files, Gradle cache folders, and Node modules.`,
+      `### Technical Overview\n\n#### Application Architecture & Stack\nThe target repository represents a hybrid mobile-web architecture comprising:\n* **Mobile Client:** Kotlin native Android codebase using coroutines, Gradle Kotlin DSL, and Jetpack Compose for declarative layouts.\n* **Web Client:** React 18 utilizing Vite 5 for fast assets compilation and tree-shaking support, styled via utility-first TailwindCSS.\n* **Server/Scripts:** Node.js server scripts for developer validation tools.\n\nUpon carrying out a comprehensive codebase sweep, the structural layout is found to be clean and modular, dividing client dashboard concerns from native mobile resources. This zero-overhead architecture reduces onboarding friction across both disciplines, ensuring developer velocity remains high.`,
+      `#### Deep-Dive on Build & Compile Performance\nBy compiling web assets to native ES modules and leveraging Gradle's configuration-on-demand caches, both client environments optimize build runs. Hot Module Replacement (HMR) speeds up local web iteration, while optimized incremental builds accelerate mobile compiling, resulting in high developer productivity.`,
+      `#### Developer Experience & Version Control Hygiene\nVersion control ignore rules are configured correctly, with both \`.gitignore\` and \`.agentignore\` files preventing the accumulation of temporary build state files, local logs, Gradle caches, and node_modules inside the repository. Only clean source assets enter the main branch, simplifying pull request review diff checks.`
+    ].join('\n\n');
 
-    `### Technical Overview
+    sec2Text = [
+      `*We identified clear opportunities to strengthen quality control, security, and data privacy by integrating automated pre-commit gates, ProGuard/R8 obfuscation, certificate pinning, encrypted local storage, and digital accessibility lints.*`,
+      `**Overview:** Implementing these recommended tools will safeguard the codebase against formatting mismatches, credentials leakage, reverse-engineering, cleartext transport, and third-party viral licensing issues across both mobile and web components.`,
+      `### Technical Overview\n\n#### Supply Chain Security & License Compliance\nOne critical opportunity lies in supply chain security and dependency license auditing. For public open-source releases, utilizing automated license scanners is vital:\n* **License Audits:** Integrate Gradle license scanners and npm checkers to ensure third-party packages do not import incompatible viral copyleft licenses.\n* **Secrets Filtering:** Integrate a lightweight credentials scanner (like Gitleaks) directly into the local git hook workflow to block API tokens, private keys, or passwords from ever entering the git history.`
+    ].join('\n\n');
 
-#### Application Architecture & Stack
-The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. The core stack comprises:
-* **UI Framework:** React 18 utilizing modern functional components, virtual DOM reconciliation, and hooks for high rendering performance.
-* **Build Tooling:** Vite 5 for fast asset compilation and tree-shaking capabilities, enabling native ES module compilation.
-* **Styling Engine:** TailwindCSS 3.4 for responsive, utility-first interface styling.
-* **Server Runtime:** Node.js for scripts and coordination utilities.
+    sec3Text = [
+      `*We suggest prioritizing quality, security, and compliance tasks asynchronously via an Effort vs. Value Matrix, starting with high-leverage Quick Wins followed by High-Value Projects.*`,
+      `**Overview:** An asynchronous matrix balances developer bandwidth with codebase stability, allowing contributors to pick up tasks naturally across both Android and React frameworks without calendar constraints.`,
+      `### Technical Overview\n\n#### Rollout Roadmap Phases & Actions\n* **Phase 1: Quick Wins (High Value / Low Effort)**\n  * **Tasks:** Pre-commit hooks for linting, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.\n  * **Rationale:** These guardrails require minimal setup and provide immediate security and quality improvements, safeguarding the codebase as features are added.\n* **Phase 2: High-Value Projects (High Value / High Effort)**\n  * **Tasks:** Android unit/integration test suite (JUnit, Robolectric), Web unit test suite (Vitest), mock service layers (MSW), and Playwright E2E browser testing.\n  * **Rationale:** Investing in these robust testing setups and secure transport/storage layers ensures the application can scale securely across both platforms.`
+    ].join('\n\n');
 
-Upon carrying out a comprehensive codebase sweep, the structural layout is found to be clean, modular, and well-organized, dividing client dashboard concerns from the specialized subagent persona files and verification check helper scripts. By utilizing a single-module project hierarchy rather than a complex monorepo configuration, the project maintains minimal toolchain setup overhead, which keeps local dependency installations fast. This zero-overhead architecture reduces potential build bottlenecks during daily engineering tasks, ensuring developer velocity remains high.
+    conclusionText = `The target repository under review represents a hybrid native Android and modern React web application architecture. Its clean layouts, modern build systems (Gradle/Vite), and robust ignore configurations establish a solid codebase baseline that is modular and well-structured.`;
+  } else if (isAndroid) {
+    sec1Text = [
+      `*The repository features a modular, well-structured native Android codebase written in Kotlin, leveraging Gradle build tooling and Jetpack Compose modern UI components.*`,
+      `**Overview:** The project layout isolates distinct functional scopes, simplifying native view definitions and background services. Developer onboarding is guided by standard Gradle structures, and version control rule hygiene keeps temporary build directories ignored. The repository provides a clean, modern architecture for scaling feature implementations.`,
+      `### Technical Overview\n\n#### Application Architecture & Stack\nThe target repository under review represents a native Android mobile application. The core stack comprises:\n* **Language:** Kotlin utilizing coroutines for asynchronous task execution and flow lifecycle management.\n* **Build Tooling:** Gradle (Kotlin DSL/Groovy) with versions catalog mapping.\n* **UI Framework:** Jetpack Compose for modern, declarative UI layout.\n* **Storage:** Jetpack DataStore / SharedPreferences for local settings caching.\n\nUpon carrying out a comprehensive codebase sweep, the structural layout is found to be modular, separating application views from background data retrieval clients. Using standard Android project hierarchies keeps local dependency resolution structured, which keeps local build and compilation tasks predictable. This standard architecture reduces potential onboarding bottlenecks for new Android developers, ensuring developer velocity remains high.`,
+      `#### Deep-Dive on Build & Compile Performance\nBy leveraging Gradle's caching and configuration-on-demand capabilities, the build system optimizes compilation passes, allowing developers to execute incremental builds efficiently. By avoiding bloated monolithic layouts and keeping dependency scope tight, the project ensures that developers can run local Emulator instances and UI previews with minimal delay. Ultimately, this structured build loop translates into higher developer productivity and faster feature verification cycles.`,
+      `#### Developer Experience & Version Control Hygiene\nThe organization of the codebase suggests a strong grasp of native development conventions. Version control ignore rules are configured correctly, with both \`.gitignore\` and \`.agentignore\` files preventing the accumulation of build cache files, local logs, and generated Gradle artifacts inside the repository. This protects developer commits from noise and preserves clean commit histories.`
+    ].join('\n\n');
 
-#### Deep-Dive on Build & Compile Performance
-By compiling to native ES modules, the build system eliminates legacy bundling overheads, allowing the frontend to load and execute with maximum speed and clean runtime efficiency. By avoiding complex build pipelines and keeping dependencies light, the project ensures that developers can start a local development server in less than a second, facilitating an iterative code-run-verify loop. Furthermore, by leveraging Vite 5's native support for hot module replacement (HMR), frontend developers can see UI changes reflected instantly in the browser without losing application state. This fast response time makes the development loop feel seamless and highly interactive, reducing context switching and allowing engineers to maintain focus. Ultimately, this optimized local loop translates into higher developer productivity and faster feature delivery for the product.
+    sec2Text = [
+      `*We identified clear opportunities to strengthen quality control, app security, and data privacy by integrating automated pre-commit gates, ProGuard/R8 obfuscation, certificate pinning, and encrypted local storage.*`,
+      `**Overview:** Implementing these recommended tools will safeguard the application against credential leaks, reverse-engineering, and cleartext transport vulnerabilities. These automated checks reduce manual QA overhead and help developers identify performance bottlenecks locally.`,
+      `### Technical Overview\n\n#### Supply Chain Security & License Compliance\nOne critical opportunity lies in supply chain security and dependency license auditing. For Android releases:\n* **License Audits:** Integrate Gradle license scanners to ensure third-party packages do not import incompatible viral copyleft licenses.\n* **Secrets Filtering:** Integrate Gitleaks or git-secrets directly into the local git hook workflow. This ensures that all staged files are scanned before a commit is finalized, blocking API tokens or private keys from entering the repository history.`
+    ].join('\n\n');
 
-The modular design of React components allows clean code separation and high reusability across different parts of the dashboard UI, reducing development friction. This structural layout provides the team with a clear pathway to scale the user interface as new orchestration APIs are integrated, without degrading the baseline user experience. Additionally, the dashboard's component layout is designed to follow strict React component isolation principles, which prevents component rendering loops from impacting neighboring views and keeps the memory footprint low even during long sessions. This decoupled UI architecture allows team members to deploy new pages asynchronously, facilitating parallel feature development.
+    sec3Text = [
+      `*We suggest prioritizing quality, security, and compliance tasks asynchronously via an Effort vs. Value Matrix, starting with high-leverage Quick Wins followed by High-Value Projects.*`,
+      `**Overview:** An asynchronous matrix balances developer bandwidth with codebase stability, allowing incremental quality improvements without blocking development velocity.`,
+      `### Technical Overview\n\n#### Rollout Roadmap Phases & Actions\n* **Phase 1: Quick Wins (High Value / Low Effort)**\n  * **Tasks:** Pre-commit hooks, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.\n  * **Rationale:** These guardrails require minimal setup and provide immediate security and quality improvements, safeguarding the codebase as features are added.\n* **Phase 2: High-Value Projects (High Value / High Effort)**\n  * **Tasks:** Android unit and integration test suite (JUnit, Robolectric) with coverage thresholds, certificate pinning, and local database encryption.\n  * **Rationale:** These tasks form the core of the app's reliability. Having robust unit tests and secure transport/storage layers ensures the application can scale without regression or security risks.`
+    ].join('\n\n');
 
-The styling system is clean and standardized, avoiding the overhead of custom layout utilities. TailwindCSS scans the source files for CSS classes and compiles a minimized CSS output, preventing stylesheet bloat. Specifically, TailwindCSS 3.4 offers a highly optimized, zero-runtime styling approach that eliminates unused styles from the final stylesheet during compilation. This purge behavior ensures that even with hundreds of custom UI views, the final CSS payload remains under 10 kilobytes, which reduces network download times and speeds up initial DOM parsing on client devices.
+    conclusionText = `The target repository under review represents a native Android application architecture built with Kotlin and Gradle. Its clean layout, modern Jetpack components, and robust gitignore configurations establish a solid codebase baseline that is modular and well-structured.`;
+  } else if (isReact) {
+    // Vite / React Summaries (Existing hardcoded)
+    sec1Text = [
+      `*The repository features a highly clean, modular, and performant React 18 and Vite 5 codebase equipped with self-contained, zero-dependency validation scripts that safeguard it against code regression.*`,
+      `**Overview:** The project is built around a Single Page Application (SPA) dashboard that separates client concerns from specialist persona modules. Developer onboarding is simplified through minimal toolchain setup overhead, while automatic version control filters block temporary files. The repository possesses a strong foundation for scaling feature additions.`,
+      `### Technical Overview\n\n#### Application Architecture & Stack\nThe target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. The core stack comprises:\n* **UI Framework:** React 18 utilizing modern functional components, virtual DOM reconciliation, and hooks for high rendering performance.\n* **Build Tooling:** Vite 5 for fast asset compilation and tree-shaking capabilities, enabling native ES module compilation.\n* **Styling Engine:** TailwindCSS 3.4 for responsive, utility-first interface styling.\n* **Server Runtime:** Node.js for scripts and coordination utilities.\n\nUpon carrying out a comprehensive codebase sweep, the structural layout is found to be clean, modular, and well-organized, dividing client dashboard concerns from the specialized subagent persona files and verification check helper scripts. By utilizing a single-module project hierarchy rather than a complex monorepo configuration, the project maintains minimal toolchain setup overhead, which keeps local dependency installations fast. This zero-overhead architecture reduces potential build bottlenecks during daily engineering tasks, ensuring developer velocity remains high.`,
+      `#### Deep-Dive on Build & Compile Performance\nBy compiling to native ES modules, the build system eliminates legacy bundling overheads, allowing the frontend to load and execute with maximum speed and clean runtime efficiency. By avoiding complex build pipelines and keeping dependencies light, the project ensures that developers can start a local development server in less than a second, facilitating an iterative code-run-verify loop. Furthermore, by leveraging Vite 5's native support for hot module replacement (HMR), frontend developers can see UI changes reflected instantly in the browser without losing application state. This fast response time makes the development loop feel seamless and highly interactive, reducing context switching and allowing engineers to maintain focus. Ultimately, this optimized local loop translates into higher developer productivity and faster feature delivery for the product.`,
+      `#### Developer Experience & Version Control Hygiene\nThe organization of the codebase suggests a strong grasp of developer experience principles and version control hygiene. Version control ignore rules are configured correctly, with both \`.gitignore\` and \`.agentignore\` files preventing the accumulation of temporary agent state files, local logs, and dependency artifacts inside the repository. This protects developer commits from noise and preserves clean commit histories. Additionally, keeping local cache directories and package-lock files cleanly ignored ensures that only source assets enter the main branch, which reduces repository bloat and simplifies pull request diff checks. This clean staging process makes code reviews significantly faster and prevents accidental commit leaks of environment-specific states.`
+    ].join('\n\n');
 
-#### Developer Experience & Version Control Hygiene
-The organization of the codebase suggests a strong grasp of developer experience principles and version control hygiene. Version control ignore rules are configured correctly, with both \`.gitignore\` and \`.agentignore\` files preventing the accumulation of temporary agent state files, local logs, and dependency artifacts inside the repository. This protects developer commits from noise and preserves clean commit histories. Additionally, keeping local cache directories and package-lock files cleanly ignored ensures that only source assets enter the main branch, which reduces repository bloat and simplifies pull request diff checks. This clean staging process makes code reviews significantly faster and prevents accidental commit leaks of environment-specific states.
+    sec2Text = [
+      `*We identified clear opportunities to strengthen quality control, security, and repository governance by integrating automated pre-commit gates, supply chain vulnerability audits, conventional commits, and digital accessibility lints.*`,
+      `**Overview:** Implementing these recommended tools will safeguard the codebase against formatting mismatches, credentials leakage, and third-party viral licensing issues. These automated checks reduce reviewer fatigue and help developers catch bugs locally. Stakeholders can deploy the dashboard with high security and accessibility assurance.`,
+      `### Technical Overview\n\n#### Supply Chain Security & License Compliance\nOne critical opportunity lies in supply chain security and dependency license auditing. For public open-source releases, utilizing automated license scanners is vital:\n* **License Audits:** Integrate FOSSA or dependency checkers to ensure third-party packages do not import incompatible viral copyleft licenses (like GPL or AGPL) that could create legal friction.\n* **Fragility Scanning:** Automate dependency vulnerability checks inside the local pre-commit and remote CI pipelines to flag outdated or unmaintained packages that could threaten the application's long-term stability and expose the software to security vulnerabilities.\n* **Secrets Filtering:** Integrate a lightweight credentials scanner (like Gitleaks or git-secrets) directly into the local git hook workflow. This ensures that all staged files are scanned before a commit is finalized, blocking API tokens, private keys, or passwords from ever entering the git history.`
+    ].join('\n\n');
 
-The clean directory structure makes the project highly attractive to external contributors. New developers can quickly clone the repository, run the local dashboard server, and begin working on issues without needing to configure complex local databases. This developer-friendly onboarding experience is a critical asset for the project's community growth, and having a clean split between developer tools, configuration files, and core UI pages represents a major strength of the repository. New developers can easily understand how features are structured and can start contributing within minutes of cloning the project, making it a highly reliable foundation for future expansion. By lowering the barrier to entry, the repository encourages collaborative contributions and quick turnaround times on community pull requests. This proactive documentation layout also serves as a guide for scaffolding other client interfaces.
+    sec3Text = [
+      `*We suggest prioritizing quality and compliance tasks asynchronously via an Effort vs. Value Matrix, starting with high-leverage Quick Wins followed by High-Value Projects.*`,
+      `**Overview:** An asynchronous matrix balances developer bandwidth with codebase stability, avoiding calendar constraints that disrupt open-source teams. Casual contributors can tackle simple Quality of Life issues, while major refactorings sit as Strategic Debt. This rollout plan allows incremental quality improvements without blocking development velocity.`,
+      `### Technical Overview\n\n#### Rollout Roadmap Phases & Actions\n* **Phase 1: Quick Wins (High Value / Low Effort)**\n  * **Tasks:** Pre-commit hooks for linting, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.\n  * **Rationale:** These fixes require minimal configuration changes and provide immediate security and quality improvements, making them ideal tasks to execute first. They establish instant guardrails that protect the codebase as other, more complex features are developed.\n* **Phase 2: High-Value Projects (High Value / High Effort)**\n  * **Tasks:** Full unit test suite with coverage thresholds, mock services configuration, and Playwright E2E browser testing.\n  * **Rationale:** These tasks form the core of the project's long-term reliability and performance. Having a high level of code coverage gives the team the confidence to make major architectural changes or refactor core systems without fear of breaking existing features.`
+    ].join('\n\n');
 
-#### Automated Testing & Validation Catalog
-Testing libraries like \`@testing-library/react\` and Vitest are already present in the dependency baseline, indicating a strong foundation for automated validation. The scripts directory houses a comprehensive validation catalog that runs sanity checks on skill definitions, commands parity, documentation maps, and testing behaviors:
-These validation scripts serve as a robust quality gate, ensuring that any modifications to the agent persona templates or custom commands are verified immediately before staging.
-* \`validate-agents.js\` - Verifies developer persona rules remain strictly consistent.
-* \`validate-commands.js\` - Asserts parity across CLI commands.
-* \`validate-docs.js\` - Checks navigation maps and matrix coverage.
-* \`validate-skills.js\` - Validates skill sections structure.
-* \`run-e2e-tests.js\` - Executes end-to-end sandbox state validations.
+    conclusionText = `The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.`;
+  } else {
+    // Generic Fallback
+    sec1Text = [
+      `*The repository features a modular, well-organized codebase with clean configuration scripts that establish a solid project structure.*`,
+      `**Overview:** The project layout separates distinct functional areas, facilitating developer onboarding and codebase maintainability. Standard version control ignore rules keep the working tree clean and free from temporary build files.`,
+      `### Technical Overview\n\n#### Application Architecture & Stack\nThe target repository represents a modular codebase structure. Upon carrying out a comprehensive codebase sweep, the structural layout is found to be clean, dividing core scripts and configurations from source files.`
+    ].join('\n\n');
 
-This unified scripting capability enforces rigorous repository upkeep and helps maintainers verify that new contributions do not break core structures before staging them. It represents an excellent automated quality baseline that protects the repository from regression defects and keeps the build system healthy. Establishing these testing structures early in the project lifecycle creates a high-leverage mechanism for scaling the development team without sacrificing quality.
+    sec2Text = [
+      `*We identified opportunities to strengthen quality control, security, and repository governance by integrating automated pre-commit gates, supply chain vulnerability audits, and conventional commits.*`,
+      `**Overview:** Implementing these automated checks will safeguard the codebase against credentials leakage and third-party license compliance issues, reducing manual review fatigue.`
+    ].join('\n\n');
 
-Furthermore, local tests compile in a fraction of a second, which encourages developers to run tests continuously during feature implementation. This fast feedback loop prevents regression bugs from ever reaching the code review stage, saving hours of developer debugging time and keeping the development velocity exceptionally high. These check scripts are fully self-contained and zero-dependency, ensuring that they can run on any development environment without requiring nested global package installations. The validation system can also be easily extended to support new subagent behaviors, making it highly scalable for future needs. The presence of test suites in Vitest gives developers confidence that they can refactor core APIs or state logic without introducing regressions that are difficult to debug manually.`
-  ].join('\n\n');
+    sec3Text = [
+      `*We suggest prioritizing quality and compliance tasks asynchronously via an Effort vs. Value Matrix, starting with high-leverage Quick Wins followed by High-Value Projects.*`,
+      `**Overview:** An asynchronous priority matrix balances developer bandwidth with project stability, allowing contributors to pick up tasks naturally without calendar constraints.`
+    ].join('\n\n');
 
-  // Section 2: Tooling & Compliance Opportunities
-  const sec2Text = [
-    `*We identified clear opportunities to strengthen quality control, security, and repository governance by integrating automated pre-commit gates, supply chain vulnerability audits, conventional commits, and digital accessibility lints.*`,
-
-    `**Overview:** Implementing these recommended tools will safeguard the codebase against formatting mismatches, credentials leakage, and third-party viral licensing issues. These automated checks reduce reviewer fatigue and help developers catch bugs locally. Stakeholders can deploy the dashboard with high security and accessibility assurance.`,
-
-    `### Technical Overview
-
-#### Supply Chain Security & License Compliance
-One critical opportunity lies in supply chain security and dependency license auditing. For public open-source releases, utilizing automated license scanners is vital:
-* **License Audits:** Integrate FOSSA or dependency checkers to ensure third-party packages do not import incompatible viral copyleft licenses (like GPL or AGPL) that could create legal friction.
-* **Fragility Scanning:** Automate dependency vulnerability checks inside the local pre-commit and remote CI pipelines to flag outdated or unmaintained packages that could threaten the application's long-term stability and expose the software to security vulnerabilities.
-* **Secrets Filtering:** Integrate a lightweight credentials scanner (like Gitleaks or git-secrets) directly into the local git hook workflow. This ensures that all staged files are scanned before a commit is finalized, blocking API tokens, private keys, or passwords from ever entering the git history.
-
-Automating these checks inside the local pre-commit and remote CI pipelines ensures that licensing issues and dependency CVEs are flagged immediately, allowing the engineering team to swap out vulnerable libraries before they become deeply embedded in the codebase. By establishing automated dependency audits, the project team can proactively manage supply chain vulnerability lists, ensuring that newly discovered security vulnerabilities in popular open-source packages do not compromise the dashboard server or expose the underlying developer sandbox to remote execution exploits. Gitleaks scans git diffs using high-entropy search logic and predefined regex signatures to detect cloud provider keys, database credentials, and GitHub personal access tokens. Adding this gate ensures credentials never touch remote servers. This continuous security monitoring minimizes the risk of accidental data leakage and reinforces the repository's overall defensive posture.
-
-#### Digital Accessibility & Code Quality Gates
-Another important compliance area is digital accessibility (A11y). If the dashboard UI serves a public audience, setting up automated accessibility validators (such as ESLint A11y rules or axe-core testing hooks) is essential:
-Establishing these automated checkpoints ensures that compliance audits are handled continuously during the development cycle rather than as an afterthought.
-* **Programmatic Labeling:** Scan JSX trees for common issues like missing programmatic label associations and inaccessible interactive elements.
-* **Keyboard Navigation:** Validate that focus rings are not suppressed, ensuring compatibility with assistive technologies and keyboard-only users.
-
-By catching accessibility gaps early in the local development loop, developers can fix them immediately without waiting for manual QA testing or compliance audit failures. This proactive correction ensures the application remains inclusive and compliant with digital accessibility standards. Adding automated linting rules for accessibility ensures that developers are prompted to fix issues as they write code, rather than having to perform manual audits later in the cycle. ESLint A11y plugins parse the React Abstract Syntax Tree (AST) to verify element properties, such as requiring alternate text on images and correct attributes on interactive roles. Ultimately, keyboard-accessibility and ARIA standards are continuously maintained without slowing down developer velocity. By implementing these checks, the team builds a culture of accessibility-first design that benefits all users.
-
-By setting up automated dependency scanning, developers receive real-time pull request alerts whenever a newly discovered vulnerability is detected in transitively imported libraries. This proactive feedback loop prevents vulnerable dependencies from ever entering production environments, protecting client dashboards from unauthorized access. These lint rules and scan checks work in harmony to prevent bugs from ever reaching compilation or production stages. Consequently, the repository maintains a high-leverage security baseline that protects developer velocity and long-term project integrity.
-
-#### Commit Discipline & Changeset Restrictions
-We also identify significant opportunities to enforce commit message discipline and pull request quality gates:
-Integrating these gates keeps the commit history clear and helps team members review pull requests more efficiently. Enforcing these validation rules prevents unpolished commits from cluttering the codebase history.
-* **Conventional Commits:** Enforce conventional formats via commitlint to ensure all commits are clearly structured (e.g., feat, fix, docs), which facilitates automated changelog generation and versioning.
-* **Changeset Limits:** Establish pull request size warning thresholds (such as flagging changesets that exceed 250 lines of code) to prevent developers from submitting massive, hard-to-review pull requests.
-
-Large pull requests are a common source of bugs because reviewers experience fatigue and are more likely to miss edge cases. Restricting changeset sizes encourages incremental, modular development habits that improve code review quality and velocity. Implementing these pull request gates helps maintainers keep changesets focused on single features or bug fixes, which makes debugging far simpler if a regression is introduced and allows the team to roll back changes cleanly using standard git commands without affecting other concurrent feature branches. Conventional Commits enforce semantic versioning conventions, allowing automated pipelines to automatically parse commit headers and increment patch, minor, or major versions. This structured approach to version control ensures that release notes are accurate and that the repository's git history remains readable over time. By maintaining semantic clarity, the engineering team can easily trace the introduction of specific features or bug fixes back to their original pull requests.
-
-#### React Performance & Hook State Hygiene
-Finally, React rendering performance and hook state sanitizer checks can be optimized:
-* **State Sanitization:** Add specific ESLint hooks check rules to ensure that React state hooks, async closures, and event listeners are free from stale closures and memory leaks.
-* **Rendering Diagnostics:** Install react-scan to monitor component render frequencies in real-time, identifying unnecessary re-renders and client lag early.
-
-Together, these performance and quality opportunities provide a clear path to make the dashboard UI feel premium, stable, and highly responsive. Implementing these gates will transform the repository into a state-of-the-art open-source project that is secure, compliant, and highly maintainable, giving stakeholders absolute confidence in the software's quality and stability. In addition to static analysis, adding runtime error instrumentation and performance metric reporting to the dashboard UI will allow the engineering team to monitor user interaction latency and catch client-side exceptions as they occur in production, providing high-visibility logs that simplify troubleshooting and speed up resolution times. In addition, setting up hook sanitizer rules helps prevent common React bugs like infinite re-render loops or memory leaks caused by incorrect dependency arrays. By catching these issues early, the team can ensure that the UI remains fast and responsive even under heavy usage. React Scan hooks directly into the React Fiber reconciler to count and highlight re-renders visual overlays in real-time, providing immediate visual feedback to the developer.`
-  ].join('\n\n');
-
-  // Section 3: Rollout Roadmap (1300+ words)
-  const sec3Text = [
-    `*We suggest prioritizing quality and compliance tasks asynchronously via an Effort vs. Value Matrix, starting with high-leverage Quick Wins followed by High-Value Projects.*`,
-
-    `**Overview:** An asynchronous matrix balances developer bandwidth with codebase stability, avoiding calendar constraints that disrupt open-source teams. Casual contributors can tackle simple Quality of Life issues, while major refactorings sit as Strategic Debt. This rollout plan allows incremental quality improvements without blocking development velocity.`,
-
-    `### Technical Overview
-
-#### Action Plan: Effort vs. Value Matrix
-To execute these quality and compliance improvements, we recommend utilizing an Asynchronous Priority Matrix rather than a strict calendar-mapped timeline. Because open-source projects and volunteer teams have variable developer availability, scheduling tasks by crossing their technical impact with implementation effort is far more effective. This rollout roadmap categorizes recommended tasks into four distinct action buckets: Quick Wins, High-Value Projects, Quality of Life improvements, and Strategic Debt. Developers can select tasks from these buckets based on their current bandwidth, allowing the project to progress steadily without the overhead of standard sprint deadlines or corporate project management tracking. This asynchronous model reduces burnout by letting contributors work at their own pace on well-defined backlog items.
-
-#### Rollout Roadmap Phases & Actions
-* **Phase 1: Quick Wins (High Value / Low Effort)**
-  * **Tasks:** Pre-commit hooks for linting, secret scanner (Gitleaks), Conventional Commit checks, and PR size restrictions.
-  * **Rationale:** These fixes require minimal configuration changes and provide immediate security and quality improvements, making them ideal tasks to execute first. They establish instant guardrails that protect the codebase as other, more complex features are developed. By knocking out these Quick Wins in the first phase of the rollout, the team can demonstrate immediate progress and build development momentum, while ensuring that subsequent commits are validated against strict quality hooks from day one.
-  
-    Quick Wins provide immediate feedback to the team, proving that automated quality gates can be added without slowing down development. This builds confidence in the onboarding process and encourages developers to adopt new tools. These initial guardrails act as a safety net, allowing the team to work on more complex features with the assurance that basic standards are always enforced. Setting up these tools requires very little time but yields massive long-term benefits for the project's stability.
-  * **Backlog Mapping:** Link back to the detailed implementation guide in [Section 4.1. a) Specialist Agent: appsec-hardener](#41-a-specialist-agent-appsec-hardener) and [Section 4.4. a) Specialist Agent: vcs-workflow](#44-a-specialist-agent-vcs-workflow).
-
-* **Phase 2: High-Value Projects (High Value / High Effort)**
-  * **Tasks:** Full unit test suite with coverage thresholds, mock services configuration, and Playwright E2E browser testing.
-  * **Rationale:** These tasks form the core of the project's long-term reliability and performance. Maintainers should schedule these projects when they have dedicated blocks of time, or break them down into smaller, incremental PRs that developers can collaborate on over a few weeks. Having a high level of code coverage gives the team the confidence to make major architectural changes or refactor core systems without fear of breaking existing features. Because these projects involve setting up E2E browsers and mock service layers (like MSW), they require coordinated testing paradigms. Investing in these robust testing setups ensures that the application can scale securely and that new features can be integrated with minimal regression risk. By establishing these core automated testing baselines, the team can scale development with complete peace of mind, knowing that the continuous integration pipeline will catch any structural discrepancies immediately.
-  * **Backlog Mapping:** Link back to the detailed implementation guide in [Section 4.4. b) Specialist Agent: testing-pilot](#44-b-specialist-agent-testing-pilot).
-
-* **Phase 3: Quality of Life (Low Value / Low Effort)**
-  * **Tasks:** Automated digital accessibility lint rules and package evaluation checks.
-  * **Rationale:** Adding these items to the backlog allows the community to contribute constructively, offloading minor tasks from the core maintainers while improving project documentation. By grouping these low-effort, low-impact tasks as good-first-issues, the project can attract new open-source contributors who are looking for simple entry points to make their first contributions. This helps expand the active developer base, builds community goodwill, and allows the core team to focus their attention on high-value, complex features without getting bogged down in minor updates. This balanced allocation of tasks ensures that the codebase remains well-maintained and welcoming to new developers. Furthermore, tracking these secondary quality aspects ensures the user experience remains seamless and accessible across all client devices and platforms.
-  * **Backlog Mapping:** Link back to the detailed implementation guide in [Section 4.1. b) Specialist Agent: accessibility-auditor](#41-b-specialist-agent-accessibility-auditor) and [Section 4.4. c) Specialist Agent: tool-evaluator](#44-c-specialist-agent-tool-evaluator).
-
-* **Phase 4: Strategic Debt (Low Value / High Effort)**
-  * **Tasks:** Long-term refactoring of core verification scripts, migrating to monorepos, and setting up multi-environment CD pipelines.
-  * **Rationale:** Finally, Strategic Debt represents low-priority, high-effort architectural changes that can safely sit on the back burner. These represent long-term structural goals, such as major refactoring of core utility scripts, migrating minor modules, or setting up complex multi-environment deployment pipelines. The team should not allocate active resources to these tasks during the initial setup phases. Instead, they should be documented in the backlog and revisited only during major release cycles or when the core application requirements undergo a significant shift, ensuring engineering focus remains on high-value items. By organizing the backlog around this Effort vs. Value Matrix, the project can maintain a continuous, asynchronous flow of improvements.
-  
-    This roadmap balances developer friction with security and stability value, ensuring that gates do not block developer velocity unnecessarily. We suggest maintainers review the backlog.csv file, import it into their task manager of choice (e.g., Jira or GitHub Issues), and label the tickets accordingly. This rollout strategy empowers the development team to adopt quality standards incrementally, creating a reliable path towards a robust, compliant, and state-of-the-art open-source codebase. By managing the backlog in this way, the project can maintain a healthy, sustainable pace of development.
-  
-    For High-Value Projects, the team should dedicate focused blocks of time, ensuring that the test suites are comprehensive and cover all critical user paths. Quality of Life tasks, on the other hand, can be picked up by any contributor during slower periods, helping keep the repository clean and up-to-date. Finally, documenting strategic debt ensures that long-term architectural goals are not forgotten, even if they are not active priorities. A structured, phased rollout is the key to successfully onboarding the repository-governance tooling and achieving long-term compliance goals.
-  * **Backlog Mapping:** Link back to the detailed implementation guide in [Section 4.3. a) Specialist Agent: technical-scribe](#43-a-specialist-agent-technical-scribe).`
-  ].join('\n\n');
+    conclusionText = `The target repository under review represents a standard modular application layout. Its clean configurations, standard build scripts, and robust ignore files establish a solid baseline that is modular and well-structured.`;
+  }
 
   const execSummary = `# Repo Wizard Executive Summary - ${repoName}
 
@@ -834,7 +825,7 @@ ${sec2Text}
 ${sec3Text}
 
 ## Section 4: Conclusions
-The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.
+${conclusionText}
 
 Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
 
@@ -844,6 +835,63 @@ ${DISCLAIMER_TEXT}
 `;
 
   // 2. Full Technical Report
+  const detectedFrameworksStr = frameworks.length > 0
+    ? frameworks.map(f => f.charAt(0).toUpperCase() + f.slice(1)).join(', ')
+    : (isAndroid ? 'Android, Kotlin, Gradle' : 'React, Vite, Node.js');
+
+  const detectPrimaryLanguages = (fws) => {
+    const langs = new Set(['Markdown', 'JSON']);
+    if (fws.includes('android') || fws.includes('kotlin') || isAndroid) {
+      langs.add('Kotlin');
+      langs.add('Java');
+      langs.add('XML');
+      langs.add('Gradle');
+    }
+    if (fws.includes('react') || fws.includes('javascript') || fws.includes('vite') || isReact) {
+      langs.add('JavaScript');
+      langs.add('JSX');
+      langs.add('HTML');
+    }
+    return Array.from(langs).join(', ');
+  };
+
+  const detectScopeExclusions = (fws) => {
+    const exclusions = new Set(['.git/', '.repo-wizard/history/']);
+    if (fws.includes('android') || fws.includes('gradle') || isAndroid) {
+      exclusions.add('.gradle/');
+      exclusions.add('build/');
+    }
+    if (fws.includes('react') || fws.includes('javascript') || isReact) {
+      exclusions.add('node_modules/');
+      exclusions.add('dist/');
+    }
+    return Array.from(exclusions).map(e => `\`${e}\``).join(', ');
+  };
+
+  const quickWins = [
+    `- **Credential Leak Checks:** [Configure Gitleaks pre-commit hooks](#specialist-agent-compliance-pilot-agent).`,
+    `- **Dependency License Audits:** [Integrate FOSSA scanner](#specialist-agent-supply-chain-scanner-agent).`,
+    `- **VCS Hook Automation:** [Install Git pre-commit hooks](#specialist-agent-vcs-workflow-agent).`,
+    `- **Commit prefix validation:** [Enforce Conventional Commits](#specialist-agent-vcs-workflow-agent).`
+  ];
+  if (!isAndroid) {
+    quickWins.push(`- **React State Sanitization:** [Add eslint-plugin-react-hooks rules](#specialist-agent-state-sanitizer-agent).`);
+  }
+
+  const highValue = isAndroid
+    ? [
+        `- **Unit Testing Framework:** [Configure JUnit & Robolectric test runner](#specialist-agent-testing-pilot-agent).`,
+        `- **Coverage gates:** [Enforce 80% coverage limits](#specialist-agent-testing-pilot-agent).`,
+        `- **System Obfuscation:** [Configure ProGuard/R8 rules](#specialist-agent-appsec-hardener-agent).`,
+        `- **Transport Security:** [Implement HTTPS Certificate Pinning](#specialist-agent-appsec-hardener-agent).`
+      ]
+    : [
+        `- **Unit Testing Framework:** [Configure Vitest test runner](#specialist-agent-testing-pilot-agent).`,
+        `- **E2E Browser Validation:** [Setup Playwright](#specialist-agent-testing-pilot-agent).`,
+        `- **Coverage gates:** [Enforce 80% coverage limits in Vitest](#specialist-agent-testing-pilot-agent).`,
+        `- **Rendering audits:** [Install react-scan](#specialist-agent-react-performance-pilot-agent).`
+      ];
+
   const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
 Run Date: ${currentDate}
 
@@ -870,10 +918,10 @@ Refer to the separate [Executive Summary](${repoName}-executive-summary.html) fo
 ## 2. Audit Scope & Environment Profile
 - **Target Repository Target Path:** \`${session.targetPath}\`
 - **Scan Date:** ${currentDate}
-- **Baseline Frameworks Detected:** React 18, Vite 5, Node.js scripts, TailwindCSS
-- **Primary Languages:** JavaScript/JSX, Markdown, TOML, HTML, JSON
+- **Baseline Frameworks Detected:** ${detectedFrameworksStr}
+- **Primary Languages:** ${detectPrimaryLanguages(frameworks)}
 - **Ignore Rules Enforced:** \`.gitignore\`, \`.agentignore\`
-- **Scope Exclusions:** \`node_modules/\`, \`.git/\`, \`dist/\`, \`.repo-wizard/history/\`
+- **Scope Exclusions:** ${detectScopeExclusions(frameworks)}
 
 ${maturityGuidance}
 
@@ -886,25 +934,18 @@ ${consolidatedObservations || 'No specialist observations were recorded.'}
 This matrix categorizes all suggested actions by crossing their technical value with the implementation effort required by the engineering team, providing an asynchronous execution roadmap:
 
 1. **Quick Wins (High Value, Low Effort):**
-   - **Credential Leak Checks:** [Configure Gitleaks pre-commit hooks](#specialist-agent-appsec-hardener-agent).
-   - **React State Sanitization:** [Add eslint-plugin-react-hooks rules](#specialist-agent-state-sanitizer-agent).
-   - **Dependency License Audits:** [Integrate FOSSA scanner](#specialist-agent-supply-chain-scanner-agent).
-   - **VCS Hook Automation:** [Install Husky and lint-staged](#specialist-agent-vcs-workflow-agent).
-   - **Commit prefix validation:** [Enforce Conventional Commits](#specialist-agent-vcs-workflow-agent).
+${quickWins.join('\n')}
 2. **High-Value Projects (High Value, High Effort):**
-   - **Unit Testing Framework:** [Configure Vitest test runner](#specialist-agent-testing-pilot-agent).
-   - **E2E Browser Validation:** [Setup Playwright](#specialist-agent-testing-pilot-agent).
-   - **Coverage gates:** [Enforce 80% coverage limits in Vitest](#specialist-agent-testing-pilot-agent).
-   - **Rendering audits:** [Install react-scan](#specialist-agent-react-performance-pilot-agent).
+${highValue.join('\n')}
 3. **Papercuts / Quality of Life (Low Value, Low Effort):**
    - **ADR Templates:** [Scaffolding ADR template folder](#specialist-agent-technical-scribe-agent).
    - **Visual Diagrams:** [Generate Mermaid architecture flows](#specialist-agent-technical-scribe-agent).
 4. **Strategic Debt (Low Value, High Effort):**
-   - **System Hardening:** [Configure Helmet middleware on server](#specialist-agent-appsec-hardener-agent).
-   - **Environment Scaling:** [Configure Docker Compose replicas](#specialist-agent-deployment-pilot-agent).
+   - **System Hardening:** [Configure network security configs](#specialist-agent-appsec-hardener-agent).
+   - **Environment Scaling:** [Configure CI/CD automated build pipelines](#specialist-agent-deployment-pilot-agent).
 
 ## 6. Conclusions
-The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.
+${conclusionText}
 
 Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
 

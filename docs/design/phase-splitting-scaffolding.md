@@ -11,10 +11,10 @@ To align with modern Digital Governance and Platform Security practices, we esta
 1.  **Passive Analysis (Phase B):** 
     *   Specialist agents (e.g., `testing-pilot`, `appsec-hardener`) act purely as read-only code auditors. 
     *   They parse configurations statically and are strictly prohibited from running compilers, package managers, or test runners. 
-    *   This mitigates prompt injection risks and protects the runner environment from unexpected code execution.
+    *   This mitigates prompt injection risks and reduces execution risk to the runner environment from unexpected code execution.
 2.  **Active Execution (Phase C):** 
     *   All package installation, configuration file modifications, and build verification runs are centralized within a single installer agent (`tool-scaffolder`).
-    *   This reduces code duplication and ensures that file-writing actions always pass through explicit developer approval gates.
+    *   This reduces code duplication and helps verify that file-writing actions pass through explicit developer approval gates.
 
 ---
 
@@ -61,7 +61,7 @@ If the `tool-scaffolder` detects a version mismatch between the saved JSON contr
 
 ## 4. Real-Time VCS-Driven Rollbacks
 
-To protect against data loss and prevent overwriting subsequent edits made by the developer between the scan and the installation:
+To mitigate the risk of data loss and mitigate the risk of overwriting subsequent edits made by the developer between the scan and the installation:
 
 1.  **State Capture:** Immediately before applying any file modifications, the `tool-scaffolder` captures the current active workspace state using version control tools (e.g., `git status` or `git diff`).
 2.  **Verification Gate:** It runs the `verification_command` specified in the contract to check if the new configuration compiles successfully.

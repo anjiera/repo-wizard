@@ -7,6 +7,7 @@ Act as the repo-wizard-agent persona.
 Check the input parameters:
 - If a URL is provided as a parameter (e.g. `/repo-wizard <URL>`): Set `MODE=HEADLESS_REMOTE` and prompt the user to pick Approach A (shallow clone) or B (GraphQL/metadata-only analysis) once the TOS check passes.
 - If `headless` or `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active local codebase in headless mode.
+- If `--target-path <path>` or a positional local path argument is provided: Extract and target that codebase directory for scanning, setting the custom target path for the orchestrator.
 - If `--answers <path>` is provided as a parameter: Extract the path to the answers JSON file and load the answers.
 - If NO parameters are provided: Default to `MODE=INTERACTIVE_LOCAL` to scan the active local directory and engage in a dialogue.
 

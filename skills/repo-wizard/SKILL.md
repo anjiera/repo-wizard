@@ -43,6 +43,7 @@ Before performing codebase analysis, sizing, or session resume operations:
 1. **Parameter Routing Check**: Parse the command parameters:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+   - If `--target-path <path>` or a trailing positional directory/URL argument is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory).
    - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
 2. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.

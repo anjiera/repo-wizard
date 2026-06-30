@@ -21,7 +21,8 @@ const BLUE = '\x1b[34m';
  * Archives the active session, manifest, and compiled reports for a workspace.
  * @param {string} workspacePath
  */
-function archiveSession(workspacePath = process.cwd()) {
+function archiveSession(workspacePath = process.cwd(), options = {}) {
+  const opt = options || {};
   const wizardDir = path.join(workspacePath, '.repo-wizard');
   const repoName = path.basename(workspacePath);
 
@@ -61,12 +62,16 @@ function archiveSession(workspacePath = process.cwd()) {
       const base = path.basename(srcPath, ext);
       const destPath = path.join(historyDir, `${base}_${timestamp}${ext}`);
       
-      fs.copyFileSync(srcPath, destPath);
-      fs.unlinkSync(srcPath);
-      archivedFiles.push({
-        original: path.relative(workspacePath, srcPath),
-        archived: path.relative(workspacePath, destPath)
-      });
+      try {
+        fs.copyFileSync(srcPath, destPath);
+        fs.unlinkSync(srcPath);
+        archivedFiles.push({
+          original: path.relative(workspacePath, srcPath),
+          archived: path.relative(workspacePath, destPath)
+        });
+      } catch (e) {
+        // Ignore file archive errors
+      }
     }
   };
 
@@ -77,13 +82,17 @@ function archiveSession(workspacePath = process.cwd()) {
 
   // Ensure we keep an unchanged copy of session.json and manifest.json in the reports folder
   if (fs.existsSync(rootSession) && !fs.existsSync(reportsSession)) {
-    fs.copyFileSync(rootSession, reportsSession);
+    try {
+      fs.copyFileSync(rootSession, reportsSession);
+    } catch (e) { /* ignore */ }
   }
 
   const rootManifest = path.join(wizardDir, 'manifest.json');
   const reportsManifest = path.join(reportsDir, 'manifest.json');
   if (fs.existsSync(rootManifest) && !fs.existsSync(reportsManifest)) {
-    fs.copyFileSync(rootManifest, reportsManifest);
+    try {
+      fs.copyFileSync(rootManifest, reportsManifest);
+    } catch (e) { /* ignore */ }
   }
 
   // 1. Archive session.json & manifest.json from the root
@@ -92,49 +101,55 @@ function archiveSession(workspacePath = process.cwd()) {
 
   // 2. Archive all reports in reports/<repoName>/ (.md and .html only)
   if (fs.existsSync(reportsDir)) {
-    const items = fs.readdirSync(reportsDir);
-    for (const item of items) {
-      const itemPath = path.join(reportsDir, item);
-      if (fs.statSync(itemPath).isFile()) {
-        const ext = path.extname(item);
-        if (ext === '.md' || ext === '.html') {
-          archiveFile(itemPath);
-        }
+    try {
+      const items = fs.readdirSync(reportsDir);
+      for (const item of items) {
+        const itemPath = path.join(reportsDir, item);
+        try {
+          if (fs.statSync(itemPath).isFile()) {
+            const ext = path.extname(item);
+            if (ext === '.md' || ext === '.html') {
+              archiveFile(itemPath);
+            }
+          }
+        } catch (e) { /* ignore */ }
       }
-    }
+    } catch (e) { /* ignore */ }
   }
 
   // 3. Remove all files in the agent folder (reports/<repoName>/agents/)
   const agentsDir = path.join(reportsDir, 'agents');
   if (fs.existsSync(agentsDir)) {
-    const items = fs.readdirSync(agentsDir);
-    for (const item of items) {
-      const itemPath = path.join(agentsDir, item);
-      if (fs.statSync(itemPath).isFile()) {
-        fs.unlinkSync(itemPath);
-      }
-    }
     try {
+      const items = fs.readdirSync(agentsDir);
+      for (const item of items) {
+        const itemPath = path.join(agentsDir, item);
+        try {
+          if (fs.statSync(itemPath).isFile()) {
+            fs.unlinkSync(itemPath);
+          }
+        } catch (e) { /* ignore */ }
+      }
       fs.rmdirSync(agentsDir);
-    } catch (e) {
-      // Ignore
-    }
+    } catch (e) { /* ignore */ }
   }
 
-  // 3.5 Remove all files in the contracts folder (reports/<repoName>/contracts/)
-  const contractsDir = path.join(reportsDir, 'contracts');
-  if (fs.existsSync(contractsDir)) {
-    const items = fs.readdirSync(contractsDir);
-    for (const item of items) {
-      const itemPath = path.join(contractsDir, item);
-      if (fs.statSync(itemPath).isFile()) {
-        fs.unlinkSync(itemPath);
-      }
-    }
-    try {
-      fs.rmdirSync(contractsDir);
-    } catch (e) {
-      // Ignore
+  // 3.5 Remove all files in the contracts folder (reports/<repoName>/contracts/) only if pruneContracts is true
+  if (opt.pruneContracts === true) {
+    const contractsDir = path.join(reportsDir, 'contracts');
+    if (fs.existsSync(contractsDir)) {
+      try {
+        const items = fs.readdirSync(contractsDir);
+        for (const item of items) {
+          const itemPath = path.join(contractsDir, item);
+          try {
+            if (fs.statSync(itemPath).isFile()) {
+              fs.unlinkSync(itemPath);
+            }
+          } catch (e) { /* ignore */ }
+        }
+        fs.rmdirSync(contractsDir);
+      } catch (e) { /* ignore */ }
     }
   }
 
@@ -163,7 +178,7 @@ function archiveSession(workspacePath = process.cwd()) {
 // Support executing directly from command line
 if (require.main === module) {
   const targetDir = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
-  archiveSession(targetDir);
+  archiveSession(targetDir, { pruneContracts: true });
 }
 
 module.exports = { archiveSession };
