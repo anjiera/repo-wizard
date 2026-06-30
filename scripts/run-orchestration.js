@@ -59,12 +59,6 @@ let targetPath = null;
 const targetIdx = process.argv.indexOf('--target-path');
 if (targetIdx !== -1 && process.argv[targetIdx + 1]) {
   targetPath = process.argv[targetIdx + 1];
-} else {
-  // Positional argument check (excluding flag arguments and node/file path)
-  const possiblePaths = process.argv.slice(2).filter(arg => !arg.startsWith('-') && arg !== 'node' && !arg.endsWith('.js'));
-  if (possiblePaths.length > 0) {
-    targetPath = possiblePaths[0];
-  }
 }
 if (!targetPath) {
   targetPath = process.cwd();

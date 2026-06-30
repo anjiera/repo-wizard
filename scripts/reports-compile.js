@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { compileRealReports } = require('./dashboard-server');
+const { compileRealReports } = require('./reports-compiler-engine');
 const { archiveSession } = require('./reports-archive');
 
 // ANSI escape codes for colorized CLI output

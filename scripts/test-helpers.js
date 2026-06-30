@@ -369,12 +369,13 @@ function testRunOrchestration() {
     const testRepoDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
     if (!fs.existsSync(testRepoDir)) fs.mkdirSync(testRepoDir, { recursive: true });
     
+    const resolvedTestRepo = path.resolve(testRepoDir);
     const dummyPath = path.join(testRepoDir, 'dummy-report.md');
-    fs.writeFileSync(dummyPath, 'Target repo is test-repo located at D:\\Sandbox\\test-repo. Git URL is git@github.com:test-org/test-repo.git', 'utf8');
+    fs.writeFileSync(dummyPath, `Target repo is test-repo located at ${resolvedTestRepo}. Git URL is git@github.com:test-org/test-repo.git`, 'utf8');
 
     const redactRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" "D:\\Sandbox\\test-repo"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${resolvedTestRepo}"`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: {
