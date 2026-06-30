@@ -122,17 +122,29 @@ function checkAgyCli() {
   }
 
   if (!agyCmd) {
+    const isWindows = process.platform === 'win32';
+    const homeDir = process.env.HOME || process.env.USERPROFILE;
     const fallbackPaths = [];
-    if (process.env.USERPROFILE) {
-      fallbackPaths.push(path.join(process.env.USERPROFILE, '.gemini', 'antigravity', 'bin', 'agy.exe'));
+
+    if (isWindows) {
+      if (process.env.USERPROFILE) {
+        fallbackPaths.push(path.join(process.env.USERPROFILE, '.gemini', 'antigravity', 'bin', 'agy.exe'));
+      }
+      if (process.env.APPDATA) {
+        fallbackPaths.push(path.join(process.env.APPDATA, 'Antigravity', 'bin', 'agy.exe'));
+      }
+      if (process.env.LOCALAPPDATA) {
+        fallbackPaths.push(path.join(process.env.LOCALAPPDATA, 'Programs', 'Antigravity', 'bin', 'agy.exe'));
+      }
+    } else {
+      if (homeDir) {
+        fallbackPaths.push(path.join(homeDir, '.gemini', 'antigravity', 'bin', 'agy'));
+        fallbackPaths.push(path.join(homeDir, 'Library', 'Application Support', 'Antigravity', 'bin', 'agy'));
+        fallbackPaths.push(path.join(homeDir, '.local', 'share', 'Antigravity', 'bin', 'agy'));
+      }
+      fallbackPaths.push('/usr/local/bin/agy');
+      fallbackPaths.push('/opt/antigravity/bin/agy');
     }
-    if (process.env.APPDATA) {
-      fallbackPaths.push(path.join(process.env.APPDATA, 'Antigravity', 'bin', 'agy.exe'));
-    }
-    if (process.env.LOCALAPPDATA) {
-      fallbackPaths.push(path.join(process.env.LOCALAPPDATA, 'Programs', 'Antigravity', 'bin', 'agy.exe'));
-    }
-    fallbackPaths.push('D:\\agy\\bin\\agy.exe');
 
     for (const p of fallbackPaths) {
       if (fs.existsSync(p)) {
