@@ -22,7 +22,8 @@ const BLUE = '\x1b[34m';
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Compiling Repo Wizard reports from specialist observations...${RESET}`);
 
-const pointerPath = path.join(__dirname, '..', '.repo-wizard', 'last_session_path.json');
+const ROOT = require('./root-resolver');
+const pointerPath = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
 let sessionPath = '';
 
 if (fs.existsSync(pointerPath)) {
@@ -37,7 +38,7 @@ if (fs.existsSync(pointerPath)) {
 }
 
 if (!sessionPath) {
-  const defaultPath = path.join(__dirname, '..', '.repo-wizard', 'session.json');
+  const defaultPath = path.join(ROOT, '.repo-wizard', 'session.json');
   if (fs.existsSync(defaultPath)) {
     sessionPath = defaultPath;
   }
@@ -52,7 +53,7 @@ try {
   const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
   
   // Archive prior session and report files before compiling new ones
-  const workspaceDir = path.dirname(path.dirname(sessionPath));
+  const workspaceDir = session.targetPath || ROOT;
   archiveSession(workspaceDir);
   
   compileRealReports(session);

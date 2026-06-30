@@ -18,7 +18,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 const { QUALITY_PILLARS, TEAM_COLORS } = require('./quality-pillars');
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = require('./root-resolver');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
 
 const SessionStatus = Object.freeze({

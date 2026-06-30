@@ -79,6 +79,19 @@ function main() {
     process.exit(1);
   }
 
+  logStep('Writing workspace development path link...');
+  try {
+    const devPathDir = path.join(ROOT, '.repo-wizard');
+    if (!fs.existsSync(devPathDir)) {
+      fs.mkdirSync(devPathDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(devPathDir, 'dev_path.txt'), ROOT, 'utf8');
+    logSuccess(`Workspace path saved to dev_path.txt: ${ROOT}`);
+  } catch (err) {
+    logError(`Failed to save workspace development path link: ${err.message}`);
+    process.exit(1);
+  }
+
   logStep('Registering/installing plugin updates...');
   try {
     execSync(`"${agyCmd}" plugin install .`, { stdio: 'inherit', cwd: ROOT });

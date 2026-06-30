@@ -54,7 +54,7 @@ process.on('exit', () => {
   cleanupChildren();
 });
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = require('./root-resolver');
 const targetPath = process.env.TARGET_PATH || ROOT;
 const resolvedTarget = path.resolve(targetPath);
 let repoName = process.env.MOCK_REPO_NAME;
@@ -137,8 +137,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Pre-populate file cache asynchronously to avoid blocking event loop
-  await buildFileCache(resolvedTarget);
+  // Pre-populate file cache synchronously to avoid race conditions
+  buildFileCache(resolvedTarget);
 
   let manifest;
   try {
@@ -501,16 +501,17 @@ main().catch(err => {
 });
 
 
-async function buildFileCache(targetDir) {
+function buildFileCache(targetDir) {
   if (fileCache) return;
   fileCache = [];
   const visited = new Set();
+  const MAX_FILES = 10000;
 
-  const traverse = async (dir, depth = 0) => {
-    if (depth > 8) return;
+  const traverse = (dir, depth = 0) => {
+    if (depth > 8 || fileCache.length >= MAX_FILES) return;
     let absPath;
     try {
-      absPath = await fs.promises.realpath(dir);
+      absPath = fs.realpathSync(dir);
     } catch (e) {
       absPath = path.resolve(dir);
     }
@@ -519,30 +520,31 @@ async function buildFileCache(targetDir) {
 
     let files;
     try {
-      files = await fs.promises.readdir(absPath);
+      files = fs.readdirSync(absPath);
     } catch (e) {
       return;
     }
 
     for (const file of files) {
+      if (fileCache.length >= MAX_FILES) return;
       if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'].includes(file)) {
         continue;
       }
       const fullPath = path.join(absPath, file);
       try {
-        const stat = await fs.promises.lstat(fullPath);
+        const stat = fs.lstatSync(fullPath);
         if (stat.isSymbolicLink()) {
           continue;
         }
         fileCache.push({ name: file, path: fullPath, isDir: stat.isDirectory() });
         if (stat.isDirectory()) {
-          await traverse(fullPath, depth + 1);
+          traverse(fullPath, depth + 1);
         }
       } catch (e) { /* ignore */ }
     }
   };
 
-  await traverse(targetDir);
+  traverse(targetDir);
 }
 
 function checkFilesExist(dir, predicate, maxDepth = 4) {
