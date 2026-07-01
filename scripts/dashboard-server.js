@@ -883,6 +883,7 @@ const server = http.createServer((req, res) => {
       // Spawn run-orchestration.js in background
       activeScanProcess = spawn('node', [
         path.join(ROOT, 'scripts', 'run-orchestration.js'),
+        '--target-path',
         session.targetPath
       ], {
         cwd: ROOT,

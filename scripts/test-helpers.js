@@ -278,7 +278,7 @@ function testRunOrchestration() {
     // Run script with MOCK_CLI=true env
     const mockRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}"`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
@@ -326,7 +326,7 @@ function testRunOrchestration() {
 
     const badRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}"`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
@@ -348,7 +348,7 @@ function testRunOrchestration() {
     fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
     const fallbackRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}"`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, DISABLE_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
