@@ -334,7 +334,7 @@ function sanitizeHtml(html) {
   // Remove iframe, object, embed, frame, frameset tags
   clean = clean.replace(/<(iframe|object|embed|frame|frameset)\b[^<]*(?:(?!<\/\1>)<[^<]*)*<\/\1>/gi, '');
   // Remove inline on* event handlers
-  clean = clean.replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  clean = clean.replace(/[\s/]+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
   // Remove javascript: links
   clean = clean.replace(/href\s*=\s*["']\s*javascript:[^"']*["']/gi, 'href="#"');
   return clean;

@@ -108,9 +108,22 @@ function countSentences(str) {
   clean = clean.replace(/approx\./gi, 'approx');
   clean = clean.replace(/etc\./gi, 'etc');
 
-  // Split by sentence terminators: . ! : ? followed by whitespace or string end
-  const sentences = clean.split(/[.!:?](?=\s|$)/).map(s => s.trim()).filter(s => s.length > 0);
+  // Split by sentence terminators: . ! ? followed by whitespace or string end
+  const sentences = clean.split(/[.!?](?=\s|$)/).map(s => s.trim()).filter(s => s.length > 0);
   return sentences.length;
+}
+
+/**
+ * Helper to check if a paragraph ends with a colon, stripping trailing markdown or HTML tags
+ */
+function cleanEndsWithColon(text) {
+  if (!text) return false;
+  let clean = text.trim();
+  // Strip trailing markdown bolding/italics/code block marks
+  clean = clean.replace(/[\*_~`>]+$/, '').trim();
+  // Strip trailing HTML tags
+  clean = clean.replace(/<\/[^>]+>$/, '').trim();
+  return clean.endsWith(':');
 }
 
 /**
@@ -181,7 +194,10 @@ function validateFile(filePath) {
       const headings = [];
       let match;
       while ((match = hRegex.exec(cleanContent)) !== null) {
-        headings.push({ tag: match[1], title: match[2].trim(), index: match.index });
+        const title = match[2].trim();
+        if (/^Section\b/i.test(title)) {
+          headings.push({ tag: match[1], title, index: match.index });
+        }
       }
 
       if (headings.length !== 4) {
@@ -230,7 +246,7 @@ function validateFile(filePath) {
               for (let j = 2; j < paragraphs.length; j++) {
                 const pText = paragraphs[j];
                 // Exempt list intros (paragraphs ending with a colon)
-                if (pText.trim().endsWith(':')) {
+                if (cleanEndsWithColon(pText)) {
                   continue;
                 }
                 const sentences = countSentences(pText);
@@ -281,7 +297,7 @@ function validateFile(filePath) {
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        if (line.startsWith('## ')) {
+        if (line.startsWith('## Section ')) {
           flushText();
           if (currentSection) {
             sections.push(currentSection);
@@ -291,14 +307,25 @@ function validateFile(filePath) {
           if (line.startsWith('#')) {
             // Heading ends the active paragraph, and is ignored
             flushText();
-          } else if (line.startsWith('*') || line.startsWith('-') || /^\d+\./.test(line)) {
+          } else if (line.startsWith('* ') || line.startsWith('- ') || /^\d+\.\s+/.test(line)) {
             // List item ends the active paragraph, and is stored as a list item paragraph
             flushText();
             currentSection.paragraphs.push(line);
           } else if (line === '') {
             flushText();
           } else {
-            currentSection.activeText += ' ' + line;
+            // Check if the last paragraph in the list is a list item, and there was no empty line
+            const lastParaIdx = currentSection.paragraphs.length - 1;
+            if (lastParaIdx >= 0 && (
+              currentSection.paragraphs[lastParaIdx].startsWith('* ') ||
+              currentSection.paragraphs[lastParaIdx].startsWith('- ') ||
+              /^\d+\.\s+/.test(currentSection.paragraphs[lastParaIdx])
+            ) && currentSection.activeText === '') {
+              // Append to the list item!
+              currentSection.paragraphs[lastParaIdx] += ' ' + line;
+            } else {
+              currentSection.activeText += ' ' + line;
+            }
           }
         }
       }
@@ -339,12 +366,12 @@ function validateFile(filePath) {
               for (let j = 2; j < sec.paragraphs.length; j++) {
                 const pText = sec.paragraphs[j];
                 const trimmed = pText.trim();
-                // Exempt list items starting with standard list marks (*, -, or digits followed by a period)
-                if (trimmed.startsWith('*') || trimmed.startsWith('-') || /^\d+\./.test(trimmed)) {
-                  continue;
-                }
+                 // Exempt list items starting with standard list marks (*, -, or digits followed by a period with space)
+                 if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || /^\d+\.\s+/.test(trimmed)) {
+                   continue;
+                 }
                 // Exempt list intros ending with a colon
-                if (trimmed.endsWith(':')) {
+                if (cleanEndsWithColon(pText)) {
                   continue;
                 }
                 const sentences = countSentences(pText);

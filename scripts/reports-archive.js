@@ -11,6 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const ROOT = require('./root-resolver');
 
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
@@ -36,7 +37,7 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
   const wsPath = (workspacePath && typeof workspacePath === 'string') ? workspacePath : process.cwd();
   const opt = options || {};
   const wizardDir = path.join(wsPath, '.repo-wizard');
-  const repoName = getSafeRepoName(wsPath);
+  const repoName = opt.repoName || getSafeRepoName(wsPath);
 
   if (!fs.existsSync(wizardDir)) {
     return;
@@ -81,7 +82,9 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
     if (fs.existsSync(srcPath)) {
       const ext = path.extname(srcPath);
       const base = path.basename(srcPath, ext);
-      const destPath = path.join(historyDir, `${base}_${timestamp}${ext}`);
+      const isReportFile = srcPath.startsWith(reportsDir);
+      const prefix = isReportFile && (base === 'session' || base === 'manifest') ? 'reports_' : '';
+      const destPath = path.join(historyDir, `${prefix}${base}_${timestamp}${ext}`);
       
       try {
         fs.copyFileSync(srcPath, destPath);
@@ -92,6 +95,29 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
         });
       } catch (e) {
         // Ignore file archive errors
+      }
+    }
+  };
+
+  const rmRecursive = (dirPath) => {
+    if (fs.existsSync(dirPath)) {
+      if (fs.rmSync) {
+        fs.rmSync(dirPath, { recursive: true, force: true });
+      } else {
+        const items = fs.readdirSync(dirPath);
+        for (const item of items) {
+          const itemPath = path.join(dirPath, item);
+          if (fs.statSync(itemPath).isDirectory()) {
+            rmRecursive(itemPath);
+          } else {
+            try {
+              fs.unlinkSync(itemPath);
+            } catch (e) { /* ignore */ }
+          }
+        }
+        try {
+          fs.rmdirSync(dirPath);
+        } catch (e) { /* ignore */ }
       }
     }
   };
@@ -167,46 +193,12 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
 
   // 3. Remove the agent folder (reports/<repoName>/agents/)
   const agentsDir = path.join(reportsDir, 'agents');
-  if (fs.existsSync(agentsDir)) {
-    try {
-      if (fs.rmSync) {
-        fs.rmSync(agentsDir, { recursive: true, force: true });
-      } else {
-        const items = fs.readdirSync(agentsDir);
-        for (const item of items) {
-          const itemPath = path.join(agentsDir, item);
-          try {
-            if (fs.statSync(itemPath).isFile()) {
-              fs.unlinkSync(itemPath);
-            }
-          } catch (e) { /* ignore */ }
-        }
-        fs.rmdirSync(agentsDir);
-      }
-    } catch (e) { /* ignore */ }
-  }
+  rmRecursive(agentsDir);
 
   // 3.5 Remove the contracts folder (reports/<repoName>/contracts/) only if pruneContracts is true
   if (opt.pruneContracts === true) {
     const contractsDir = path.join(reportsDir, 'contracts');
-    if (fs.existsSync(contractsDir)) {
-      try {
-        if (fs.rmSync) {
-          fs.rmSync(contractsDir, { recursive: true, force: true });
-        } else {
-          const items = fs.readdirSync(contractsDir);
-          for (const item of items) {
-            const itemPath = path.join(contractsDir, item);
-            try {
-              if (fs.statSync(itemPath).isFile()) {
-                fs.unlinkSync(itemPath);
-              }
-            } catch (e) { /* ignore */ }
-          }
-          fs.rmdirSync(contractsDir);
-        }
-      } catch (e) { /* ignore */ }
-    }
+    rmRecursive(contractsDir);
   }
 
   // 4. Clean up reports directory and parent if completely empty (though they shouldn't be since session.json & manifest.json remain there)
@@ -233,8 +225,18 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
 
 // Support executing directly from command line
 if (require.main === module) {
-  const targetDir = process.argv[2] ? path.resolve(process.argv[2]) : process.cwd();
-  archiveSession(targetDir, { pruneContracts: true });
+  const args = process.argv.slice(2);
+  const targetPathIdx = args.indexOf('--target-path');
+  if (targetPathIdx === -1) {
+    console.error('ERROR: Missing required parameter "--target-path".');
+    process.exit(1);
+  }
+  const targetDir = args[targetPathIdx + 1];
+  if (!targetDir) {
+    console.error('ERROR: Missing value for parameter "--target-path".');
+    process.exit(1);
+  }
+  archiveSession(ROOT, { repoName: getSafeRepoName(targetDir), pruneContracts: true });
 }
 
 module.exports = { archiveSession };

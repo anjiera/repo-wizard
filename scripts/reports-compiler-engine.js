@@ -368,6 +368,14 @@ ${suggestedAdjustmentsText}
 ${DISCLAIMER_TEXT}
 `;
 
+  if (session.mode === 'backlog' && !Array.isArray(customReport.backlog)) {
+    missingFields.push('backlog');
+  }
+
+  if (missingFields.length > 0) {
+    throw new Error(`Report compilation failed due to missing dynamic report sections: ${missingFields.join(', ')}.`);
+  }
+
   const execPath = path.join(reportsDir, `${repoName}-executive-summary.md`);
   const fullPath = path.join(reportsDir, `${repoName}-full-report.md`);
   const obsPath = path.join(reportsDir, `${repoName}-observations.md`);
@@ -395,15 +403,12 @@ ${DISCLAIMER_TEXT}
       const csvPath = path.join(reportsDir, 'backlog.csv');
       let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
       
-      if (!Array.isArray(customReport.backlog)) {
-        missingFields.push('backlog');
-      }
       const stories = Array.isArray(customReport.backlog) ? customReport.backlog : [];
 
       const escapeCsv = (str) => {
         if (!str) return '';
         let escaped = String(str).replace(/"/g, '""');
-        if (/^[=\+\-@]/.test(escaped)) {
+        if (/^[=\+\-@]/.test(escaped.trim())) {
           escaped = "'" + escaped;
         }
         return escaped;
@@ -420,10 +425,6 @@ ${DISCLAIMER_TEXT}
   } catch (err) {
     console.error('Failed to compile real reports:', err.message);
     throw err;
-  }
-
-  if (missingFields.length > 0) {
-    throw new Error(`Report compilation failed due to missing dynamic report sections: ${missingFields.join(', ')}.`);
   }
 }
 

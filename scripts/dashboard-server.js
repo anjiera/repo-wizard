@@ -541,6 +541,12 @@ ${DISCLAIMER_TEXT}
 const server = http.createServer((req, res) => {
   const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();
 
+  // Set standard security headers to prevent XSS, Clickjacking, and Content Sniffing
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ws: wss:;");
+
   // Validate Host Header to prevent DNS Rebinding
   const host = req.headers.host || '';
   const isLocalhost = /^localhost(:\d+)?$/i.test(host) || /^127\.0\.0\.1(:\d+)?$/i.test(host) || /^\[::1\](:\d+)?$/i.test(host);
@@ -1240,10 +1246,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-function scanReports(dir, baseDir, fileList = []) {
+function scanReports(dir, baseDir, fileList = [], depth = 0, maxFiles = 1000) {
+  if (depth > 5 || fileList.length >= maxFiles) return fileList;
   if (!fs.existsSync(dir)) return fileList;
   const files = fs.readdirSync(dir);
   for (const file of files) {
+    if (fileList.length >= maxFiles) break;
     const fullPath = path.join(dir, file);
     let stat;
     try {
@@ -1254,7 +1262,7 @@ function scanReports(dir, baseDir, fileList = []) {
     if (stat.isSymbolicLink()) continue;
     if (stat.isDirectory()) {
       if (file !== 'agents' && file !== 'history') {
-        scanReports(fullPath, baseDir, fileList);
+        scanReports(fullPath, baseDir, fileList, depth + 1, maxFiles);
       }
     } else {
       if (file === 'backlog.csv' || file.endsWith('.md') || file.endsWith('.html')) {

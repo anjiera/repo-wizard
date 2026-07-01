@@ -54,7 +54,7 @@ try {
   
   // Archive prior session and report files before compiling new ones
   const workspaceDir = session.targetPath || ROOT;
-  archiveSession(workspaceDir);
+  archiveSession(ROOT, { repoName: getSafeRepoName(workspaceDir) });
   
   compileRealReports(session);
   console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);

@@ -85,6 +85,10 @@ function testMdToHtml() {
   const nestedJsHtml = convertMdToHtml('[Nested XSS Link](java&Tab;script:alert(1))');
   assert(nestedJsHtml.includes('href="#"'), 'blocks obfuscated/nested javascript scheme');
 
+  // Block slash-based onerror handler
+  const slashXssHtml = convertMdToHtml('<img/src="x"/onerror="alert(1)">');
+  assert(!slashXssHtml.includes('onerror'), 'blocks slash-based inline event handlers');
+
   // 4. Nested parentheses and ReDoS safety
   const nestedParenHtml = convertMdToHtml('[nested](url(param))');
   assert(nestedParenHtml.includes('href="url(param)"'), 'handles nested parentheses in link URL');
