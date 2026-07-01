@@ -70,6 +70,10 @@ For each capability needed, recommend candidate tools dynamically after screenin
 ### Phase 5: Optimization & Handoff
 1. **Local Interactive Mode**: Finish the interview first, deduplicate candidates, and dispatch parameters contract to `tool-scaffolder.agent` or subagents (backlog mode). Run verification and VCS rollback on failure.
 2. **Headless Mode**: Do NOT make any package installations or write files in the targeted repository. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
+3. **Execution & Synchronization Rules**:
+   - **Mock-CLI Default**: When spawning `run-orchestration.js`, you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
+   - **Sync Gate**: You MUST wait for all background specialist subagents to complete their scans, report back, and write their observations and contract files to disk before executing the compilation utility (`reports-compile.js`). If you compile before they finish, Section 4 of the report will be blank.
+
 
 ### Phase 6: Reports & Deliverables Compilation
 Generate the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):

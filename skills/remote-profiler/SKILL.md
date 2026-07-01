@@ -40,6 +40,9 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 1. **Non-blocking Run:** Relevant subagents run in headless mode (following Section 10 of the protocol), skipping interactive inputs and scaffolding/modifications.
 2. **Observations Output:** Each subagent saves its observations report to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 3. **Caching & Resumability:** If an agent's mini-report already exists from a previous run, reuse it to support resuming halted scans.
+4. **Execution & Synchronization Rules**:
+   - **Mock-CLI Default**: When running scans, you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
+   - **Sync Gate**: You MUST wait for all background specialist subagents to complete their scans, report back, and write their observations and contract files to disk before executing the compilation utility (`reports-compile.js`). If you compile before they finish, Section 4 of the report will be blank.
 
 ### Phase 4: Report Amalgamation & Compilation
 1. **Consolidate Observations:** The orchestrator reads all agent mini-reports and consolidates them into the final reports.
