@@ -882,16 +882,17 @@ const server = http.createServer((req, res) => {
       scanLogs.push(`[${new Date().toLocaleTimeString()}] Starting codebase scan...`);
       scanLogs.push(`[${new Date().toLocaleTimeString()}] Sizing codebase: detected target directory at "${session.targetPath}"`);
 
-      // Spawn run-orchestration.js in background
+      // Spawn run-orchestration.js in background forcing --mock-cli false
       activeScanProcess = spawn('node', [
         path.join(ROOT, 'scripts', 'run-orchestration.js'),
         '--target-path',
-        session.targetPath
+        session.targetPath,
+        '--mock-cli',
+        'false'
       ], {
         cwd: ROOT,
         env: {
           ...process.env,
-          MOCK_CLI: process.env.MOCK_CLI === 'true' ? 'true' : 'false',
           MOCK_REPO_NAME: repoName,
           REDACT: session.redact ? 'true' : 'false'
         },
@@ -936,7 +937,7 @@ const server = http.createServer((req, res) => {
             }
             
             if (code === 0) {
-              const isMockMode = process.env.MOCK_CLI === 'true';
+              const isMockMode = false;
               if (isMockMode) {
                 generateMockReports(currentSession);
               } else {
