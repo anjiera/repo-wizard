@@ -73,6 +73,22 @@ if (!targetPath) {
   process.exit(1);
 }
 const resolvedTarget = path.resolve(targetPath);
+
+// Parse and validate --mock-cli flag
+let isMock = false;
+const mockCliIdx = process.argv.indexOf('--mock-cli');
+if (mockCliIdx !== -1) {
+  const mockCliVal = process.argv[mockCliIdx + 1];
+  if (mockCliVal === 'true') {
+    isMock = true;
+  } else if (mockCliVal === 'false') {
+    isMock = false;
+  } else {
+    console.error('ERROR: Invalid or missing boolean value for parameter "--mock-cli". Must be "true" or "false".');
+    process.exit(1);
+  }
+}
+
 let repoName = process.env.MOCK_REPO_NAME;
 if (!repoName) {
   repoName = path.basename(resolvedTarget).replace(/[^a-zA-Z0-9_\-\.]/g, '');
@@ -86,17 +102,23 @@ const CONTRACTS_DIR = path.join(REPORTS_DIR, 'contracts');
 
 let fileCache = null;
 
-let manifestPath = path.join(REPORTS_DIR, 'manifest.json');
-if (!fs.existsSync(manifestPath)) {
-  const legacyPath = path.join(ROOT, '.repo-wizard', 'manifest.json');
-  if (fs.existsSync(legacyPath)) {
-    manifestPath = legacyPath;
-  }
-}
-
 function ensureDirExists(dir) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+const rootManifest = path.join(ROOT, '.repo-wizard', 'manifest.json');
+const manifestPath = path.join(REPORTS_DIR, 'manifest.json');
+
+// Promotion of fresh manifest written by the lead agent
+if (fs.existsSync(rootManifest)) {
+  ensureDirExists(REPORTS_DIR);
+  fs.copyFileSync(rootManifest, manifestPath);
+  try {
+    fs.unlinkSync(rootManifest);
+  } catch (e) {
+    // ignore
   }
 }
 
@@ -202,8 +224,7 @@ async function main() {
 
   // 2. Detect CLI Environment
   const cliCmd = detectAgentCLI();
-  const isMock = process.env.MOCK_CLI === 'true';
-  console.log(`Execution Mode: ${isMock ? 'MOCK (Simulated Subagents)' : 'REAL (Spawning LLM Specialist Subagents)'} (MOCK_CLI environment variable = "${process.env.MOCK_CLI || 'not set'}")`);
+  console.log(`Execution Mode: ${isMock ? 'MOCK (Simulated Subagents)' : 'REAL (Spawning LLM Specialist Subagents)'} (mock-cli flag = "${isMock ? 'true' : 'false'}")`);
 
 
   if (!cliCmd && !isMock) {

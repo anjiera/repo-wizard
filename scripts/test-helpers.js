@@ -275,13 +275,13 @@ function testRunOrchestration() {
     };
     fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
 
-    // Run script with MOCK_CLI=true env
+    // Run script with --mock-cli true parameter
     const mockRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true`, {
           cwd: ROOT,
           stdio: 'pipe',
-          env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
+          env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
         }).toString();
         return { code: 0, stdout };
       } catch (err) {
@@ -291,18 +291,39 @@ function testRunOrchestration() {
 
     assert(mockRun.code === 0, 'run-orchestration.js exits with 0 on successful mock run');
     
-    // Check manifest status update
-    const updatedManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    // Check manifest status update (promoted to reports dir)
+    const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
+    const targetManifestPath = path.join(reportsDir, 'manifest.json');
+    const updatedManifest = JSON.parse(fs.readFileSync(targetManifestPath, 'utf8'));
     assert(updatedManifest.status === 'completed', 'manifest status updated to completed');
     assert(updatedManifest.contracts[0].status === 'completed', 'contract status updated to completed');
     
     // Check observations generated
-    const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
     const obsPath = path.join(reportsDir, 'agents', 'test-repo-observations-privacy-guardian-agent.md');
     assert(fs.existsSync(obsPath), 'mock observations file created successfully');
     if (fs.existsSync(reportsDir)) {
       fs.rmSync(reportsDir, { recursive: true, force: true });
     }
+
+    // Test 1.5: Invalid --mock-cli value checks
+    const invalidMockRun = (() => {
+      try {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli invalid_value`, {
+          cwd: ROOT,
+          stdio: 'pipe',
+          env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return {
+          code: err.status || 1,
+          stdout: err.stdout ? err.stdout.toString() : '',
+          stderr: err.stderr ? err.stderr.toString() : ''
+        };
+      }
+    })();
+    assert(invalidMockRun.code === 1, 'run-orchestration.js exits with 1 on invalid --mock-cli value');
+    assert(invalidMockRun.stderr.includes('ERROR: Invalid or missing boolean value for parameter "--mock-cli"'), 'correct error message for invalid mock-cli parameter');
 
     // Test 2: Pre-flight validation fails on bad contract structure
     const badManifest = {
@@ -326,10 +347,10 @@ function testRunOrchestration() {
 
     const badRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true`, {
           cwd: ROOT,
           stdio: 'pipe',
-          env: { ...process.env, MOCK_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
+          env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
         }).toString();
         return { code: 0, stdout };
       } catch (err) {
@@ -360,9 +381,12 @@ function testRunOrchestration() {
     })();
 
     assert(fallbackRun.code === 0, 'run-orchestration.js exits with 0 on fallback when CLI not found');
-    const fallbackManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    const fallbackManifest = JSON.parse(fs.readFileSync(targetManifestPath, 'utf8'));
     assert(fallbackManifest.status === 'fallback_to_agent', 'manifest status updated to fallback_to_agent');
     assert(fallbackManifest.contracts[0].status === 'pending_agent_fallback', 'contract status updated to pending_agent_fallback');
+    if (fs.existsSync(reportsDir)) {
+      fs.rmSync(reportsDir, { recursive: true, force: true });
+    }
 
     // Test 4: Redaction pipeline works on mock execution
     fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
@@ -375,12 +399,11 @@ function testRunOrchestration() {
 
     const redactRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${resolvedTestRepo}"`, {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${resolvedTestRepo}" --mock-cli true`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: {
             ...process.env,
-            MOCK_CLI: 'true',
             MOCK_REPO_NAME: 'test-repo',
             REDACT: 'true'
           }
@@ -404,6 +427,10 @@ function testRunOrchestration() {
       fs.writeFileSync(manifestPath, originalManifestContent, 'utf8');
     } else if (fs.existsSync(manifestPath)) {
       fs.unlinkSync(manifestPath);
+    }
+    const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
+    if (fs.existsSync(reportsDir)) {
+      fs.rmSync(reportsDir, { recursive: true, force: true });
     }
   }
 }
