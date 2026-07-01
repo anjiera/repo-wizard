@@ -35,7 +35,7 @@ Before generating or modifying any files, you **MUST** align with the developer:
 4. **Consent Check:** Inform the developer that you will analyze existing configurations and ask for permission before modifying scripts or installing tools.
 
 ### Phase 2: Codebase Compliance Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate existing security controls:
 1. **IaC Presence:** Locate Terraform files (`*.tf`), CloudFormation configs (`*.yaml`, `*.json`), or Dockerfiles.
 2. **Setup/Pre-commit Configs:** Search for pre-commit hooks or local lint configs (`package.json`, `Makefile`, etc.).

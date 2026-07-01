@@ -62,7 +62,7 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
    - Only launch Step 5 (Scaffolding, Optimization & Handoff) and call `run-orchestration.js` after the user explicitly confirms they want to proceed.
 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
-Bypass the questionnaire and live alignment:
+Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Step 0 remains mandatory and must never be bypassed under any mode):
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
 2. **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
 3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.

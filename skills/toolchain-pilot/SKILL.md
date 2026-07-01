@@ -28,7 +28,7 @@ Before writing toolchain configuration overrides, align with the developer:
 5. **Sysroot Location:** Identify the sysroot directory mapping target standard C library headers (glibc, newlib, musl) if compiling on disconnected hosts.
 
 ### Phase 2: Ingestion & Toolchain Path Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the host platform:
 1. **Toolchain Check:** Verify that cross-compiler binaries (e.g. `riscv-none-elf-gcc --version`) are present in the system environment path.
 2. **Linker Mappings Audit:** Inspect the workspace for compiler configuration overrides, environment scripts, or target configurations.

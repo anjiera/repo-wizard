@@ -28,7 +28,7 @@ Before editing container scripts or K8s YAML files, align with the developer on 
 5. **Recovery Validation:** Confirm testing parameters for backup files (e.g. automatic temporary dry-run restore validation).
 
 ### Phase 2: Deployment & Container Sweep
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the codebase to assess current infrastructure setups:
 1. **Docker Config Scan:** Locate existing Dockerfiles, `.dockerignore` files, and `docker-compose.yaml` manifests.
 2. **Kubernetes Scan:** Locate active Kubernetes charts or deployment YAML resource files.

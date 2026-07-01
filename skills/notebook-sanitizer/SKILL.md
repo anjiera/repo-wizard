@@ -28,7 +28,7 @@ Before installing VCS filters or editing environment files, align with the devel
 5. **PII Safety Warning:** Explain that clean filters only strip local staged files and do not scrub historical commits or replace runtime data validators.
 
 ### Phase 2: Codebase Notebook & Environment Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the repository to locate active notebooks and manifests:
 1. **Notebook Sweeps:** Locate all `.ipynb` files in the repository directory.
 2. **Environment Manifest Scan:** Search for `pyproject.toml`, `environment.yml`, `Pipfile`, or `requirements.txt` files.

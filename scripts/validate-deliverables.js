@@ -476,6 +476,7 @@ function runValidation(targetDir) {
 /**
  * Runs a self-test of the validator using temporary mock files
  */
+// mock-start
 function runSelfTest() {
   console.log('Running validate-deliverables self-test...');
   const tempDir = path.join(__dirname, 'temp_test_deliverables');
@@ -585,6 +586,7 @@ Para 1.
     console.log(`\n${BOLD}${GREEN}Self-test PASSED.${RESET}`);
   }
 }
+// mock-end
 
 function main() {
   const args = process.argv.slice(2);

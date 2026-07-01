@@ -27,7 +27,7 @@ Before scanning or scaffolding, align with the developer on target configuration
 4. **CI Budget Gates:** Ask the developer for permission and specifications to configure performance budget limits that fail builds or pull requests on regressions.
 
 ### Phase 2: Codebase Performance Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current performance configurations:
 1. **Manifest Audit:** Read build manifest files (e.g., `package.json`, `Cargo.toml`, `pyproject.toml`) to detect existing benchmark dependencies or load-testing libraries.
 2. **Config Audit:** Look for configuration files related to speed or benchmarks (e.g. `.k6.js`, `locustfile.py`, `pytest.ini`).

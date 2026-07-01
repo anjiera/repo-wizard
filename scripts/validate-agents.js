@@ -125,18 +125,62 @@ function main() {
       });
     }
 
-    // Structural validations for execution agents
-    const EXEMPT_AGENTS = [
-      'repo-wizard-agent.md',
-      'legal-neutrality-agent.md',
-      'tool-evaluator-agent.md',
-      'tool-scaffolder-agent.md'
-    ];
+    // Scan agent file contents for structure, prompt injection, and cheating patterns
+    try {
+      const content = fs.readFileSync(fullPath, 'utf8');
 
-    if (!EXEMPT_AGENTS.includes(file)) {
-      try {
-        const content = fs.readFileSync(fullPath, 'utf8');
+      // Honesty & Anti-Cheating Checks (run on ALL agents)
+      const CHEATING_INJECTION_PATTERNS = [
+        {
+          regex: /(?:ignore|bypass)\s+(?:the\s+)?(?:validation|checks|rules|consent|tos)/i,
+          message: "Suspicious instruction to ignore/bypass active validation checks, consent gates, or rules."
+        },
+        {
+          regex: /pretend\s+(?:the\s+)?(?:scan|check|validation)/i,
+          message: "Suspicious instruction to pretend a scan or check was executed."
+        },
+        {
+          regex: /always\s+(?:output|return|report)\s+(?:success|completed|passed)/i,
+          message: "Directive telling the agent to always report success regardless of execution state."
+        },
+        {
+          regex: /do\s+not\s+(?:perform|run)\s+(?:real|actual)\s+(?:scanning|checks|auditing)/i,
+          message: "Instruction telling the agent to skip real scanning/auditing."
+        }
+      ];
 
+      const SUSPICIOUS_STATIC_PATTERNS = [
+        {
+          regex: /always\s+(?:output|write)\s+(?:exactly|the following)/i,
+          message: "Suspicious directive telling the agent to output a static pre-written response."
+        },
+        {
+          regex: /use\s+(?:the\s+)?(?:following\s+)?(?:mock|dummy|placeholder|fake)\s+(?:content|report|summary|text)/i,
+          message: "Instruction suggesting the use of hardcoded mock, dummy, or placeholder report data."
+        }
+      ];
+
+      for (const pattern of CHEATING_INJECTION_PATTERNS) {
+        if (pattern.regex.test(content)) {
+          errors.push(`[Honesty Check Failed] ${pattern.message} (Matched pattern: ${pattern.regex})`);
+        }
+      }
+
+      for (const pattern of SUSPICIOUS_STATIC_PATTERNS) {
+        if (pattern.regex.test(content)) {
+          errors.push(`[Honesty Check Failed] ${pattern.message} (Matched pattern: ${pattern.regex})`);
+        }
+      }
+
+      // Structural validations for execution agents (excluding helpers/orchestrators)
+      const EXEMPT_AGENTS = [
+        'repo-wizard-agent.md',
+        'legal-neutrality-agent.md',
+        'tool-evaluator-agent.md',
+        'tool-scaffolder-agent.md'
+      ];
+
+      if (!EXEMPT_AGENTS.includes(file)) {
         if (!content.includes('## Step 1: Alignment & Target Stack')) {
           errors.push("Missing exact header: '## Step 1: Alignment & Target Stack'");
         }
@@ -161,9 +205,9 @@ function main() {
         if (!content.includes('scaffolding-robustness-protocol.md')) {
           errors.push("Missing link reference to '../references/scaffolding-robustness-protocol.md'");
         }
-      } catch (err) {
-        errors.push(`Failed to read agent file: ${err.message}`);
       }
+    } catch (err) {
+      errors.push(`Failed to read agent file: ${err.message}`);
     }
 
     if (errors.length === 0) {

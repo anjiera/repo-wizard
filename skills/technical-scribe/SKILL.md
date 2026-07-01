@@ -27,7 +27,7 @@ Align with the developer on target settings before scanning or writing any files
 4. **Post-Mortem & Retrospective Formats:** Establish template locations (e.g., under `docs/post-mortems/` and `docs/retrospectives/`). Note that Incident Post-Mortems are used to analyze specific failures, whereas Retrospectives look back at sprint cycles and feature releases (integrating standard Agile questions and the *Stop-Start-Continue-Kudos* kudos ritual).
 
 ### Phase 2: Codebase Documentation Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current documentation patterns:
 1. **Directories Check:** Scan for folders like `docs/`, `decisions/`, `references/`, `wiki/` to check for pre-existing documents.
 2. **Configuration Check:** Check package manifests (e.g. `package.json`, `pyproject.toml`) and scripts to see if document generation utilities or testing frameworks are present.

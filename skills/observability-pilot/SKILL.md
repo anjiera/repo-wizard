@@ -28,7 +28,7 @@ Before scanning or scaffolding, align with the developer on target configuration
 4. **Data Privacy Bounds:** Coordinate with `privacy-guardian` specifications. Confirm which variables, headers, or parameters must be redacted (e.g. JWT tokens, email fields, passwords) before export.
 
 ### Phase 2: Codebase Telemetry Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current observability configurations:
 1. **Manifest File Scan:** Check project package manifests (e.g., `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`) for existing OpenTelemetry, tracing, or logging package dependencies.
 2. **Setup Code Audit:** Look for telemetry initialization modules, environment files (`.env`), or telemetry configs.

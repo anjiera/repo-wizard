@@ -50,10 +50,10 @@ if (fs.existsSync(AGENTS_DIR)) {
 
     // Insert Step 2 override
     const step2Target = '## Step 2: Codebase Scan & Auditing';
-    if (content.includes(step2Target) && !content.includes('Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent')) {
+    if (content.includes(step2Target) && !content.includes('Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip scanning consent')) {
       content = content.replace(
         step2Target,
-        `${step2Target}\n\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, bypass scanning consent and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output \`[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]\` for any unobservable details.`
+        `${step2Target}\n\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, skip scanning consent prompts and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output \`[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]\` for any unobservable details.`
       );
       modified = true;
     }
@@ -96,7 +96,7 @@ if (fs.existsSync(SKILLS_DIR)) {
 
       content = content.replace(
         /^(### Phase 2: [^\r\n]*)/m,
-        `$1\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, bypass consent. If Approach B is used, output \`[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]\` for unobservable details.`
+        `$1\n- **Headless Mode Override:** If \`MODE=HEADLESS_REMOTE\` or \`MODE=HEADLESS_LOCAL\` is active, skip interactive consent prompts. If Approach B is used, output \`[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]\` for unobservable details.`
       );
 
       const agentName = dir + '-agent';

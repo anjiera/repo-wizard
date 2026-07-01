@@ -28,7 +28,7 @@ When spawned, you must align with the developer:
 
 ## Step 2: Codebase Scan & Auditing
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass scanning consent and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for any unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip scanning consent prompts and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for any unobservable details.
 
 Audit the repository's current state:
 1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.

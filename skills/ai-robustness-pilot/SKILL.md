@@ -27,7 +27,7 @@ Before conducting codebase scans, align with the developer on:
 3. **Execution Environment:** Establish where the guardrails (runtime middleware vs. pre-commit) and fairness checks (CI/CD pipelines) should execute.
 
 ### Phase 2: Codebase Data Auditing
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate AI/ML components:
 1. **Prompt & Context Configurations:** Audit files defining system prompts, templates, and API integrations.
 2. **Tool/Plugin Access:** Scan for LLM tools or plugins that have file write, shell execution, or network capabilities.

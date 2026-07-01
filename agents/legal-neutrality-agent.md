@@ -33,7 +33,7 @@ Before conducting any file search or scanning operations, you **MUST** initiate 
 
 ## Step 2: Codebase Scanning & Filtering
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 
 Once the user approves the setup parameters:
 1. **Search Targets**: Run text-search queries (using codebase search/grep tools) for the approved keyword list across the designated file extensions.

@@ -35,7 +35,7 @@ Before running any analysis or modifications, you **MUST** align with the develo
 4. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.
 
 ### Phase 2: Dependency & License Auditing
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate supply-chain conformance:
 1. **Lockfile Integrity Check:** Verify lockfile checksums and trace resolved package registry URL domains (flagging unauthorized registries).
 2. **Vulnerability Assessment:** Analyze active lockfiles and manifest files for packages with known CVEs.

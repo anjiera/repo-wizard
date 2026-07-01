@@ -29,7 +29,7 @@ Before scaffolding schema files or installing linters, align with the developer 
 5. **Tool Preference:** Review candidate validation tools (Spectral, Buf CLI, GraphQL Inspector) matching project capabilities and developer workflows.
 
 ### Phase 2: Codebase API Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the repository to locate active endpoint declarations and contract parameters:
 1. **Route Sweeps:** Scan controllers, route definition files, and HTTP handlers to map current REST path configurations.
 2. **Schema & Model Check:** Search for existing database tables, validation models (e.g. Zod, Pydantic, struct definitions), or model declarations.

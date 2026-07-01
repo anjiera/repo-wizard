@@ -29,7 +29,7 @@ Before scanning or scaffolding, align with the developer on target configuration
 5. **Chaos Testing Scope:** Agree on testing configurations (e.g., local traffic control shell scripts vs. Kubernetes Chaos Mesh YAML files).
 
 ### Phase 2: Codebase Reliability Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the codebase to check current configurations:
 1. **HTTP Client Sweeps:** Search codebase directories for network request configurations (e.g. Axios, fetch, requests, reqwest imports).
 2. **Wrapper Scan:** Search for existing retry decorators, breaker wrappers, or timeout settings.

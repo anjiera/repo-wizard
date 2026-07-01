@@ -28,7 +28,7 @@ Before scanning or scaffolding, align with the developer on target settings:
 4. **Static Scanning Rules:** Check which security rulesets are needed (e.g., standard OWASP Top 10 SAST checks).
 
 ### Phase 2: Codebase Security Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the codebase to check current configurations:
 1. **Middleware Check:** Check the codebase handler entry points for secure header inclusions (like helmet in Node, or secure middleware in Python).
 2. **CORS Scan:** Search for configuration keys matching `cors`, `allow_origins`, or `Access-Control-Allow-Origin`.

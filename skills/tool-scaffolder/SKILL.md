@@ -25,7 +25,7 @@ Use this skill when:
 4. **VCS State Baseline:** Immediately before making any modifications to target files, execute a VCS check (e.g. `git status` or `git diff`) to capture the active workspace baseline. This baseline state must be used to guide rollbacks if verification fails.
 
 ### Phase 2: Package Installation & Configuration
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 1. **Installation:** Run package manager commands specified in the scaffolding contract.
 2. **Safe Merging:** Write new configurations or merge into existing configurations as specified in the contract. Always use precise, AST-based edits or line replacements to prevent syntax breakage.
 3. **Nuance Explanation:** Explain the configuration parameters being created or modified, highlighting tradeoffs (e.g. strictness settings).

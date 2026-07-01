@@ -27,7 +27,7 @@ Before writing formal specification templates or solver harnesses, align with th
 4. **Assumption Limits:** Establish constraints on symbolic inputs to prevent SMT solver state-space explosion (e.g. limiting symbolic array lengths to <= 256).
 
 ### Phase 2: Ingestion & Logic Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the repository to target verification:
 1. **Critical Code Sweep:** Search for complex match statements, state variables, array indexing, and unsafe memory blocks.
 2. **Toolchain verification:** Check for verification compilers (like `cargo-kani`, `tlc` runners) in the system path.

@@ -37,7 +37,7 @@ Before running any analysis or modifications, you **MUST** align with the develo
 5. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.
 
 ### Phase 2: VCS & Style Auditing
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate current configuration setups:
 1. **VCS Hooks Config:** Inspect `.husky/`, `.pre-commit-config.yaml`, `.git/hooks/`, or `.hg/hgrc` configurations.
 2. **Style Manifests:** Check for formatter settings (e.g., `package.json`, `.prettierrc`, `.eslintrc`, `.rustfmt.toml`).

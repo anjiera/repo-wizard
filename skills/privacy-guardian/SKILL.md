@@ -35,7 +35,7 @@ Before generating or modifying any files, you **MUST** align with the developer:
 4. **Consent Check:** Inform the developer that you will analyze files and seek permission before making any changes.
 
 ### Phase 2: Codebase Data Auditing
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the codebase to evaluate existing privacy controls:
 1. **Schema Audits:** Search for database configuration files, migrations, or ORM models. Look for plaintext sensitive fields (e.g., `email`, `phone`, `ssn`, `birth_date`).
 2. **Logger Audits:** Scan for logging outputs that print whole request bodies, raw object variables, or user context properties.

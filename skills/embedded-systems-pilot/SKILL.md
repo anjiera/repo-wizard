@@ -29,7 +29,7 @@ Before writing code or changing build scripts, align with the developer on hardw
 5. **Emulation Scope:** Agree on QEMU machines and config parameters to mock target hardware peripherals.
 
 ### Phase 2: Firmware Codebase Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the repository to locate build configurations and linker files:
 1. **Build Manifest Scan:** Search for `CMakeLists.txt`, `Makefile`, `Cargo.toml`, or `platformio.ini` files.
 2. **Memory Layout Audit:** Search for linker scripts (`.ld`, `link.x`) to verify stack and heap limits.

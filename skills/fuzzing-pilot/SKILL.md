@@ -44,7 +44,7 @@ Before generating harness code or installing fuzzer packages, align with the dev
 4. **CI Integration Scope:** Determine whether the fuzzer should run only locally (default) or integrate into remote security pipelines (e.g. ClusterFuzz, GitHub Action fuzz loops).
 
 ### Phase 2: Ingest & Parser Codebase Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Scan the repository to map inputs:
 1. **Parser & Ingest File Sweeps:** Search for functions with signatures accepting raw input (e.g., `char*`, `const uint8_t*`, `std::string`, `bytes`, `read()`).
 2. **Dependency Manager Scan:** Check `package.json`, `Cargo.toml`, `requirements.txt` to find compiler toolchains and language versions.

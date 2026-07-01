@@ -39,7 +39,7 @@ You **MUST** initiate an interactive discussion with the user before executing a
 5. **Wait for Approval**: Stop and wait for the user's response before proceeding.
 
 ### Phase 2: Codebase Scanning
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Once parameters are approved:
 1. **Search Execution**: Run search/grep queries for the final customized list of keywords in the permitted text file extensions.
 2. **Binary Filtering**: Ensure you ignore non-text or binary files (PDFs, ZIPs, images, executables).

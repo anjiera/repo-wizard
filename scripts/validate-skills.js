@@ -97,6 +97,49 @@ function validateSkill(dirName) {
     }
   }
 
+  // Honesty & Anti-Cheating Checks
+  const CHEATING_INJECTION_PATTERNS = [
+    {
+      regex: /(?:ignore|bypass)\s+(?:the\s+)?(?:validation|checks|rules|consent|tos)/i,
+      message: "Suspicious instruction to ignore/bypass active validation checks, consent gates, or rules."
+    },
+    {
+      regex: /pretend\s+(?:the\s+)?(?:scan|check|validation)/i,
+      message: "Suspicious instruction to pretend a scan or check was executed."
+    },
+    {
+      regex: /always\s+(?:output|return|report)\s+(?:success|completed|passed)/i,
+      message: "Directive telling the agent to always report success regardless of execution state."
+    },
+    {
+      regex: /do\s+not\s+(?:perform|run)\s+(?:real|actual)\s+(?:scanning|checks|auditing)/i,
+      message: "Instruction telling the agent to skip real scanning/auditing."
+    }
+  ];
+
+  const SUSPICIOUS_STATIC_PATTERNS = [
+    {
+      regex: /always\s+(?:output|write)\s+(?:exactly|the following)/i,
+      message: "Suspicious directive telling the agent to output a static pre-written response."
+    },
+    {
+      regex: /use\s+(?:the\s+)?(?:following\s+)?(?:mock|dummy|placeholder|fake)\s+(?:content|report|summary|text)/i,
+      message: "Instruction suggesting the use of hardcoded mock, dummy, or placeholder report data."
+    }
+  ];
+
+  for (const pattern of CHEATING_INJECTION_PATTERNS) {
+    if (pattern.regex.test(content)) {
+      errors.push(`[Honesty Check Failed] ${pattern.message} (Matched pattern: ${pattern.regex})`);
+    }
+  }
+
+  for (const pattern of SUSPICIOUS_STATIC_PATTERNS) {
+    if (pattern.regex.test(content)) {
+      errors.push(`[Honesty Check Failed] ${pattern.message} (Matched pattern: ${pattern.regex})`);
+    }
+  }
+
   return { errors };
 }
 

@@ -28,7 +28,7 @@ Before writing scripts or orchestrations, align with the developer on data strat
 5. **Alerting Channels:** Agree on notifications channels (email, Slack, pager alerts) on pipeline task failures.
 
 ### Phase 2: Codebase Data Flow Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Audit the repository to locate database connections and data sync paths:
 1. **Ingest Scripts Scan:** Locate python or node files importing files (CSV, JSON, XML), querying external APIs, or saving bulk data.
 2. **Database Config Check:** Find database connection pool setups (e.g. SQLAlchemy, `pg` pools, raw DB connections).

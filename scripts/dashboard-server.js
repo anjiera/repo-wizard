@@ -400,6 +400,7 @@ async function scanDirectoryExtensions(dir, extCounts, fileLimit = { count: 0 },
   }
 }
 
+// mock-start
 function generateMockReports(session) {
   const repoName = getSafeRepoName(session.targetPath);
   const answers = session.answers || {};
@@ -535,6 +536,7 @@ ${DISCLAIMER_TEXT}
     console.error('Failed to write mock reports or compile HTML:', err.message);
   }
 }
+// mock-end
 
 const server = http.createServer((req, res) => {
   const correlationId = req.headers['x-correlation-id'] || crypto.randomUUID();

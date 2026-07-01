@@ -24,7 +24,7 @@ Accept the parameters contract containing:
 3. **Tooling Budget:** Free-only vs paid or mixed.
 
 ### Phase 2: Metadata Verification
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, bypass consent. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
 Evaluate the target package:
 1. **Security Scan:** Query public CVE and package vulnerability databases. Discourage tools containing unpatched critical or high severity CVEs.
 2. **Maintenance Check:** Check repository commit activity. Flag a warning if no commits in >12 months, and discourage if no commits in >2 years (abandoned).
