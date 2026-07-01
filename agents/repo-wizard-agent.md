@@ -91,7 +91,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 3. Run verification and VCS rollback on failure.
 4. **CLI/Terminal Yield Instructions**: Whenever you must yield (go idle/waiting) while subagents execute or after scheduling background timers:
    - Explicitly instruct the developer on how to check status and compile reports from their command-line interface.
-   - Specifically print: *"Since you are running from the terminal CLI, you can check progress and trigger compilation by running `agy --dangerously-skip-permissions -p \"Check status\"` or directly compiling the reports using `node scripts/reports-compile.js`."*
+   - Specifically print: *"Since you are running from the terminal CLI, you can check progress and trigger compilation by running `agy --dangerously-skip-permissions -p \"/repo-wizard Check status\"` or directly compiling the reports using `node scripts/reports-compile.js`."*
 
 ### B. Headless Mode
 1. Do NOT make any package installations or write files in the targeted repository.

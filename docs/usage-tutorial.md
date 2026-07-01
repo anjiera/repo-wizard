@@ -92,7 +92,7 @@ If you run `agy --dangerously-skip-permissions -p "/repo-wizard ..."` on the com
 * `agy` runs in single-shot mode. It prints the questionnaire, saves the session state to `.repo-wizard/session.json` and the active session pointer to `.repo-wizard/last_session_path.json`, and then exits back to your terminal prompt.
 * **To reply and resume the session from the terminal**, run another single-shot command passing your reply as the prompt:
   ```bash
-  agy --dangerously-skip-permissions -p "Proceed"
+  agy --dangerously-skip-permissions -p "/repo-wizard Proceed"
   ```
   The agent will automatically read your saved session, apply your response, and continue the execution.
 
