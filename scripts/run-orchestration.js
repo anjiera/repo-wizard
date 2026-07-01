@@ -67,6 +67,8 @@ let targetPath = null;
 const targetIdx = process.argv.indexOf('--target-path');
 if (targetIdx !== -1 && process.argv[targetIdx + 1]) {
   targetPath = process.argv[targetIdx + 1];
+} else if (process.argv[2] && !process.argv[2].startsWith('-')) {
+  targetPath = process.argv[2];
 }
 if (!targetPath) {
   targetPath = process.cwd();

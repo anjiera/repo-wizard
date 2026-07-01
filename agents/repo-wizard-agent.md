@@ -118,6 +118,10 @@ Write the deliverables upon scan completion by first generating and saving the b
        * `maturityGuidance`: Maturity model guidance paragraphs aligned with the 4 pillars.
        * `conclusion`: Hopeworthy conclusion text summarizing findings and next steps.
        * `suggestedAdjustments`: Markdown bullet points representing suggested adjustments.
+       * `quickWins`: An array of markdown bullet point strings representing Quick Wins recommendations.
+       * `highValue`: An array of markdown bullet point strings representing High-Value Projects recommendations.
+       * `papercuts`: An array of markdown bullet point strings representing Papercuts / Quality of Life recommendations.
+       * `strategicDebt`: An array of markdown bullet point strings representing Strategic Debt recommendations.
        * `backlog`: An array of stories, each containing `summary`, `desc`, `type` (e.g. `"Story"`), `epic`, `agent` (recommending agent), `goal`, and `priority` (`quick-win`, `high-value-project`, or `papercut`).
    - Run the compilation utility `node scripts/reports-compile.js` to compile the final reports.
 

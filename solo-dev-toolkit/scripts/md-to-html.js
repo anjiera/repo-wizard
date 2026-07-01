@@ -315,10 +315,27 @@ function inlineParse(text) {
 }
 
 /**
+ * Strict, zero-dependency HTML sanitizer to mitigate XSS
+ */
+function sanitizeHtml(html) {
+  if (!html) return '';
+  let clean = html;
+  // Remove script tags
+  clean = clean.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  // Remove iframe, object, embed, frame, frameset tags
+  clean = clean.replace(/<(iframe|object|embed|frame|frameset)\b[^<]*(?:(?!<\/\1>)<[^<]*)*<\/\1>/gi, '');
+  // Remove inline on* event handlers
+  clean = clean.replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  // Remove javascript: links
+  clean = clean.replace(/href\s*=\s*["']\s*javascript:[^"']*["']/gi, 'href="#"');
+  return clean;
+}
+
+/**
  * Injects markdown HTML body into the premium template
  */
 function convertMdToHtml(mdContent, title = 'Documentation') {
-  const htmlBody = parseMarkdown(mdContent);
+  const htmlBody = sanitizeHtml(parseMarkdown(mdContent));
 
   return `<!DOCTYPE html>
 <html lang="en">

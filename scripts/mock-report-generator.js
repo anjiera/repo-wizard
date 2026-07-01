@@ -41,6 +41,16 @@ function generateMockCustomReport(targetPath) {
     `- **Rendering audits:** [Install react-scan](#specialist-agent-react-performance-pilot-agent).`
   ];
 
+  const papercuts = [
+    `- **ADR Templates:** [Scaffolding ADR template folder](#specialist-agent-technical-scribe-agent).`,
+    `- **Visual Diagrams:** [Generate Mermaid architecture flows](#specialist-agent-technical-scribe-agent).`
+  ];
+
+  const strategicDebt = [
+    `- **System Hardening:** [Configure network security configs](#specialist-agent-appsec-hardener-agent).`,
+    `- **Environment Scaling:** [Configure CI/CD automated build pipelines](#specialist-agent-deployment-pilot-agent).`
+  ];
+
   const backlog = [
     {
       summary: '[Supply Chain] Install and configure FOSSA for license scanning',
@@ -90,6 +100,8 @@ function generateMockCustomReport(targetPath) {
     suggestedAdjustments: defaultAdjustments,
     quickWins,
     highValue,
+    papercuts,
+    strategicDebt,
     backlog
   };
 }

@@ -657,9 +657,15 @@ const server = http.createServer((req, res) => {
             res.end(JSON.stringify({ status: 'declined', message: 'TOS declined.' }));
           }
         } catch (err) {
-          writeLog('error', 'Malformed payload in consent update', correlationId, { error: err.message });
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
+          if (err instanceof SyntaxError) {
+            writeLog('error', 'Malformed payload in consent update', correlationId, { error: err.message });
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Invalid JSON payload.' }));
+          } else {
+            writeLog('error', 'Filesystem error during consent update', correlationId, { error: err.message });
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: `Internal server error: ${err.message}` }));
+          }
         }
       })();
     });
@@ -1145,6 +1151,30 @@ const server = http.createServer((req, res) => {
         }
 
         let resolved = target ? path.resolve(target) : ROOT;
+        
+        // Path Traversal containment check: restrict system-critical directories
+        const winSysDirs = [];
+        if (process.env.SystemRoot) winSysDirs.push(path.resolve(process.env.SystemRoot));
+        if (process.env.ProgramFiles) winSysDirs.push(path.resolve(process.env.ProgramFiles));
+        if (process.env['ProgramFiles(x86)']) winSysDirs.push(path.resolve(process.env['ProgramFiles(x86)']));
+        if (process.env.ProgramData) winSysDirs.push(path.resolve(process.env.ProgramData));
+        const unixSysDirs = ['/System', '/Library', '/var', '/etc', '/bin', '/sbin', '/private', '/dev', '/proc', '/sys'];
+        
+        const resolvedLower = resolved.toLowerCase();
+        const isRestricted = [...winSysDirs, ...unixSysDirs].some(sysDir => {
+          try {
+            const sysDirLower = path.resolve(sysDir).toLowerCase();
+            return resolvedLower === sysDirLower || resolvedLower.startsWith(sysDirLower + path.sep);
+          } catch (e) {
+            return false;
+          }
+        });
+
+        if (isRestricted) {
+          res.writeHead(403, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: `Access to system directory is restricted: ${resolved}` }));
+          return;
+        }
         
         if (!fs.existsSync(resolved)) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
