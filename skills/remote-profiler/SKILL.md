@@ -43,6 +43,8 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 4. **Execution & Synchronization Rules**:
    - **Mock-CLI Default**: When running scans, you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
    - **Sync Gate**: You MUST wait for all background specialist subagents to complete their scans, report back, and write their observations and contract files to disk before executing the compilation utility (`reports-compile.js`). If you compile before they finish, Section 4 of the report will be blank.
+   - **Strict Target Directories**: All specialist observations MUST be written to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` and all subagent contracts MUST be written to `.repo-wizard/reports/<repo-name-here>/contracts/<agent-name>-contract.json`. Do NOT place observations or contracts directly in the parent directory (`.repo-wizard/reports/<repo-name-here>/`).
+
 
 ### Phase 4: Report Amalgamation & Compilation
 1. **Consolidate Observations:** The orchestrator reads all agent mini-reports and consolidates them into the final reports.
