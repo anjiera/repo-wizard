@@ -148,6 +148,14 @@ function detectAgentCLI() {
 }
 
 async function main() {
+  // Disable block-buffering on non-TTY streams
+  if (process.stdout._handle && typeof process.stdout._handle.setBlocking === 'function') {
+    process.stdout._handle.setBlocking(true);
+  }
+  if (process.stderr._handle && typeof process.stderr._handle.setBlocking === 'function') {
+    process.stderr._handle.setBlocking(true);
+  }
+
   console.log(`\n${BLUE}==>${RESET} ${BOLD}Repo Wizard has started. This analysis conducts deep codebase diagnostics and runs specialist subagents. It may take 5+ minutes depending on the repository size.${RESET}\n`);
 
   if (!fs.existsSync(manifestPath)) {
@@ -195,6 +203,8 @@ async function main() {
   // 2. Detect CLI Environment
   const cliCmd = detectAgentCLI();
   const isMock = process.env.MOCK_CLI === 'true';
+  console.log(`Execution Mode: ${isMock ? 'MOCK (Simulated Subagents)' : 'REAL (Spawning LLM Specialist Subagents)'} (MOCK_CLI environment variable = "${process.env.MOCK_CLI || 'not set'}")`);
+
 
   if (!cliCmd && !isMock) {
     console.log('NOTICE: No platform CLI binary (antigravity, agy, claude) found in PATH.');

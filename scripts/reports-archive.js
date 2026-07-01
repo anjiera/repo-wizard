@@ -33,9 +33,10 @@ function getSafeRepoName(targetPath) {
 }
 
 function archiveSession(workspacePath = process.cwd(), options = {}) {
+  const wsPath = (workspacePath && typeof workspacePath === 'string') ? workspacePath : process.cwd();
   const opt = options || {};
-  const wizardDir = path.join(workspacePath, '.repo-wizard');
-  const repoName = getSafeRepoName(workspacePath);
+  const wizardDir = path.join(wsPath, '.repo-wizard');
+  const repoName = getSafeRepoName(wsPath);
 
   if (!fs.existsSync(wizardDir)) {
     return;
@@ -86,8 +87,8 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
         fs.copyFileSync(srcPath, destPath);
         fs.unlinkSync(srcPath);
         archivedFiles.push({
-          original: path.relative(workspacePath, srcPath),
-          archived: path.relative(workspacePath, destPath)
+          original: path.relative(wsPath, srcPath),
+          archived: path.relative(wsPath, destPath)
         });
       } catch (e) {
         // Ignore file archive errors
@@ -105,16 +106,21 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
     return;
   }
 
+  const rootManifest = path.join(wizardDir, 'manifest.json');
+  const reportsManifest = path.join(reportsDir, 'manifest.json');
+
+  // Archive any existing session.json and manifest.json inside reportsDir first to avoid state bleed
+  archiveFile(reportsSession);
+  archiveFile(reportsManifest);
+
   // Ensure we keep an unchanged copy of session.json and manifest.json in the reports folder
-  if (fs.existsSync(rootSession) && !fs.existsSync(reportsSession)) {
+  if (fs.existsSync(rootSession)) {
     try {
       fs.copyFileSync(rootSession, reportsSession);
     } catch (e) { /* ignore */ }
   }
 
-  const rootManifest = path.join(wizardDir, 'manifest.json');
-  const reportsManifest = path.join(reportsDir, 'manifest.json');
-  if (fs.existsSync(rootManifest) && !fs.existsSync(reportsManifest)) {
+  if (fs.existsSync(rootManifest)) {
     try {
       fs.copyFileSync(rootManifest, reportsManifest);
     } catch (e) { /* ignore */ }

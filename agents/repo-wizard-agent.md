@@ -138,6 +138,7 @@ Write the deliverables upon scan completion by first generating and saving the b
 
 4. **Post-Execution Output Summary**:
    - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
+   - Include a clear statement indicating whether the scan was executed in MOCK mode (simulated) or REAL mode (actual LLM specialist agents) by documenting the status of the `MOCK_CLI` flag.
    - Under no circumstances should this summary message contain any unapproved emojis (i.e. emojis other than the approved status circles 🟢, 🔵, ⚪, 🟡, 🔴, ⚫ or checkmarks ✓, ✗, ⚠). Use only approved status symbols or cross-platform ANSI color escape codes for terminal formatting.
    - List each generated file with clickable absolute file URLs (using the file scheme with forward slashes, e.g. formatting the absolute path to the report as a file URL: [Executive Summary]\(file:///path/to/repo-wizard-executive-summary.md\) using an escaped parenthesis).
    - Provide a brief 1-sentence explanation of what each report contains and what the developer's next step should be with it (e.g. reviewing recommendations, importing backlog tickets, or verifying configurations).

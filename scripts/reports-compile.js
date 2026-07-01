@@ -10,7 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { compileRealReports } = require('./reports-compiler-engine');
+const { compileRealReports, getSafeRepoName } = require('./reports-compiler-engine');
 const { archiveSession } = require('./reports-archive');
 
 // ANSI escape codes for colorized CLI output
@@ -59,7 +59,7 @@ try {
   compileRealReports(session);
   console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);
 
-  const repoName = path.basename(workspaceDir).replace(/[^a-zA-Z0-9_\-\.]/g, '');
+  const repoName = getSafeRepoName(workspaceDir);
   const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', repoName);
   console.log(`${BOLD}Generated deliverables:${RESET}`);
   console.log(`  - Executive Summary:  [${repoName}-executive-summary.md](file:///${path.join(reportsDir, repoName + '-executive-summary.md').replace(/\\/g, '/')})`);
