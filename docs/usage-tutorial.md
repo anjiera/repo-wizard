@@ -78,7 +78,36 @@ To optimize token usage and avoid redundant analyses on large codebases, the lea
 
 ---
 
-## 4. Understanding Deliverables
+## 4. How to Interact with the Onboarding Questionnaire
+
+When running in **Interactive Local Mode**, `repo-wizard` prints the alignment questionnaire and asks you to reply with adjustments or say "Proceed". Depending on how you invoke the agent, your interaction flow will differ:
+
+### Option A: Via the Editor's IDE Chat Sidebar (Recommended)
+If you run `/repo-wizard` inside the editor's Antigravity chat panel/sidebar GUI:
+* The conversation session remains alive and continuous.
+* You can simply type "Proceed" or your adjustments directly into the chat input, and the agent will receive it immediately and continue without restarting.
+
+### Option B: Via the Terminal CLI
+If you run `agy --dangerously-skip-permissions -p "/repo-wizard ..."` on the command line:
+* `agy` runs in single-shot mode. It prints the questionnaire, saves the session state to `.repo-wizard/session.json` and the active session pointer to `.repo-wizard/last_session_path.json`, and then exits back to your terminal prompt.
+* **To reply and resume the session from the terminal**, run another single-shot command passing your reply as the prompt:
+  ```bash
+  agy --dangerously-skip-permissions -p "Proceed"
+  ```
+  The agent will automatically read your saved session, apply your response, and continue the execution.
+
+### Option C: Via the Local Dashboard UI
+If you prefer a visual web interface:
+1. Run the local dashboard server:
+   ```bash
+   node scripts/dashboard-server.js
+   ```
+2. Open `http://localhost:3000` in your browser.
+3. You can review compiled reports, view active manifests, and manage your backlog configuration presets interactively.
+
+---
+
+## 5. Understanding Deliverables
 
 Every successful scan compiles deliverables under the `.repo-wizard/reports/<repo-name>/` directory (automatically added to your gitignore):
 
