@@ -151,7 +151,7 @@ function compileRealReports(session) {
         const letter = String.fromCharCode(97 + idx); // a, b, c, d...
         let report = `#### ${pNum}. ${letter}) Specialist Agent: ${item.agentName}\n\n`;
         if (item.color && TEAM_COLORS[item.color]) {
-          report += `**Role Alignment:** ${TEAM_COLORS[item.color]}\n\n`;
+          report += `**Cybersecurity Role Alignment:** ${TEAM_COLORS[item.color]}\n\n`;
         }
         report += `**Description:** ${item.desc}\n\n`;
 
