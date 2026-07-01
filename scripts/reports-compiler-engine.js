@@ -334,13 +334,16 @@ ${consolidatedObservations || 'No specialist observations were recorded.'}
 ## 5. Effort vs. Value Rollout Matrix
 This matrix categorizes all suggested actions by crossing their technical value with the implementation effort required by the engineering team, providing an asynchronous execution roadmap:
 
-  1. **Quick Wins (High Value, Low Effort):**
+1. **Quick Wins (High Value, Low Effort):**
 ${quickWins.join('\n')}
-  2. **High-Value Projects (High Value, High Effort):**
+
+2. **High-Value Projects (High Value, High Effort):**
 ${highValue.join('\n')}
-  3. **Papercuts / Quality of Life (Low Value, Low Effort):**
+
+3. **Papercuts / Quality of Life (Low Value, Low Effort):**
 ${papercuts.join('\n')}
-  4. **Strategic Debt (Low Value, High Effort):**
+
+4. **Strategic Debt (Low Value, High Effort):**
 ${strategicDebt.join('\n')}
 
 ## 6. Conclusions
