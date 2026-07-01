@@ -24,7 +24,7 @@ function compileRealReports(session) {
   const repoName = getSafeRepoName(session.targetPath);
   const reportsDir = path.join(REPORTS_ROOT, repoName);
   const obsDir = path.join(reportsDir, 'agents');
-  
+
   const answers = session.answers || {};
   const rawFrameworks = Array.isArray(answers.frameworks) ? answers.frameworks : [];
   const rawPlatforms = Array.isArray(answers.platforms) ? answers.platforms : [];
@@ -146,7 +146,7 @@ function compileRealReports(session) {
     if (list && list.length > 0) {
       const pNum = PILLAR_NUMBERS[key];
       consolidatedObservations += `\n### ${pNum} Pillar: ${QUALITY_PILLARS[key]}\n\n`;
-      
+
       const formattedReports = list.map((item, idx) => {
         const letter = String.fromCharCode(97 + idx); // a, b, c, d...
         let report = `#### ${pNum}. ${letter}) Specialist Agent: ${item.agentName}\n\n`;
@@ -160,7 +160,7 @@ function compileRealReports(session) {
           .replace(/^##\s+/gm, '#### ')
           .replace(/^###\s+/gm, '##### ')
           .replace(/^####\s+/gm, '###### ');
-        
+
         report += cleanContent + '\n\n';
         return report;
       });
@@ -267,7 +267,7 @@ ${DISCLAIMER_TEXT}
   if (isInferred) {
     profileSection += `*Note: The survey answers in this profile were dynamically inferred by the Repo Wizard orchestration agent using best-guess codebase sweeps rather than user input.*\n\n`;
   }
-  
+
   const answersList = [];
   const addAnswer = (label, value) => {
     if (value !== undefined && value !== null && value !== '') {
@@ -294,7 +294,7 @@ ${DISCLAIMER_TEXT}
 Run Date: ${currentDate}
 
 ## Preamble
-This report was compiled by the **Repo Wizard** multi-agent governance system. Repo Wizard conducts token-efficient codebase sweeps, analyzes project configuration rules, and evaluates toolchain compatibility against target standards. The system coordinates specialized subagents—each auditing distinct domains like security, testing, performance, and version control—to generate observations and structured task backlogs.
+This report was compiled by the **Repo Wizard** multi-agent LLM-based code analysis and onboarding tool. Repo Wizard conducts token-efficient codebase sweeps, analyzes project configuration rules, and evaluates toolchain compatibility against target standards. The system coordinates specialized subagents—each auditing distinct domains like security, testing, performance, and version control—to generate observations and structured task backlogs.
 
 This report is a compass, and not a scale. There are no scorecards involved, or valuations of technical debt. Rather, this report is intended to help you understand where your repo sits, and to give you concrete suggestions on how to move towards your goals for the project. The recommendations compiled below are directly based on the project parameters, development environment, and quality thresholds identified in your wizard session.
 
@@ -397,12 +397,12 @@ ${DISCLAIMER_TEXT}
 
     const htmlObs = convertMdToHtml(observationsSummary, `Observations Summary - ${repoName}`);
     fs.writeFileSync(obsPath.replace(/\.md$/, '.html'), htmlObs, 'utf8');
-    
+
     // Generate backlog CSV if mode is backlog
     if (session.mode === 'backlog') {
       const csvPath = path.join(reportsDir, 'backlog.csv');
       let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
-      
+
       const stories = Array.isArray(customReport.backlog) ? customReport.backlog : [];
 
       const escapeCsv = (str) => {
@@ -419,7 +419,7 @@ ${DISCLAIMER_TEXT}
         const cleanDesc = descText.includes(DISCLAIMER_TEXT) ? descText : `${descText} ${DISCLAIMER_TEXT}`;
         csvContent += `"${escapeCsv(story.summary)}","${escapeCsv(cleanDesc)}","${escapeCsv(story.type || 'Story')}","${escapeCsv(story.epic || 'General')}","repo-wizard,${escapeCsv(story.priority || 'quick-win')}","${escapeCsv(story.agent || 'general')}","${escapeCsv(story.goal || 'General')}"\n`;
       }
-      
+
       fs.writeFileSync(csvPath, csvContent, 'utf8');
     }
   } catch (err) {
