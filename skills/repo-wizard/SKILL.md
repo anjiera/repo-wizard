@@ -94,6 +94,8 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
   - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
   - List each generated file with clickable absolute file URLs (using the file scheme with forward slashes, e.g. formatting the absolute path to the report as a file URL: [Executive Summary]\(file:///path/to/repo-wizard-executive-summary.md\) using an escaped parenthesis).
   - Provide a brief 1-sentence explanation of what each report contains and what the developer's next step should be with it (e.g. reviewing recommendations, importing backlog tickets, or verifying configurations).
+  - Include an explicit line documenting the status of the `--mock-cli` flag evaluated during the scan (stating whether it was executed in MOCK mode or REAL mode).
+
 
 
 ---
