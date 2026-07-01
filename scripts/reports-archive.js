@@ -106,15 +106,30 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
     return;
   }
 
+  let answersInferred = true;
+  try {
+    const sessionFileToCheck = fs.existsSync(rootSession) ? rootSession : (fs.existsSync(reportsSession) ? reportsSession : null);
+    if (sessionFileToCheck) {
+      const sess = JSON.parse(fs.readFileSync(sessionFileToCheck, 'utf8'));
+      if (sess.answersInferred === false) {
+        answersInferred = false;
+      }
+    }
+  } catch (e) {
+    // Default to true
+  }
+
   const rootManifest = path.join(wizardDir, 'manifest.json');
   const reportsManifest = path.join(reportsDir, 'manifest.json');
 
   // Archive any existing session.json and manifest.json inside reportsDir first to avoid state bleed
-  archiveFile(reportsSession);
+  if (answersInferred) {
+    archiveFile(reportsSession);
+  }
   archiveFile(reportsManifest);
 
   // Ensure we keep an unchanged copy of session.json and manifest.json in the reports folder
-  if (fs.existsSync(rootSession)) {
+  if (fs.existsSync(rootSession) && answersInferred) {
     try {
       fs.copyFileSync(rootSession, reportsSession);
     } catch (e) { /* ignore */ }
@@ -127,7 +142,9 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
   }
 
   // 1. Archive session.json & manifest.json from the root
-  archiveFile(rootSession);
+  if (answersInferred) {
+    archiveFile(rootSession);
+  }
   archiveFile(rootManifest);
 
   // 2. Archive all reports in reports/<repoName>/ (.md and .html only)
