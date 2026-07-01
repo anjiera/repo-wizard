@@ -34,7 +34,8 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 ### Phase 2: Decoupled Relevance Sweeps
 1. **Lightweight Relevance Query:** The orchestrator queries all 20+ specialized subagents.
 2. **Relevance Verdict:** Each agent performs a fast metadata check and returns `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`.
-3. **Execution Filter:** The orchestrator ignores agents returning `Low` relevance to save tokens and execution time.
+3. **Execution Filter:** The orchestrator ignores agents returning `Low` relevance to save tokens and execution time. You MUST update the status of all `Low` relevance agents to `completed` in the manifest on startup so they are not treated as pending.
+
 
 ### Phase 3: Headless Subagent Audit
 1. **Non-blocking Run:** Relevant subagents run in headless mode (following Section 10 of the protocol), skipping interactive inputs and scaffolding/modifications.
