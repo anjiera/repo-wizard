@@ -87,10 +87,10 @@ function parseCSV(text) {
   const parsedRows = [];
   for (let i = 1; i < rows.length; i++) {
     const values = rows[i];
-    if (values.length === headers.length) {
+    if (values.length > 0) {
       const row = {};
       for (let j = 0; j < headers.length; j++) {
-        row[headers[j]] = values[j];
+        row[headers[j]] = values[j] !== undefined ? values[j] : '';
       }
       parsedRows.push(row);
     }
@@ -218,6 +218,11 @@ async function handleAdd(args) {
 
   // Normalize path relative to repository ROOT using forward slashes
   const absPath = path.resolve(ROOT, rawFile);
+  const rootResolved = path.resolve(ROOT);
+  if (!absPath.startsWith(rootResolved + path.sep) && absPath !== rootResolved) {
+    console.error(`${RED}Error: Path traversal detected. --file must point to a file inside the repository boundary.${RESET}`);
+    process.exit(1);
+  }
   const normalizedFile = path.relative(ROOT, absPath).replace(/\\/g, '/');
 
   const rows = readRegistry();

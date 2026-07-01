@@ -74,6 +74,10 @@ function validateFile(filePath) {
     }
   }
 
+  if (isInsideMockBlock) {
+    errors.push('Contains an unclosed mock block (missing matching "// mock-end").');
+  }
+
   const scanContent = filteredLines.join('\n');
 
   // Check 1: Padding paragraph cheat

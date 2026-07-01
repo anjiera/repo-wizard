@@ -402,7 +402,11 @@ ${DISCLAIMER_TEXT}
 
       const escapeCsv = (str) => {
         if (!str) return '';
-        return String(str).replace(/"/g, '""');
+        let escaped = String(str).replace(/"/g, '""');
+        if (/^[=\+\-@]/.test(escaped)) {
+          escaped = "'" + escaped;
+        }
+        return escaped;
       };
 
       for (const story of stories) {

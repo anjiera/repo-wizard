@@ -148,6 +148,15 @@ function parseMarkdown(md) {
         inList = false;
       }
       continue;
+    } else if (inList && (line.startsWith(' ') || line.startsWith('\t') || (!line.match(/^[#<|]/) && line.trim() !== '---'))) {
+      // Continuation of the current list item
+      let content = inlineParse(line.trim());
+      if (html.endsWith('</li>\n')) {
+        html = html.slice(0, -6) + ' ' + content + '</li>\n';
+      } else {
+        html += `  <li>${content}</li>\n`;
+      }
+      continue;
     } else if (inList) {
       html += '</ul>\n';
       inList = false;

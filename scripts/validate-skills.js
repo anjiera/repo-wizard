@@ -43,12 +43,19 @@ function parseFrontmatter(content) {
   if (!match) return null;
 
   const result = {};
+  let lastKey = null;
   for (const line of match[1].split(/\r?\n/)) {
     const colonIdx = line.indexOf(':');
-    if (colonIdx === -1) continue;
-    const key   = line.slice(0, colonIdx).trim();
-    const value = line.slice(colonIdx + 1).trim().replace(/^['"]|['"]$/g, '');
-    if (key) result[key] = value;
+    if (colonIdx !== -1) {
+      const key   = line.slice(0, colonIdx).trim();
+      const value = line.slice(colonIdx + 1).trim().replace(/^['"]|['"]$/g, '');
+      if (key) {
+        result[key] = value;
+        lastKey = key;
+      }
+    } else if (lastKey && line.trim()) {
+      result[lastKey] += '\n' + line.trim().replace(/^['"]|['"]$/g, '');
+    }
   }
   return result;
 }
