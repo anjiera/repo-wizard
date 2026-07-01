@@ -11,7 +11,6 @@
 const fs = require('fs');
 const path = require('path');
 const { compileRealReports, getSafeRepoName } = require('./reports-compiler-engine');
-const { archiveSession } = require('./reports-archive');
 
 // ANSI escape codes for colorized CLI output
 const RESET = '\x1b[0m';
@@ -19,21 +18,21 @@ const BOLD = '\x1b[1m';
 const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
 const BLUE = '\x1b[34m';
+const ROOT = require('./root-resolver');
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Compiling Repo Wizard reports from specialist observations...${RESET}`);
 
-const ROOT = require('./root-resolver');
-const pointerPath = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
-let sessionPath = '';
+let sessionPath = process.argv[2];
 
-if (fs.existsSync(pointerPath)) {
-  try {
-    const ptr = JSON.parse(fs.readFileSync(pointerPath, 'utf8'));
-    if (ptr.lastSessionPath && fs.existsSync(ptr.lastSessionPath)) {
-      sessionPath = ptr.lastSessionPath;
-    }
-  } catch (e) {
-    // Ignore and fallback
+if (!sessionPath) {
+  const sessionPointerPath = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
+  if (fs.existsSync(sessionPointerPath)) {
+    try {
+      const pointer = JSON.parse(fs.readFileSync(sessionPointerPath, 'utf8'));
+      if (pointer && pointer.lastSessionPath) {
+        sessionPath = pointer.lastSessionPath;
+      }
+    } catch (e) {}
   }
 }
 
@@ -52,13 +51,10 @@ if (!sessionPath) {
 try {
   const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
   
-  // Archive prior session and report files before compiling new ones
-  const workspaceDir = session.targetPath || ROOT;
-  archiveSession(ROOT, { repoName: getSafeRepoName(workspaceDir) });
-  
   compileRealReports(session);
   console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);
 
+  const workspaceDir = session.targetPath || ROOT;
   const repoName = getSafeRepoName(workspaceDir);
   const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', repoName);
   console.log(`${BOLD}Generated deliverables:${RESET}`);

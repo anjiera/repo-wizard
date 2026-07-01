@@ -18,6 +18,7 @@ const path = require('path');
 const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
 const { generateMockCustomReport } = require('./mock-report-generator');
+const { archiveSession } = require('./reports-archive');
 
 const activeChildren = new Set();
 const runningAgents = new Map();
@@ -96,6 +97,12 @@ if (!repoName) {
     repoName = 'project';
   }
 }
+
+// Archive prior session and report files before beginning orchestration
+if (!isMock) {
+  archiveSession(ROOT, { repoName });
+}
+
 const REPORTS_DIR = path.join(ROOT, '.repo-wizard', 'reports', repoName);
 const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
 const CONTRACTS_DIR = path.join(REPORTS_DIR, 'contracts');
