@@ -22,9 +22,9 @@ const YELLOW = '\x1b[33m';
 
 // Configuration for exclusions
 const EXCLUDED_DIRS = new Set([
-  'node_modules', 'vendor', '.gradle', '.kotlin', 'bower_components', // Dependency Directories
-  'dist', 'build', 'out', 'target', 'bin', 'obj',                     // Build & Dist Outputs
-  '.git', '.svn', '.idea', '.vscode', '.repo-wizard', '.agents'       // VCS & Tooling Metadata
+  'node_modules', 'vendor', 'bower_components', // Dependency Directories
+  'dist', 'build', 'out', 'target', 'bin', 'obj', // Build & Dist Outputs
+  'coverage'                                     // Test Coverage
 ]);
 
 const EXCLUDED_FILES = new Set([
@@ -138,7 +138,7 @@ function walk(dir) {
     }
 
     if (fileStat.isDirectory()) {
-      if (EXCLUDED_DIRS.has(file)) {
+      if (file.startsWith('.') || EXCLUDED_DIRS.has(file)) {
         continue;
       }
       walk(fullPath);
