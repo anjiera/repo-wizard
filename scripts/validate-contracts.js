@@ -17,6 +17,7 @@ const BOLD = '\x1b[1m';
 const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
 const BLUE = '\x1b[34m';
+// mock-start
 const CONTRACT_TEMPLATE = {
   task_metadata: {
     target_modules: ['/src/backend'],
@@ -29,6 +30,7 @@ const CONTRACT_TEMPLATE = {
   compliance_targets: [],
   tooling_specification: []
 };
+// mock-end
 
 /**
  * Validates a contract object against the schema.
@@ -150,6 +152,7 @@ function runSelfTest() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Running contract validator self-test...${RESET}`);
   let failures = 0;
 
+  // mock-start
   const validContract = {
     task_metadata: {
       target_modules: ['/src/backend', '/src/frontend'],
@@ -238,6 +241,7 @@ function runSelfTest() {
       expectedError: 'standard must be a non-empty string'
     }
   ];
+  // mock-end
 
   // Test Valid
   const validErrors = validateContract(validContract);

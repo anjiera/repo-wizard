@@ -20,7 +20,7 @@ Before performing any codebase profiling, checks, or session state verification:
    - **Parameter Default Values**:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
      - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
-     - `--target-path`: Defaults to the active local workspace directory.
+     - `--target-path`: Defaults to the active local workspace directory (which the invoking agent resolves and explicitly forwards to the orchestrator script to satisfy Rule 12 of `AGENTS.md`).
      - `--report-path`: Defaults to the workspace root directory.
      - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
    - **Parameter Parsing**:

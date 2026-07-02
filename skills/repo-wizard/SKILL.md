@@ -39,7 +39,7 @@ Before performing codebase analysis, sizing, or session resume operations:
    - **Parameter Default Values**:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
      - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
-     - `--target-path`: Defaults to the active local workspace directory.
+     - `--target-path`: Defaults to the active local workspace directory (which the invoking agent resolves and explicitly forwards to the orchestrator script to satisfy Rule 12 of `AGENTS.md`).
      - `--report-path`: Defaults to the workspace root directory.
      - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
    - **Parameter Parsing**:
@@ -155,7 +155,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Opt-in/Skip questions are asked at the beginning of each category.
 - [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
-- [ ] Scaffolding is delegated via parameters contract with rollback safety checks.
+- [ ] Scaffolding is delegated via parameters contract with rollback verification checks.
 - [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless modes).
 - [ ] Full Technical Report `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
 - [ ] Constructive `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html` are generated (3 sections, each under 3 paragraphs and 450 words).

@@ -37,7 +37,7 @@ Map user queries to skills according to this matrix:
 - **Query / Intent:** Banned words check, legal liability scanning, phrasing checks for weather safety/fitness/finance, or running `/rw-legal-neutrality`.
   - **Skill:** [legal-neutrality-scanner](skills/legal-neutrality-scanner/SKILL.md)
 - **Query / Intent:** Setting up testing, auditing code compliance, onboarding a repository, choosing linter configs, or running `/repo-wizard`.
-  - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*
+  - **Skill:** [repo-wizard](skills/repo-wizard/SKILL.md)
 - **Query / Intent:** Auditing agent prompts, checking prompt consistency, configuring agent rubric evaluations, or running `/rw-agent-align`.
   - **Skill:** [agent-alignment-pilot](skills/agent-alignment-pilot/SKILL.md)
 - **Query / Intent:** Code review, verification checks, blast radius gating, triage papercuts, papercut checkup, or invoking the `sdt-code-review` skill.
@@ -58,6 +58,7 @@ For details on the architecture, see the specifications in the [repo-wizard-plan
 ## Workflow: Mandatory Verification & Review Gate for Programming Tasks
 
 This workflow applies strictly to tasks that involve writing, modifying, or refactoring code. It does NOT apply to planning, brainstorming, research, or exploratory tasks.
+This gate is **mandatory under all circumstances, with no exceptions whatsoever** (including minor tweaks, hotfixes, simple script edits, config changes, or small follow-up tasks). Skipping this step is strictly forbidden.
 
 Before declaring any programming or code-writing task as finished:
 1. **Run Local Checks:** Run the workspace's tests, linters, and compilers (e.g., `npm run test`, `eslint .`, `pytest`). Resolve any errors or warnings.
