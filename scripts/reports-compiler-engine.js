@@ -264,7 +264,8 @@ ${DISCLAIMER_TEXT}
 
 
   const isInferred = session.answersInferred === true;
-  const profileTitle = isInferred ? '2.1 Inferred Interview Profile' : '2.1 Interview Profile';
+  const profileTitle = isInferred ? '2.3 Inferred Interview Profile' : '2.3 Interview Profile';
+  const interviewTocLink = isInferred ? '  - [2.3 Inferred Interview Profile](#23-inferred-interview-profile)' : '  - [2.3 Interview Profile](#23-interview-profile)';
   let profileSection = `### ${profileTitle}\n\n`;
   if (isInferred) {
     profileSection += `*Note: The survey answers in this profile were dynamically inferred by the Repo Wizard orchestration agent using best-guess codebase sweeps rather than user input.*\n\n`;
@@ -292,6 +293,10 @@ ${DISCLAIMER_TEXT}
     profileSection += '_No interview choices were recorded._\n';
   }
 
+  const targetPathResolved = session.targetPath ? path.resolve(session.targetPath) : '';
+  const workspaceRoot = path.resolve(__dirname, '..');
+  const targetPathIsDefault = targetPathResolved === workspaceRoot;
+
   const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
 Run Date: ${currentDate}
 
@@ -303,7 +308,9 @@ This report is a compass, and not a scale. There are no scorecards involved, or 
 ## Table of Contents
 - [1. Executive Summary](#1-executive-summary)
 - [2. Audit Scope & Environment Profile](#2-audit-scope--environment-profile)
-  - [2.1 Interview Profile](#21-interview-profile)
+  - [2.1 Environment Profile](#21-environment-profile)
+  - [2.2 Audit Parameters](#22-audit-parameters)
+${interviewTocLink}
 - [3. Maturity Model Guidance](#3-maturity-model-guidance)
 - [4. Detailed Quality Pillars Analysis](#4-detailed-quality-pillars-analysis)
   - [Security & Compliance](#security--compliance)
@@ -317,12 +324,22 @@ This report is a compass, and not a scale. There are no scorecards involved, or 
 Refer to the separate [Executive Summary](${repoName}-executive-summary.html) for a detailed, high-level business review of the repository's health, Opportunities, and Rollout roadmap.
 
 ## 2. Audit Scope & Environment Profile
+
+### 2.1 Environment Profile
 - **Target Repository Target Path:** \`${session.targetPath}\`
 - **Scan Date:** ${currentDate}
 - **Baseline Frameworks Detected:** ${detectedFrameworksStr}
 - **Primary Languages:** ${detectPrimaryLanguages(frameworks)}
 - **Ignore Rules Enforced:** \`.gitignore\`, \`.agentignore\`
 - **Scope Exclusions:** ${detectScopeExclusions(frameworks)}
+
+### 2.2 Audit Parameters
+- **--target-path :** ${targetPathIsDefault ? `workspace path, \`${session.targetPath || ''}\` (default)` : `\`${session.targetPath || ''}\``}
+- **--report-path :** ${session.reportPath ? `\`${session.reportPath}\`` : 'workspace root (default)'}
+- **--tos-path :** ${session.tosPath ? `\`${session.tosPath}\`` : 'report path (default)'}
+- **--headless :** ${session.answersInferred === true ? 'true' : 'false (default)'}
+- **--redact :** ${session.redact === true ? 'true' : 'false (default)'}
+- **--mock-cli :** ${session.mockCli === true ? 'true' : 'false (default)'}
 
 ${profileSection}
 
