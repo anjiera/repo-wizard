@@ -37,9 +37,9 @@ Before performing any codebase profiling, checks, or session state verification:
    - If the target path is a remote URL: Verify that the URL is a valid Git remote address (e.g. by running a dry-run check or verifying connectivity). If it is invalid or inaccessible, halt execution, describe the error, and ask the user to correct the remote location.
    - If the target path is a local filepath: Verify that the directory exists and is readable on disk. If the path does not exist, halt execution, explain that the target folder was not found, and ask the user to correct the target path.
 2. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
-   - Estimate LOC, count files, detect primary languages and build systems.
+   - Measure LOC, count files, detect primary languages and build systems by running the helper script: `node solo-dev-toolkit/scripts/count-loc.js --target-path <resolved_target_path>`. Avoid running arbitrary dynamic shell scripts or recursive PowerShell expressions.
    - For `MODE=INTERACTIVE_LOCAL` or `MODE=HEADLESS_LOCAL`, if the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user for Incremental Adoption (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-2. **Ignore Local States**: Only if `reportRoot` resides inside the target codebase path, verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`. If `reportRoot` is configured to a directory outside the codebase, do NOT modify the project's `.gitignore` file.
+3. **Ignore Local States**: Only if `reportRoot` resides inside the target codebase path, verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`. If `reportRoot` is configured to a directory outside the codebase, do NOT modify the project's `.gitignore` file.
 
 ---
 

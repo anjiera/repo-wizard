@@ -54,7 +54,7 @@ Before performing codebase analysis, sizing, or session resume operations:
    - If `TARGET_PATH` is a remote URL: Verify that it is a valid, reachable Git repository address. If invalid or inaccessible, halt execution, describe the error, and ask the user to correct the path.
    - If `TARGET_PATH` is a local filepath: Verify that the directory exists and is readable. If the folder does not exist, halt execution, explain that it was not found, and ask the user to correct the path.
 2. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
-3. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
+3. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts by executing the helper script: `node solo-dev-toolkit/scripts/count-loc.js --target-path <resolved_target_path>`. Avoid running arbitrary dynamic shell scripts or recursive PowerShell expressions.
 4. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
 5. **Gitignore Verification**: Only if `reportRoot` resides inside the target codebase path (`TARGET_PATH`), automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files. If `reportRoot` is outside the target path, do not modify the codebase's ignore files.
 

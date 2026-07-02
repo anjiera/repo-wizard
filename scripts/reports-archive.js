@@ -102,12 +102,14 @@ function archiveSession(workspacePath = process.cwd(), options = {}) {
   const rmRecursive = (dirPath) => {
     if (fs.existsSync(dirPath)) {
       if (fs.rmSync) {
-        fs.rmSync(dirPath, { recursive: true, force: true });
+        try {
+          fs.rmSync(dirPath, { recursive: true, force: true });
+        } catch (e) { /* ignore */ }
       } else {
         const items = fs.readdirSync(dirPath);
         for (const item of items) {
           const itemPath = path.join(dirPath, item);
-          if (fs.statSync(itemPath).isDirectory()) {
+          if (fs.lstatSync(itemPath).isDirectory()) {
             rmRecursive(itemPath);
           } else {
             try {
@@ -232,7 +234,7 @@ if (require.main === module) {
     process.exit(1);
   }
   const targetDir = args[targetPathIdx + 1];
-  if (!targetDir) {
+  if (!targetDir || targetDir.startsWith('-')) {
     console.error('ERROR: Missing value for parameter "--target-path".');
     process.exit(1);
   }
