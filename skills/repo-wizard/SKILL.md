@@ -50,10 +50,13 @@ Before performing codebase analysis, sizing, or session resume operations:
 6. **Proceed**: If the agreement exists, read it and proceed to Phase 1.
 
 ### Phase 1: Codebase Sizing & Analysis
-1. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
-2. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
-3. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-4. **Gitignore Verification**: Only if `reportRoot` resides inside the target codebase path (`TARGET_PATH`), automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files. If `reportRoot` is outside the target path, do not modify the codebase's ignore files.
+1. **Target Path Verification Check**: Verify that the target path parameter (`TARGET_PATH`) is valid and accessible:
+   - If `TARGET_PATH` is a remote URL: Verify that it is a valid, reachable Git repository address. If invalid or inaccessible, halt execution, describe the error, and ask the user to correct the path.
+   - If `TARGET_PATH` is a local filepath: Verify that the directory exists and is readable. If the folder does not exist, halt execution, explain that it was not found, and ask the user to correct the path.
+2. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
+3. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
+4. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
+5. **Gitignore Verification**: Only if `reportRoot` resides inside the target codebase path (`TARGET_PATH`), automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files. If `reportRoot` is outside the target path, do not modify the codebase's ignore files.
 
 ### Phase 2: Resumability & Session State Check
 1. **Interactive Mode**: Check for `<reportRoot>/.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Before overwriting, run the utility script `node scripts/reports-archive.js` to backup all prior configurations and reports (including `session.json`, `manifest.json`, and all compiled markdown/HTML reports under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/`) into `<reportRoot>/.repo-wizard/reports/history/<repo-name-here>/<timestamp>/`, suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate age.

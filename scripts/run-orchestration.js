@@ -75,6 +75,10 @@ if (!targetPath) {
   process.exit(1);
 }
 const resolvedTarget = path.resolve(targetPath);
+if (!fs.existsSync(resolvedTarget)) {
+  console.error(`ERROR: Target directory "${resolvedTarget}" does not exist on disk.`);
+  process.exit(1);
+}
 
 // Parse --report-path flag
 let reportPath = null;
