@@ -128,7 +128,7 @@ function ensureDirExists(dir) {
   }
 }
 
-const rootManifest = path.join(ROOT, '.repo-wizard', 'manifest.json');
+const rootManifest = path.join(reportRoot, '.repo-wizard', 'manifest.json');
 const manifestPath = path.join(REPORTS_DIR, 'manifest.json');
 
 // Promotion of fresh manifest written by the lead agent

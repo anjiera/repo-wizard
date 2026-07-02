@@ -445,11 +445,7 @@ function testCustomReportPath() {
   }
 
   // Create manifest under the custom reports directory
-  const rootManifest = path.join(ROOT, '.repo-wizard', 'manifest.json');
-  let originalManifestContent = null;
-  if (fs.existsSync(rootManifest)) {
-    originalManifestContent = fs.readFileSync(rootManifest, 'utf8');
-  }
+  const rootManifest = path.join(customReportDir, '.repo-wizard', 'manifest.json');
 
   try {
     const mockManifest = {
@@ -495,12 +491,6 @@ function testCustomReportPath() {
     assert(session.reportPath === customReportDir, 'session.json correctly persisted reportPath');
 
   } finally {
-    // Restore manifest
-    if (originalManifestContent !== null) {
-      fs.writeFileSync(rootManifest, originalManifestContent, 'utf8');
-    } else if (fs.existsSync(rootManifest)) {
-      fs.unlinkSync(rootManifest);
-    }
     if (fs.existsSync(customReportDir)) {
       fs.rmSync(customReportDir, { recursive: true, force: true });
     }
