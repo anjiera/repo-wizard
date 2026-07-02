@@ -48,6 +48,13 @@ if (cliTosPathIdx !== -1 && process.argv[cliTosPathIdx + 1] && !process.argv[cli
 const tosRoot = cliTosPath ? path.resolve(cliTosPath) : path.join(reportRoot, '.repo-wizard');
 const TOS_FILE = path.join(tosRoot, '.tos_agreed');
 
+// Parse --report-style from startup arguments
+const cliReportStyleIdx = process.argv.indexOf('--report-style');
+let cliReportStyle = 'whitepaper';
+if (cliReportStyleIdx !== -1 && process.argv[cliReportStyleIdx + 1] && !process.argv[cliReportStyleIdx + 1].startsWith('-')) {
+  cliReportStyle = process.argv[cliReportStyleIdx + 1];
+}
+
 if (!fs.existsSync(tosRoot)) {
   fs.mkdirSync(tosRoot, { recursive: true });
 }
@@ -794,6 +801,9 @@ const server = http.createServer((req, res) => {
           if (payload.redact !== undefined) sessionState.redact = !!payload.redact;
           if (payload.reportPath !== undefined && typeof payload.reportPath === 'string') sessionState.reportPath = payload.reportPath;
           if (payload.tosPath !== undefined && typeof payload.tosPath === 'string') sessionState.tosPath = payload.tosPath;
+          if (!sessionState.reportStyle) {
+            sessionState.reportStyle = cliReportStyle || 'whitepaper';
+          }
 
           // Nested validation for answers
           if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {
@@ -914,6 +924,9 @@ const server = http.createServer((req, res) => {
       if (session.reportPath) {
         spawnArgs.push('--report-path', session.reportPath);
       }
+      
+      const targetStyle = session.reportStyle || cliReportStyle || 'whitepaper';
+      spawnArgs.push('--report-style', targetStyle);
 
       activeScanProcess = spawn('node', spawnArgs, {
         cwd: ROOT,
@@ -1375,7 +1388,8 @@ function scanReports(dir, baseDir, fileList = [], depth = 0, maxFiles = 1000) {
         try {
           const mdContent = fs.readFileSync(inputPath, 'utf8');
           const title = path.basename(inputPath, '.md');
-          const htmlContent = convertMdToHtml(mdContent, title);
+          const reportStyle = (sessionState && sessionState.reportStyle) ? sessionState.reportStyle : (cliReportStyle || 'whitepaper');
+          const htmlContent = convertMdToHtml(mdContent, title, reportStyle);
           fs.writeFileSync(outputPath, htmlContent, 'utf8');
 
           writeLog('info', `Successfully compiled HTML: ${path.basename(outputPath)}`, correlationId);

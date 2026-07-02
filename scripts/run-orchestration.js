@@ -88,6 +88,13 @@ if (reportPathIdx !== -1 && process.argv[reportPathIdx + 1] && !process.argv[rep
 }
 const reportRoot = reportPath ? path.resolve(reportPath) : ROOT;
 
+// Parse --report-style flag
+let reportStyle = 'whitepaper';
+const styleIdx = process.argv.indexOf('--report-style');
+if (styleIdx !== -1 && process.argv[styleIdx + 1] && !process.argv[styleIdx + 1].startsWith('-')) {
+  reportStyle = process.argv[styleIdx + 1];
+}
+
 // Parse and validate --mock-cli flag
 let isMock = false;
 const mockCliIdx = process.argv.indexOf('--mock-cli');
@@ -786,6 +793,7 @@ function completeOrchestration(manifest) {
     session.reportPath = reportPath;
   }
   session.answersInferred = session.answersInferred !== undefined ? session.answersInferred : true;
+  session.reportStyle = reportStyle || 'whitepaper';
   
   if (!session.customReport) {
     session.customReport = generateMockCustomReport(targetPath);

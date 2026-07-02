@@ -22,6 +22,13 @@ const ROOT = require('./root-resolver');
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Compiling Repo Wizard reports from specialist observations...${RESET}`);
 
+let reportStyleOverride = null;
+const styleIdx = process.argv.indexOf('--report-style');
+if (styleIdx !== -1 && process.argv[styleIdx + 1] && !process.argv[styleIdx + 1].startsWith('-')) {
+  reportStyleOverride = process.argv[styleIdx + 1];
+  process.argv.splice(styleIdx, 2);
+}
+
 let sessionPath = process.argv[2];
 
 if (!sessionPath) {
@@ -50,6 +57,9 @@ if (!sessionPath) {
 
 try {
   const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
+  if (reportStyleOverride) {
+    session.reportStyle = reportStyleOverride;
+  }
   
   compileRealReports(session);
   console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);

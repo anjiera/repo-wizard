@@ -26,6 +26,7 @@ function compileRealReports(session) {
   const reportsRoot = session.reportPath ? path.join(path.resolve(session.reportPath), '.repo-wizard', 'reports') : REPORTS_ROOT;
   const reportsDir = path.join(reportsRoot, repoName);
   const obsDir = path.join(reportsDir, 'agents');
+  const reportStyle = session.reportStyle || 'whitepaper';
 
   const answers = session.answers || {};
   const rawFrameworks = Array.isArray(answers.frameworks) ? answers.frameworks : [];
@@ -410,14 +411,15 @@ ${DISCLAIMER_TEXT}
     // Compile to HTML
     const htmlExec = convertMdToHtml(
       execSummary.replace(/#specialist-agent-/g, `${repoName}-full-report.html#specialist-agent-`).replace(/#4/g, `${repoName}-full-report.html#4`),
-      `Executive Summary - ${repoName}`
+      `Executive Summary - ${repoName}`,
+      reportStyle
     );
     fs.writeFileSync(execPath.replace(/\.md$/, '.html'), htmlExec, 'utf8');
 
-    const htmlFull = convertMdToHtml(fullReport, `Full Technical Report - ${repoName}`);
+    const htmlFull = convertMdToHtml(fullReport, `Full Technical Report - ${repoName}`, reportStyle);
     fs.writeFileSync(fullPath.replace(/\.md$/, '.html'), htmlFull, 'utf8');
 
-    const htmlObs = convertMdToHtml(observationsSummary, `Observations Summary - ${repoName}`);
+    const htmlObs = convertMdToHtml(observationsSummary, `Observations Summary - ${repoName}`, reportStyle);
     fs.writeFileSync(obsPath.replace(/\.md$/, '.html'), htmlObs, 'utf8');
 
     // Generate backlog CSV if mode is backlog

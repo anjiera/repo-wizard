@@ -341,10 +341,121 @@ function sanitizeHtml(html) {
 }
 
 /**
+ * Loads style config from report-styles.json or falls back to built-in styles.
+ * Logs a warning if the requested style is not found or is malformed.
+ */
+function loadStyleConfig(styleName) {
+  const defaultStyles = {
+    "whitepaper": {
+      "light": {
+        "bg-primary": "#ffffff",
+        "text-primary": "#1f2937",
+        "text-heading": "#111827",
+        "accent": "#1e3a8a",
+        "accent-hover": "#2563eb",
+        "border-color": "#e5e7eb",
+        "code-bg": "#f3f4f6",
+        "quote-bg": "#f9fafb",
+        "quote-text": "#374151",
+        "quote-border": "#9ca3af"
+      },
+      "dark": {
+        "bg-primary": "#ffffff",
+        "text-primary": "#1f2937",
+        "text-heading": "#111827",
+        "accent": "#1e3a8a",
+        "accent-hover": "#2563eb",
+        "border-color": "#e5e7eb",
+        "code-bg": "#f3f4f6",
+        "quote-bg": "#f9fafb",
+        "quote-text": "#374151",
+        "quote-border": "#9ca3af"
+      }
+    },
+    "dark-blue": {
+      "light": {
+        "bg-primary": "#fafafa",
+        "text-primary": "#334155",
+        "text-heading": "#0f172a",
+        "accent": "#2563eb",
+        "accent-hover": "#1d4ed8",
+        "border-color": "#e2e8f0",
+        "code-bg": "#f1f5f9",
+        "quote-bg": "#eff6ff",
+        "quote-text": "#1e3a8a",
+        "quote-border": "#3b82f6"
+      },
+      "dark": {
+        "bg-primary": "#0f172a",
+        "text-primary": "#cbd5e1",
+        "text-heading": "#f8fafc",
+        "accent": "#3b82f6",
+        "accent-hover": "#60a5fa",
+        "border-color": "#334155",
+        "code-bg": "#1e293b",
+        "quote-bg": "#1e293b",
+        "quote-text": "#93c5fd",
+        "quote-border": "#3b82f6"
+      }
+    }
+  };
+
+  let resolvedStyle = "whitepaper";
+  let loadedConfig = null;
+
+  const configPath = path.join(__dirname, '..', '..', '.repo-wizard', 'report-styles.json');
+  try {
+    if (fs.existsSync(configPath)) {
+      const data = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      if (data && data.styles) {
+        loadedConfig = data.styles;
+        if (data.defaultStyle && data.styles[data.defaultStyle]) {
+          resolvedStyle = data.defaultStyle;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn(`[Warning] Failed to load/parse report-styles.json: ${err.message}. Falling back to built-in styles.`);
+  }
+
+  const stylesSource = loadedConfig || defaultStyles;
+  let targetStyleName = styleName || resolvedStyle;
+  
+  if (!stylesSource[targetStyleName]) {
+    console.error(`[Warning] Requested style "${targetStyleName}" was not found or is invalid. Falling back to "whitepaper" style.`);
+    targetStyleName = "whitepaper";
+  }
+
+  const styleObj = stylesSource[targetStyleName];
+  
+  const requiredKeys = [
+    "bg-primary", "text-primary", "text-heading", "accent", 
+    "accent-hover", "border-color", "code-bg", "quote-bg", 
+    "quote-text", "quote-border"
+  ];
+
+  const validateSubStyle = (sub) => {
+    if (!sub || typeof sub !== 'object') return false;
+    for (const key of requiredKeys) {
+      if (typeof sub[key] !== 'string') return false;
+    }
+    return true;
+  };
+
+  if (!styleObj || !validateSubStyle(styleObj.light) || !validateSubStyle(styleObj.dark)) {
+    console.error(`[Warning] Style "${targetStyleName}" is malformed or missing required keys. Falling back to built-in "whitepaper".`);
+    return defaultStyles["whitepaper"];
+  }
+
+  return styleObj;
+}
+
+/**
  * Injects markdown HTML body into the premium template
  */
-function convertMdToHtml(mdContent, title = 'Documentation') {
+function convertMdToHtml(mdContent, title = 'Documentation', styleName = 'whitepaper') {
   const htmlBody = sanitizeHtml(parseMarkdown(mdContent));
+  const styleConfig = loadStyleConfig(styleName);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -354,30 +465,30 @@ function convertMdToHtml(mdContent, title = 'Documentation') {
   <title>${escapeHtml(String(title))}</title>
   <style>
     :root {
-      --bg-primary: #fafafa;
-      --text-primary: #334155;
-      --text-heading: #0f172a;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --border-color: #e2e8f0;
-      --code-bg: #f1f5f9;
-      --quote-bg: #eff6ff;
-      --quote-text: #1e3a8a;
-      --quote-border: #3b82f6;
+      --bg-primary: ${styleConfig.light["bg-primary"]};
+      --text-primary: ${styleConfig.light["text-primary"]};
+      --text-heading: ${styleConfig.light["text-heading"]};
+      --accent: ${styleConfig.light["accent"]};
+      --accent-hover: ${styleConfig.light["accent-hover"]};
+      --border-color: ${styleConfig.light["border-color"]};
+      --code-bg: ${styleConfig.light["code-bg"]};
+      --quote-bg: ${styleConfig.light["quote-bg"]};
+      --quote-text: ${styleConfig.light["quote-text"]};
+      --quote-border: ${styleConfig.light["quote-border"]};
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg-primary: #0f172a;
-        --text-primary: #cbd5e1;
-        --text-heading: #f8fafc;
-        --accent: #3b82f6;
-        --accent-hover: #60a5fa;
-        --border-color: #334155;
-        --code-bg: #1e293b;
-        --quote-bg: #1e293b;
-        --quote-text: #93c5fd;
-        --quote-border: #3b82f6;
+        --bg-primary: ${styleConfig.dark["bg-primary"]};
+        --text-primary: ${styleConfig.dark["text-primary"]};
+        --text-heading: ${styleConfig.dark["text-heading"]};
+        --accent: ${styleConfig.dark["accent"]};
+        --accent-hover: ${styleConfig.dark["accent-hover"]};
+        --border-color: ${styleConfig.dark["border-color"]};
+        --code-bg: ${styleConfig.dark["code-bg"]};
+        --quote-bg: ${styleConfig.dark["quote-bg"]};
+        --quote-text: ${styleConfig.dark["quote-text"]};
+        --quote-border: ${styleConfig.dark["quote-border"]};
       }
     }
 
@@ -522,8 +633,16 @@ function convertMdToHtml(mdContent, title = 'Documentation') {
 
 function main() {
   const args = process.argv.slice(2);
+  
+  let reportStyle = 'whitepaper';
+  const styleIdx = args.indexOf('--report-style');
+  if (styleIdx !== -1 && args[styleIdx + 1] && !args[styleIdx + 1].startsWith('-')) {
+    reportStyle = args[styleIdx + 1];
+    args.splice(styleIdx, 2);
+  }
+
   if (args.length < 2) {
-    console.error('Usage: node scripts/md-to-html.js <input.md> <output.html>');
+    console.error('Usage: node scripts/md-to-html.js <input.md> <output.html> [--report-style <style>]');
     process.exit(1);
   }
 
@@ -538,7 +657,7 @@ function main() {
   try {
     const mdContent = fs.readFileSync(inputPath, 'utf8');
     const title = path.basename(inputPath, '.md');
-    const htmlContent = convertMdToHtml(mdContent, title);
+    const htmlContent = convertMdToHtml(mdContent, title, reportStyle);
     
     // Ensure parent dir exists
     const outputDir = path.dirname(outputPath);
