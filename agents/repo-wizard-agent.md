@@ -36,7 +36,7 @@ Before performing any codebase profiling, checks, or session state verification:
 1. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
    - Estimate LOC, count files, detect primary languages and build systems.
    - For `MODE=INTERACTIVE_LOCAL` or `MODE=HEADLESS_LOCAL`, if the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user for Incremental Adoption (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-2. **Ignore Local States**: Verify that `.repo-wizard/` (at `reportRoot`) is added to the project's `.gitignore` or `.agentignore`.
+2. **Ignore Local States**: Only if `reportRoot` resides inside the target codebase path, verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`. If `reportRoot` is configured to a directory outside the codebase, do NOT modify the project's `.gitignore` file.
 
 ---
 
