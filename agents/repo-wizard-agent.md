@@ -24,7 +24,7 @@ Before performing any codebase profiling, checks, or session state verification:
      - `--report-path`: Defaults to the workspace root directory.
      - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
    - **Parameter Parsing**:
-     - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
+     - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output and state files under `.repo-wizard/` (including `manifest.json`, `session.json`, and `.tos_agreed`) will reside under `reportRoot`.
      - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
      - If `--target-path <path>` is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory). Note: Positional parameters for target paths are strictly forbidden per repository governance rules.
 2. **Check Agreement File**: Search for the local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside `reportRoot/.repo-wizard/` (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`).
