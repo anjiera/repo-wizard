@@ -40,7 +40,7 @@ Map user queries to skills according to this matrix:
   - **Skill:** `skills/repo-wizard/SKILL.md` *(under development)*
 - **Query / Intent:** Auditing agent prompts, checking prompt consistency, configuring agent rubric evaluations, or running `/rw-agent-align`.
   - **Skill:** [agent-alignment-pilot](skills/agent-alignment-pilot/SKILL.md)
-- **Query / Intent:** Code review, verification checks, blast radius gating, triage papercuts, papercut checkup, or running `/rw-code-review`.
+- **Query / Intent:** Code review, verification checks, blast radius gating, triage papercuts, papercut checkup, or invoking the `sdt-code-review` skill.
   - **Skill:** [sdt-code-review](solo-dev-toolkit/skills/sdt-code-review/SKILL.md)
 
 ## Orchestration & Scanning Modes
@@ -61,20 +61,7 @@ This workflow applies strictly to tasks that involve writing, modifying, or refa
 
 Before declaring any programming or code-writing task as finished:
 1. **Run Local Checks:** Run the workspace's tests, linters, and compilers (e.g., `npm run test`, `eslint .`, `pytest`). Resolve any errors or warnings.
-2. **Spawn a Reviewer Subagent:** Use `define_subagent` and `invoke_subagent` to spin up a fresh-context reviewer. **Graceful Fallback:** If subagent tools (`define_subagent` / `invoke_subagent`) are not supported or fail in this environment, perform the adversarial code review yourself in this session:
-   * **Role:** Lead Code Reviewer
-   * **Prompt:**
-     ```text
-     Adversarial code review. Analyze the changes in the active workspace according to the guidelines in [sdt-code-review](solo-dev-toolkit/skills/sdt-code-review/SKILL.md).
-     Evaluate the code against the Solo-Developer axes:
-     1. Correctness (handling of boundaries, error paths, and edge cases)
-     2. Security (validation at boundaries, secrets, injection prevention)
-     3. Performance (unbounded loops, database queries, hot-path allocations)
-     
-     Follow the Blast-Radius Gating guidelines and verify high-risk code using Active Disproof Testing.
-     List all issues found and label them by severity: [Critical], [Important], [Nit], [FYI]. 
-     Do not summarize or validate; only list issues.
-     ```
+2. **Spawn a Reviewer Subagent:** Use `define_subagent` and `invoke_subagent` to spin up a fresh-context reviewer (`code-reviewer`). Use the agent definition and prompt rules defined in [code-reviewer-agent.md](solo-dev-toolkit/agents/code-reviewer-agent.md). **Graceful Fallback:** If subagent tools (`define_subagent` / `invoke_subagent`) are not supported or fail in this environment, perform the adversarial code review yourself in this session following the exact prompts in [code-reviewer-agent.md](solo-dev-toolkit/agents/code-reviewer-agent.md).
 3. **Reconcile Findings:** You must address all [Critical] and [Important] issues. If code changes are made, run tests and lints again.
-   * **Exception for Code-Cheating / Honesty Violations:** If any checks (such as `validate-scripts.js`, `validate-agents.js`, or `validate-skills.js`) or the reviewer subagent flag attempts to use code-cheating, mock-bypass, or word-count padding, you MUST NOT attempt to edit or rewrite the code to bypass or automatically resolve the violation. Instead, you must immediately halt, present the flagged code/prompt line details to the developer, fail the review, and pass judgment back to the user for human-in-the-loop review.
-4. **Auto-Commit:** Once all tests, linters, and the code review pass, you are authorized to automatically commit the changes using the Conventional Commits format, unless the user has explicitly requested in the prompt not to auto-commit.
+4. **Design Documentation Check:** If any new or modified technical design documents (under `docs/design/`) are written as part of the implementation, you must explicitly highlight these documents to the user in your walkthrough summary so they can approve the design.
+5. **Auto-Commit:** Once all tests, linters, and the code review pass, you are authorized to automatically commit the changes using the Conventional Commits format, unless the user has explicitly requested in the prompt not to auto-commit.

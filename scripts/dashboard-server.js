@@ -619,6 +619,24 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // 0c. GET /api/tos - Get TOS HTML compiled from markdown
+  if (req.method === 'GET' && url.pathname === '/api/tos') {
+    (async () => {
+      try {
+        const tosMdPath = path.join(ROOT, 'references', 'terms-of-service.md');
+        const mdContent = await fs.promises.readFile(tosMdPath, 'utf8');
+        const html = convertMdToHtml(mdContent, 'Terms of Service & Developer Consent');
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ html }));
+      } catch (err) {
+        writeLog('error', 'Failed to read or convert TOS markdown file', correlationId, { error: err.message });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to retrieve Terms of Service' }));
+      }
+    })();
+    return;
+  }
+
   // 0b. POST /api/consent - Save or revoke TOS consent
   if (req.method === 'POST' && url.pathname === '/api/consent') {
     let body = '';

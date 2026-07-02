@@ -20,6 +20,12 @@ describe('App Component Workflow', () => {
           json: () => Promise.resolve({ reports: [] })
         });
       }
+      if (url.includes('/api/tos')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ html: '<p>Mocked Terms of Service HTML</p>' })
+        });
+      }
       if (url.includes('/api/session')) {
         // Return a 200 OK to indicate an active session exists
         return Promise.resolve({
@@ -106,6 +112,12 @@ describe('App Component Workflow', () => {
           json: () => Promise.resolve({ consented: false })
         });
       }
+      if (url.includes('/api/tos')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ html: '<p>Mocked Terms of Service HTML</p>' })
+        });
+      }
       return Promise.resolve({
         ok: true,
         json: () => Promise.resolve({ reports: [] })
@@ -117,6 +129,11 @@ describe('App Component Workflow', () => {
     // Expect Consent screen terms and accept button
     const heading = await screen.findByText(/Terms of Service & Developer Consent/i);
     expect(heading).toBeInTheDocument();
+    
+    // Expect the mocked terms of service content to be rendered
+    const termsContent = await screen.findByText(/Mocked Terms of Service HTML/i);
+    expect(termsContent).toBeInTheDocument();
+
     const acceptBtn = screen.getByRole('button', { name: /i accept the terms/i });
     
     // Accept consent

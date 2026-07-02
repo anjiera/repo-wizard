@@ -32,17 +32,29 @@ export default function App() {
     };
   }, []);
   const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('theme');
-    return saved ? saved === 'dark' : true;
+    try {
+      const saved = typeof localStorage !== 'undefined' && localStorage.getItem ? localStorage.getItem('theme') : null;
+      return saved ? saved === 'dark' : true;
+    } catch (e) {
+      return true;
+    }
   });
 
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      try {
+        if (typeof localStorage !== 'undefined' && localStorage.setItem) {
+          localStorage.setItem('theme', 'dark');
+        }
+      } catch (e) {}
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      try {
+        if (typeof localStorage !== 'undefined' && localStorage.setItem) {
+          localStorage.setItem('theme', 'light');
+        }
+      } catch (e) {}
     }
   }, [darkMode]);
 
@@ -158,6 +170,7 @@ export default function App() {
   const [hasSession, setHasSession] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [hasConsented, setHasConsented] = useState(false);
+  const [tosHtml, setTosHtml] = useState('');
   const [customLanguage, setCustomLanguage] = useState('');
   const [customPlatform, setCustomPlatform] = useState('');
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -170,6 +183,11 @@ export default function App() {
         setHasConsented(data.consented);
         if (!data.consented) {
           setScreen('consent');
+          fetch('/api/tos')
+            .then(res => res.ok ? res.json() : { html: '' })
+            .then(tosData => {
+              setTosHtml(tosData.html);
+            });
         }
       })
       .catch(() => {
@@ -556,24 +574,10 @@ export default function App() {
         {screen === 'consent' && (
           <div className="w-full max-w-xl glass-panel p-8 rounded-2xl shadow-xl animate-fade-in space-y-6">
             <h2 className="text-2xl font-bold mb-4 text-white text-center">Terms of Service & Developer Consent</h2>
-            <div className="bg-[#0d1117] border border-brand-border rounded-xl p-4 text-sm text-[#8b949e] h-60 overflow-y-auto space-y-4 leading-relaxed">
-              <p className="text-white font-semibold">Please read and accept the following terms before proceeding with any codebase analysis or modifications.</p>
-              
-              <p>
-                <strong>1. Developer Ownership & Responsibility:</strong> Repo Wizard is an AI-driven tool configuration assistant. 
-                It makes recommendations and can generate scaffolding configurations, security rules, and lint configurations. 
-                However, you acknowledge and agree that you retain absolute and final responsibility for reviewing all generated files, security configurations, and licensing, and for performing code integration or changes.
-              </p>
-
-              <div className="border-l-4 border-yellow-500 bg-yellow-500/10 p-3 rounded text-yellow-200 text-xs">
-                <strong>Disclaimer:</strong> Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.
-              </div>
-
-              <p>
-                <strong>2. Data Privacy:</strong> By proceeding, you authorize Repo Wizard to scan selected directories on your local disk or fetch remote repositories for scanning. 
-                All scan actions run locally on your system, and report summaries are stored in the local workspace directory.
-              </p>
-            </div>
+            <div 
+              className="bg-[#0d1117] border border-brand-border rounded-xl p-4 text-sm text-[#8b949e] h-60 overflow-y-auto space-y-4 leading-relaxed markdown-body"
+              dangerouslySetInnerHTML={{ __html: tosHtml || '<p>Loading Terms of Service...</p>' }}
+            />
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-brand-border/40">
               <button

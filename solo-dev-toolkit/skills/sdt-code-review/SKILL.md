@@ -49,12 +49,13 @@ Run all local compilers, unit tests, and linters:
 If the build or tests fail, you must fix them before proceeding.
 
 ### Step 3: Adversarial Review (Medium & High Risk)
-Spawn a reviewer agent (or conduct self-audit in this session if subagents are unsupported) to inspect the files across the **Five Core Solo-Developer Axes**:
+Spawn the reviewer agent (`code-reviewer`) using the definition and prompt rules in [code-reviewer-agent.md](../../agents/code-reviewer-agent.md) (or conduct a self-audit following those rules if subagents are unsupported) to inspect the files across the **Five Core Solo-Developer Axes**:
 1.  **Correctness:** Are edge cases handled? (e.g., empty arrays, null values, network timeouts). Are errors caught and handled gracefully?
-2.  **Readability & Simplicity:** Is the code clean and easy to understand? Are abstractions earning their complexity, or is it over-engineered?
-3.  **Architecture:** Does the change respect module boundaries? Is there duplicate code that should be shared?
-4.  **Security:** Are inputs validated at the system boundaries? Are there hardcoded secrets or prompt injection vulnerabilities?
-5.  **Performance:** Are there $N+1$ query patterns, unbounded loops, or unnecessary allocations in hot paths?
+2.  **Security:** Are inputs validated at system boundaries? Are there hardcoded secrets or prompt injection vulnerabilities?
+3.  **Performance:** Are there $N+1$ query patterns, unbounded loops, or unnecessary allocations in hot paths?
+4.  **Maintainability:** Is the code DRY compliant? Is there redundant copy or hardcoded text that should be consolidated? Does the code align with architecture guidelines?
+5.  **Honesty & Completeness:** Are there any placeholder implementations, mock bypasses of validations, or word-count/documentation padding? Every change must be fully implemented.
+
 
 ### Step 4: Active Disproof Testing (High Risk Only)
 For High Risk changes, the reviewer must actively attempt to disprove the correctness of the code:

@@ -32,6 +32,7 @@ Focuses on compliance profiles, accessibility standards, legal liability checks,
 * **Legal Phrasing & UI Neutrality:** [legal-phrasing-dictionary.md](legal-phrasing-dictionary.md)
 * **Regulatory Compliance Frameworks:** [security-hardening-checklist.md](security-hardening-checklist.md)
 * **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
+* **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
 
 ### 🟡 Yellow Team (System Builders & Deployment Lifecycle)
 Focuses on build automation, container configurations, hardware limits, data workflows, and service resilience.
@@ -142,9 +143,11 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Swift Copy-on-Write value structures, avoiding strong cycles (weak/unowned), and Actor concurrency.
 45. **[testing-patterns.md](testing-patterns.md)**
     - Unit/integration mocking frameworks (Jest, Vitest, MSW), coverage budgets, and test setups.
-46. **[toolchain-standards.md](coding-standards/toolchain-standards.md)**
+46. **[terms-of-service.md](terms-of-service.md)**
+    - Dynamic terms of service text, developer consent definitions, and data privacy clauses.
+47. **[toolchain-standards.md](coding-standards/toolchain-standards.md)**
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
-47. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
+48. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
 
 ---
