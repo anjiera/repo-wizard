@@ -28,7 +28,8 @@ const BLUE = '\x1b[34m';
 const AGENTS_DIR = path.resolve(__dirname, '..', 'agents');
 const EVALS_FILE = path.resolve(__dirname, 'run-evals.js');
 const MAPPINGS_FILE = path.resolve(__dirname, '..', 'agents', 'agent-quality-pillar-mappings.json');
-const { QUALITY_PILLARS, TEAM_COLORS } = require('./quality-pillars');
+const { QUALITY_PILLARS } = require('./quality-pillars');
+const { TEAM_COLORS } = require('./report-constants');
 
 function main() {
   if (!fs.existsSync(AGENTS_DIR)) {

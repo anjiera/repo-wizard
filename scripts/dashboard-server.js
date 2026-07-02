@@ -18,7 +18,8 @@ const path = require('path');
 const crypto = require('crypto');
 const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 const ROOT = require('./root-resolver');
-const { QUALITY_PILLARS, TEAM_COLORS } = require('./quality-pillars');
+const { QUALITY_PILLARS } = require('./quality-pillars');
+const { TEAM_COLORS, DISCLAIMER_TEXT } = require('./report-constants');
 const { compileRealReports, getSafeRepoName, REPORTS_ROOT } = require('./reports-compiler-engine');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
 
@@ -73,7 +74,7 @@ function findOpenPort(startPort, callback) {
     return;
   }
   const server = net.createServer();
-  server.listen(startPort, () => {
+  server.listen(startPort, '127.0.0.1', () => {
     server.once('close', () => callback(null, startPort));
     server.close();
   });
@@ -408,7 +409,7 @@ function generateMockReports(session) {
   const platforms = answers.platforms || [];
   const compliance = answers.compliance || [];
 
-  const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+
   const dummyBluf = '*This is a single sentence summary that serves as the BLUF.*';
   const dummyOverview = 'Overview: This is a CEO-level overview in three sentences or less.';
   const dummyText = 'word '.repeat(1200);
@@ -1425,7 +1426,7 @@ function scanReports(dir, baseDir, fileList = [], depth = 0, maxFiles = 1000) {
 
 // Start server trying sequentially higher ports to avoid TOCTOU race conditions
 function startServer(port) {
-  server.listen(port, () => {
+  server.listen(port, '127.0.0.1', () => {
     console.log(`\n\x1b[1m\x1b[32m==================================================\x1b[0m`);
     console.log(`\x1b[1m\x1b[35m   ^   \x1b[0m`);
     console.log(`\x1b[1m\x1b[35m   R   \x1b[0m  \x1b[1m\x1b[36mRepo Wizard Interactive Dashboard is Live!\x1b[0m`);

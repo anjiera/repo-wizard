@@ -124,9 +124,9 @@ Write the deliverables upon scan completion by first generating and saving the b
    - Construct and write a JSON object to `.repo-wizard/session.json` (merging with existing session data) containing:
      * `answersInferred`: boolean (`true` if headless/inferred, `false` if interactive).
      * `customReport`: An object with keys:
-       * `section1`: Section 1 of the Executive Summary (BLUF/Overview/Technical Overview). First paragraph must be wrapped in italics, second paragraph must start with "Overview:", remaining paragraphs must have between 3 and 6 sentences each, and the total section word count must be between 800 and 3000 words.
-       * `section2`: Section 2 of the Executive Summary. (Same paragraph/word constraints).
-       * `section3`: Section 3 of the Executive Summary. (Same paragraph/word constraints).
+        * `section1`: Section 1 of the Executive Summary (BLUF/Overview/Technical Overview). First paragraph must be wrapped in italics, second paragraph must start with "Overview:", remaining paragraphs must have between 3 and 6 sentences each, and the total section word count must be between `SECTION_WORD_COUNT_MIN` and `SECTION_WORD_COUNT_MAX` words (as defined in `scripts/report-constants.js`).
+        * `section2`: Section 2 of the Executive Summary. (Same paragraph/word constraints).
+        * `section3`: Section 3 of the Executive Summary. (Same paragraph/word constraints).
        * `maturityGuidance`: Maturity model guidance paragraphs aligned with the 4 pillars.
        * `conclusion`: Hopeworthy conclusion text summarizing findings and next steps.
        * `suggestedAdjustments`: Markdown bullet points representing suggested adjustments.

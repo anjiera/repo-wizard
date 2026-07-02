@@ -46,7 +46,8 @@ function parseFrontmatter(content) {
   let lastKey = null;
   for (const line of match[1].split(/\r?\n/)) {
     const colonIdx = line.indexOf(':');
-    if (colonIdx !== -1) {
+    const isIndented = /^[ \t]/.test(line);
+    if (colonIdx !== -1 && !isIndented) {
       const key   = line.slice(0, colonIdx).trim();
       const value = line.slice(colonIdx + 1).trim().replace(/^['"]|['"]$/g, '');
       if (key) {

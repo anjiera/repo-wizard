@@ -48,7 +48,7 @@ const SPECIALISTS = [
   'state-sanitizer-agent'
 ];
 
-const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+const { DISCLAIMER_TEXT } = require('./report-constants');
 
 /**
  * Creates a mock contract for a given specialist subagent

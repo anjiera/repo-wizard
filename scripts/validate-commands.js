@@ -40,7 +40,8 @@ function descriptionFromMd(filePath) {
   if (!match) return null;
   for (const line of match[1].split(/\r?\n/)) {
     const colonIdx = line.indexOf(':');
-    if (colonIdx === -1) continue;
+    const isIndented = /^[ \t]/.test(line);
+    if (colonIdx === -1 || isIndented) continue;
     if (line.slice(0, colonIdx).trim() === 'description') {
       return line.slice(colonIdx + 1).trim().replace(/^['"]|['"]$/g, '');
     }

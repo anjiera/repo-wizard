@@ -22,7 +22,7 @@ const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
 const BLUE = '\x1b[34m';
 
-const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
+const { DISCLAIMER_TEXT, SECTION_WORD_COUNT_MIN, SECTION_WORD_COUNT_MAX } = require('./report-constants');
 
 // Expected CSV Columns
 const CSV_COLUMNS = [
@@ -272,8 +272,8 @@ function validateFile(filePath) {
                 technicalContent = sectionContent.slice(idx);
               }
               const words = countWords(technicalContent);
-              if (words < 800 || words > 3000) {
-                errors.push(`HTML Section "${headings[i].title}" Technical Overview word count is ${words} (must be between 800 and 3000).`);
+              if (words < SECTION_WORD_COUNT_MIN || words > SECTION_WORD_COUNT_MAX) {
+                errors.push(`HTML Section "${headings[i].title}" Technical Overview word count is ${words} (must be between ${SECTION_WORD_COUNT_MIN} and ${SECTION_WORD_COUNT_MAX}).`);
               }
             }
           }
@@ -384,8 +384,8 @@ function validateFile(filePath) {
               const technicalParagraphs = sec.paragraphs.slice(2);
               const totalText = technicalParagraphs.join(' ');
               const words = countWords(totalText);
-              if (words < 800 || words > 3000) {
-                errors.push(`Section "${sec.heading}" Technical Overview word count is ${words} (must be between 800 and 3000).`);
+              if (words < SECTION_WORD_COUNT_MIN || words > SECTION_WORD_COUNT_MAX) {
+                errors.push(`Section "${sec.heading}" Technical Overview word count is ${words} (must be between ${SECTION_WORD_COUNT_MIN} and ${SECTION_WORD_COUNT_MAX}).`);
               }
             }
           }
