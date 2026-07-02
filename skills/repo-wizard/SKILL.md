@@ -92,6 +92,8 @@ For each capability needed, recommend candidate tools dynamically after screenin
 ### Phase 6: Reports & Deliverables Compilation
 Generate the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
 
+* **Redacted Mode Validation**: If Redacted/Anonymized Mode is active (`isRedact = true` / `--redact true`), you must strictly ensure that when synthesizing report sections, Maturity Model guidance, backlog stories, and conclusion text, you NEVER output the actual repository name, target path, organization name, developer credentials, or project-specific branding. Instead, write neutrally and refer to the project generically (e.g. as 'the target repository', 'the target codebase', 'the workspace', or 'the codebase').
+
 1. **Observations Summary (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` - Headless Modes Only)**:
   - Document assumptions about what toolchain clues currently exist in the codebase.
   - Highlight guesses about what kinds of compliance standards may or may not be involved.

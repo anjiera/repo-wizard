@@ -474,8 +474,27 @@ function redactPaths(text, targetPath) {
 function redactRepoName(text, repoName) {
   if (!repoName || repoName === 'project') return text;
   const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(escapeRegExp(repoName), 'gi');
-  return text.replace(regex, 'target-repository');
+  
+  const variants = new Set();
+  variants.add(repoName);
+  
+  const flat = repoName.replace(/[-_]/g, '');
+  if (flat) {
+    variants.add(flat);
+  }
+  
+  const spaced = repoName.replace(/[-_]/g, ' ');
+  if (spaced) {
+    variants.add(spaced);
+  }
+
+  let redacted = text;
+  for (const variant of variants) {
+    if (variant.length < 3) continue;
+    const regex = new RegExp(escapeRegExp(variant), 'gi');
+    redacted = redacted.replace(regex, 'target-repository');
+  }
+  return redacted;
 }
 
 function redactReportText(text, repoName, targetPath) {
