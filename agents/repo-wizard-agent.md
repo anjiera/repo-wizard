@@ -80,7 +80,7 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Step 0 remains mandatory and must never be bypassed under any mode):
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
 2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`.
-3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--report-path <reportRoot>` if configured.
+3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--target-path <targetPath>` (and `--report-path <reportRoot>` and `--redact <isRedact>` if configured).
 4. **Collect and Read Observations**:
     - If execution status in `manifest.json` is `completed` or `skipped`, directly read and consolidate their mini-reports.
    - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
@@ -99,7 +99,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 ## Step 5: Scaffolding, Optimization & Handoff
 
 ### A. Local Interactive Mode
-1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`, forwarding `--report-path <reportRoot>` if configured.
+1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`, forwarding `--target-path <targetPath>` (and `--report-path <reportRoot>` and `--redact <isRedact>` if configured).
 2. **Handle Fallback Execution**:
    - If execution status in the manifest is `fallback_to_agent`, **do NOT immediately proceed to invoke fallback subagents**. First, issue a mandatory warning to the developer:
      > ⚠ **Heads-up: High Token Usage Ahead**
