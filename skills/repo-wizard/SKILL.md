@@ -42,12 +42,10 @@ Before performing codebase analysis, sizing, or session resume operations:
      - `--target-path`: Defaults to the active local workspace directory.
      - `--report-path`: Defaults to the workspace root directory.
      - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
-     - `--answers`: Defaults to `null` (no answers JSON file loaded).
    - **Parameter Parsing**:
      - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
      - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
      - If `--target-path <path>` is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory). Note: Positional parameters for target paths are strictly forbidden per repository governance rules.
-     - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
 2. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the custom reports parent directory (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`) if `--report-path <path>` is configured, falling back to the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
 3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window, and ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
 4. **Save Agreement**: If accepted:
@@ -76,7 +74,6 @@ Before performing codebase analysis, sizing, or session resume operations:
    - **Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. Present a formatted summary of the user's answers and list the selected sub-agents along with a 1-sentence description of what each sub-agent does. Prompt the user to review/update their answers or proceed. Only dispatch parameters contracts to specialists and call `run-orchestration.js` in Phase 5 after the user explicitly confirms they want to proceed.
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`, and immediately update their status in the manifest to `completed` so they are not treated as pending.
-   - **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
    - **Coordinate Headless Scans**: Dispatch the best-guess parameter contract to High/Medium relevance subagents. Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
    - **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 

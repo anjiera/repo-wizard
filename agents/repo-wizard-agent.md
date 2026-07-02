@@ -23,12 +23,10 @@ Before performing any codebase profiling, checks, or session state verification:
      - `--target-path`: Defaults to the active local workspace directory.
      - `--report-path`: Defaults to the workspace root directory.
      - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
-     - `--answers`: Defaults to `null` (no answers JSON file loaded).
    - **Parameter Parsing**:
      - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
      - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
      - If `--target-path <path>` is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory). Note: Positional parameters for target paths are strictly forbidden per repository governance rules.
-     - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
 2. **Check Agreement File**: Search for the local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside `reportRoot/.repo-wizard/` (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`).
 3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window, and ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
 4. **Save Agreement**: If accepted:
@@ -81,8 +79,7 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Step 0 remains mandatory and must never be bypassed under any mode):
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
-2. **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
-3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`.
+2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`.
 3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--report-path <reportRoot>` if configured.
 4. **Collect and Read Observations**:
    - If execution status in `manifest.json` is `completed`, directly read and consolidate their mini-reports.
@@ -124,7 +121,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 2. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` (either written by the runtime or the fallback manual execution loop).
 3. **Execution & Synchronization Rules**:
    - **Mock-CLI Default**: When spawning `run-orchestration.js`, you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
-   - **Parameter Defaults**: Enforce parameter default values during scans (`--mock-cli` defaults to `false`, `--redact` defaults to `false`, `--target-path` defaults to the active local workspace directory, `--report-path` defaults to the workspace root, `--tos-path` defaults to `<reportRoot>/.repo-wizard/`, and `--answers` defaults to `null`).
+   - **Parameter Defaults**: Enforce parameter default values during scans (`--mock-cli` defaults to `false`, `--redact` defaults to `false`, `--target-path` defaults to the active local workspace directory, `--report-path` defaults to the workspace root, and `--tos-path` defaults to `<reportRoot>/.repo-wizard/`).
 
 ---
 
