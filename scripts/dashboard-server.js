@@ -38,7 +38,15 @@ const SessionStatus = Object.freeze({
   FAILED: 'failed'
 });
 let currentPort = 3000;
-const TOS_FILE = path.join(reportRoot, '.repo-wizard', '.tos_agreed');
+
+// Parse --tos-path from startup arguments
+const cliTosPathIdx = process.argv.indexOf('--tos-path');
+let cliTosPath = null;
+if (cliTosPathIdx !== -1 && process.argv[cliTosPathIdx + 1] && !process.argv[cliTosPathIdx + 1].startsWith('-')) {
+  cliTosPath = process.argv[cliTosPathIdx + 1];
+}
+const tosRoot = cliTosPath ? path.resolve(cliTosPath) : path.join(reportRoot, '.repo-wizard');
+const TOS_FILE = path.join(tosRoot, '.tos_agreed');
 
 if (!fs.existsSync(REPORTS_ROOT_DIR)) {
   fs.mkdirSync(REPORTS_ROOT_DIR, { recursive: true });
@@ -572,14 +580,23 @@ const server = http.createServer((req, res) => {
   // 0a. GET /api/consent - Check TOS consent status
   if (req.method === 'GET' && url.pathname === '/api/consent') {
     (async () => {
-      const exists = await fileExists(TOS_FILE);
+      let activeTosFile = TOS_FILE;
+      if (fs.existsSync(currentSessionFile)) {
+        try {
+          const sess = JSON.parse(await fs.promises.readFile(currentSessionFile, 'utf8'));
+          if (sess.tosPath) {
+            activeTosFile = path.join(path.resolve(sess.tosPath), '.tos_agreed');
+          }
+        } catch (e) {}
+      }
+      const exists = await fileExists(activeTosFile);
       if (!exists) {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ consented: false }));
         return;
       }
       try {
-        const data = JSON.parse(await fs.promises.readFile(TOS_FILE, 'utf8'));
+        const data = JSON.parse(await fs.promises.readFile(activeTosFile, 'utf8'));
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ consented: true, data }));
       } catch (err) {
@@ -615,14 +632,33 @@ const server = http.createServer((req, res) => {
               agreed_by: typeof payload.agreed_by === 'string' ? payload.agreed_by : 'dev-user',
               timestamp: new Date().toISOString()
             };
-            await fs.promises.writeFile(TOS_FILE, JSON.stringify(consentData, null, 2), 'utf8');
+            let activeTosFile = TOS_FILE;
+            if (fs.existsSync(currentSessionFile)) {
+              try {
+                const sess = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+                if (sess.tosPath) {
+                  activeTosFile = path.join(path.resolve(sess.tosPath), '.tos_agreed');
+                }
+              } catch (e) {}
+            }
+            await fs.promises.mkdir(path.dirname(activeTosFile), { recursive: true });
+            await fs.promises.writeFile(activeTosFile, JSON.stringify(consentData, null, 2), 'utf8');
             writeLog('info', 'TOS Consent saved successfully', correlationId);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ status: 'success', message: 'TOS accepted.' }));
           } else {
-            const exists = await fileExists(TOS_FILE);
+            let activeTosFile = TOS_FILE;
+            if (fs.existsSync(currentSessionFile)) {
+              try {
+                const sess = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+                if (sess.tosPath) {
+                  activeTosFile = path.join(path.resolve(sess.tosPath), '.tos_agreed');
+                }
+              } catch (e) {}
+            }
+            const exists = await fileExists(activeTosFile);
             if (exists) {
-              await fs.promises.unlink(TOS_FILE);
+              await fs.promises.unlink(activeTosFile);
             }
             writeLog('info', 'TOS Consent declined / revoked', correlationId);
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -753,6 +789,7 @@ const server = http.createServer((req, res) => {
           if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
           if (payload.redact !== undefined) sessionState.redact = !!payload.redact;
           if (payload.reportPath !== undefined && typeof payload.reportPath === 'string') sessionState.reportPath = payload.reportPath;
+          if (payload.tosPath !== undefined && typeof payload.tosPath === 'string') sessionState.tosPath = payload.tosPath;
 
           // Nested validation for answers
           if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {

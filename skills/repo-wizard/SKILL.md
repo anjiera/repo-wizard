@@ -31,9 +31,9 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ### Phase 0: Legal Terms & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
-1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
+1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
 2. **Halt and Prompt if Missing**: If this file is missing, halt execution immediately. Present the exact **Terms of Service & Developer Agreement** (disclaimer) to the developer and prompt them to accept (y/N).
-3. **Save Agreement**: If accepted, write a JSON file to the `repo-wizard` tool's `.repo-wizard/.tos_agreed` path containing:
+3. **Save Agreement**: If accepted, write a JSON file to the resolved `.tos_agreed` path containing:
    - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
    - `timestamp`: The current timestamp in ISO format.
 4. **Refuse if Declined**: If declined, halt execution, state that the agent cannot proceed without agreement, and do not write the file.
@@ -44,6 +44,7 @@ Before performing codebase analysis, sizing, or session resume operations:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
    - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
+   - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
    - If `--target-path <path>` or a trailing positional directory/URL argument is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory).
    - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.

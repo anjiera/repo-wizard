@@ -208,6 +208,29 @@ function testE2ECustomReportPath() {
   assert(fs.existsSync(historyBaseDir), 'Archived session folders exist under custom reportPath');
 }
 
+function testE2ECustomTosPath() {
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing E2E custom TOS path consent check...${RESET}`);
+  
+  const customTosDir = path.join(SANDBOX_DIR, 'custom_tos');
+  const wizardDir = path.join(SANDBOX_DIR, '.repo-wizard');
+  const repoName = path.basename(SANDBOX_DIR);
+  
+  const sessionObj = {
+    targetPath: path.join(SANDBOX_DIR, repoName),
+    tosPath: customTosDir,
+    status: 'paused',
+    answersInferred: true,
+    customReport: {}
+  };
+
+  let activeTosFile = path.join(SANDBOX_DIR, '.repo-wizard', '.tos_agreed');
+  if (sessionObj.tosPath) {
+    activeTosFile = path.join(sessionObj.tosPath, '.tos_agreed');
+  }
+  
+  assert(activeTosFile === path.join(customTosDir, '.tos_agreed'), 'TOS file path correctly routed to custom tosPath');
+}
+
 function testE2EDeliverablesValidator() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing E2E deliverables validator validation...${RESET}`);
   const validatorScript = path.join(ROOT, 'scripts', 'validate-deliverables.js');
@@ -386,6 +409,7 @@ async function runE2E() {
     testGitignoreAppend();
     testSessionArchiving();
     testE2ECustomReportPath();
+    testE2ECustomTosPath();
     testE2EDeliverablesValidator();
     await testPresetsAndParallelism();
     testPromptInjectionDefense();

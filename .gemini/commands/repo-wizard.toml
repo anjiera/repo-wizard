@@ -8,10 +8,11 @@ Check the input parameters:
 - If a URL is provided as a parameter (e.g. `/repo-wizard <URL>`): Set `MODE=HEADLESS_REMOTE` and prompt the user to pick Approach A (shallow clone) or B (GraphQL/metadata-only analysis) once the TOS check passes.
 - If `headless` or `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active local codebase in headless mode.
 - If `--report-path <path>` is provided: Extract the custom parent directory for reports (setting reportRoot).
+- If `--tos-path <path>` is provided: Extract the custom directory for `.tos_agreed` (setting tosPath).
 - If NO parameters are provided: Default to `MODE=INTERACTIVE_LOCAL` to scan the active local directory and engage in a dialogue.
 
 Before starting:
-1. Perform the TOS check (Step 0) using `.tos_agreed`. Halt and prompt if missing.
+1. Perform the TOS check (Step 0) using `.tos_agreed` (looking inside `tosPath` if configured). Halt and prompt if missing.
 2. Perform codebase sizing and ignore states checks (utilizing the custom reportPath if configured).
 3. Check for previous active sessions (for local interactive mode).
 
