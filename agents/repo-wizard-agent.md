@@ -82,7 +82,7 @@ Bypass the questionnaire and live alignment (Note: The Terms of Service agreemen
 2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`.
 3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--report-path <reportRoot>` if configured.
 4. **Collect and Read Observations**:
-   - If execution status in `manifest.json` is `completed`, directly read and consolidate their mini-reports.
+    - If execution status in `manifest.json` is `completed` or `skipped`, directly read and consolidate their mini-reports.
    - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
 
 ---

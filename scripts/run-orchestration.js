@@ -241,6 +241,9 @@ async function main() {
   console.log('Running pre-flight parameter contract validation...');
   const validationErrors = [];
   for (const entry of manifest.contracts) {
+    if (entry.status === 'skipped' || entry.status === 'completed') {
+      continue;
+    }
     const errors = validateContract(entry.contract);
     if (errors.length > 0) {
       validationErrors.push({ agent: entry.agent_name, errors });
@@ -357,7 +360,7 @@ async function main() {
         const skippedContent = `# Observations for ${agentName}\n\nSkipped: Low relevance to the workspace.\n\nRationale: ${rationale}\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`;
         fs.writeFileSync(obsPath, skippedContent, 'utf8');
         
-        entry.status = 'completed';
+        entry.status = 'skipped';
         completed++;
         
         if (!isTTY) {
@@ -367,7 +370,7 @@ async function main() {
         return;
       }
 
-      if (entry.status === 'completed') {
+      if (entry.status === 'completed' || entry.status === 'skipped') {
         completed++;
         resolve();
         return;
