@@ -7,8 +7,13 @@ Act as the repo-wizard-agent persona.
 
 Check the input parameters:
 - If a URL is provided as a parameter (e.g. `/repo-wizard <URL>`): Set `MODE=HEADLESS_REMOTE` and prompt the user to pick Approach A (shallow clone) or B (GraphQL/metadata-only analysis) once the TOS check passes.
-- If `headless` or `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active local codebase in headless mode.
-- If NO parameters are provided: Default to `MODE=INTERACTIVE_LOCAL` to scan the active local directory and engage in a dialogue.
+- If `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active local codebase in headless mode.
+- Default to `MODE=INTERACTIVE_LOCAL` unless a URL or `--headless` is passed (meaning interactive local mode is the default mode even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed).
+- If `--target-path <path>` is provided: Extract and target that codebase directory for scanning, setting the custom target path for the orchestrator. Note: Positional parameters for target paths are strictly forbidden.
+- If `--report-path <path>` is provided: Extract the custom parent directory for reports (setting reportRoot).
+- If `--tos-path <path>` is provided: Extract the custom directory for `.tos_agreed` (setting tosPath).
+- If `--answers <path>` is provided as a parameter: Extract the path to the answers JSON file and load the answers.
+- Ensure that `--mock-cli` defaults to `false` and `--redact` defaults to `false` unless explicitly overridden.
 
 Before starting:
 1. Perform the TOS check (Step 0) using `.tos_agreed`. Halt and prompt if missing.

@@ -31,14 +31,23 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ### Phase 0: Legal Terms, Parameter Routing & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
-1. **Parameter Routing Check**: Parse the command parameters:
-   - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
-   - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
-   - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
-   - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
-   - If `--target-path <path>` or a trailing positional directory/URL argument is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory).
-   - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
-   - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
+1. **Parameter Routing Check**: Parse the command parameters and enforce their default values:
+   - **Mode Defaults**:
+     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
+     - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+     - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`.
+   - **Parameter Default Values**:
+     - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
+     - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
+     - `--target-path`: Defaults to the active local workspace directory.
+     - `--report-path`: Defaults to the workspace root directory.
+     - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
+     - `--answers`: Defaults to `null` (no answers JSON file loaded).
+   - **Parameter Parsing**:
+     - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
+     - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
+     - If `--target-path <path>` is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory). Note: Positional parameters for target paths are strictly forbidden per repository governance rules.
+     - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
 2. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the custom reports parent directory (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`) if `--report-path <path>` is configured, falling back to the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
 3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window, and ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
 4. **Save Agreement**: If accepted:

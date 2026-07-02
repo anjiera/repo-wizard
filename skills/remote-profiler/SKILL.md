@@ -14,7 +14,7 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 * Running a best-guess analysis on a public remote repository URL.
 * Performing a fast, non-blocking check on a local checked-out repository.
 * Setting the execution parameter to `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`.
-* Invoked when parameter routing detects `/repo-wizard <URL>` or `/repo-wizard headless` / `/repo-wizard --headless`.
+* Invoked when parameter routing detects `/repo-wizard <URL>` or `/repo-wizard --headless`.
 
 ### When NOT to Use
 * Running the wizard interactively on the local workspace where a dialogue with the developer is desired (`MODE=INTERACTIVE_LOCAL`).
@@ -28,7 +28,7 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 1. **TOS Verification:** Search for `.tos_agreed` in `.repo-wizard/` or the workspace root. If missing, halt execution and present the Terms of Service & Developer Agreement. Once accepted by the operator, proceed.
 2. **Mode Switch Check:**
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE`.
-   - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+   - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
    - If `MODE=HEADLESS_REMOTE` is active, prompt the operator to choose **Approach A** (shallow clone / local checkout) or **B** (GraphQL & metadata-only scan) before starting the analysis.
 
 ### Phase 2: Decoupled Relevance Sweeps
