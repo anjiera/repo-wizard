@@ -435,6 +435,78 @@ function testRunOrchestration() {
   }
 }
 
+function testCustomReportPath() {
+  console.log('Testing orchestration with custom --report-path...');
+  const scriptPath = path.join(SCRIPTS_DIR, 'run-orchestration.js');
+  const customReportDir = path.join(ROOT, 'temp_custom_reports');
+  
+  if (fs.existsSync(customReportDir)) {
+    fs.rmSync(customReportDir, { recursive: true, force: true });
+  }
+
+  // Create manifest under the custom reports directory
+  const rootManifest = path.join(ROOT, '.repo-wizard', 'manifest.json');
+  let originalManifestContent = null;
+  if (fs.existsSync(rootManifest)) {
+    originalManifestContent = fs.readFileSync(rootManifest, 'utf8');
+  }
+
+  try {
+    const mockManifest = {
+      status: "pending",
+      contracts: [
+        {
+          agent_name: "privacy-guardian-agent",
+          status: "pending",
+          contract: {
+            task_metadata: {
+              target_modules: ["/src"],
+              language: "javascript",
+              build_system: "npm",
+              execution_mode: "scaffold"
+            }
+          }
+        }
+      ]
+    };
+    
+    fs.mkdirSync(path.dirname(rootManifest), { recursive: true });
+    fs.writeFileSync(rootManifest, JSON.stringify(mockManifest, null, 2), 'utf8');
+
+    // Run script with --mock-cli true and --report-path D:\...\temp_custom_reports
+    const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true --report-path "${customReportDir}"`, {
+      cwd: ROOT,
+      stdio: 'pipe',
+      env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
+    }).toString();
+
+    // Check manifest status update (promoted to custom reports dir)
+    const reportsDir = path.join(customReportDir, '.repo-wizard', 'reports', 'test-repo');
+    const targetManifestPath = path.join(reportsDir, 'manifest.json');
+    assert(fs.existsSync(targetManifestPath), 'manifest promoted to custom report path');
+
+    const updatedManifest = JSON.parse(fs.readFileSync(targetManifestPath, 'utf8'));
+    assert(updatedManifest.status === 'completed', 'manifest status updated to completed under custom report path');
+    
+    // Check session.json contains reportPath
+    const targetSessionPath = path.join(reportsDir, 'session.json');
+    assert(fs.existsSync(targetSessionPath), 'session.json generated under custom report path');
+    const session = JSON.parse(fs.readFileSync(targetSessionPath, 'utf8'));
+    assert(session.reportPath === customReportDir, 'session.json correctly persisted reportPath');
+
+  } finally {
+    // Restore manifest
+    if (originalManifestContent !== null) {
+      fs.writeFileSync(rootManifest, originalManifestContent, 'utf8');
+    } else if (fs.existsSync(rootManifest)) {
+      fs.unlinkSync(rootManifest);
+    }
+    if (fs.existsSync(customReportDir)) {
+      fs.rmSync(customReportDir, { recursive: true, force: true });
+    }
+  }
+}
+
 function testValidateDeliverables() {
   console.log('Testing validate-deliverables.js...');
   const scriptPath = path.join(SCRIPTS_DIR, 'validate-deliverables.js');
@@ -458,6 +530,7 @@ function runAll() {
     testPatchHeadlessMode();
     testValidateDocs();
     testRunOrchestration();
+    testCustomReportPath();
     testValidateDeliverables();
 
     console.log(`\nAll helper validator tests complete: ${testsPassed} / ${testsRun} assertions passed.`);

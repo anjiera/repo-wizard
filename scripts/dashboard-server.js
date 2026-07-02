@@ -20,8 +20,17 @@ const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 const ROOT = require('./root-resolver');
 const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS, DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./report-constants');
-const { compileRealReports, getSafeRepoName, REPORTS_ROOT, redactReportFiles } = require('./reports-compiler-engine');
+const { compileRealReports, getSafeRepoName, redactReportFiles } = require('./reports-compiler-engine');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
+
+// Parse --report-path from startup arguments
+const cliReportPathIdx = process.argv.indexOf('--report-path');
+let cliReportPath = null;
+if (cliReportPathIdx !== -1 && process.argv[cliReportPathIdx + 1] && !process.argv[cliReportPathIdx + 1].startsWith('-')) {
+  cliReportPath = process.argv[cliReportPathIdx + 1];
+}
+const reportRoot = cliReportPath ? path.resolve(cliReportPath) : ROOT;
+const REPORTS_ROOT_DIR = path.join(reportRoot, '.repo-wizard', 'reports');
 
 const SessionStatus = Object.freeze({
   PAUSED: 'paused',
@@ -29,14 +38,14 @@ const SessionStatus = Object.freeze({
   FAILED: 'failed'
 });
 let currentPort = 3000;
-const TOS_FILE = path.join(ROOT, '.repo-wizard', '.tos_agreed');
+const TOS_FILE = path.join(reportRoot, '.repo-wizard', '.tos_agreed');
 
-if (!fs.existsSync(REPORTS_ROOT)) {
-  fs.mkdirSync(REPORTS_ROOT, { recursive: true });
+if (!fs.existsSync(REPORTS_ROOT_DIR)) {
+  fs.mkdirSync(REPORTS_ROOT_DIR, { recursive: true });
 }
 
-const LAST_SESSION_POINTER = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
-let currentSessionFile = path.join(ROOT, '.repo-wizard', 'session.json');
+const LAST_SESSION_POINTER = path.join(reportRoot, '.repo-wizard', 'last_session_path.json');
+let currentSessionFile = path.join(reportRoot, '.repo-wizard', 'session.json');
 
 if (fs.existsSync(LAST_SESSION_POINTER)) {
   try {
@@ -710,11 +719,17 @@ const server = http.createServer((req, res) => {
           }
 
           let repoName = 'project';
+          let activeReportRoot = sessionState.reportPath ? path.resolve(sessionState.reportPath) : reportRoot;
+          if (payload.reportPath !== undefined && typeof payload.reportPath === 'string') {
+            activeReportRoot = payload.reportPath ? path.resolve(payload.reportPath) : reportRoot;
+          }
+          const activeReportsRootDir = path.join(activeReportRoot, '.repo-wizard', 'reports');
+
           if (payload.targetPath !== undefined && typeof payload.targetPath === 'string') {
             const oldPath = sessionState.targetPath;
             if (payload.targetPath !== oldPath) {
               repoName = getSafeRepoName(payload.targetPath);
-              const targetSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
+              const targetSessionFile = path.join(activeReportsRootDir, repoName, 'session.json');
               const targetExists = await fileExists(targetSessionFile);
               if (targetExists) {
                 try {
@@ -737,6 +752,7 @@ const server = http.createServer((req, res) => {
           if (payload.currentStep !== undefined && typeof payload.currentStep === 'number') sessionState.currentStep = payload.currentStep;
           if (payload.mode !== undefined && typeof payload.mode === 'string') sessionState.mode = payload.mode;
           if (payload.redact !== undefined) sessionState.redact = !!payload.redact;
+          if (payload.reportPath !== undefined && typeof payload.reportPath === 'string') sessionState.reportPath = payload.reportPath;
 
           // Nested validation for answers
           if (payload.answers !== undefined && typeof payload.answers === 'object' && payload.answers !== null) {
@@ -782,7 +798,9 @@ const server = http.createServer((req, res) => {
           }
 
           // Select the correct output session file
-          const newSessionFile = path.join(REPORTS_ROOT, repoName, 'session.json');
+          const activeReportRootFinal = sessionState.reportPath ? path.resolve(sessionState.reportPath) : reportRoot;
+          const activeReportsRootDirFinal = path.join(activeReportRootFinal, '.repo-wizard', 'reports');
+          const newSessionFile = path.join(activeReportsRootDirFinal, repoName, 'session.json');
           await fs.promises.mkdir(path.dirname(newSessionFile), { recursive: true });
           currentSessionFile = newSessionFile;
 
@@ -831,7 +849,8 @@ const server = http.createServer((req, res) => {
       const session = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
       const manifest = generateManifestFromSession(session);
       const repoName = getSafeRepoName(session.targetPath);
-      const manifestPath = path.join(REPORTS_ROOT, repoName, 'manifest.json');
+      const activeReportRootScan = session.reportPath ? path.resolve(session.reportPath) : reportRoot;
+      const manifestPath = path.join(activeReportRootScan, '.repo-wizard', 'reports', repoName, 'manifest.json');
       
       // Ensure directory exists
       fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
@@ -844,13 +863,18 @@ const server = http.createServer((req, res) => {
       scanLogs.push(`[${new Date().toLocaleTimeString()}] Sizing codebase: detected target directory at "${session.targetPath}"`);
 
       // Spawn run-orchestration.js in background forcing --mock-cli false
-      activeScanProcess = spawn('node', [
+      const spawnArgs = [
         path.join(ROOT, 'scripts', 'run-orchestration.js'),
         '--target-path',
         session.targetPath,
         '--mock-cli',
         'false'
-      ], {
+      ];
+      if (session.reportPath) {
+        spawnArgs.push('--report-path', session.reportPath);
+      }
+
+      activeScanProcess = spawn('node', spawnArgs, {
         cwd: ROOT,
         env: {
           ...process.env,
@@ -907,7 +931,8 @@ const server = http.createServer((req, res) => {
               if (currentSession.redact) {
                 writeLog('info', 'Redaction is enabled. Scrubbing report files...', correlationId);
                 const repoName = getSafeRepoName(currentSession.targetPath);
-                const reportsDir = path.join(REPORTS_ROOT, repoName);
+                const activeReportRootScan = currentSession.reportPath ? path.resolve(currentSession.reportPath) : reportRoot;
+                const reportsDir = path.join(activeReportRootScan, '.repo-wizard', 'reports', repoName);
                 redactReportFiles(reportsDir, repoName, currentSession.targetPath);
               }
             }
@@ -1232,7 +1257,16 @@ function scanReports(dir, baseDir, fileList = [], depth = 0, maxFiles = 1000) {
   // 3. GET /api/reports - Fetch compiled reports list
   if (req.method === 'GET' && url.pathname === '/api/reports') {
     try {
-      const reports = scanReports(REPORTS_ROOT, REPORTS_ROOT);
+      let activeReportsRoot = REPORTS_ROOT_DIR;
+      if (fs.existsSync(currentSessionFile)) {
+        try {
+          const sess = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+          if (sess.reportPath) {
+            activeReportsRoot = path.join(path.resolve(sess.reportPath), '.repo-wizard', 'reports');
+          }
+        } catch (e) {}
+      }
+      const reports = scanReports(activeReportsRoot, activeReportsRoot);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ reports }));
     } catch (err) {
@@ -1268,10 +1302,19 @@ function scanReports(dir, baseDir, fileList = [], depth = 0, maxFiles = 1000) {
           return;
         }
 
-        const inputPath = path.resolve(REPORTS_ROOT, markdownFile);
+        let activeReportsRoot = REPORTS_ROOT_DIR;
+        if (fs.existsSync(currentSessionFile)) {
+          try {
+            const sess = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+            if (sess.reportPath) {
+              activeReportsRoot = path.join(path.resolve(sess.reportPath), '.repo-wizard', 'reports');
+            }
+          } catch (e) {}
+        }
+        const inputPath = path.resolve(activeReportsRoot, markdownFile);
 
         // Enforce boundary check to prevent Directory Traversal
-        const relative = path.relative(REPORTS_ROOT, inputPath);
+        const relative = path.relative(activeReportsRoot, inputPath);
         if (relative.startsWith('..') || path.isAbsolute(relative)) {
           res.writeHead(403, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Access denied.' }));
@@ -1334,10 +1377,19 @@ function scanReports(dir, baseDir, fileList = [], depth = 0, maxFiles = 1000) {
         return;
       }
 
-      const filePath = path.resolve(REPORTS_ROOT, fileName);
+      let activeReportsRoot = REPORTS_ROOT_DIR;
+      if (fs.existsSync(currentSessionFile)) {
+        try {
+          const sess = JSON.parse(fs.readFileSync(currentSessionFile, 'utf8'));
+          if (sess.reportPath) {
+            activeReportsRoot = path.join(path.resolve(sess.reportPath), '.repo-wizard', 'reports');
+          }
+        } catch (e) {}
+      }
+      const filePath = path.resolve(activeReportsRoot, fileName);
 
       // Enforce boundary check to prevent Directory Traversal
-      const relative = path.relative(REPORTS_ROOT, filePath);
+      const relative = path.relative(activeReportsRoot, filePath);
       if (relative.startsWith('..') || path.isAbsolute(relative)) {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Access denied.' }));

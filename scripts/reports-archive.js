@@ -236,7 +236,14 @@ if (require.main === module) {
     console.error('ERROR: Missing value for parameter "--target-path".');
     process.exit(1);
   }
-  archiveSession(ROOT, { repoName: getSafeRepoName(targetDir), pruneContracts: true });
+
+  const reportPathIdx = args.indexOf('--report-path');
+  let reportRoot = ROOT;
+  if (reportPathIdx !== -1 && args[reportPathIdx + 1] && !args[reportPathIdx + 1].startsWith('-')) {
+    reportRoot = path.resolve(args[reportPathIdx + 1]);
+  }
+
+  archiveSession(reportRoot, { repoName: getSafeRepoName(targetDir), pruneContracts: true });
 }
 
 module.exports = { archiveSession };

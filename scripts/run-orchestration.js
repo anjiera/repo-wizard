@@ -76,6 +76,14 @@ if (!targetPath) {
 }
 const resolvedTarget = path.resolve(targetPath);
 
+// Parse --report-path flag
+let reportPath = null;
+const reportPathIdx = process.argv.indexOf('--report-path');
+if (reportPathIdx !== -1 && process.argv[reportPathIdx + 1] && !process.argv[reportPathIdx + 1].startsWith('-')) {
+  reportPath = process.argv[reportPathIdx + 1];
+}
+const reportRoot = reportPath ? path.resolve(reportPath) : ROOT;
+
 // Parse and validate --mock-cli flag
 let isMock = false;
 const mockCliIdx = process.argv.indexOf('--mock-cli');
@@ -105,10 +113,10 @@ if (!repoName) {
 
 // Archive prior session and report files before beginning orchestration
 if (!isMock) {
-  archiveSession(ROOT, { repoName });
+  archiveSession(reportRoot, { repoName });
 }
 
-const REPORTS_DIR = path.join(ROOT, '.repo-wizard', 'reports', repoName);
+const REPORTS_DIR = path.join(reportRoot, '.repo-wizard', 'reports', repoName);
 const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
 const CONTRACTS_DIR = path.join(REPORTS_DIR, 'contracts');
 
@@ -762,6 +770,9 @@ function completeOrchestration(manifest) {
   
   session.status = 'completed';
   session.targetPath = targetPath;
+  if (reportPath) {
+    session.reportPath = reportPath;
+  }
   session.answersInferred = session.answersInferred !== undefined ? session.answersInferred : true;
   
   if (!session.customReport) {

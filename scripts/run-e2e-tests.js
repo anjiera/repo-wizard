@@ -158,6 +158,56 @@ function testSessionArchiving() {
   }
 }
 
+function testE2ECustomReportPath() {
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing E2E custom report path archiving and compilation...${RESET}`);
+  
+  const customReportDir = path.join(SANDBOX_DIR, 'custom_reports');
+  const wizardDir = path.join(customReportDir, '.repo-wizard');
+  const repoName = 'sandbox-repo';
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  
+  fs.mkdirSync(reportsDir, { recursive: true });
+
+  const sessionObj = {
+    targetPath: path.join(SANDBOX_DIR, repoName),
+    reportPath: customReportDir,
+    status: 'completed',
+    answersInferred: true,
+    customReport: {
+      maturityStates: {
+        SECURITY: 'Level 1',
+        PERFORMANCE: 'Level 1',
+        ARCHITECTURE: 'Level 1',
+        QUALITY: 'Level 1'
+      },
+      section1: 'Health review health review health review.',
+      section2: 'Compliance details compliance details compliance details.',
+      section3: 'Rollout roadmap rollout roadmap rollout roadmap.',
+      conclusion: 'Conclusion conclusion conclusion.',
+      quickWins: ['- Quick win 1'],
+      highValue: ['- High value 1'],
+      papercuts: ['- Papercut 1'],
+      strategicDebt: ['- Strategic debt 1'],
+      suggestedAdjustments: 'Adjustments adjustments adjustments.'
+    }
+  };
+
+  const sessionPath = path.join(reportsDir, 'session.json');
+  fs.writeFileSync(sessionPath, JSON.stringify(sessionObj, null, 2));
+
+  // Run compile
+  const { compileRealReports } = require('./reports-compiler-engine');
+  compileRealReports(sessionObj);
+
+  const execSummaryPath = path.join(reportsDir, `${repoName}-executive-summary.md`);
+  assert(fs.existsSync(execSummaryPath), 'Executive summary compiled under custom reportPath');
+
+  // Test archiving under custom path
+  archiveSession(customReportDir, { repoName });
+  const historyBaseDir = path.join(wizardDir, 'reports', 'history', repoName);
+  assert(fs.existsSync(historyBaseDir), 'Archived session folders exist under custom reportPath');
+}
+
 function testE2EDeliverablesValidator() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing E2E deliverables validator validation...${RESET}`);
   const validatorScript = path.join(ROOT, 'scripts', 'validate-deliverables.js');
@@ -335,6 +385,7 @@ async function runE2E() {
     setupSandbox();
     testGitignoreAppend();
     testSessionArchiving();
+    testE2ECustomReportPath();
     testE2EDeliverablesValidator();
     await testPresetsAndParallelism();
     testPromptInjectionDefense();

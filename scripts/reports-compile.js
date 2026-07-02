@@ -56,7 +56,8 @@ try {
 
   const workspaceDir = session.targetPath || ROOT;
   const repoName = getSafeRepoName(workspaceDir);
-  const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', repoName);
+  const reportsRoot = session.reportPath ? path.join(path.resolve(session.reportPath), '.repo-wizard', 'reports') : path.join(ROOT, '.repo-wizard', 'reports');
+  const reportsDir = path.join(reportsRoot, repoName);
   console.log(`${BOLD}Generated deliverables:${RESET}`);
   console.log(`  - Executive Summary:  [${repoName}-executive-summary.md](file:///${path.join(reportsDir, repoName + '-executive-summary.md').replace(/\\/g, '/')})`);
   console.log(`  - Full Tech Report:   [${repoName}-full-report.md](file:///${path.join(reportsDir, repoName + '-full-report.md').replace(/\\/g, '/')})`);

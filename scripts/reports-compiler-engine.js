@@ -23,7 +23,8 @@ function getSafeRepoName(targetPath) {
 
 function compileRealReports(session) {
   const repoName = getSafeRepoName(session.targetPath);
-  const reportsDir = path.join(REPORTS_ROOT, repoName);
+  const reportsRoot = session.reportPath ? path.join(path.resolve(session.reportPath), '.repo-wizard', 'reports') : REPORTS_ROOT;
+  const reportsDir = path.join(reportsRoot, repoName);
   const obsDir = path.join(reportsDir, 'agents');
 
   const answers = session.answers || {};

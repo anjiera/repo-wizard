@@ -27,12 +27,13 @@ Before running the tool or performing any codebase profiling, checks, or session
 1. **Parameter Routing Check**: Parse the command parameters:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Step 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+   - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
    - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
 2. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
    - Estimate LOC, count files, detect primary languages and build systems.
    - For `MODE=INTERACTIVE_LOCAL` or `MODE=HEADLESS_LOCAL`, if the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user for Incremental Adoption (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-3. **Ignore Local States**: Verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`.
+3. **Ignore Local States**: Verify that `.repo-wizard/` (at `reportRoot`) is added to the project's `.gitignore` or `.agentignore`.
 
 ---
 
@@ -65,11 +66,11 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Step 0 remains mandatory and must never be bypassed under any mode):
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
 2. **Custom Answers Payload Integration**: If custom answers are loaded via `--answers <path>`, merge them with the inferred parameters. For example, if a specific framework or compliance target is specified in the answers, force that subagent's relevance to 'High' and merge the answers into the manifest parameter contracts.
-3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `.repo-wizard/manifest.json`.
-3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts.
+3. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`.
+3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--report-path <reportRoot>` if configured.
 4. **Collect and Read Observations**:
    - If execution status in `manifest.json` is `completed`, directly read and consolidate their mini-reports.
-   - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
+   - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
 
 ---
 
@@ -85,7 +86,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 ## Step 5: Scaffolding, Optimization & Handoff
 
 ### A. Local Interactive Mode
-1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`.
+1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`, forwarding `--report-path <reportRoot>` if configured.
 2. **Handle Fallback Execution**:
    - If execution status in the manifest is `fallback_to_agent`, **do NOT immediately proceed to invoke fallback subagents**. First, issue a mandatory warning to the developer:
      > ⚠ **Heads-up: High Token Usage Ahead**
@@ -96,7 +97,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
      > **To proceed now from the CLI:** Reply `/repo-wizard proceed with fallback` to invoke the remaining agents sequentially in this session.
      > **To abort and run later:** Close the terminal and run the command again from the IDE sidebar when you are ready.
    - **Only proceed** with sequentially invoking the subagents flagged as `pending_agent_fallback` (using the native `invoke_subagent` tool) after the developer explicitly replies to proceed.
-   - Write each subagent's findings to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, then continue.
+   - Write each subagent's findings to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, then continue.
 3. Run verification and VCS rollback on failure.
 4. **CLI/Terminal Yield Instructions**: Whenever you must yield (go idle/waiting) while subagents execute or after scheduling background timers:
    - Explicitly instruct the developer on how to check status and compile reports from their command-line interface.
