@@ -87,7 +87,16 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 ### A. Local Interactive Mode
 1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`.
 2. **Handle Fallback Execution**:
-   - If execution status in the manifest is `fallback_to_agent`, sequentially invoke the subagents flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their scaffolding reports to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then continue.
+   - If execution status in the manifest is `fallback_to_agent`, **do NOT immediately proceed to invoke fallback subagents**. First, issue a mandatory warning to the developer:
+     > ⚠ **Heads-up: High Token Usage Ahead**
+     > The orchestration CLI runner could not dispatch specialist agents automatically, so this run will fall back to invoking each specialist agent directly using in-session LLM calls. This consumes significantly more AI tokens than the standard CLI path.
+     >
+     > **Recommended alternative:** Run `/repo-wizard` as a slash command inside **Antigravity** — this keeps the session alive between turns and avoids the single-shot CLI limitation that triggers this fallback.
+     >
+     > **To proceed now from the CLI:** Reply `/repo-wizard proceed with fallback` to invoke the remaining agents sequentially in this session.
+     > **To abort and run later:** Close the terminal and run the command again from the IDE sidebar when you are ready.
+   - **Only proceed** with sequentially invoking the subagents flagged as `pending_agent_fallback` (using the native `invoke_subagent` tool) after the developer explicitly replies to proceed.
+   - Write each subagent's findings to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, then continue.
 3. Run verification and VCS rollback on failure.
 4. **CLI/Terminal Yield Instructions**: Whenever you must yield (go idle/waiting) while subagents execute or after scheduling background timers:
    - Explicitly instruct the developer on how to check status and compile reports from their command-line interface.
