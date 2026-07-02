@@ -20,6 +20,16 @@ const RED = '\x1b[31m';
 const BLUE = '\x1b[34m';
 const YELLOW = '\x1b[33m';
 
+let INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
+try {
+  const constants = require(path.join(__dirname, '..', '..', 'scripts', 'report-constants.js'));
+  if (constants && constants.INCREMENTAL_ADOPTION_THRESHOLD_LOC !== undefined) {
+    INCREMENTAL_ADOPTION_THRESHOLD_LOC = constants.INCREMENTAL_ADOPTION_THRESHOLD_LOC;
+  }
+} catch (e) {
+  // Fallback if imported externally
+}
+
 // Configuration for exclusions
 const EXCLUDED_DIRS = new Set([
   'node_modules', 'vendor', 'bower_components', // Dependency Directories
@@ -117,7 +127,8 @@ if (!fs.existsSync(resolvedTarget)) {
 const stats = {
   totalFiles: 0,
   totalLOC: 0,
-  languages: {}
+  languages: {},
+  exceedsAdoptionThreshold: false
 };
 
 function walk(dir) {
@@ -177,6 +188,8 @@ function walk(dir) {
 
 walk(resolvedTarget);
 
+stats.exceedsAdoptionThreshold = stats.totalLOC > INCREMENTAL_ADOPTION_THRESHOLD_LOC;
+
 if (outputJson) {
   console.log(JSON.stringify(stats, null, 2));
 } else {
@@ -185,6 +198,10 @@ if (outputJson) {
   console.log(`Total Files:   ${GREEN}${stats.totalFiles}${RESET}`);
   console.log(`Total LOC:     ${GREEN}${stats.totalLOC}${RESET}`);
   console.log(`--------------------------------------------------`);
+  if (stats.exceedsAdoptionThreshold) {
+    console.log(`${YELLOW}⚠ WARNING: Codebase size exceeds the incremental adoption threshold (${INCREMENTAL_ADOPTION_THRESHOLD_LOC} LOC).${RESET}`);
+    console.log(`--------------------------------------------------`);
+  }
   console.log(`${BOLD}Language Distribution:${RESET}`);
   
   const sortedLangs = Object.entries(stats.languages).sort((a, b) => b[1].loc - a[1].loc);

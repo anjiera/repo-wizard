@@ -60,6 +60,8 @@ const MOCK_TOOL_MAP = {
   'state-sanitizer-agent': 'eslint-plugin-react-hooks'
 };
 
+const INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
+
 module.exports = {
   SECTION_WORD_COUNT_MIN,
   SECTION_WORD_COUNT_MAX,
@@ -67,4 +69,6 @@ module.exports = {
   DISCLAIMER_TEXT,
   MOCK_CAPABILITY_MAP,
   MOCK_TOOL_MAP,
+  INCREMENTAL_ADOPTION_THRESHOLD_LOC
 };
+

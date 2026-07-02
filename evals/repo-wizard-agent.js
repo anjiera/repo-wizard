@@ -16,9 +16,9 @@ module.exports = {
     },
     {
       name: 'Large Codebase Incremental Adoption Trigger',
-      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, can you set up my repository? It is a Gradle Kotlin project with approximately 12,000 estimated lines of code.',
+      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, can you set up my repository? It is a Gradle Kotlin project. The LOC counting script output indicates that the codebase size exceeds the incremental adoption threshold configured in report-constants.js.',
       rubrics: [
-        'The response prompts the developer with the Incremental Adoption Question due to the LOC exceeding the 10,000 line threshold.',
+        'The response prompts the developer with the Incremental Adoption Question due to the LOC exceeding the threshold configured in report-constants.js.',
         'The response contains the mandatory upfront safety disclaimer.'
       ]
     },
