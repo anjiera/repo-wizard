@@ -17,6 +17,18 @@ const BOLD = '\x1b[1m';
 const GREEN = '\x1b[32m';
 const RED = '\x1b[31m';
 const BLUE = '\x1b[34m';
+const CONTRACT_TEMPLATE = {
+  task_metadata: {
+    target_modules: ['/src/backend'],
+    language: 'typescript',
+    build_system: 'npm-vite',
+    budget_tier: 'free',
+    execution_environments: ['pre-commit', 'CI'],
+    execution_mode: 'scaffold'
+  },
+  compliance_targets: [],
+  tooling_specification: []
+};
 
 /**
  * Validates a contract object against the schema.
@@ -268,5 +280,5 @@ function runSelfTest() {
 if (require.main === module) {
   runSelfTest();
 } else {
-  module.exports = { validateContract };
+  module.exports = { validateContract, CONTRACT_TEMPLATE };
 }
