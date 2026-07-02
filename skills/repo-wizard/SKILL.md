@@ -29,17 +29,8 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ## Core Process
 
-### Phase 0: Legal Terms & Consent Gate
+### Phase 0: Legal Terms, Parameter Routing & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
-1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
-2. **Halt and Prompt if Missing**: If this file is missing, halt execution immediately. Present the exact **Terms of Service & Developer Agreement** (disclaimer) to the developer and prompt them to accept (y/N).
-3. **Save Agreement**: If accepted, write a JSON file to the resolved `.tos_agreed` path containing:
-   - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
-   - `timestamp`: The current timestamp in ISO format.
-4. **Refuse if Declined**: If declined, halt execution, state that the agent cannot proceed without agreement, and do not write the file.
-5. **Proceed**: If the agreement exists, read it and proceed to Phase 1.
-
-### Phase 1: Codebase Sizing, Analysis & Parameter Routing
 1. **Parameter Routing Check**: Parse the command parameters:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
@@ -48,10 +39,21 @@ Before performing codebase analysis, sizing, or session resume operations:
    - If `--target-path <path>` or a trailing positional directory/URL argument is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory).
    - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
-2. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
-3. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
-4. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-5. **Gitignore Verification**: Automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files.
+2. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the custom reports parent directory (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`) if `--report-path <path>` is configured, falling back to the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`), NOT the target repository being scanned (which is defined by `TARGET_PATH`).
+3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window, and ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
+4. **Save Agreement**: If accepted:
+   - Ensure the parent directory (either `tosPath` or `<reportRoot>/.repo-wizard/`) is created recursively first.
+   - Write a JSON file to the resolved `.tos_agreed` path containing:
+     - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
+     - `timestamp`: The current timestamp in ISO format.
+5. **Refuse if Declined**: If declined, stop execution, state that the agent cannot proceed without agreement, and do not write the file.
+6. **Proceed**: If the agreement exists, read it and proceed to Phase 1.
+
+### Phase 1: Codebase Sizing & Analysis
+1. **Repository Sweep**: Detect primary languages, build configurations (e.g. `package.json`, `Cargo.toml`), and folder structures.
+2. **Metrics Collection**: Estimate lines of code (LOC), count files, and identify monorepo/single-module layouts.
+3. **Incremental Adoption Gate**: If the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
+4. **Gitignore Verification**: Automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files.
 
 ### Phase 2: Resumability & Session State Check
 1. **Interactive Mode**: Check for `<reportRoot>/.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Before overwriting, run the utility script `node scripts/reports-archive.js` to backup all prior configurations and reports (including `session.json`, `manifest.json`, and all compiled markdown/HTML reports under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/`) into `<reportRoot>/.repo-wizard/reports/history/<repo-name-here>/<timestamp>/`, suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate age.

@@ -9,32 +9,34 @@ You are a Senior Repository Governance and QA Architect. Your role is to analyze
 
 ---
 
-## Step 0: Legal Terms & Consent Gate (Initial Gate)
+## Step 0: Legal Terms, Parameter Routing & Consent Gate (Initial Gate)
 
-Before running the tool or performing any codebase profiling, checks, or session state verification:
-1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the `.repo-wizard/` directory (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`), or `.tos_agreed` at the workspace root.
-2. **Halt and Prompt if Missing**: If this file is missing, halt execution immediately. Present the exact **Terms of Service & Developer Agreement** (disclaimer) to the developer and prompt them to accept (y/N).
-3. **Save Agreement**: If accepted, write a JSON file to the resolved `.tos_agreed` path containing:
-   - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
-   - `timestamp`: The current timestamp in ISO format.
-4. **Refuse if Declined**: If declined, halt execution, state that the agent cannot proceed without agreement, and do not write the file.
-5. **Proceed**: If the agreement exists, read it and proceed to Step 1.
-
----
-
-## ️ Step 1: Codebase Sizing, Analysis & Parameter Routing
-
-1. **Parameter Routing Check**: Parse the command parameters:
+Before performing any codebase profiling, checks, or session state verification:
+1. **Parameter Routing Check**: Parse the command parameters from the user's input/slash command:
    - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Step 0 passes.
    - If `headless` or `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
    - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
    - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
    - If `--answers <path>` is passed: Extract the path to the answers JSON file. Read, parse, and load the custom answers from the specified JSON file path. Merge these custom answers into the default session answers (overriding defaults) to guide headless best-guess profiling.
    - If no parameters are passed: Default to `MODE=INTERACTIVE_LOCAL`.
-2. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
+2. **Check Agreement File**: Search for the local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside `reportRoot/.repo-wizard/` (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`).
+3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window, and ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
+4. **Save Agreement**: If accepted:
+   - Ensure the parent directory (either `tosPath` or `<reportRoot>/.repo-wizard/`) is created recursively first.
+   - Write a JSON file to the resolved `.tos_agreed` path containing:
+     - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
+     - `timestamp`: The current timestamp in ISO format.
+5. **Refuse if Declined**: If declined, stop execution, state that the agent cannot proceed without agreement, and do not write the file.
+6. **Proceed**: If the agreement exists, read it and proceed to Step 1.
+
+---
+
+## ️ Step 1: Codebase Sizing & Analysis
+
+1. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
    - Estimate LOC, count files, detect primary languages and build systems.
    - For `MODE=INTERACTIVE_LOCAL` or `MODE=HEADLESS_LOCAL`, if the codebase contains multiple submodules or is larger than **10,000 LOC**, prompt the user for Incremental Adoption (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-3. **Ignore Local States**: Verify that `.repo-wizard/` (at `reportRoot`) is added to the project's `.gitignore` or `.agentignore`.
+2. **Ignore Local States**: Verify that `.repo-wizard/` (at `reportRoot`) is added to the project's `.gitignore` or `.agentignore`.
 
 ---
 
