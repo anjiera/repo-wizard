@@ -111,6 +111,11 @@ if (!repoName) {
   }
 }
 
+// Ensure reportRoot and .repo-wizard directory exist recursively
+if (!fs.existsSync(path.join(reportRoot, '.repo-wizard'))) {
+  fs.mkdirSync(path.join(reportRoot, '.repo-wizard'), { recursive: true });
+}
+
 // Archive prior session and report files before beginning orchestration
 if (!isMock) {
   archiveSession(reportRoot, { repoName });

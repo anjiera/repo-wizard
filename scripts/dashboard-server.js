@@ -48,6 +48,10 @@ if (cliTosPathIdx !== -1 && process.argv[cliTosPathIdx + 1] && !process.argv[cli
 const tosRoot = cliTosPath ? path.resolve(cliTosPath) : path.join(reportRoot, '.repo-wizard');
 const TOS_FILE = path.join(tosRoot, '.tos_agreed');
 
+if (!fs.existsSync(tosRoot)) {
+  fs.mkdirSync(tosRoot, { recursive: true });
+}
+
 if (!fs.existsSync(REPORTS_ROOT_DIR)) {
   fs.mkdirSync(REPORTS_ROOT_DIR, { recursive: true });
 }
