@@ -54,8 +54,10 @@ export default function App() {
   const [browserParentPath, setBrowserParentPath] = useState(null);
   const [browserDirectories, setBrowserDirectories] = useState([]);
   const [browserError, setBrowserError] = useState('');
+  const [browserTargetField, setBrowserTargetField] = useState('targetPath'); // 'targetPath', 'reportPath', 'tosPath'
 
-  const openDirectoryBrowser = (startPath = '') => {
+  const openDirectoryBrowser = (startPath = '', field = 'targetPath') => {
+    setBrowserTargetField(field);
     setShowBrowserModal(true);
     setBrowserError('');
     fetchDirectories(startPath);
@@ -112,7 +114,13 @@ export default function App() {
 
   const handleSelectFolder = () => {
     if (browserCurrentPath && browserCurrentPath !== 'drives') {
-      setTargetPath(browserCurrentPath);
+      if (browserTargetField === 'reportPath') {
+        setSession(prev => ({ ...prev, reportPath: browserCurrentPath }));
+      } else if (browserTargetField === 'tosPath') {
+        setSession(prev => ({ ...prev, tosPath: browserCurrentPath }));
+      } else {
+        setTargetPath(browserCurrentPath);
+      }
     }
     setShowBrowserModal(false);
   };
@@ -152,6 +160,7 @@ export default function App() {
   const [hasConsented, setHasConsented] = useState(false);
   const [customLanguage, setCustomLanguage] = useState('');
   const [customPlatform, setCustomPlatform] = useState('');
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   // Check consent status on startup
   useEffect(() => {
@@ -714,17 +723,79 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <input 
-                  type="checkbox"
-                  id="redactCheckbox"
-                  checked={session.redact || false}
-                  onChange={(e) => setSession({ ...session, redact: e.target.checked })}
-                  className="w-4 h-4 rounded bg-[#0d1117] border border-brand-border text-[#58a6ff] focus:ring-0 focus:ring-offset-0 cursor-pointer"
-                />
-                <label htmlFor="redactCheckbox" className="text-sm font-medium text-[#8b949e] cursor-pointer select-none hover:text-white transition">
-                  Anonymize Reports (Scrub absolute paths, repository names, and Git URL details)
-                </label>
+              {/* Advanced Settings Accordion */}
+              <div className="border border-brand-border rounded-xl bg-[#0d1117]/25 overflow-hidden transition-all duration-300">
+                <button
+                  type="button"
+                  onClick={() => setAdvancedOpen(!advancedOpen)}
+                  className="w-full flex justify-between items-center px-4 py-3 text-sm font-semibold text-[#8b949e] hover:text-white transition focus:outline-none"
+                >
+                  <span>Advanced Settings</span>
+                  <span className={`transform transition-transform duration-200 ${advancedOpen ? 'rotate-90' : ''}`}>▸</span>
+                </button>
+                
+                {advancedOpen && (
+                  <div className="px-4 pb-4 border-t border-brand-border/40 pt-4 space-y-4 animate-fade-in text-left">
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="checkbox"
+                        id="redactCheckbox"
+                        checked={session.redact || false}
+                        onChange={(e) => setSession({ ...session, redact: e.target.checked })}
+                        className="w-4 h-4 rounded bg-[#0d1117] border border-brand-border text-[#58a6ff] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                      />
+                      <label htmlFor="redactCheckbox" className="text-sm font-medium text-[#8b949e] cursor-pointer select-none hover:text-white transition">
+                        Anonymize Reports (Scrub absolute paths, repository names, and Git URL details)
+                      </label>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#8b949e]">
+                        Report Output Path
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={session.reportPath || ''}
+                          onChange={(e) => setSession({ ...session, reportPath: e.target.value })}
+                          placeholder="Default: wizard install directory"
+                          className="flex-1 bg-[#0d1117] border border-brand-border rounded-xl px-3 py-2 text-sm text-white placeholder-[#484f58] focus:outline-none focus:border-[#58a6ff] transition"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => openDirectoryBrowser(session.reportPath || '', 'reportPath')}
+                          className="bg-[#30363d] hover:bg-[#8b949e]/20 text-[#c9d1d9] border border-brand-border px-3 rounded-xl transition font-semibold text-xs flex items-center justify-center"
+                        >
+                          Browse...
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-[#8b949e]">Where .repo-wizard/ folder will be created. Leave blank for default.</p>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-[#8b949e]">
+                        TOS File Directory
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={session.tosPath || ''}
+                          onChange={(e) => setSession({ ...session, tosPath: e.target.value })}
+                          placeholder="Default: .repo-wizard/ folder"
+                          className="flex-1 bg-[#0d1117] border border-brand-border rounded-xl px-3 py-2 text-sm text-white placeholder-[#484f58] focus:outline-none focus:border-[#58a6ff] transition"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => openDirectoryBrowser(session.tosPath || '', 'tosPath')}
+                          className="bg-[#30363d] hover:bg-[#8b949e]/20 text-[#c9d1d9] border border-brand-border px-3 rounded-xl transition font-semibold text-xs flex items-center justify-center"
+                        >
+                          Browse...
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-[#8b949e]">Where .tos_agreed will be looked up. Leave blank for default.</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Option A: Interactive Wizard */}
