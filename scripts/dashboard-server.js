@@ -19,8 +19,8 @@ const crypto = require('crypto');
 const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 const ROOT = require('./root-resolver');
 const { QUALITY_PILLARS } = require('./quality-pillars');
-const { TEAM_COLORS, DISCLAIMER_TEXT } = require('./report-constants');
-const { compileRealReports, getSafeRepoName, REPORTS_ROOT } = require('./reports-compiler-engine');
+const { TEAM_COLORS, DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./report-constants');
+const { compileRealReports, getSafeRepoName, REPORTS_ROOT, redactReportFiles } = require('./reports-compiler-engine');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
 
 const SessionStatus = Object.freeze({
@@ -190,52 +190,6 @@ function serveStaticFile(res, reqPath, correlationId) {
 }
 
 function createMockContract(specialist, mode = 'scaffold') {
-  const capabilityMap = {
-    'accessibility-auditor-agent': 'Accessibility Auditing',
-    'compliance-pilot-agent': 'Compliance Hardening',
-    'privacy-guardian-agent': 'PII Logging Audits',
-    'supply-chain-scanner-agent': 'Dependency Licensing',
-    'testing-pilot-agent': 'Unit Testing',
-    'vcs-workflow-agent': 'Git Hook Automation',
-    'technical-scribe-agent': 'ADR & Architecture Diagrams',
-    'appsec-hardener-agent': 'Application Hardening',
-    'resilience-pilot-agent': 'Retry & Circuit Breaker Setup',
-    'deployment-pilot-agent': 'Container Orchestration & Backup',
-    'api-contract-pilot-agent': 'API Linting & Schema Checking',
-    'data-pipeline-pilot-agent': 'Data Integrity Checks',
-    'notebook-sanitizer-agent': 'Jupyter Notebook Cleaners',
-    'embedded-systems-pilot-agent': 'Embedded Warning Linters',
-    'fuzzing-pilot-agent': 'Fuzz Testing Harnesses',
-    'toolchain-pilot-agent': 'Cross-Compilation Toolchains',
-    'formal-methods-pilot-agent': 'Formal Model Verification',
-    'ai-robustness-pilot-agent': 'AI Input/Output Guardrails',
-    'react-performance-pilot-agent': 'React Performance Auditing',
-    'state-sanitizer-agent': 'State Sanitization Auditing'
-  };
-
-  const toolMap = {
-    'accessibility-auditor-agent': 'axe-core',
-    'compliance-pilot-agent': 'checkov',
-    'privacy-guardian-agent': 'gdpr-sanitizer',
-    'supply-chain-scanner-agent': 'fossa',
-    'testing-pilot-agent': 'vitest',
-    'vcs-workflow-agent': 'husky',
-    'technical-scribe-agent': 'mermaid-cli',
-    'appsec-hardener-agent': 'helmet',
-    'resilience-pilot-agent': 'opossum',
-    'deployment-pilot-agent': 'docker-compose',
-    'api-contract-pilot-agent': 'spectral',
-    'data-pipeline-pilot-agent': 'pandera',
-    'notebook-sanitizer-agent': 'nbstripout',
-    'embedded-systems-pilot-agent': 'cppcheck',
-    'fuzzing-pilot-agent': 'cargo-fuzz',
-    'toolchain-pilot-agent': 'riscv-gcc',
-    'formal-methods-pilot-agent': 'kani',
-    'ai-robustness-pilot-agent': 'llm-guard',
-    'react-performance-pilot-agent': 'react-scan',
-    'state-sanitizer-agent': 'eslint-plugin-react-hooks'
-  };
-
   const contract = {
     task_metadata: {
       target_modules: ['/src'],
@@ -251,11 +205,11 @@ function createMockContract(specialist, mode = 'scaffold') {
     ],
     tooling_specification: [
       {
-        capability: capabilityMap[specialist] || 'General QA',
-        selected_tool: toolMap[specialist] || 'eslint',
-        install_command: `npm install -D ${toolMap[specialist] || 'eslint'}`,
+        capability: MOCK_CAPABILITY_MAP[specialist] || 'General QA',
+        selected_tool: MOCK_TOOL_MAP[specialist] || 'eslint',
+        install_command: `npm install -D ${MOCK_TOOL_MAP[specialist] || 'eslint'}`,
         config_file: {
-          path: `.config-${toolMap[specialist] || 'eslint'}`
+          path: `.config-${MOCK_TOOL_MAP[specialist] || 'eslint'}`
         }
       }
     ]
@@ -1510,88 +1464,4 @@ process.on('SIGHUP', () => {
   process.exit(0);
 });
 
-function redactGitUrls(text) {
-  const gitUrlRegex = /(https?:\/\/|git@)([a-zA-Z0-9\-._~]+)([\/:][a-zA-Z0-9\-._~]+)\/([a-zA-Z0-9\-._~]+)/gi;
-  return text.replace(gitUrlRegex, (match, p1, p2, p3, p4) => {
-    const prefix = p3.charAt(0);
-    const suffix = match.endsWith('.git') ? '.git' : '';
-    return `${p1}${p2}${prefix}redacted-org/redacted-repo${suffix}`;
-  });
-}
 
-function redactPaths(text, targetPath) {
-  if (!targetPath) return text;
-  const absPath = path.resolve(targetPath);
-  const isRoot = absPath === path.resolve(absPath, '..');
-  if (isRoot) return text;
-
-  const forwardSlashPath = absPath.replace(/\\/g, '/');
-  const backslashPath = absPath.replace(/\//g, '\\');
-  const doubleBackslashPath = backslashPath.replace(/\\/g, '\\\\');
-  
-  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  
-  const patterns = [
-    new RegExp(escapeRegExp(forwardSlashPath), 'gi'),
-    new RegExp(escapeRegExp(backslashPath), 'gi'),
-    new RegExp(escapeRegExp(doubleBackslashPath), 'gi')
-  ];
-  
-  let result = text;
-  for (const pattern of patterns) {
-    result = result.replace(pattern, 'target-workspace-path');
-  }
-  return result;
-}
-
-function redactRepoName(text, repoName) {
-  if (!repoName || repoName === 'project') return text;
-  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(escapeRegExp(repoName), 'gi');
-  return text.replace(regex, 'target-repository');
-}
-
-function redactReportText(text, repoName, targetPath) {
-  if (!text || typeof text !== 'string') return text;
-  let redacted = text;
-  redacted = redactGitUrls(redacted);
-  if (targetPath) {
-    redacted = redactPaths(redacted, targetPath);
-  }
-  if (repoName) {
-    redacted = redactRepoName(redacted, repoName);
-  }
-  return redacted;
-}
-
-function redactReportFiles(reportsDir, repoName, targetPath) {
-  if (!fs.existsSync(reportsDir)) return;
-  const traverse = (dir) => {
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      const fullPath = path.join(dir, file);
-      const stat = fs.lstatSync(fullPath);
-      if (stat.isSymbolicLink()) {
-        continue;
-      }
-      if (stat.isDirectory()) {
-        traverse(fullPath);
-      } else if (stat.isFile()) {
-        if (file === 'manifest.json' || file === 'session.json') {
-          continue;
-        }
-        const ext = path.extname(file).toLowerCase();
-        if (['.md', '.html', '.csv'].includes(ext)) {
-          try {
-            const content = fs.readFileSync(fullPath, 'utf8');
-            const redacted = redactReportText(content, repoName, targetPath);
-            fs.writeFileSync(fullPath, redacted, 'utf8');
-          } catch (e) {
-            console.error(`Failed to redact file ${fullPath}:`, e.message);
-          }
-        }
-      }
-    }
-  };
-  traverse(reportsDir);
-}

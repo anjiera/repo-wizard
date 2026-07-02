@@ -412,7 +412,7 @@ ${DISCLAIMER_TEXT}
       const escapeCsv = (str) => {
         if (!str) return '';
         let escaped = String(str).replace(/"/g, '""');
-        if (/^[=\+\-@]/.test(escaped.trim())) {
+        if (/^[=\+\-@]/.test(escaped.trim()) || /[\t;,]+[=\+\-@]/.test(escaped)) {
           escaped = "'" + escaped;
         }
         return escaped;
@@ -425,6 +425,10 @@ ${DISCLAIMER_TEXT}
       }
 
       fs.writeFileSync(csvPath, csvContent, 'utf8');
+
+      if (session.isRedact || session.redact) {
+        redactReportFiles(reportsDir, repoName, session.targetPath);
+      }
     }
   } catch (err) {
     console.error('Failed to compile real reports:', err.message);
@@ -432,8 +436,95 @@ ${DISCLAIMER_TEXT}
   }
 }
 
+function redactGitUrls(text) {
+  const gitUrlRegex = /(https?:\/\/|git@)([a-zA-Z0-9\-._~]+)([\/:][a-zA-Z0-9\-._~]+)\/([a-zA-Z0-9\-._~]+)/gi;
+  return text.replace(gitUrlRegex, (match, p1, p2, p3, p4) => {
+    const prefix = p3.charAt(0);
+    const suffix = match.endsWith('.git') ? '.git' : '';
+    return `${p1}${p2}${prefix}redacted-org/redacted-repo${suffix}`;
+  });
+}
+
+function redactPaths(text, targetPath) {
+  if (!targetPath) return text;
+  const absPath = path.resolve(targetPath);
+  const isRoot = absPath === path.resolve(absPath, '..');
+  if (isRoot) return text;
+
+  const forwardSlashPath = absPath.replace(/\\/g, '/');
+  const backslashPath = absPath.replace(/\//g, '\\');
+  const doubleBackslashPath = backslashPath.replace(/\\/g, '\\\\');
+  
+  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  
+  const patterns = [
+    new RegExp(escapeRegExp(forwardSlashPath), 'gi'),
+    new RegExp(escapeRegExp(backslashPath), 'gi'),
+    new RegExp(escapeRegExp(doubleBackslashPath), 'gi')
+  ];
+  
+  let result = text;
+  for (const pattern of patterns) {
+    result = result.replace(pattern, 'target-workspace-path');
+  }
+  return result;
+}
+
+function redactRepoName(text, repoName) {
+  if (!repoName || repoName === 'project') return text;
+  const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escapeRegExp(repoName), 'gi');
+  return text.replace(regex, 'target-repository');
+}
+
+function redactReportText(text, repoName, targetPath) {
+  if (!text || typeof text !== 'string') return text;
+  let redacted = text;
+  redacted = redactGitUrls(redacted);
+  if (targetPath) {
+    redacted = redactPaths(redacted, targetPath);
+  }
+  if (repoName) {
+    redacted = redactRepoName(redacted, repoName);
+  }
+  return redacted;
+}
+
+function redactReportFiles(reportsDir, repoName, targetPath) {
+  if (!fs.existsSync(reportsDir)) return;
+  const traverse = (dir) => {
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      const stat = fs.lstatSync(fullPath);
+      if (stat.isSymbolicLink()) {
+        continue;
+      }
+      if (stat.isDirectory()) {
+        traverse(fullPath);
+      } else if (stat.isFile()) {
+        if (file === 'manifest.json' || file === 'session.json') {
+          continue;
+        }
+        const ext = path.extname(file).toLowerCase();
+        if (['.md', '.html', '.csv'].includes(ext)) {
+          try {
+            const content = fs.readFileSync(fullPath, 'utf8');
+            const redacted = redactReportText(content, repoName, targetPath);
+            fs.writeFileSync(fullPath, redacted, 'utf8');
+          } catch (e) {
+            console.error(`Failed to redact file ${fullPath}:`, e.message);
+          }
+        }
+      }
+    }
+  };
+  traverse(reportsDir);
+}
+
 module.exports = {
   compileRealReports,
   getSafeRepoName,
-  REPORTS_ROOT
+  REPORTS_ROOT,
+  redactReportFiles
 };
