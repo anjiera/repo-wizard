@@ -20,7 +20,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Policy Setup
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before scanning or scaffolding, align with the developer on target configurations:
 1. **Critical APIs:** Identify which third-party or internal API integrations need protection (e.g., payment gateways, database endpoints).
 2. **Retry Policies:** Define retry caps (e.g. maximum of 3 retries), backoff multipliers, and jitter choices.
@@ -29,7 +29,7 @@ Before scanning or scaffolding, align with the developer on target configuration
 5. **Chaos Testing Scope:** Agree on testing configurations (e.g., local traffic control shell scripts vs. Kubernetes Chaos Mesh YAML files).
 
 ### Phase 2: Codebase Reliability Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the codebase to check current configurations:
 1. **HTTP Client Sweeps:** Search codebase directories for network request configurations (e.g. Axios, fetch, requests, reqwest imports).
 2. **Wrapper Scan:** Search for existing retry decorators, breaker wrappers, or timeout settings.
@@ -37,7 +37,7 @@ Audit the codebase to check current configurations:
 4. **Package Scan:** Check manifest files for reliability or chaos dependencies.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-resilience-pilot-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-resilience-pilot-agent.md`).
 Draft all configurations, middlewares, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated retry policies, circuit breaker code blocks, and chaos injection files to the developer and prompt them for review and confirmation.

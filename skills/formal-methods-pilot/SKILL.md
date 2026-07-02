@@ -19,7 +19,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Model Scoping
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before writing formal specification templates or solver harnesses, align with the developer:
 1. **Target Verification Scope:** Identify the critical algorithm, state machine, or function that requires formal verification.
 2. **Verification Tool:** Select the target solver environment (e.g. TLA+ for architectural model checking, Rust `Kani` for code-level SMT proofs).
@@ -27,14 +27,14 @@ Before writing formal specification templates or solver harnesses, align with th
 4. **Assumption Limits:** Establish constraints on symbolic inputs to prevent SMT solver state-space explosion (e.g. limiting symbolic array lengths to <= 256).
 
 ### Phase 2: Ingestion & Logic Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the repository to target verification:
 1. **Critical Code Sweep:** Search for complex match statements, state variables, array indexing, and unsafe memory blocks.
 2. **Toolchain verification:** Check for verification compilers (like `cargo-kani`, `tlc` runners) in the system path.
 3. **State Variable Audit:** Scan module entry points to map out variable ranges.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-formal-methods-pilot-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-formal-methods-pilot-agent.md`).
 Draft all specifications, proof harnesses, and SMT solver configurations in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending model checks, creating formal files, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing test and build configurations. Do **NOT** overwrite, alter, or remove configurations added by other agents.

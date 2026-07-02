@@ -20,7 +20,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Design Choices
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before scaffolding schema files or installing linters, align with the developer on API designs:
 1. **Target Protocols:** Identify the active interface paradigms (REST, gRPC/Protobuf, GraphQL).
 2. **Contract Versioning:** Determine the API versioning strategy (e.g. URI prefixes like `/v1`, HTTP headers, package version subfolders for protobufs).
@@ -29,7 +29,7 @@ Before scaffolding schema files or installing linters, align with the developer 
 5. **Tool Preference:** Review candidate validation tools (Spectral, Buf CLI, GraphQL Inspector) matching project capabilities and developer workflows.
 
 ### Phase 2: Codebase API Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the repository to locate active endpoint declarations and contract parameters:
 1. **Route Sweeps:** Scan controllers, route definition files, and HTTP handlers to map current REST path configurations.
 2. **Schema & Model Check:** Search for existing database tables, validation models (e.g. Zod, Pydantic, struct definitions), or model declarations.
@@ -37,7 +37,7 @@ Audit the repository to locate active endpoint declarations and contract paramet
 4. **Linter Config Scan:** Search for existing Spectral, Buf, or GraphQL linter configurations.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-api-contract-pilot-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-api-contract-pilot-agent.md`).
 Draft all specifications, validator files, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating spec files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenAPI YAML templates, Protobuf service schemas, or GraphQL Inspector configurations to the developer, prompting them for review and confirmation.

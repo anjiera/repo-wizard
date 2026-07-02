@@ -19,7 +19,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Scope Definition
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Align with the developer on target settings before scanning or writing any files:
 1. **ADR Path & Structure:** Establish the target directory for ADRs (typically `docs/decisions/`) and format conventions (Nygard-style sequential numbering).
 2. **ADR Helper CLI Language:** Ask the developer for their programming language preference (e.g., Bash shell script, Python, or Node.js) to scaffold a lightweight command-line script for spawning new ADR files.
@@ -27,14 +27,14 @@ Align with the developer on target settings before scanning or writing any files
 4. **Post-Mortem & Retrospective Formats:** Establish template locations (e.g., under `docs/post-mortems/` and `docs/retrospectives/`). Note that Incident Post-Mortems are used to analyze specific failures, whereas Retrospectives look back at sprint cycles and feature releases (integrating standard Agile questions and the *Stop-Start-Continue-Kudos* kudos ritual).
 
 ### Phase 2: Codebase Documentation Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate current documentation patterns:
 1. **Directories Check:** Scan for folders like `docs/`, `decisions/`, `references/`, `wiki/` to check for pre-existing documents.
 2. **Configuration Check:** Check package manifests (e.g. `package.json`, `pyproject.toml`) and scripts to see if document generation utilities or testing frameworks are present.
 3. **VCS Check:** Verify the active version control system configuration to know how to integrate hooks or setup scripts.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe-agent.md`).
 Draft all documentation and configuration templates. Adhere strictly to these rules:
 1. **Explicit Consent:** Ask the user for permission before creating directories or writing helper scripts.
 2. **Interactive Code Review:** Display generated script files, diagrams, and templates to the user and prompt them to guide or review changes.

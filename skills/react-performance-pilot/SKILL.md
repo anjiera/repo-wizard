@@ -25,7 +25,7 @@ Before auditing or making edits, align with the developer:
 3. **Browser Targets:** Establish if the target user base utilizes older mobile hardware where main thread yield cycles are critical.
 
 ### Phase 2: Codebase Performance Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the codebase to check current React performance configurations:
 1. **Rendering Analysis:** Search for complex calculations inside render blocks and verify use of caching tools (`useMemo`, `useCallback`).
 2. **Asset Inspection:** Inspect font loading structures and CSS font-face declarations to check for missing overrides.

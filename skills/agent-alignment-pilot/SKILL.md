@@ -18,7 +18,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Input Analysis
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Accept the parameters contract containing:
 1. **Target Agent Files:** Path to agent configuration files (e.g. `agents/*.md`).
 2. **Quality Profile:** Prompt size limits, required section templates, and consistency rules.
@@ -33,7 +33,7 @@ Evaluate target agent configurations:
 4. **Token Footprint:** Audit prompt size. If the file is >150 lines or contains large checklists/dictionaries, recommend moving them to the `references/` directory.
 
 ### Phase 3: Validation & Test Scaffolding
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-agent-alignment-pilot-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-agent-alignment-pilot-agent.md`).
 Configure quality gates for the agent files:
 1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`../../evals/<agent-name>-agent.js`) containing concrete test cases and verification rubrics.
 2. **Structural Validators:** Add structural validators (e.g., extending `validate-agents.js`) to check prompt syntax and required headers.

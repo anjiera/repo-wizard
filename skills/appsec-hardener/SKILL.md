@@ -20,7 +20,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Policy Setup
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before scanning or scaffolding, align with the developer on target settings:
 1. **Target Endpoints & CORS:** List the backend base URLs and specific domains to whitelist under the CORS configuration.
 2. **Secure Headers Policy:** Review the secure headers checklist (CSP, HSTS, frame options) and agree on values (e.g. strict vs legacy-support settings).
@@ -28,7 +28,7 @@ Before scanning or scaffolding, align with the developer on target settings:
 4. **Static Scanning Rules:** Check which security rulesets are needed (e.g., standard OWASP Top 10 SAST checks).
 
 ### Phase 2: Codebase Security Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the codebase to check current configurations:
 1. **Middleware Check:** Check the codebase handler entry points for secure header inclusions (like helmet in Node, or secure middleware in Python).
 2. **CORS Scan:** Search for configuration keys matching `cors`, `allow_origins`, or `Access-Control-Allow-Origin`.
@@ -36,7 +36,7 @@ Audit the codebase to check current configurations:
 4. **Package Scan:** Check manifests for existing security, rate-limiting, or linter dependencies.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-appsec-hardener-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-appsec-hardener-agent.md`).
 Draft all configurations, middlewares, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or performing package installations, writing new middleware files, or modifying server configuration scripts.
 2. **Interactive Code Review:** Display generated CORS settings, helmet integrations, and rate limit rules to the developer and prompt them for review and confirmation.

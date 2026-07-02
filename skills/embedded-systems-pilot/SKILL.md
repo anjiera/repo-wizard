@@ -20,7 +20,7 @@ Use this skill when:
 ## Core Process
 
 ### Phase 1: Interactive Alignment & Hardware Specification
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before writing code or changing build scripts, align with the developer on hardware and robustness parameters:
 1. **Target Architecture & MCU:** Identify the microcontroller family (e.g. STM32 ARM Cortex-M, ESP32 Xtensa, AVR ATMega, RISC-V) and toolchain.
 2. **Build System:** Identify the build tool (CMake, Makefile, Cargo, platformio).
@@ -29,7 +29,7 @@ Before writing code or changing build scripts, align with the developer on hardw
 5. **Emulation Scope:** Agree on QEMU machines and config parameters to mock target hardware peripherals.
 
 ### Phase 2: Firmware Codebase Scan
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the repository to locate build configurations and linker files:
 1. **Build Manifest Scan:** Search for `CMakeLists.txt`, `Makefile`, `Cargo.toml`, or `platformio.ini` files.
 2. **Memory Layout Audit:** Search for linker scripts (`.ld`, `link.x`) to verify stack and heap limits.
@@ -37,7 +37,7 @@ Audit the repository to locate build configurations and linker files:
 4. **VCS Filters Check:** Ensure clean working trees and respect hooks/configs created by other agents.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-embedded-systems-pilot-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-embedded-systems-pilot-agent.md`).
 Draft all configurations, warning overlays, and emulation scripts in coordination with `tool-scaffolder.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, modifying linker configurations, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing build gates and CI configurations. You must **NOT** overwrite, alter, or remove configurations added by other agents (such as testing setups or AppSec configurations). Always request developer consent.

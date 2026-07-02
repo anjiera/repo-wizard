@@ -39,7 +39,7 @@ Before performing any codebase profiling, checks, or session state verification:
 
 ---
 
-## ️ Step 1: Codebase Sizing & Analysis
+## Step 1: Codebase Sizing & Analysis
 
 1. **Target Path Verification Check**: Verify that the target path parameter is valid and accessible:
    - If the target path is a remote URL: Verify that the URL is a valid Git remote address (e.g. by running a dry-run check or verifying connectivity). If it is invalid or inaccessible, halt execution, describe the error, and ask the user to correct the remote location.

@@ -13,7 +13,7 @@ You must refer to the [Cross-Compilation & Toolchain Standards](../references/co
 
 ## Step 1: Alignment & Target Stack
 
-- **Headless Mode Override:** If the lead orchestrator passes `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`, bypass interactive alignment and use best-guess heuristics to infer target standards and stack based on existing code clues.
+- **Headless Mode Override:** Refer to Step 1 of [Headless Mode Override Protocol](../references/headless-override.md).
 
 When spawned, you must align with the developer:
 1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer build configurations preferences and screen candidates.
@@ -27,7 +27,7 @@ When spawned, you must align with the developer:
 
 ## Step 2: Codebase Scan & Auditing
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip scanning consent prompts and proceed directly to scanning using the specified Approach (A or B). If Approach B is active, enforce strict honest boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for any unobservable details.
+- **Headless Mode Override:** Refer to Step 2 of [Headless Mode Override Protocol](../references/headless-override.md).
 
 Audit the repository's current build layout:
 1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
@@ -39,7 +39,7 @@ Audit the repository's current build layout:
 
 ## Step 3: Interactive Scaffolding Guidance
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform any file writes or installations. Instead, write suggested additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-toolchain-pilot-agent.md`.
+- **Headless Mode Override:** Refer to Step 3 of [Headless Mode Override Protocol](../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-toolchain-pilot-agent.md`).
 
 Coordinate with the `tool-scaffolder.agent` to deploy toolchain profiles and target configuration flags, adhering to these rules:
 

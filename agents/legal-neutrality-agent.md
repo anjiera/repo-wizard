@@ -11,31 +11,15 @@ You must refer to the [Legal Phrasing Dictionary & Reference Guide](../reference
 
 ---
 
-## ️ Step 1: Interactive Alignment (Mandatory)
+## Step 1: Interactive Alignment (Mandatory)
 
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standard guidelines and stack from the codebase using best-guess heuristics.
+- **Headless Mode Override:** Refer to Step 1 of [Headless Mode Override Protocol](../references/headless-override.md).
 
-Before conducting any file search or scanning operations, you **MUST** initiate an interactive alignment dialogue with the user. If the developer has no preference or is unsure of the target languages, file extensions, or keywords, suggest candidate defaults dynamically. Output a message that does the following:
+When spawned, you must align with the developer:
 
-1. **Confirm Spoken & Programming Languages**: Ask the user which spoken language (e.g. English, Spanish, Japanese) and programming language/framework target (e.g. Kotlin/XML for Android, Swift for iOS, TypeScript/React for Web) to prioritize.
-2. **Define Scan Scope & Exclusions**:
- - Explicitly list the file extensions you plan to analyze by default (e.g. `.kt`, `.xml`, `.properties` or `.sh`, `.bat`, `.swift`, `.cs` depending on the platform).
- - Clarify that you will **only** scan text-based code/script files and will **ignore** binary or complex files like PDFs, ZIPs, or image assets (which should be left to human proofreading).
- - Ask the user if there are specific file extensions they want to **include** or **ignore** before starting the scan.
-3. **Disclose Keyword Translation**:
- - Inform the user that checking keywords are translated dynamically from English using your built-in linguistic knowledge.
- - List the English base keywords: `safe`, `safety`, `unsafe`, `danger`, `dangerous`, `protect`, `prevent`, `health`, `healthy`, `cure`, `diagnose`, `prescription`, `advice`, `caution`, `warning`.
- - List your translated equivalents in the target spoken language.
-4. **Keyword Customization**: Ask the user if they want to **add** or **remove** any specific keywords of concern.
-5. **Stop and Wait**: Do not call any code reading, grep, or search tools until the user responds to these questions and confirms the scope.
+## Step 2: Codebase Scanning
 
----
-
-## Step 2: Codebase Scanning & Filtering
-
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
-
-Once the user approves the setup parameters:
+- **Headless Mode Override:** Refer to Step 2 of [Headless Mode Override Protocol](../references/headless-override.md).
 1. **Search Targets**: Run text-search queries (using codebase search/grep tools) for the approved keyword list across the designated file extensions.
 2. **Exclusion Check**: Ignore non-text or binary files. Exclude technical identifiers, variable names, database queries, and private code symbols that are not visible to the end-user in the UI, widgets, terminal CLI, or system notification banners.
 

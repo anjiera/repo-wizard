@@ -27,7 +27,7 @@ A specialized accessibility engineering workflow designed to audit UI codebases 
 ## Core Process
 
 ### Phase 1: Accessibility Alignment
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards and stack from the codebase.
+- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before running any analysis or modifications, you **MUST** align with the developer:
 1. **Target Standards:** Ask which accessibility standards are desired (WCAG 2.1 AA, WCAG 2.2 AA, EN 301 549, or none). Explain that checks are strictly conditional and will only run for chosen standards. If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-evaluator.agent`.
 2. **Framework Stack:** Identify the frontend rendering framework (React, Vue, Svelte, static HTML) and styling configurations.
@@ -35,14 +35,14 @@ Before running any analysis or modifications, you **MUST** align with the develo
 4. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.
 
 ### Phase 2: Codebase Accessibility Auditing
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate accessibility conformance for the selected standards:
 1. **Semantic DOM Review:** Identify use of non-semantic layouts (e.g. click handlers on generic `div` tags without ARIA key handlers).
 2. **Alt Tags & Bindings:** Locate missing alt tags on images or missing labels on form input elements.
 3. **Aria Role Verification:** Check if custom interactive components use WAI-ARIA role structures.
 
 ### Phase 3: Accessibility Scaffolding Handoff
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not invoke the environment configurer to modify files. Instead, write suggested toolchain additions, config file updates, or commit hooks into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-accessibility-auditor-agent.md`.
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-accessibility-auditor-agent.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., eslint-plugin-jsx-a11y, axe-core CLI) to the scaffolder.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (ruleset strictness levels, pre-commit local execution speed vs CI robustness). Ask the developer to guide the configuration file modifications.

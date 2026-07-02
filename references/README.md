@@ -33,6 +33,7 @@ Focuses on compliance profiles, accessibility standards, legal liability checks,
 * **Regulatory Compliance Frameworks:** [security-hardening-checklist.md](security-hardening-checklist.md)
 * **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
 * **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
+* **Headless Mode Override Protocol:** [headless-override.md](headless-override.md)
 
 ### 🟡 Yellow Team (System Builders & Deployment Lifecycle)
 Focuses on build automation, container configurations, hardware limits, data workflows, and service resilience.
@@ -149,6 +150,8 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
 48. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
+49. **[headless-override.md](headless-override.md)**
+    - Canonical Headless Mode Override steps bypassing questionnaire/alignment and scanning consent prompts.
 
 ---
 

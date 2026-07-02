@@ -25,7 +25,7 @@ Before auditing or scaffolding, align with the developer:
 3. **Linter Integrations:** Verify if they want automated custom linter rules (like `react-hooks/exhaustive-deps`) set up.
 
 ### Phase 2: Codebase State Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. If Approach B is used, output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the codebase to check current state configurations:
 1. **Hook Inspection:** Read component hook dependencies to check for stale closures.
 2. **Fetch Sweeps:** Scan async fetch pathways for missing active cancellation indicators or AbortController bindings.
