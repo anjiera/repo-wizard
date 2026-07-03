@@ -11,12 +11,12 @@ You must strictly follow the styling, formatting, and behavior guidelines define
 
 ---
 
-## Step 0: Legal Terms, Parameter Routing & Consent Gate (Initial Gate)
+## Legal Terms, Parameter Routing & Consent Gate (Initial Gate)
 
 Before performing any codebase profiling, checks, or session state verification:
 1. **Parameter Routing Check**: Parse the command parameters from the user's input/slash command and enforce their default values:
    - **Mode Defaults**:
-     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Step 0 passes.
+     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Legal Terms, Parameter Routing & Consent Gate passes.
      - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
      - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
    - **Parameter Default Values**:
@@ -37,11 +37,11 @@ Before performing any codebase profiling, checks, or session state verification:
      - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
      - `timestamp`: The current timestamp in ISO format.
 5. **Refuse if Declined**: If declined, stop execution, state that the agent cannot proceed without agreement, and do not write the file.
-6. **Proceed**: If the agreement exists, read it and proceed to Step 1.
+6. **Proceed**: If the agreement exists, read it and proceed to Codebase Sizing & Analysis.
 
 ---
 
-## Step 1: Codebase Sizing & Analysis
+## Codebase Sizing & Analysis
 
 1. **Target Path Verification Check**: Verify that the target path parameter is valid and accessible:
    - If the target path is a remote URL: Verify that the URL is a valid Git remote address (e.g. by running a dry-run check or verifying connectivity). If it is invalid or inaccessible, halt execution, describe the error, and ask the user to correct the remote location.
@@ -53,7 +53,7 @@ Before performing any codebase profiling, checks, or session state verification:
 
 ---
 
-## Step 2: Session Checking & Resumability
+## Session Checking & Resumability
 
 For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
 1. **Search Session File**: Look for `.repo-wizard/session.json`.
@@ -67,7 +67,7 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 
 ---
 
-## Step 3: Core Profiling & Questionnaire
+## Core Profiling & Questionnaire
 
 ### A. Local Interactive Alignment (`MODE=INTERACTIVE_LOCAL`)
 1. **Disclaimer**: Begin the questionnaire by presenting the mandatory disclaimer.
@@ -76,10 +76,10 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
    - Summarize the answers provided in a clear, formatted summary block.
    - List the specialist sub-agents selected to run based on these answers, along with a brief 1-sentence description of what each sub-agent does.
    - Ask the user if they would like to review/update their answers, or if they would like to proceed with the analysis.
-   - Only launch Step 5 (Scaffolding, Optimization & Handoff) and call `run-orchestration.js` after the user explicitly confirms they want to proceed.
+   - Only launch Optimization & Handoff and call `run-orchestration.js` after the user explicitly confirms they want to proceed.
 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
-Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Step 0 remains mandatory and must never be bypassed under any mode):
+Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Legal Terms, Parameter Routing & Consent Gate remains mandatory and must never be bypassed under any mode):
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
 2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`. You **MUST** read [validate-contracts.js](../scripts/validate-contracts.js) to inspect the validation rules and structure of `CONTRACT_TEMPLATE`. Ensure every contract object inside the `contracts` array contains a valid `task_metadata` block matching the structure of `CONTRACT_TEMPLATE` (setting `target_modules: ["<targetPath>"]`, `language`, `build_system`, `budget_tier`, `execution_environments`, and `execution_mode`).
 3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--target-path <targetPath>` (and `--report-path <reportRoot>`, `--report-style <reportStyle>`, `--mock-cli <isMock>`, and `--redact` if configured).
@@ -89,7 +89,7 @@ Bypass the questionnaire and live alignment (Note: The Terms of Service agreemen
 
 ---
 
-## ️ Step 4: Dynamic Tool Screening
+## Dynamic Tool Screening
 
 Under all modes, screen candidate tool recommendations using the `tool-evaluator.agent` protocol to check:
 1. **Vulnerabilities**: Ensure no active critical CVEs.
@@ -98,7 +98,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 
 ---
 
-## Step 5: Scaffolding, Optimization & Handoff
+## Optimization & Handoff
 
 ### A. Local Interactive Mode
 1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`, forwarding `--target-path <targetPath>` (and `--report-path <reportRoot>`, `--report-style <reportStyle>`, `--mock-cli <isMock>`, and `--redact` if configured).
@@ -127,7 +127,7 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 
 ---
 
-## Step 6: Reports & Summary Generation
+## Reports & Summary Generation
 
 Write the deliverables upon scan completion by first generating and saving the bespoke custom report data directly into the session state file (`.repo-wizard/session.json`) under the key `customReport`, and setting the `answersInferred` boolean flag (to `false` for interactive mode, or `true` for headless mode).
 

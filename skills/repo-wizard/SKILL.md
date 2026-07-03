@@ -29,11 +29,11 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ## Core Process
 
-### Phase 0: Legal Terms, Parameter Routing & Consent Gate
+### Legal Terms, Parameter Routing & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
 1. **Parameter Routing Check**: Parse the command parameters and enforce their default values:
    - **Mode Defaults**:
-     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Phase 0 passes.
+     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Legal Terms, Parameter Routing & Consent Gate passes.
      - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
      - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
    - **Parameter Default Values**:
@@ -54,9 +54,9 @@ Before performing codebase analysis, sizing, or session resume operations:
      - `agreed_by`: The user's login name (retrieved from environment variables like `USERNAME`, `USER`, `LOGNAME`, or by running `whoami`).
      - `timestamp`: The current timestamp in ISO format.
 5. **Refuse if Declined**: If declined, stop execution, state that the agent cannot proceed without agreement, and do not write the file.
-6. **Proceed**: If the agreement exists, read it and proceed to Phase 1.
+6. **Proceed**: If the agreement exists, read it and proceed to Codebase Sizing & Analysis.
 
-### Phase 1: Codebase Sizing & Analysis
+### Codebase Sizing & Analysis
 1. **Target Path Verification Check**: Verify that the target path parameter (`TARGET_PATH`) is valid and accessible:
    - If `TARGET_PATH` is a remote URL: Verify that it is a valid, reachable Git repository address. If invalid or inaccessible, halt execution, describe the error, and ask the user to correct the path.
    - If `TARGET_PATH` is a local filepath: Verify that the directory exists and is readable. If the folder does not exist, halt execution, explain that it was not found, and ask the user to correct the path.
@@ -65,23 +65,23 @@ Before performing codebase analysis, sizing, or session resume operations:
 4. **Incremental Adoption Gate**: If the codebase contains multiple submodules or the LOC counting script output indicates that the codebase size exceeds the incremental adoption threshold (which is configured as `INCREMENTAL_ADOPTION_THRESHOLD_LOC` in [report-constants.js](../../scripts/report-constants.js), returning `exceedsAdoptionThreshold: true` in JSON), prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
 5. **Gitignore Verification**: Only if `reportRoot` resides inside the target codebase path (`TARGET_PATH`), automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files. If `reportRoot` is outside the target path, do not modify the codebase's ignore files.
 
-### Phase 2: Resumability & Session State Check
+### Resumability & Session State Check
 1. **Interactive Mode**: Check for `<reportRoot>/.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Before overwriting, run the utility script `node scripts/reports-archive.js` to backup all prior configurations and reports (including `session.json`, `manifest.json`, and all compiled markdown/HTML reports under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/`) into `<reportRoot>/.repo-wizard/reports/history/<repo-name-here>/<timestamp>/`, suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate age.
 2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
-### Phase 3: Core Profiling & Alignment
+### Core Profiling & Alignment
 1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). Avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
-   - **Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. Present a formatted summary of the user's answers and list the selected sub-agents along with a 1-sentence description of what each sub-agent does. Prompt the user to review/update their answers or proceed. Only dispatch parameters contracts to specialists and call `run-orchestration.js` in Phase 5 after the user explicitly confirms they want to proceed.
+   - **Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. Present a formatted summary of the user's answers and list the selected sub-agents along with a 1-sentence description of what each sub-agent does. Prompt the user to review/update their answers or proceed. Only dispatch parameters contracts to specialists and call `run-orchestration.js` in Optimization & Handoff after the user explicitly confirms they want to proceed.
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`, and immediately update their status in the manifest to `completed` so they are not treated as pending.
      - **Coordinate Headless Scans**: Write all selected parameter contracts to `<reportRoot>/.repo-wizard/manifest.json`. You **MUST** read [validate-contracts.js](../../scripts/validate-contracts.js) to inspect the validation rules and structure of `CONTRACT_TEMPLATE`. Ensure every contract object inside the `contracts` array contains a valid `task_metadata` block matching the structure of `CONTRACT_TEMPLATE` (setting `target_modules: ["<targetPath>"]`, `language`, `build_system`, `budget_tier`, `execution_environments`, and `execution_mode`). Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details. Run `node scripts/run-orchestration.js` forwarding `--target-path <targetPath>` (and other parameters like `--report-path <reportRoot>`, `--report-style <reportStyle>`, `--mock-cli <isMock>`, and `--redact` if configured) to execute the scans.
      - **Collect Observations**: Subagents execute their scans and save findings directly as mini-reports at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 
 
-### Phase 4: Dynamic Screening & Tool Selection
+### Dynamic Screening & Tool Selection
 For each capability needed, recommend candidate tools dynamically after screening them via `tool-evaluator.agent` to check vulnerabilities, activity/maintenance, and license compliance.
 
-### Phase 5: Optimization & Handoff
+### Optimization & Handoff
 1. **Local Interactive Mode**: Finish the interview first, deduplicate candidates, and dispatch parameters contract to `tool-scaffolder.agent` or subagents (backlog mode). Run verification and VCS rollback on failure.
 2. **Headless Mode**: Do NOT make any package installations or write files in the targeted repository. Read and consolidate all subagents' mini-reports from `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 3. **Execution & Synchronization Rules**:
@@ -94,7 +94,7 @@ For each capability needed, recommend candidate tools dynamically after screenin
    - **History Directory Isolation**: The archived history folder (`<reportRoot>/.repo-wizard/reports/history/`) is strictly write-only for the archiving script. Under no circumstances should you browse, search, or read files inside the `history/` directory to restore state, parse past sessions, or infer configurations.
    - **No Parameter Invariant Drift from Conversation History**: Never use descriptions, metadata, or execution modes mentioned in the system-provided chat "Conversation History" or "<conversation_summaries>" to determine or override the parameters/mode of the current session. You must only configure the session based on the explicit parameters typed by the user in their current prompt/command.
 
-### Phase 6: Reports & Deliverables Compilation
+### Reports & Deliverables Compilation
 Generate the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
 
 * **Redacted Mode Validation**: If Redacted/Anonymized Mode is active (`isRedact = true` / `--redact true`), you must strictly ensure that when synthesizing report sections, Maturity Model guidance, backlog stories, and conclusion text, you NEVER output the actual repository name, target path, organization name, developer credentials, or project-specific branding. Instead, write neutrally and refer to the project generically (e.g. as 'the target repository', 'the target codebase', 'the workspace', or 'the codebase').
