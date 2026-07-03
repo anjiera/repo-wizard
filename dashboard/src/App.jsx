@@ -1,15 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const complianceFrameworks = [
-  { id: 'GDPR', fullName: 'GDPR (General Data Protection Regulation)', hint: 'Required for applications processing EU citizen data.' },
-  { id: 'SOC 2', fullName: 'SOC 2 (Systems and Organization Controls 2)', hint: 'Required for cloud and SaaS systems handling customer data.' },
-  { id: 'ISO 27001', fullName: 'ISO 27001 (Information Security Management)', hint: 'International framework for information security systems.' },
-  { id: 'HIPAA', fullName: 'HIPAA (Health Insurance Portability and Accountability Act)', hint: 'Required for US healthcare applications storing patient data.' },
-  { id: 'PCI-DSS', fullName: 'PCI-DSS (Payment Card Industry Data Security Standard)', hint: 'Required for apps processing credit card transactions.' },
-  { id: 'CCPA / CPRA', fullName: 'CCPA / CPRA (California Consumer Privacy Act / CPRA)', hint: 'Applies to businesses handling California resident data.' },
-  { id: 'FIPS', fullName: 'FIPS (Federal Information Processing Standards)', hint: 'Required for US federal agency cryptography standards.' },
-  { id: 'FedRAMP', fullName: 'FedRAMP (Federal Risk and Authorization Management Program)', hint: 'Required for cloud vendors supplying US federal agencies.' }
-];
+import stepperConfig from './config/stepper-config.json';
+const { complianceFrameworks, steps } = stepperConfig;
 
 export default function App() {
   const [screen, setScreen] = useState('landing'); // 'landing', 'picker', 'questionnaire', 'reports', 'running', 'success'
@@ -153,12 +145,10 @@ export default function App() {
       coverageThreshold: 80,
       compliance: []
     },
-    sections: {
-      context: { status: 'pending' },
-      stack: { status: 'pending' },
-      gates: { status: 'pending' },
-      compliance: { status: 'pending' }
-    }
+    sections: steps.reduce((acc, s) => {
+      acc[s.id] = { status: 'pending' };
+      return acc;
+    }, {})
   });
 
   const [reports, setReports] = useState([]);
@@ -338,12 +328,10 @@ export default function App() {
         coverageThreshold: 80,
         compliance: []
       },
-      sections: {
-        context: { status: 'pending' },
-        stack: { status: 'pending' },
-        gates: { status: 'pending' },
-        compliance: { status: 'pending' }
-      }
+      sections: steps.reduce((acc, s) => {
+        acc[s.id] = { status: 'pending' };
+        return acc;
+      }, {})
     });
     setScreen('picker');
   };
@@ -444,13 +432,7 @@ export default function App() {
       });
   };
 
-  // Stepper steps config
-  const steps = [
-    { id: 'context', title: 'Context & Goals', desc: 'Define your release environment and tooling budget.' },
-    { id: 'stack', title: 'Technical Stack', desc: 'Verify target runtime, libraries, and frameworks.' },
-    { id: 'gates', title: 'Verification Gates', desc: 'Configure testing coverage limits and commit hooks.' },
-    { id: 'compliance', title: 'Compliance Triggers', desc: 'Identify regulatory and privacy requirements.' }
-  ];
+
 
   const handleNextStep = (skip = false) => {
     const currentSectionId = steps[session.currentStep].id;
@@ -1200,7 +1182,7 @@ export default function App() {
                         />
                         <label htmlFor={`compliance-${fw.id}`} className="flex flex-col cursor-pointer select-none pr-8">
                           <span className="font-semibold text-white text-sm">{fw.id}</span>
-                          <span className="text-xs text-[#8b949e]">{fw.fullName.substring(fw.id.length + 2, fw.fullName.length - 1)}</span>
+                          <span className="text-xs text-[#8b949e]">{fw.description}</span>
                         </label>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-help text-[#8b949e] hover:text-white group">
                           <span className="text-[10px] w-4.5 h-4.5 flex items-center justify-center bg-[#161b22] rounded-full border border-brand-border font-bold">i</span>

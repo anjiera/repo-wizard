@@ -854,7 +854,18 @@ const server = http.createServer((req, res) => {
           if (payload.sections !== undefined && typeof payload.sections === 'object' && payload.sections !== null) {
             const cleanSections = sessionState.sections || {};
             const pSections = payload.sections;
-            const validSections = ['context', 'stack', 'gates', 'compliance'];
+            let validSections = ['context', 'stack', 'gates', 'compliance'];
+            try {
+              const configPath = path.resolve(__dirname, '..', 'dashboard', 'src', 'config', 'stepper-config.json');
+              if (fs.existsSync(configPath)) {
+                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                if (config && Array.isArray(config.steps)) {
+                  validSections = config.steps.map(s => s.id);
+                }
+              }
+            } catch (err) {
+              // fallback
+            }
             
             for (const key of validSections) {
               if (pSections[key] !== undefined && typeof pSections[key] === 'object' && pSections[key] !== null) {
