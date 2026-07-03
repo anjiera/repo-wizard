@@ -58,3 +58,17 @@ Antigravity automatically discovers the `skills/` directory. If you ask the agen
 > *"Look at this UI description and verify it has neutral phrasing"*
 
 The agent will detect the intent, prompt you for permission to load the `legal-neutrality-auditor` skill, and start the interactive alignment dialogue.
+
+---
+
+## Custom Command Permissions (Bypassing Approval Gates)
+
+By default, the Antigravity sandbox environment requires you to explicitly review and click "Approve" for every command execution (e.g. running scripts like validation tests or codebase line counting scripts).
+
+If you plan to run headless scans frequently, clicking "Approve" for each sub-process script can cause questionnaire fatigue. You can pre-authorize these script command prefixes to run silently without prompting you.
+
+### Authorizing Script Paths
+When you run the plugin, you can authorize command prefixes using the permission tool or in your Antigravity config file. For example:
+- To allow running helper validator scripts: Authorize prefix `node scripts/`
+- To allow running E2E tests: Authorize prefix `node scripts/run-e2e-tests.js`
+- To allow running the LOC count utility: Authorize prefix `node solo-dev-toolkit/scripts/count-loc.js`
