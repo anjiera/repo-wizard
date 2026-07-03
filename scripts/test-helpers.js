@@ -230,8 +230,8 @@ function testValidateDocs() {
 }
 
 function testRunOrchestration() {
-  console.log('Testing run-orchestration.js...');
-  const scriptPath = path.join(ROOT, 'scripts', 'run-orchestration.js');
+  console.log('Testing run-fallback-sequential-orchestration.js...');
+  const scriptPath = path.join(ROOT, 'scripts', 'run-fallback-sequential-orchestration.js');
   const manifestDir = path.join(ROOT, '.repo-wizard');
   const manifestPath = path.join(manifestDir, 'manifest.json');
   const agentsDir = path.join(manifestDir, 'agents');
@@ -280,7 +280,7 @@ function testRunOrchestration() {
       }
     })();
 
-    assert(mockRun.code === 0, 'run-orchestration.js exits with 0 on successful mock run');
+    assert(mockRun.code === 0, 'run-fallback-sequential-orchestration.js exits with 0 on successful mock run');
     
     // Check manifest status update (promoted to reports dir)
     const reportsDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
@@ -313,7 +313,7 @@ function testRunOrchestration() {
         };
       }
     })();
-    assert(invalidMockRun.code === 1, 'run-orchestration.js exits with 1 on invalid --mock-cli value');
+    assert(invalidMockRun.code === 1, 'run-fallback-sequential-orchestration.js exits with 1 on invalid --mock-cli value');
     assert(invalidMockRun.stderr.includes('ERROR: Invalid or missing boolean value for parameter "--mock-cli"'), 'correct error message for invalid mock-cli parameter');
 
     // Test 2: Pre-flight validation fails on bad contract structure
@@ -353,7 +353,7 @@ function testRunOrchestration() {
       }
     })();
 
-    assert(badRun.code === 1, 'run-orchestration.js exits with 1 on invalid parameter contract');
+    assert(badRun.code === 1, 'run-fallback-sequential-orchestration.js exits with 1 on invalid parameter contract');
     assert(badRun.stderr.includes('task_metadata.language must be a non-empty string'), 'correct validation error outputted in stderr');
 
     // Test 3: Fallback triggered when no CLI binary exists
@@ -371,7 +371,7 @@ function testRunOrchestration() {
       }
     })();
 
-    assert(fallbackRun.code === 0, 'run-orchestration.js exits with 0 on fallback when CLI not found');
+    assert(fallbackRun.code === 0, 'run-fallback-sequential-orchestration.js exits with 0 on fallback when CLI not found');
     const fallbackManifest = JSON.parse(fs.readFileSync(targetManifestPath, 'utf8'));
     assert(fallbackManifest.status === 'fallback_to_agent', 'manifest status updated to fallback_to_agent');
     assert(fallbackManifest.contracts[0].status === 'pending_agent_fallback', 'contract status updated to pending_agent_fallback');
@@ -405,7 +405,7 @@ function testRunOrchestration() {
       }
     })();
 
-    assert(redactRun.code === 0, 'run-orchestration.js exits with 0 on successful redact run');
+    assert(redactRun.code === 0, 'run-fallback-sequential-orchestration.js exits with 0 on successful redact run');
     const dummyContent = fs.readFileSync(dummyPath, 'utf8');
     assert(dummyContent.includes('Target repo is target-repository located at target-workspace-path'), 'repo name and path redacted');
     assert(dummyContent.includes('Git URL is git@github.com:redacted-org/redacted-repo.git'), 'git url redacted');
@@ -428,7 +428,7 @@ function testRunOrchestration() {
 
 function testCompiledAnalysisPath() {
   console.log('Testing orchestration with custom --report-path...');
-  const scriptPath = path.join(SCRIPTS_DIR, 'run-orchestration.js');
+  const scriptPath = path.join(SCRIPTS_DIR, 'run-fallback-sequential-orchestration.js');
   const customReportDir = path.join(ROOT, 'temp_custom_reports');
   
   if (fs.existsSync(customReportDir)) {

@@ -11,6 +11,18 @@ You must strictly follow the styling, formatting, and behavior guidelines define
 
 ---
 
+## Execution Environment & Handoff Rule
+
+You can run in one of two execution environments. You must detect your environment on startup and apply this handoff rule to all execution, scan, and scaffolding steps described in this document:
+
+1. **Antigravity Chat Session (Native Path):** This is active whenever you are executing natively inside the chat interface (e.g. triggered via a slash command like `/repo-wizard`). You have direct access to the native `invoke_subagent` tool.
+   - **Action:** You MUST natively coordinate, configure, and dispatch all High and Medium relevance specialist subagents concurrently in parallel using a single `invoke_subagent` tool call. You are strictly forbidden from spawning `run-fallback-sequential-orchestration.js` in this environment. Proceed directly to parallel native subagent invocation.
+   - **Mock Mode Handling (`--mock-cli`)**: The default value of `--mock-cli` is `false` if not explicitly specified. If `--mock-cli true` is explicitly provided, do NOT invoke real subagents; instead, write mock observations and contracts to disk (matching the mock mode output files of the CLI) and proceed to compile. If `--mock-cli` is `false` (either directly specified or indirectly specified by being left out), you MUST NOT mock. You MUST invoke the real subagents to perform real scans and write genuine analysis reports. Taking shortcuts or generating mock reports under `false` or default configurations is strictly forbidden.
+   - **Pass Paths & Params**: For each subagent, pass a clear contract and instruct it to check for consent at `<reportRoot>/.repo-wizard/.tos_agreed`, write its observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and write its contract file to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/<agent-name>-contract.json`.
+   - **Propagate Redaction Flag**: If `--redact true` is active, explicitly instruct the subagents to follow Rule 2 of the Agent Execution Rules to only output plain-text file basenames in their observations.
+2. **Terminal CLI (Sequential Fallback Path):** This is active when executing from a command-line interface or CI system outside of the chat sandbox (where `invoke_subagent` is not available).
+   - **Action:** Run `node scripts/run-fallback-sequential-orchestration.js` forwarding all command-line parameters (specifically `--target-path`, `--report-path`, `--report-style`, `--mock-cli`, and `--redact`) to coordinate the scan.
+
 ## Legal Terms, Parameter Routing & Consent Gate (Initial Gate)
 
 Before performing any codebase profiling, checks, or session state verification:
@@ -82,10 +94,10 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Legal Terms, Parameter Routing & Consent Gate remains mandatory and must never be bypassed under any mode):
 1. **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`.
 2. **Compile and Write Manifest**: Compile all selected specialist parameter contracts into a single JSON manifest at `<reportRoot>/.repo-wizard/manifest.json`. You **MUST** read [validate-contracts.js](../scripts/validate-contracts.js) to inspect the validation rules and structure of `CONTRACT_TEMPLATE`. Ensure every contract object inside the `contracts` array contains a valid `task_metadata` block matching the structure of `CONTRACT_TEMPLATE` (setting `target_modules: ["<targetPath>"]`, `language`, `build_system`, `budget_tier`, `execution_environments`, and `execution_mode`).
-3. **Execute Hybrid Orchestration**: Run `node scripts/run-orchestration.js` to dispatch these contracts, forwarding `--target-path <targetPath>` (and `--report-path <reportRoot>`, `--report-style <reportStyle>`, `--mock-cli <isMock>`, and `--redact` if configured).
+3. **Execute Orchestration**: Run the subagent scans following the **Execution Environment & Handoff Rule**.
 4. **Collect and Read Observations**:
     - If execution status in `manifest.json` is `completed` or `skipped`, directly read and consolidate their mini-reports.
-   - If execution status in the manifest is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
+    - If executing fallback sequential mode and status is `fallback_to_agent`, fallback to manual LLM-driven execution: sequentially invoke each agent flagged as `pending_agent_fallback` using the native `invoke_subagent` tool, write their observation reports to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and then consolidate.
 
 ---
 
@@ -101,9 +113,9 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
 ## Optimization & Handoff
 
 ### A. Local Interactive Mode
-1. **Execute Hybrid Scaffolding**: Run `node scripts/run-orchestration.js`, forwarding `--target-path <targetPath>` (and `--report-path <reportRoot>`, `--report-style <reportStyle>`, `--mock-cli <isMock>`, and `--redact` if configured).
-2. **Handle Fallback Execution**:
-   - If execution status in the manifest is `fallback_to_agent`, **do NOT immediately proceed to invoke fallback subagents**. First, issue a mandatory warning to the developer:
+1. **Execute Scaffolding & Audits**: Run the subagent scans following the **Execution Environment & Handoff Rule**.
+2. **Handle Fallback Sequential Execution**:
+   - If executing fallback sequential mode and the CLI runner fails with status `fallback_to_agent`, **do NOT immediately proceed to invoke fallback subagents**. First, issue a mandatory warning to the developer:
      > ⚠ **Heads-up: High Token Usage Ahead**
      > The orchestration CLI runner could not dispatch specialist agents automatically, so this run will fall back to invoking each specialist agent directly using in-session LLM calls. This consumes significantly more AI tokens than the standard CLI path.
      >
@@ -114,15 +126,13 @@ Under all modes, screen candidate tool recommendations using the `tool-evaluator
    - **Only proceed** with sequentially invoking the subagents flagged as `pending_agent_fallback` (using the native `invoke_subagent` tool) after the developer explicitly replies to proceed.
    - Write each subagent's findings to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, then continue.
 3. Run verification and VCS rollback on failure.
-4. **CLI/Terminal Yield Instructions**: Whenever you must yield (go idle/waiting) while subagents execute or after scheduling background timers:
-   - Explicitly instruct the developer on how to check status and compile reports from their command-line interface.
-   - Specifically print: *"Since you are running from the terminal CLI, you can check progress and trigger compilation by running `agy --dangerously-skip-permissions -p \"/repo-wizard Check status\"` or directly compiling the reports using `node scripts/reports-compile.js`."*
 
 ### B. Headless Mode
-1. Do NOT make any package installations or write files in the targeted repository.
-2. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` (either written by the runtime or the fallback manual execution loop).
-3. **Execution & Synchronization Rules**:
-   - **Mock-CLI Default**: When spawning `run-orchestration.js`, you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
+1. **Execute Audits**: Run the subagent scans following the **Execution Environment & Handoff Rule**.
+2. Do NOT make any package installations or write files in the targeted repository.
+3. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
+4. **Execution & Synchronization Rules**:
+   - **Mock-CLI Default**: When spawning `run-fallback-sequential-orchestration.js` (CLI Fallback Mode Only), you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
    - **Parameter Defaults**: Enforce parameter default values during scans (`--mock-cli` defaults to `false`, `--redact` defaults to `false`, `--target-path` defaults to the active local workspace directory, `--report-path` defaults to the workspace root, and `--tos-path` defaults to `<reportRoot>/.repo-wizard/`).
 
 ---
