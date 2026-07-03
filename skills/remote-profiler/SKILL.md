@@ -30,7 +30,7 @@ A specialized codebase profiling workflow designed to scan remote public reposit
     - If a URL is passed: Set `MODE=HEADLESS_REMOTE`.
     - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
     - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
-    - If `MODE=HEADLESS_REMOTE` is active, prompt the operator to choose **Approach A** (shallow clone / local checkout) or **B** (GraphQL & metadata-only scan) before starting the analysis.
+    - If `MODE=HEADLESS_REMOTE` is active, default to executing a shallow clone (Approach A) before starting the analysis.
 
 ### Phase 2: Decoupled Relevance Sweeps
 1. **Lightweight Relevance Query:** The orchestrator queries all 20+ specialized subagents.
@@ -60,7 +60,7 @@ A specialized codebase profiling workflow designed to scan remote public reposit
    - `<repo-name-here>-executive-summary.md` & `.html`
 3. **Wording Hook Tweak:** If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
    > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
-4. **Enforce Honest-Boundaries:** Under Approach B, verify that all unobservable files return `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` instead of hallucinated findings.
+4. **Enforce Honest-Boundaries:** Verify that all unobservable files return `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` instead of hallucinated findings.
 5. **Standard Disclaimer:** Append the Developer Empowerment Disclaimer to the bottom of all generated reports.
 
 ---
@@ -69,7 +69,7 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 
 | Rationalization | Reality |
 | :--- | :--- |
-| "I should guess test files' contents under Approach B to fill the report." | Enforcing honest boundaries prevents misleading recommendations. Use the blocked token to prompt checkout. |
+| "I should guess test files' contents when reads are restricted to fill the report." | Enforcing honest boundaries prevents misleading recommendations. Use the blocked token to prompt checkout. |
 | "Since it's remote, we don't need to check the TOS." | The operator running the tool must still accept the TOS to establish engineering accountability. |
 | "We should write files to the remote repository directory." | Headless mode is read-only. Report files must only be saved locally in the operator's workspace `.repo-wizard/` directory. |
 
@@ -87,5 +87,5 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 - [ ] Local headless routing (`MODE=HEADLESS_LOCAL`) is triggered via `headless` or `--headless` options.
 - [ ] Suffix `<repo-name-here>` is correctly derived and appended to reports and mini-reports.
 - [ ] Decoupled relevance sweeps are run, skipping Low-relevance agents.
-- [ ] Approach B reports output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- [ ] Reports output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details or restricted file reads.
 - [ ] Agent mini-reports are saved and can be read to resume execution.

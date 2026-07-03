@@ -43,7 +43,7 @@ module.exports = {
       input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, please run the repository wizard on this remote URL: https://github.com/myorg/myproject',
       rubrics: [
         'The response detects the URL parameter and sets MODE=HEADLESS_REMOTE.',
-        'The response prompts the user to pick Approach A (shallow clone / local checkout) or B (GraphQL & metadata-only analysis).'
+        'The response defaults to executing a shallow clone (Approach A) instead of prompting to choose between Approach A and B.'
       ]
     },
     {

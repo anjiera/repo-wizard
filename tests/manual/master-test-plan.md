@@ -186,7 +186,7 @@ graph TD
     agy run /repo-wizard https://github.com/expressjs/express
     ```
   - *Expected Outcome*:
-    - Prompts for Approach A (shallow clone) or B (metadata check), clones the repository, and dispatches the relevant subagent sweeps.
+    - Automatically executes Approach A (shallow clone), clones the repository, and dispatches the relevant subagent sweeps.
     - Generates a full Markdown report at `.repo-wizard/reports/repo-wizard-full-report.md` containing the executive summary, domain coverage list, and developer disclaimers.
 
 - [ ] **5.2 Custom Checkout Path & Automatic Deletion Cleanup**

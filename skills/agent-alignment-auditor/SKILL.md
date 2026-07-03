@@ -25,7 +25,7 @@ Accept the parameters contract containing:
 3. **Tooling & Hooks:** Choice of pre-commit hooks, CI/CD runners, and LLM-as-a-Judge validation runners.
 
 ### Phase 2: Metadata & Persona Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. Under Approach B, enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts. Enforce honest-boundaries: output `[Data Blocked: Requires Shallow Clone / Local Checkout to evaluate]` for unobservable details or restricted file reads.
 Evaluate target agent configurations:
 1. **Metadata Consistency:** Check for YAML frontmatter matching (`name` matches filename, `description` exists and is under character limits).
 2. **Structural Completeness:** Verify the existence of the three standard steps: Alignment & Target Stack, Codebase Scan & Auditing, and Interactive Scaffolding Guidance.

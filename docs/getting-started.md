@@ -32,7 +32,7 @@ Currently, the suite includes:
 ### 2. Remote & Local Headless Profiler
 * **Skill**: [skills/remote-profiler/SKILL.md](../skills/remote-profiler/SKILL.md)
 * **Orchestrator Persona**: [agents/repo-wizard-agent.md](../agents/repo-wizard-agent.md)
-* **Goal**: Scans remote public GitHub repositories (via URL parameter) or local active workspaces (via `headless` or `--headless` options) in a non-blocking mode. Conducts decoupled subagent relevance check sweeps, supports mini-report resumability, and compiles observations, full technical, and executive summaries with strict honest-boundaries (Approach B) and roadmap upgrade hooks.
+* **Goal**: Scans remote public GitHub repositories (via URL parameter) or local active workspaces (via `headless` or `--headless` options) in a non-blocking mode. Conducts decoupled subagent relevance check sweeps, supports mini-report resumability, and compiles observations, full technical, and executive summaries with strict honest-boundaries and roadmap upgrade hooks.
 
 
 ---

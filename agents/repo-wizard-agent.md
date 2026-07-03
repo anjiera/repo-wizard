@@ -28,7 +28,7 @@ You can run in one of two execution environments. You must detect your environme
 Before performing any codebase profiling, checks, or session state verification:
 1. **Parameter Routing Check**: Parse the command parameters from the user's input/slash command and enforce their default values:
    - **Mode Defaults**:
-     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and prompt the user to choose **Approach A** (shallow clone) or **B** (GraphQL & metadata-only scan) once Legal Terms, Parameter Routing & Consent Gate passes.
+     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and default to executing a shallow clone (Approach A) once Legal Terms, Parameter Routing & Consent Gate passes.
      - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
      - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
    - **Parameter Default Values**:
