@@ -32,9 +32,8 @@ You **MUST** initiate an interactive discussion with the user before executing a
 1. **Target Language(s)**: Ask which spoken language (e.g., English, Spanish, Japanese) and programming filetypes (e.g., Kotlin, XML, Swift) you should prioritize.
 2. **Exclusion Check**: State which file extensions you plan to analyze by default based on the programming language, and explicitly ask the user if there are any specific file extensions they want to include or ignore.
 3. **Keyword Translation Disclosure**:
-   - Inform the user that safety-checking keywords are translated dynamically from English using your built-in translation/linguistic knowledge.
-   - List the target English keywords: `safe`, `safety`, `unsafe`, `danger`, `dangerous`, `protect`, `prevent`, `health`, `healthy`, `cure`, `diagnose`, `prescription`, `advice`, `caution`, `warning`.
-   - List the translated target language equivalents.
+   - Inform the user that safety-checking keywords are dynamically loaded from the shared wordlist in [legally-dubious-words.json](../../references/legally-dubious-words.json).
+   - Read the keywords from the JSON file, translate them dynamically using your built-in translation/linguistic knowledge, and list both the English keywords and their translated equivalents for user review.
 4. **Keyword Customization**: Ask the user if they want to add or remove any specific keywords of concern before the scan begins.
 5. **Wait for Approval**: Stop and wait for the user's response before proceeding.
 
