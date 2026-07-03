@@ -288,12 +288,16 @@ function sanitizeUrl(url) {
  * Parses inline formatting like bold, code, links
  */
 function inlineParse(text) {
+  const salt = Math.random().toString(36).substring(2, 10);
+  const codePlaceholderPrefix = `@@CODEPLACEHOLDER${salt}X`;
+  const linkPlaceholderPrefix = `@@LINKPLACEHOLDER${salt}X`;
+
   const links = [];
   // Extract links from raw text first to prevent double HTML escaping of URL parameters
   let parsed = (text || '').replace(/\[([^\]]*?)\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g, (match, linkText, url) => {
     const id = links.length;
     links.push({ linkText, url });
-    return `@@LINKPLACEHOLDER${id}@@`;
+    return `${linkPlaceholderPrefix}${id}@@`;
   });
 
   const codes = [];
@@ -301,7 +305,7 @@ function inlineParse(text) {
   parsed = parsed.replace(/`(.*?)`/g, (match, codeText) => {
     const id = codes.length;
     codes.push(codeText);
-    return `@@CODEPLACEHOLDER${id}@@`;
+    return `${codePlaceholderPrefix}${id}@@`;
   });
 
   // Escape HTML on the rest of the text content
@@ -313,7 +317,7 @@ function inlineParse(text) {
   parsed = parsed.replace(/_([^_]+)_/g, '<em>$1</em>');
 
   // Restore code blocks (escaping their contents first)
-  parsed = parsed.replace(/@@CODEPLACEHOLDER(\d+)@@/g, (match, id) => {
+  parsed = parsed.replace(new RegExp(`${codePlaceholderPrefix}(\\d+)@@`, 'g'), (match, id) => {
     const codeIndex = parseInt(id, 10);
     if (codeIndex < 0 || codeIndex >= codes.length) {
       return match;
@@ -322,25 +326,25 @@ function inlineParse(text) {
   });
 
   // Restore and safely format URLs and link text
-  parsed = parsed.replace(/@@LINKPLACEHOLDER(\d+)@@/g, (match, id) => {
+  parsed = parsed.replace(new RegExp(`${linkPlaceholderPrefix}(\\d+)@@`, 'g'), (match, id) => {
     const linkIndex = parseInt(id, 10);
     if (linkIndex < 0 || linkIndex >= links.length) {
       return match;
     }
     const link = links[linkIndex];
     let safeText = escapeHtml(link.linkText);
-    // Allow bold and code formatting inside link text
+    // Allow bold and code formatting inside link text (Note: safeText is already escaped, so do not double escape)
     safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    safeText = safeText.replace(/`(.*?)`/g, (m, codeText) => `<code>${escapeHtml(codeText)}</code>`);
+    safeText = safeText.replace(/`(.*?)`/g, (m, codeText) => `<code>${codeText}</code>`);
     
     return `<a href="${escapeHtml(sanitizeUrl(link.url))}">${safeText}</a>`;
   });
 
   // Final validation check to ensure no placeholder patterns remain in the returned text
-  if (parsed.includes('@@CODEPLACEHOLDER') || parsed.includes('@@LINKPLACEHOLDER')) {
+  if (parsed.includes(codePlaceholderPrefix) || parsed.includes(linkPlaceholderPrefix)) {
     parsed = parsed
-      .replace(/@@CODEPLACEHOLDER\d+@@/g, '')
-      .replace(/@@LINKPLACEHOLDER\d+@@/g, '');
+      .replace(new RegExp(`${codePlaceholderPrefix}\\d+@@`, 'g'), '')
+      .replace(new RegExp(`${linkPlaceholderPrefix}\\d+@@`, 'g'), '');
   }
 
   return parsed;
