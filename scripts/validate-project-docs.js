@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/validate-docs.js
+ * scripts/validate-project-docs.js
  *
  * Enforces documentation upkeep checks in the pre-commit hook:
  * 1. References Directory: Every file in references/ (excluding README) must be cataloged in references/README.md.

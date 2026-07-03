@@ -182,12 +182,12 @@ description: Skill missing required sections
 }
 
 function testValidateDocs() {
-  console.log('Testing validate-docs.js...');
-  const scriptPath = path.join(SCRIPTS_DIR, 'validate-docs.js');
+  console.log('Testing validate-project-docs.js...');
+  const scriptPath = path.join(SCRIPTS_DIR, 'validate-project-docs.js');
 
   // Test 1: Run in current healthy state
   const healthyRun = runScript(scriptPath);
-  assert(healthyRun.code === 0, 'validate-docs.js exits with 0 on healthy repository');
+  assert(healthyRun.code === 0, 'validate-project-docs.js exits with 0 on healthy repository');
 
   // Test 2: Create a temp untracked reference file
   const tempRefPath = path.join(ROOT, 'references', 'temp-untracked-ref.md');
@@ -195,9 +195,9 @@ function testValidateDocs() {
 
   try {
     const unhealthyRun = runScript(scriptPath);
-    assert(unhealthyRun.code === 1, 'validate-docs.js exits with 1 when reference file is untracked');
+    assert(unhealthyRun.code === 1, 'validate-project-docs.js exits with 1 when reference file is untracked');
     assert(unhealthyRun.stdout.includes("Reference file 'temp-untracked-ref.md' is not indexed in references/README.md"),
-      'validate-docs.js prints correct missing reference error message');
+      'validate-project-docs.js prints correct missing reference error message');
   } finally {
     if (fs.existsSync(tempRefPath)) fs.unlinkSync(tempRefPath);
   }
@@ -208,9 +208,9 @@ function testValidateDocs() {
 
   try {
     const unhealthyRun = runScript(scriptPath);
-    assert(unhealthyRun.code === 1, 'validate-docs.js exits with 1 when agent is unlisted in matrix');
+    assert(unhealthyRun.code === 1, 'validate-project-docs.js exits with 1 when agent is unlisted in matrix');
     assert(unhealthyRun.stdout.includes("Agent persona 'temp-unlisted-agent' is not listed in docs/AGENT_MATRIX.md"),
-      'validate-docs.js prints correct unlisted agent error message');
+      'validate-project-docs.js prints correct unlisted agent error message');
   } finally {
     if (fs.existsSync(tempAgentPath)) fs.unlinkSync(tempAgentPath);
   }
@@ -221,9 +221,9 @@ function testValidateDocs() {
 
   try {
     const unhealthyRun = runScript(scriptPath);
-    assert(unhealthyRun.code === 1, 'validate-docs.js exits with 1 when documentation file is unmapped in README');
+    assert(unhealthyRun.code === 1, 'validate-project-docs.js exits with 1 when documentation file is unmapped in README');
     assert(unhealthyRun.stdout.includes("Documentation file 'docs/temp-unlisted-guide.md' is not mapped in root README.md"),
-      'validate-docs.js prints correct unmapped guide error message');
+      'validate-project-docs.js prints correct unmapped guide error message');
   } finally {
     if (fs.existsSync(tempGuidePath)) fs.unlinkSync(tempGuidePath);
   }
