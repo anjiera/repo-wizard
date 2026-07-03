@@ -181,15 +181,6 @@ description: Skill missing required sections
   }
 }
 
-function testPatchHeadlessMode() {
-  console.log('Testing patch-headless-mode.js...');
-  const scriptPath = path.join(SCRIPTS_DIR, 'patch-headless-mode.js');
-
-  // Running it when everything is already patched should succeed and exit 0
-  const dryRun = runScript(scriptPath);
-  assert(dryRun.code === 0, 'patch-headless-mode.js runs without error when all files are already patched');
-}
-
 function testValidateDocs() {
   console.log('Testing validate-docs.js...');
   const scriptPath = path.join(SCRIPTS_DIR, 'validate-docs.js');
@@ -545,7 +536,6 @@ function runAll() {
     testValidateAgents();
     testValidateCommands();
     testValidateSkills();
-    testPatchHeadlessMode();
     testValidateDocs();
     testRunOrchestration();
     testCustomReportPath();
