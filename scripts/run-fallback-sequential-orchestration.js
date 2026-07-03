@@ -274,6 +274,9 @@ async function main() {
       }
     }
 
+    if (path.basename(checkoutPath).toLowerCase() !== repoName.toLowerCase()) {
+      checkoutPath = path.join(checkoutPath, repoName);
+    }
     resolvedTarget = path.resolve(checkoutPath);
 
     // GitHub size estimation & connectivity warnings
