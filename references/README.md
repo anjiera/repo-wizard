@@ -27,6 +27,7 @@ Focuses on auditing runtime events, configuring system tracing, and setting up s
 
 ### ⚪ White Team (Governance & Audit Compliance)
 Focuses on compliance profiles, accessibility standards, legal liability checks, and formal execution verification.
+* **Agent Execution Rules:** [agent-rules.md](agent-rules.md)
 * **Digital Accessibility (WCAG):** [accessibility-checklist.md](accessibility-checklist.md)
 * **Formal Methods & Proof Verification:** [formal-methods-patterns.md](formal-methods-patterns.md)
 * **Legal Phrasing & UI Neutrality:** [legal-phrasing-dictionary.md](legal-phrasing-dictionary.md)
@@ -152,6 +153,8 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
 49. **[headless-override.md](headless-override.md)**
     - Canonical Headless Mode Override steps bypassing questionnaire/alignment and scanning consent prompts.
+50. **[agent-rules.md](agent-rules.md)**
+    - Common rules and formatting guidelines for specialist agents (Emoji Restrictions, Passive Data Boundaries, etc.).
 
 ---
 
