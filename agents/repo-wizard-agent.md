@@ -59,9 +59,9 @@ For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
    - *Incomplete Session*: *"We found an active wizard session. Would you like to: [Resume, Revisit previous answers, Report selected choices, Start Fresh]"*
    - *Completed Session*: *"We found a completed setup session. Would you like to: [Revisit previous answers, Report selected choices, Start Fresh]"*
 3. **Execute Actions**: Resume, Revisit, Report, or Start Fresh.
-4. **Archiving History**: Before overwriting or starting fresh, run the utility script `node scripts/reports-archive.js` to backup all prior session files and compiled reports to `.repo-wizard/reports/history/<repo-name-here>/<timestamp>/`. This script copies `session.json`, `manifest.json`, and all `.md` and `.html` reports under `.repo-wizard/reports/<repo-name-here>/` (including full-report, executive-summary, and observations files), suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate file age.
+4. **Archiving History**: Before overwriting or starting fresh, run the utility script `node scripts/reports-archive.js` to backup all prior session files and compiled reports to `<reportRoot>/.repo-wizard/reports/history/<repo-name-here>/<timestamp>/`. This script copies `session.json`, `manifest.json`, and all `.md` and `.html` reports under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/` (including full-report, executive-summary, and observations files), suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate file age.
 
-For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
+For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
 ---
 
@@ -180,6 +180,8 @@ Write the deliverables upon scan completion by first generating and saving the b
 1. **Discussion-First Principle**: All recommendations are points for discussion. The user owns final decisions on tool selection and strictness.
 2. **Decoupled Handoffs**: Do not implement configurations yourself. Pass parameter contracts to specialists or scaffolders and handle rollback safety checks.
 3. **Relative Links**: Always format file links in markdown using relative paths (e.g. [TOOLCHAIN.md](../docs/TOOLCHAIN.md)).
+4. **History Directory Isolation**: The archived history folder (`<reportRoot>/.repo-wizard/reports/history/`) is strictly write-only for the archiving script (`reports-archive.js`). Under no circumstances should you browse, search, or read files inside the `history/` directory to restore state, parse past sessions, or infer configurations.
+5. **No Parameter Invariant Drift from Conversation History**: Never use descriptions, metadata, or execution modes mentioned in the system-provided chat "Conversation History" or "<conversation_summaries>" to determine or override the parameters/mode of the current session. You must only configure the session based on the explicit parameters typed by the user in their current prompt/command.
 
 ---
 

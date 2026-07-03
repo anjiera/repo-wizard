@@ -91,10 +91,8 @@ For each capability needed, recommend candidate tools dynamically after screenin
    - **Strict Target Directories**: All specialist observations MUST be written to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` and all subagent contracts MUST be written to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/<agent-name>-contract.json`. Do NOT place observations or contracts directly in the parent directory (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/`).
    - **No Duplicate Spawning**: Never re-spawn or duplicate a subagent if it is already active. You MUST run the `manage_subagents` tool with `Action: 'list'` to check the list of currently executing subagents. If a subagent is in the list, it is still running, and you must go idle and wait. Only spawn a subagent if it is not in the active subagents list and has not written its observations report.
    - **Subagent Timeout & Triage**: Track the start timestamp of each spawned subagent in the session manifest. If a subagent has been running for longer than **10 minutes** (the fallback timeout), it is considered stuck. You MUST kill the stuck subagent using `manage_subagents` with `Action: 'kill'` and its `conversationId`, write a fallback skipped observation report noting the timeout, mark its status as `failed` in the manifest, and proceed with compiling the remaining reports.
-
-
-
-
+   - **History Directory Isolation**: The archived history folder (`<reportRoot>/.repo-wizard/reports/history/`) is strictly write-only for the archiving script. Under no circumstances should you browse, search, or read files inside the `history/` directory to restore state, parse past sessions, or infer configurations.
+   - **No Parameter Invariant Drift from Conversation History**: Never use descriptions, metadata, or execution modes mentioned in the system-provided chat "Conversation History" or "<conversation_summaries>" to determine or override the parameters/mode of the current session. You must only configure the session based on the explicit parameters typed by the user in their current prompt/command.
 
 ### Phase 6: Reports & Deliverables Compilation
 Generate the deliverables upon scan completion, ensuring all Markdown/HTML reports append the standardized **Developer Empowerment Disclaimer** blockquote (or styled equivalent) to the bottom. Extract `<repo-name-here>` from the URL (for remote) or local directory folder name (for local):
