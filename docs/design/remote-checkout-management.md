@@ -26,16 +26,11 @@ Two new command-line parameters are added to the orchestrator:
 
 ## 3. Remote Checkout Process Flow
 
-The remote scanning workflow is augmented as follows:
+The remote scanning workflow is defined as follows:
 
 ```
                   +-----------------------------------+
                   |      Launch Remote Scan URL       |
-                  +-----------------+-----------------+
-                                    |
-                                    v
-                  +-----------------+-----------------+
-                  |      Choose Approach A (Clone)    |
                   +-----------------+-----------------+
                                     |
                                     v
