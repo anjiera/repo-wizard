@@ -140,6 +140,9 @@ Write the deliverables upon scan completion by first generating and saving the b
      * **Code Quality & Testing**
    - Synthesize custom, bespoke Executive Summary sections, Maturity Model Guidance, Suggested Adjustments, and Conclusion text.
    - **Redacted Mode Validation**: If Redacted/Anonymized Mode is active (`isRedact = true` / `--redact true`), you must strictly ensure that when synthesizing report sections, Maturity Model guidance, backlog stories, and conclusion text, you NEVER output the actual repository name, target path, organization name, developer credentials, or project-specific branding. Instead, write neutrally and refer to the project generically (e.g. as 'the target repository', 'the target codebase', 'the workspace', or 'the codebase').
+   - **Quality Constraints & Integrity (No Cheating):**
+     * All synthesized text must be fully human-readable and completely free of any temporary tracking tags, sentence markers (e.g. `[Sec 1 P0S0]`), draft placeholders (e.g. `[TODO]`, `[Placeholder]`), or other compile-time markers.
+     * You must write genuine, unique technical summaries and analysis. You are strictly forbidden from copying or looping sentences/paragraphs or using repetitive boilerplate phrases to artificially pad the section word counts.
    - Generate a custom backlog task list representing the actual suggested actions compiled from the specialist audits, categorized under the 4 pillars.
    - Construct and write a JSON object to `.repo-wizard/session.json` (merging with existing session data) containing:
      * `answersInferred`: boolean (`true` if headless/inferred, `false` if interactive).

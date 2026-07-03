@@ -33,10 +33,10 @@ const CSV_COLUMNS = [
 ];
 
 /**
- * Helper to count sentences in a string, cleaning abbreviations
+ * Helper to get a list of clean sentences from a string
  */
-function countSentences(str) {
-  if (!str) return 0;
+function getSentencesList(str) {
+  if (!str) return [];
   let clean = str;
   // Strip style blocks, scripts, comments, and tags
   clean = clean.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ');
@@ -52,8 +52,37 @@ function countSentences(str) {
   clean = clean.replace(/etc\./gi, 'etc');
 
   // Split by sentence terminators: . ! ? followed by whitespace or string end
-  const sentences = clean.split(/[.!?](?=\s|$)/).map(s => s.trim()).filter(s => s.length > 0);
-  return sentences.length;
+  return clean.split(/[.!?](?=\s|$)/).map(s => s.trim()).filter(s => s.length > 0);
+}
+
+/**
+ * Helper to count sentences in a string, cleaning abbreviations
+ */
+function countSentences(str) {
+  return getSentencesList(str).length;
+}
+
+/**
+ * Helper to check for duplicate padded sentences in technical paragraphs
+ */
+function checkDuplicateSentences(paragraphs, errors, locationName, seenSentences) {
+  for (let j = 2; j < paragraphs.length; j++) {
+    const pText = paragraphs[j];
+    if (cleanEndsWithColon(pText)) continue;
+    
+    const sentences = getSentencesList(pText);
+    for (const s of sentences) {
+      const cleanS = s.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, ' ');
+      const words = cleanS.split(' ');
+      if (words.length >= 6) { // check sentences with 6 or more words
+        if (seenSentences.has(cleanS)) {
+          errors.push(`[Critical] Honesty Violation: ${locationName} contains duplicate padded sentence: "${s}".`);
+          return;
+        }
+        seenSentences.add(cleanS);
+      }
+    }
+  }
 }
 
 /**
@@ -97,10 +126,18 @@ function validateFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const filename = path.basename(filePath);
   const isHtml = filePath.endsWith('.html');
+  const seenSentences = new Set();
 
   // 1. Check Developer Empowerment Disclaimer
   if (!content.includes(DISCLAIMER_TEXT)) {
     errors.push(`Missing Developer Empowerment Disclaimer.`);
+  }
+
+  // 1b. Check for temporary tracking tags or bracketed placeholders (Proofreading Pass)
+  const tempTagRegex = /\[(?:TODO|PLACEHOLDER|DRAFT|TEMP|MOCK|[^\]]*P\d+S\d+[^\]]*)\]/i;
+  const tagMatch = content.match(tempTagRegex);
+  if (tagMatch) {
+    errors.push(`[Critical] Honesty Violation: File contains temporary tracking tag or bracketed placeholder "${tagMatch[0]}".`);
   }
 
   // 2. Check for "upgrade" keyword violation in mismatch hook
@@ -197,6 +234,7 @@ function validateFile(filePath) {
                   errors.push(`HTML Section "${headings[i].title}" Technical Overview paragraph ${j + 1} has ${sentences} sentences (must be between 3 and 6).`);
                 }
               }
+              checkDuplicateSentences(paragraphs, errors, `HTML Section "${headings[i].title}"`, seenSentences);
 
               // Word count of the remaining text (excluding the first two paragraphs)
               let technicalContent = sectionContent;
@@ -322,6 +360,7 @@ function validateFile(filePath) {
                   errors.push(`Section "${sec.heading}" Technical Overview paragraph ${j + 1} has ${sentences} sentences (must be between 3 and 6).`);
                 }
               }
+              checkDuplicateSentences(sec.paragraphs, errors, `Section "${sec.heading}"`, seenSentences);
 
               // Word count of the remaining paragraphs
               const technicalParagraphs = sec.paragraphs.slice(2);
@@ -457,7 +496,19 @@ function runSelfTest() {
   let testFailures = 0;
 
   // 1. Valid Executive Summary (Markdown)
-  const dummyText = 'Sentence one. Sentence two. Sentence three. Sentence four. ' + 'Word '.repeat(400); // 400 words per paragraph
+  const makeDummyPara = (id, sec) => `This is sentence number one in paragraph ${id} section ${sec}. This is sentence number two in paragraph ${id} section ${sec}. This is sentence number three in paragraph ${id} section ${sec}. This is sentence number four in paragraph ${id} section ${sec}. ${`Word${id}${sec} `.repeat(400)}`;
+  const p1 = makeDummyPara(1, 1);
+  const p2 = makeDummyPara(2, 1);
+  const p3 = makeDummyPara(3, 1);
+
+  const p4 = makeDummyPara(1, 2);
+  const p5 = makeDummyPara(2, 2);
+  const p6 = makeDummyPara(3, 2);
+
+  const p7 = makeDummyPara(1, 3);
+  const p8 = makeDummyPara(2, 3);
+  const p9 = makeDummyPara(3, 3);
+
   const validExecMd = `
 # Executive Summary
 
@@ -467,9 +518,12 @@ function runSelfTest() {
 **Overview:** A CEO-level overview in three sentences or less.
 
 ### Technical Overview
-${dummyText}
-${dummyText}
-${dummyText}
+
+${p1}
+
+${p2}
+
+${p3}
 
 ## Section 2: Tooling & Compliance Opportunities
 *A single sentence summary here.*
@@ -477,9 +531,12 @@ ${dummyText}
 **Overview:** A CEO-level overview in three sentences or less.
 
 ### Technical Overview
-${dummyText}
-${dummyText}
-${dummyText}
+
+${p4}
+
+${p5}
+
+${p6}
 
 ## Section 3: Rollout Roadmap
 *A single sentence summary here.*
@@ -487,9 +544,12 @@ ${dummyText}
 **Overview:** A CEO-level overview in three sentences or less.
 
 ### Technical Overview
-${dummyText}
-${dummyText}
-${dummyText}
+
+${p7}
+
+${p8}
+
+${p9}
 
 ## Section 4: Conclusions
 Some final conclusion paragraphs go here.

@@ -240,11 +240,19 @@ function testE2EDeliverablesValidator() {
   
   const dummyBluf = '*This is a single sentence summary that serves as the BLUF.*';
   const dummyOverview = 'Overview: This is a CEO-level overview in three sentences or less.';
-  const longSentence = 'This is a long sentence to ensure that we meet the required word count per section in the deliverables. ';
-  const p1 = longSentence.repeat(4) + 'word '.repeat(300);
-  const p2 = longSentence.repeat(4) + 'word '.repeat(300);
-  const p3 = longSentence.repeat(4) + 'word '.repeat(300);
-  const dummyBody = `${p1}\n\n${p2}\n\n${p3}`;
+  const makeDummyPara = (id, sec) => `This is sentence number one in paragraph ${id} section ${sec}. This is sentence number two in paragraph ${id} section ${sec}. This is sentence number three in paragraph ${id} section ${sec}. This is sentence number four in paragraph ${id} section ${sec}. ${`Word${id}${sec} `.repeat(400)}`;
+  const p1 = makeDummyPara(1, 1);
+  const p2 = makeDummyPara(2, 1);
+  const p3 = makeDummyPara(3, 1);
+
+  const p4 = makeDummyPara(1, 2);
+  const p5 = makeDummyPara(2, 2);
+  const p6 = makeDummyPara(3, 2);
+
+  const p7 = makeDummyPara(1, 3);
+  const p8 = makeDummyPara(2, 3);
+  const p9 = makeDummyPara(3, 3);
+
   const execSummaryContent = `
 # Executive Summary
 
@@ -253,21 +261,33 @@ ${dummyBluf}
 
 ${dummyOverview}
 
-${dummyBody}
+${p1}
+
+${p2}
+
+${p3}
 
 ## Section 2: Tooling & Compliance Opportunities
 ${dummyBluf}
 
 ${dummyOverview}
 
-${dummyBody}
+${p4}
+
+${p5}
+
+${p6}
 
 ## Section 3: Rollout Roadmap
 ${dummyBluf}
 
 ${dummyOverview}
 
-${dummyBody}
+${p7}
+
+${p8}
+
+${p9}
 
 ## Section 4: Conclusions
 Some final conclusion paragraphs go here.
