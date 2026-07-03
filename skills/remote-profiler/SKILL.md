@@ -27,9 +27,10 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 ### Phase 1: Parameter Routing & TOS Verification
 1. **TOS Verification:** Search for `.tos_agreed` in `.repo-wizard/` or the workspace root. If missing, halt execution and present the Terms of Service & Developer Agreement. Once accepted by the operator, proceed.
 2. **Mode Switch Check:**
-   - If a URL is passed: Set `MODE=HEADLESS_REMOTE`.
-   - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
-   - If `MODE=HEADLESS_REMOTE` is active, prompt the operator to choose **Approach A** (shallow clone / local checkout) or **B** (GraphQL & metadata-only scan) before starting the analysis.
+    - If a URL is passed: Set `MODE=HEADLESS_REMOTE`.
+    - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+    - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
+    - If `MODE=HEADLESS_REMOTE` is active, prompt the operator to choose **Approach A** (shallow clone / local checkout) or **B** (GraphQL & metadata-only scan) before starting the analysis.
 
 ### Phase 2: Decoupled Relevance Sweeps
 1. **Lightweight Relevance Query:** The orchestrator queries all 20+ specialized subagents.
