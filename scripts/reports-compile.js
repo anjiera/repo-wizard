@@ -12,12 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { compileRealReports, getSafeRepoName } = require('./reports-compiler-engine');
 
-// ANSI escape codes for colorized CLI output
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
 const ROOT = require('./root-resolver');
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Compiling Repo Wizard reports from specialist observations...${RESET}`);

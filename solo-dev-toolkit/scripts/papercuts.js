@@ -14,14 +14,8 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-// ANSI escape codes for formatting
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const YELLOW = '\x1b[33m';
-const BLUE = '\x1b[34m';
-const CYAN = '\x1b[36m';
+const { RESET, BOLD, GREEN, RED, YELLOW, BLUE, CYAN } = require('./cli-helpers');
+const { parseCSVToObjects } = require('./csv-parser-helper');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const CSV_FILE = path.join(ROOT, 'papercuts.csv');
@@ -41,61 +35,6 @@ Options:
   --triage       Verify file existence, auto-prune missing files, and run interactive resolution checks
   --force        Prune all checked files automatically without prompting in triage mode
 `);
-}
-
-function parseCSV(text) {
-  const rows = [];
-  let currentRow = [];
-  let currentField = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const nextChar = text[i + 1];
-    
-    if (char === '"') {
-      if (inQuotes && nextChar === '"') {
-        currentField += '"';
-        i++; // skip next quote
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === ',' && !inQuotes) {
-      currentRow.push(currentField.trim());
-      currentField = '';
-    } else if ((char === '\r' || char === '\n') && !inQuotes) {
-      if (char === '\r' && nextChar === '\n') {
-        i++; // skip \n
-      }
-      currentRow.push(currentField.trim());
-      rows.push(currentRow);
-      currentRow = [];
-      currentField = '';
-    } else {
-      currentField += char;
-    }
-  }
-  
-  if (currentField !== '' || currentRow.length > 0) {
-    currentRow.push(currentField.trim());
-    rows.push(currentRow);
-  }
-  
-  if (rows.length === 0) return [];
-  
-  const headers = rows[0];
-  const parsedRows = [];
-  for (let i = 1; i < rows.length; i++) {
-    const values = rows[i];
-    if (values.length > 0) {
-      const row = {};
-      for (let j = 0; j < headers.length; j++) {
-        row[headers[j]] = values[j] !== undefined ? values[j] : '';
-      }
-      parsedRows.push(row);
-    }
-  }
-  return parsedRows;
 }
 
 function writeCSV(headers, rows) {
@@ -133,7 +72,7 @@ function readRegistry() {
   }
   try {
     const content = fs.readFileSync(CSV_FILE, 'utf8');
-    return parseCSV(content);
+    return parseCSVToObjects(content);
   } catch (err) {
     console.error(`${RED}Failed to read papercuts registry:${RESET}`, err.message);
     return [];

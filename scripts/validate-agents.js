@@ -18,12 +18,7 @@
 const fs   = require('fs');
 const path = require('path');
 
-// ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
 
 const AGENTS_DIR = path.resolve(__dirname, '..', 'agents');
 const EVALS_FILE = path.resolve(__dirname, 'run-evals.js');

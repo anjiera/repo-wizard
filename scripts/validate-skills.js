@@ -19,11 +19,7 @@
 const fs   = require('fs');
 const path = require('path');
 
-// ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
+const { RESET, BOLD, GREEN, RED } = require('../solo-dev-toolkit/scripts/cli-helpers');
 
 const SKILLS_DIR = path.resolve(__dirname, '..', 'skills');
 const MAX_DESCRIPTION_LENGTH = 1024;

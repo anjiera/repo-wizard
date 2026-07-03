@@ -16,11 +16,8 @@ const fs = require('fs');
 const path = require('path');
 
 // ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
+const { parseCSV } = require('../solo-dev-toolkit/scripts/csv-parser-helper');
 
 const { DISCLAIMER_TEXT, SECTION_WORD_COUNT_MIN, SECTION_WORD_COUNT_MAX } = require('./report-constants');
 
@@ -34,60 +31,6 @@ const CSV_COLUMNS = [
   'Recommended By (Sub-Agent)',
   'Frameworks/Goals'
 ];
-
-/**
- * Simple CSV parser that handles quotes and newlines
- */
-function parseCSV(content) {
-  const rows = [];
-  let row = [];
-  let field = '';
-  let inQuotes = false;
-
-  for (let i = 0; i < content.length; i++) {
-    const char = content[i];
-    const nextChar = content[i + 1];
-
-    if (inQuotes) {
-      if (char === '"') {
-        if (nextChar === '"') {
-          // Escaped quote
-          field += '"';
-          i++;
-        } else {
-          // End of quote
-          inQuotes = false;
-        }
-      } else {
-        field += char;
-      }
-    } else {
-      if (char === '"') {
-        inQuotes = true;
-      } else if (char === ',') {
-        row.push(field);
-        field = '';
-      } else if (char === '\r' || char === '\n') {
-        row.push(field);
-        field = '';
-        if (row.length > 1 || row[0] !== '') {
-          rows.push(row);
-        }
-        row = [];
-        if (char === '\r' && nextChar === '\n') {
-          i++; // skip \n
-        }
-      } else {
-        field += char;
-      }
-    }
-  }
-  if (field !== '' || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-  return rows;
-}
 
 /**
  * Helper to count sentences in a string, cleaning abbreviations
