@@ -31,6 +31,7 @@ Focuses on compliance profiles, accessibility standards, legal liability checks,
 * **Digital Accessibility (WCAG):** [accessibility-checklist.md](accessibility-checklist.md)
 * **Formal Methods & Proof Verification:** [formal-methods-patterns.md](formal-methods-patterns.md)
 * **Legal Phrasing & UI Neutrality:** [legal-phrasing-dictionary.md](legal-phrasing-dictionary.md)
+* **Legally Dubious Wordlist:** [legally-dubious-words.json](legally-dubious-words.json)
 * **Regulatory Compliance Frameworks:** [security-hardening-checklist.md](security-hardening-checklist.md)
 * **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
 * **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
@@ -107,53 +108,55 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Google Style formatting templates for C/C++, Java, and JavaScript/TypeScript.
 26. **[legal-phrasing-dictionary.md](legal-phrasing-dictionary.md)**
     - Phrasing scanning databases mapping high-risk claims to legally neutral alternatives.
-27. **[performance-patterns-lisp.md](performance-patterns/performance-patterns-lisp.md)**
+27. **[legally-dubious-words.json](legally-dubious-words.json)**
+    - Shared catalog of legally dubious keywords used in both agent prompts and compiler validators.
+28. **[performance-patterns-lisp.md](performance-patterns/performance-patterns-lisp.md)**
     - Tail-Call Optimization (TCO), Common Lisp compilation macros, static arrays, and type assertions.
-28. **[notebook-standards.md](coding-standards/notebook-standards.md)**
+29. **[notebook-standards.md](coding-standards/notebook-standards.md)**
     - Jupyter Notebook nbstripout pre-commit filters, virtual environments (Conda/Poetry), and nbqa linters.
-29. **[observability-patterns.md](observability-patterns.md)**
+30. **[observability-patterns.md](observability-patterns.md)**
     - OpenTelemetry SDK configuration, W3C tracecontext headers, RED/USE metrics, and PII filters.
-30. **[performance-patterns-react.md](performance-patterns/performance-patterns-react.md)**
+31. **[performance-patterns-react.md](performance-patterns/performance-patterns-react.md)**
     - INP yielding (scheduler.yield()), web font metric CLS overrides, and back/forward cache (bfcache) rules.
-31. **[performance-patterns-pascal-turbo.md](performance-patterns/performance-patterns-pascal-turbo.md)**
+32. **[performance-patterns-pascal-turbo.md](performance-patterns/performance-patterns-pascal-turbo.md)**
     - Turbo Pascal heap bounds, inline assembler blocks, CPU directives, and range checking bypass.
-32. **[performance-patterns.md](performance-patterns/performance-patterns.md)**
+33. **[performance-patterns.md](performance-patterns/performance-patterns.md)**
     - K6 performance budget metrics, Micro-benchmarks, and CI budget boundaries.
-33. **[performance-patterns-php.md](performance-patterns/performance-patterns-php.md)**
+34. **[performance-patterns-php.md](performance-patterns/performance-patterns-php.md)**
     - OPcache JIT compiler, file preloading, eager-loading relations, and strict typing optimizations.
-34. **[performance-patterns-python.md](performance-patterns/performance-patterns-python.md)**
+35. **[performance-patterns-python.md](performance-patterns/performance-patterns-python.md)**
     - Generator streams, object __slots__, compiled C libraries (NumPy), and GIL worker pools.
-35. **[python-standards.md](coding-standards/python-standards.md)**
+36. **[python-standards.md](coding-standards/python-standards.md)**
     - Python PEP 8 styling guidelines and automated Ruff config templates.
-36. **[resilience-patterns.md](resilience-patterns.md)**
+37. **[resilience-patterns.md](resilience-patterns.md)**
     - Retry policies with exponential backoff and jitter, fallback patterns, and circuit breaker setups.
-37. **[performance-patterns-ruby.md](performance-patterns/performance-patterns-ruby.md)**
+38. **[performance-patterns-ruby.md](performance-patterns/performance-patterns-ruby.md)**
     - Ruby GC parameters, frozen string literal optimizations, lazy enumerators, and ActiveRecord preloading.
-38. **[performance-patterns-rust.md](performance-patterns/performance-patterns-rust.md)**
+39. **[performance-patterns-rust.md](performance-patterns/performance-patterns-rust.md)**
     - Async spawn_blocking, zero-copy borrowing Serde lifetimes, and Cargo release configurations.
-39. **[scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)**
+40. **[scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)**
     - Safe package installation commands, rollback configurations, AST merge routines, and prompt injection defense.
-40. **[security-hardening-checklist.md](security-hardening-checklist.md)**
+41. **[security-hardening-checklist.md](security-hardening-checklist.md)**
     - Compliance mapping profiles (SOC 2, ISO 27001, HIPAA controls, FIPS algorithms).
-41. **[performance-patterns-shell.md](performance-patterns/performance-patterns-shell.md)**
+42. **[performance-patterns-shell.md](performance-patterns/performance-patterns-shell.md)**
     - Minimizing child process spawns, line-by-line streams, and command output variables caching.
-42. **[state-sanitization-rules.md](state-sanitization-rules.md)**
+43. **[state-sanitization-rules.md](state-sanitization-rules.md)**
     - Prevent race conditions and stale closures in React hooks, callback updates, and window event listeners.
-43. **[supply-chain-audit-checklist.md](supply-chain-audit-checklist.md)**
+44. **[supply-chain-audit-checklist.md](supply-chain-audit-checklist.md)**
     - License validation checkers (blocking viral copyleft packages) and lockfile integrity scanning.
-44. **[performance-patterns-swift.md](performance-patterns/performance-patterns-swift.md)**
+45. **[performance-patterns-swift.md](performance-patterns/performance-patterns-swift.md)**
     - Swift Copy-on-Write value structures, avoiding strong cycles (weak/unowned), and Actor concurrency.
-45. **[testing-patterns.md](testing-patterns.md)**
+46. **[testing-patterns.md](testing-patterns.md)**
     - Unit/integration mocking frameworks (Jest, Vitest, MSW), coverage budgets, and test setups.
-46. **[terms-of-service.md](terms-of-service.md)**
+47. **[terms-of-service.md](terms-of-service.md)**
     - Dynamic terms of service text, developer consent definitions, and data privacy clauses.
-47. **[toolchain-standards.md](coding-standards/toolchain-standards.md)**
+48. **[toolchain-standards.md](coding-standards/toolchain-standards.md)**
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
-48. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
+49. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
-49. **[headless-override.md](headless-override.md)**
+50. **[headless-override.md](headless-override.md)**
     - Canonical Headless Mode Override steps bypassing questionnaire/alignment and scanning consent prompts.
-50. **[agent-rules.md](agent-rules.md)**
+51. **[agent-rules.md](agent-rules.md)**
     - Common rules and formatting guidelines for specialist agents (Emoji Restrictions, Passive Data Boundaries, etc.).
 
 ---

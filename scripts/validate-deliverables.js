@@ -141,7 +141,10 @@ function validateFile(filePath) {
   }
 
   // 2. Check for "upgrade" keyword violation in mismatch hook
-  // The mismatch hook shouldn't suggest "upgrading" via a command, but rather "improving"
+  // The mismatch hook shouldn't suggest "upgrading" via a command, but rather "improving".
+  // Note: This check is statically coded here instead of using the legal-neutrality LLM agent 
+  // to maintain fast, local, offline, and deterministic runtime guarantees during validation.
+  // Banned terms are aligned with the shared dictionary in references/legally-dubious-words.json.
   const lowercaseContent = content.toLowerCase();
   const hookIndices = [];
   let idx = lowercaseContent.indexOf('mismatch');
