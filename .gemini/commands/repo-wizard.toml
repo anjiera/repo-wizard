@@ -11,6 +11,8 @@ Check the input parameters:
 - If `--target-path <path>` is provided: Extract and target that codebase directory for scanning, setting the custom target path for the orchestrator. Note: Positional parameters for target paths are strictly forbidden.
 - If `--report-path <path>` is provided: Extract the custom parent directory for reports (setting reportRoot).
 - If `--tos-path <path>` is provided: Extract the custom directory for `.tos_agreed` (setting tosPath).
+- If `--checkout-path <path>` is provided: Extract the target directory for shallow git clone in Remote Mode. If targetPath is a URL and --checkout-path is omitted, prompt the user for it. Note: This parameter is strictly disallowed and triggers an error if `--target-path` is a local directory.
+- If `--keep-checkout` is provided: Retain the temporary checkout folder after compilation instead of deleting it. Note: This parameter is strictly disallowed and triggers an error if `--target-path` is a local directory.
 - Ensure that `--mock-cli` defaults to `false` and `--redact` defaults to `false` unless explicitly overridden.
 
 Before starting:
