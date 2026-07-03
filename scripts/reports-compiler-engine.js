@@ -5,6 +5,7 @@ const path = require('path');
 const ROOT = require('./root-resolver');
 const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS, DISCLAIMER_TEXT, SECTION_WORD_COUNT_MIN, SECTION_WORD_COUNT_MAX } = require('./report-constants');
+const { DEFAULT_CONCLUSION } = require('./report-templates-helper');
 const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 
 const REPORTS_ROOT = path.join(ROOT, '.repo-wizard', 'reports');
@@ -185,7 +186,7 @@ function compileRealReports(session) {
   let sec1Text = customReport.section1 || `*Error: Section 1 (Codebase Health & Strengths) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 1. Please re-run the sweep and verify that the specialist agents executed successfully.`;
   let sec2Text = customReport.section2 || `*Error: Section 2 (Tooling & Compliance Opportunities) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 2. Please re-run the sweep and verify that the specialist agents executed successfully.`;
   let sec3Text = customReport.section3 || `*Error: Section 3 (Rollout Roadmap) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 3. Please re-run the sweep and verify that the specialist agents executed successfully.`;
-  let conclusionText = customReport.conclusion || `Error: The report conclusion was not provided by the subagent sweep. Please re-run the sweep and verify that the specialist agents executed successfully.`;
+  let conclusionText = customReport.conclusion || DEFAULT_CONCLUSION;
 
   const execSummary = `# Repo Wizard Executive Summary - ${repoName}
 
@@ -446,9 +447,10 @@ ${DISCLAIMER_TEXT}
 
       fs.writeFileSync(csvPath, csvContent, 'utf8');
 
-      if (session.isRedact || session.redact) {
-        redactReportFiles(reportsDir, repoName, session.targetPath);
-      }
+    }
+
+    if (session.isRedact || session.redact) {
+      redactReportFiles(reportsDir, repoName, session.targetPath);
     }
   } catch (err) {
     console.error('Failed to compile real reports:', err.message);

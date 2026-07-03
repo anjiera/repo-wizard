@@ -14,7 +14,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
-const SANDBOX_DIR = path.join(ROOT, 'temp_e2e_sandbox');
+const SANDBOX_DIR = path.join(ROOT, 'temp_e2e_sandbox_' + process.pid);
 const { archiveSession } = require('./reports-archive');
 const { DISCLAIMER_TEXT } = require('./report-constants');
 
@@ -350,7 +350,7 @@ function runGit(args, cwd) {
   const env = { ...process.env };
   // Remove git environment variables to avoid leaking parent repository state
   for (const key of Object.keys(env)) {
-    if (key.startsWith('GIT_')) {
+    if (key.toUpperCase().startsWith('GIT_')) {
       delete env[key];
     }
   }
@@ -389,7 +389,7 @@ function testVCSScaffoldingRollback() {
 
   // 4. Execute the VCS Rollback sequence from Section 7 of the protocol
   if (!buildPassed) {
-    if (SANDBOX_DIR && SANDBOX_DIR !== ROOT && fs.existsSync(SANDBOX_DIR) && path.basename(SANDBOX_DIR) === 'temp_e2e_sandbox') {
+    if (SANDBOX_DIR && SANDBOX_DIR !== ROOT && fs.existsSync(SANDBOX_DIR) && path.basename(SANDBOX_DIR).startsWith('temp_e2e_sandbox')) {
       runGit('checkout -- .', SANDBOX_DIR);
       runGit('clean -fd', SANDBOX_DIR);
     }

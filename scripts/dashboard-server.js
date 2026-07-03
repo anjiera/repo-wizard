@@ -20,6 +20,7 @@ const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 const ROOT = require('./root-resolver');
 const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS, DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./report-constants');
+const { DEFAULT_CONCLUSION } = require('./report-templates-helper');
 const { compileRealReports, getSafeRepoName, redactReportFiles } = require('./reports-compiler-engine');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
 
@@ -133,13 +134,17 @@ async function fileExists(filePath) {
   }
 }
 
+function formatETag(stats) {
+  return `W/"${stats.size}-${stats.mtimeMs}"`;
+}
+
 /**
  * Generates ETag for cache validation (asynchronous version)
  */
 async function getFileETagAsync(filePath) {
   try {
     const stats = await fs.promises.stat(filePath);
-    return `W/"${stats.size}-${stats.mtimeMs}"`;
+    return formatETag(stats);
   } catch (err) {
     return '';
   }
@@ -151,7 +156,7 @@ async function getFileETagAsync(filePath) {
 function getFileETag(filePath) {
   try {
     const stats = fs.statSync(filePath);
-    return `W/"${stats.size}-${stats.mtimeMs}"`;
+    return formatETag(stats);
   } catch (err) {
     return '';
   }
@@ -421,11 +426,7 @@ ${dummyOverview}
 ${dummyText}
 
 ## Section 4: Conclusions
-The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.
-
-Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
-
-Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping project momentum high.
+${DEFAULT_CONCLUSION}
 
 ${DISCLAIMER_TEXT}
 `;
@@ -463,11 +464,7 @@ node scripts/install-hooks.js
 \`\`\`
 
 ## 6. Conclusions
-The target repository under review represents a modern web and script application architecture, built around a Single Page Application (SPA) dashboard. Its clean React 18 component structure, Vite 5 build toolchain, and robust gitignore configurations establish a solid codebase baseline that is highly clean, modular, and performant.
-
-Adopting a phased, asynchronous rollout of the recommended quality gates allows the team to prioritize security, compliance, and version control hygiene tasks naturally. By grouping these items into clear, high-leverage milestones, the engineering team can address critical exposures without hurting day-to-day developer velocity.
-
-Transitioning toward complete repository governance is an incremental journey that is entirely reasonable and do-able for the team. With a manageable set of quick wins ready for immediate implementation, stakeholders can confidently raise the quality baseline while keeping project momentum high.
+${DEFAULT_CONCLUSION}
 
 ${DISCLAIMER_TEXT}
 `;
