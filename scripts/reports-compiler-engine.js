@@ -78,14 +78,34 @@ function compileRealReports(session) {
 
   let executedAgents = [];
 
+  let skippedAgents = new Set();
+  const manifestPath = path.join(reportsDir, 'manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      if (manifest && Array.isArray(manifest.contracts)) {
+        for (const c of manifest.contracts) {
+          if (c.status === 'skipped') {
+            skippedAgents.add(c.agent_name);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to parse manifest.json for relevance check:', err.message);
+    }
+  }
+
   if (fs.existsSync(obsDir)) {
     try {
       const files = fs.readdirSync(obsDir);
       for (const file of files) {
         if (file.startsWith(`${repoName}-observations-`) && file.endsWith('.md')) {
           const agentName = file.replace(`${repoName}-observations-`, '').replace(/\.md$/, '');
-          executedAgents.push(agentName);
+          if (skippedAgents.has(agentName) || skippedAgents.has(agentName + '-agent')) {
+            continue;
+          }
           const content = fs.readFileSync(path.join(obsDir, file), 'utf8');
+          executedAgents.push(agentName);
 
           const mapping = mappings[agentName] || { pillar: 'QUALITY', color: 'WHITE' };
           const pillar = mapping.pillar || 'QUALITY';
