@@ -189,6 +189,25 @@ graph TD
     - Prompts for Approach A (shallow clone) or B (metadata check), clones the repository, and dispatches the relevant subagent sweeps.
     - Generates a full Markdown report at `.repo-wizard/reports/repo-wizard-full-report.md` containing the executive summary, domain coverage list, and developer disclaimers.
 
+- [ ] **5.2 Custom Checkout Path & Automatic Deletion Cleanup**
+  - Run a remote scan with the custom `--checkout-path` parameter:
+    ```bash
+    agy run /repo-wizard https://github.com/expressjs/express --checkout-path ./temp_checkout_test
+    ```
+  - *Expected Outcome*:
+    - The repository is checked out shallowly to `./temp_checkout_test` locally.
+    - The orchestrator retrieves the size warning from the GitHub API.
+    - Upon complete compilation of reports, the `./temp_checkout_test` folder is deleted recursively and cleanly.
+
+- [ ] **5.3 Checkout retention via `--keep-checkout`**
+  - Run a remote scan specifying both custom path and retention flag:
+    ```bash
+    agy run /repo-wizard https://github.com/expressjs/express --checkout-path ./temp_checkout_test --keep-checkout
+    ```
+  - *Expected Outcome*:
+    - The repository is checked out to `./temp_checkout_test`.
+    - After scanning and report compilation, the `./temp_checkout_test` folder is NOT deleted and remains on disk for human verification.
+
 ---
 
 ## Level 6: Specialist Slash Commands & IDE Integrations
