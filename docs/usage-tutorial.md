@@ -140,10 +140,10 @@ A high-level summary designed for engineering leads and stakeholders. It follows
 * **Section 3: Rollout Roadmap:** Describes how to distribute the recommended tasks across standard sprints.
 * *Total word count is restricted to under 450 words total across all sections.*
 
-### 3. Tabular Backlog CSV (`backlog.csv` - Backlog Mode Only)
+### 3. Tabular Backlog CSV (`backlog.csv` - "Generate Reports & Backlog" Mode Only)
 A CSV backlog formatted for bulk-importing into task managers (Jira, ClickUp, Azure DevOps). Each row includes the user story, impact area, action items, recommending subagent attribution, and the mandatory **Developer Empowerment Disclaimer**.
 
-### 4. Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)
+### 4. Developer Toolchain Summary (`docs/TOOLCHAIN.md` - "Generate Reports" Mode Only)
 Saved to your public documentation folder to onboard new developers, containing configuration file paths and official documentation links for the active tools.
 
 ---

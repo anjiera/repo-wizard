@@ -83,12 +83,12 @@ For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for 
 
 ### A. Local Interactive Alignment (`MODE=INTERACTIVE_LOCAL`)
 1. **Disclaimer**: Begin the questionnaire by presenting the mandatory disclaimer.
-2. **Questionnaire**: Sequentially present questions for Context, Compliance, Stack, and Tooling Strictness (do NOT use the term "Developer Friction" to prevent collision with system rules) with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). When asking about project management tools, avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
+2. **Questionnaire**: Sequentially present questions for Context, Compliance, Stack, and Tooling Strictness (do NOT use the term "Developer Friction" to prevent collision with system rules) with section skip controls. Promote user-owned thresholds and select "Generate Reports" mode (generating reports and proposed configuration contracts for the developer's review) vs "Generate Reports & Backlog" mode (generating reports and a prioritized task backlog CSV for project management tools). When asking about project management tools, avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
 3. **End-of-Interview Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. 
    - Summarize the answers provided in a clear, formatted summary block.
    - List ONLY the specialist sub-agents selected to run based on these answers (do NOT list any skipped or irrelevant sub-agents), along with a brief 1-sentence description of what each sub-agent does.
    - Ask the user if they would like to review/update their answers, or if they would like to proceed with the analysis.
-   - Only launch Optimization & Handoff and call `run-orchestration.js` after the user explicitly confirms they want to proceed.
+   - Only launch Optimization & Handoff and call `run-fallback-sequential-orchestration.js` after the user explicitly confirms they want to proceed.
 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Legal Terms, Parameter Routing & Consent Gate remains mandatory and must never be bypassed under any mode):

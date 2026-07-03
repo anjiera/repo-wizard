@@ -941,7 +941,7 @@ const server = http.createServer((req, res) => {
 
       // Spawn run-orchestration.js in background forcing --mock-cli false
       const spawnArgs = [
-        path.join(ROOT, 'scripts', 'run-orchestration.js'),
+        path.join(ROOT, 'scripts', 'run-fallback-sequential-orchestration.js'),
         '--target-path',
         session.targetPath,
         '--mock-cli',

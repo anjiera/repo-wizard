@@ -70,7 +70,7 @@ Before performing codebase analysis, sizing, or session resume operations:
 2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
 ### Core Profiling & Alignment
-1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select scaffolding mode (generating proposed configurations and scripts for the developer's review and interactive installation approval) vs backlog mode (generating a backlog CSV for project management tools). Avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
+1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select "Generate Reports" mode (generating reports and proposed configuration contracts for the developer's review) vs "Generate Reports & Backlog" mode (generating reports and a prioritized task backlog CSV for project management tools). Avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
     - **Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. Present a formatted summary of the user's answers and list ONLY the selected sub-agents (do NOT list any skipped or irrelevant sub-agents) along with a 1-sentence description of what each sub-agent does. Prompt the user to review/update their answers or proceed. Only dispatch parameters contracts to specialists and call `run-fallback-sequential-orchestration.js` (or invoke natively in chat) in Optimization & Handoff after the user explicitly confirms they want to proceed.
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`, and immediately update their status in the manifest to `completed` so they are not treated as pending.
@@ -115,7 +115,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
   > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
 5. **Backlog CSV & Toolchain Summary**:
   - Write JIRA backlog CSV (`<reportRoot>/.repo-wizard/backlog.csv` - Backlog Mode only).
-  - Write toolchain doc (`docs/TOOLCHAIN.md` - Scaffolding Mode only).
+  - Write toolchain doc (`docs/TOOLCHAIN.md` - "Generate Reports" Mode only).
 6. **Post-Execution Output Summary**:
   - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
   - List each generated file with clickable absolute file URLs (using the file scheme with forward slashes, e.g. formatting the absolute path to the report as a file URL: [Executive Summary]\(file:///path/to/repo-wizard-executive-summary.md\) using an escaped parenthesis).

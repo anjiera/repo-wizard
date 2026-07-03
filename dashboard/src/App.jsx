@@ -810,9 +810,9 @@ export default function App() {
                   {/* Full Headless Scan */}
                   <div className="flex flex-col justify-between p-4 rounded-xl border border-brand-border bg-[#0d1117]/30 hover:border-[#58a6ff]/30 transition group">
                     <div className="mb-3">
-                      <h4 className="text-xs font-bold text-[#58a6ff] mb-1">Full Headless Scan</h4>
+                      <h4 className="text-xs font-bold text-[#58a6ff] mb-1">Generate Reports</h4>
                       <p className="text-[11px] text-[#8b949e] leading-normal">
-                        Audits and automatically applies scaffolding configs, hooks, and tests directly to the workspace.
+                        Audits the codebase to generate comprehensive markdown and HTML assessment reports.
                       </p>
                     </div>
                     <button 
@@ -820,16 +820,16 @@ export default function App() {
                       onClick={() => handleHeadlessScan('full')}
                       className="w-full bg-[#58a6ff]/10 hover:bg-[#58a6ff]/20 text-[#58a6ff] border border-[#58a6ff]/30 font-semibold py-2 px-3 rounded-lg text-xs transition"
                     >
-                      Run Full Scan
+                      Generate Reports
                     </button>
                   </div>
 
                   {/* Read-only Backlog Generation */}
                   <div className="flex flex-col justify-between p-4 rounded-xl border border-brand-border bg-[#0d1117]/30 hover:border-purple-500/30 transition group">
                     <div className="mb-3">
-                      <h4 className="text-xs font-bold text-purple-400 mb-1">Backlog Only</h4>
+                      <h4 className="text-xs font-bold text-purple-400 mb-1">Generate Reports & Backlog</h4>
                       <p className="text-[11px] text-[#8b949e] leading-normal">
-                        A safe, read-only analysis. Compiles a backlog report of issues, leaving target codebase files untouched.
+                        Audits the codebase to generate assessment reports alongside a prioritized task backlog CSV.
                       </p>
                     </div>
                     <button 
@@ -837,7 +837,7 @@ export default function App() {
                       onClick={() => handleHeadlessScan('backlog')}
                       className="w-full bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold py-2 px-3 rounded-lg text-xs transition"
                     >
-                      Generate Backlog
+                      Generate Reports & Backlog
                     </button>
                   </div>
                 </div>
