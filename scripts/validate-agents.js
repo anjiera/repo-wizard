@@ -171,9 +171,9 @@ function main() {
       // Structural validations for execution agents (excluding helpers/orchestrators)
       const EXEMPT_AGENTS = [
         'repo-wizard-agent.md',
-        'legal-neutrality-agent.md',
-        'tool-evaluator-agent.md',
-        'tool-scaffolder-agent.md'
+        'legal-neutrality-auditor-agent.md',
+        'tool-auditor-agent.md',
+        'tooling-engineer-agent.md'
       ];
 
       if (!EXEMPT_AGENTS.includes(file)) {

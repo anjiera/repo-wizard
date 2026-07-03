@@ -21,7 +21,7 @@ This test plan defines the manual verification procedure for the **Hybrid Decoup
     - The script detects your platform CLI (if installed).
     - It reads the manifest, runs `validate-contracts.js` checks, and starts spawning subagents in parallel.
     - **Progress Bar**: A live, animated progress bar updates smoothly on a single line:
-      `Progress: [████░░░░░░] 40% (8/18) - running compliance-pilot`
+      `Progress: [████░░░░░░] 40% (8/18) - running compliance-auditor`
 
 ### Scenario 2: Non-TTY Logging (CI / File Redirection)
 - [ ] **2. Run with output redirection**: Redirect execution stdout to a file:
@@ -32,8 +32,8 @@ This test plan defines the manual verification procedure for the **Hybrid Decoup
   - *Expected*:
     - The log file contains clean, line-by-line logging milestones (no single-line progress updates or `\r` control characters that would clutter CI logs):
       ```text
-      [INFO] Spawning compliance-pilot...
-      [INFO] Spawning privacy-guardian...
+      [INFO] Spawning compliance-auditor...
+      [INFO] Spawning privacy-hardener...
       ```
 
 ### Scenario 3: Concurrency Limits

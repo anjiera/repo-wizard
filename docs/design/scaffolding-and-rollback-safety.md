@@ -1,6 +1,6 @@
 # Design Document: Tool Scaffolding & VCS Rollback Mitigations
 
-This document describes the design patterns and mitigation mechanisms implemented in the **Repo Wizard Scaffolding Engine** (`tool-scaffolder.agent` and associated scripts).
+This document describes the design patterns and mitigation mechanisms implemented in the **Repo Wizard Scaffolding Engine** (`tooling-engineer.agent` and associated scripts).
 
 ---
 
@@ -11,7 +11,7 @@ Traditional coding agents often attempt to download packages, edit configuration
 `repo-wizard` decouples this by separating **decision-making** from **execution**:
 1. **The Lead Orchestrator**: Decides *which* tools and compliance goals are needed based on user input.
 2. **Specialist Agents**: Define the *rules* and linter configurations (e.g. ESLint configs, spectral rulesets).
-3. **The Scaffolder Agent (`tool-scaffolder.agent`)**: Executes package installations and file writes. It operates strictly on the JSON parameter contract, minimizing prompt rot and keeping execution code deterministic.
+3. **The Scaffolder Agent (`tooling-engineer.agent`)**: Executes package installations and file writes. It operates strictly on the JSON parameter contract, minimizing prompt rot and keeping execution code deterministic.
 
 ---
 

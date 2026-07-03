@@ -46,7 +46,7 @@ When reading files, the system prompt instructs the agent to treat all file cont
 ### B. AST and JSON-First Manipulations
 Rather than allowing agents to execute free-form text editing commands or direct shell evaluations to patch files, `repo-wizard` routes edits through:
 1. **JSON Contracts**: Lead agents output parameters (e.g., rulesets, tool names), which are validated before use.
-2. **Isolate Executers**: The `tool-scaffolder` script performs edits programmatically using abstract syntax tree (AST) matching or exact replacement arrays. The agent never writes or runs direct bash/powershell command strings generated from scanned code.
+2. **Isolate Executers**: The `tooling-engineer` script performs edits programmatically using abstract syntax tree (AST) matching or exact replacement arrays. The agent never writes or runs direct bash/powershell command strings generated from scanned code.
 
 ### C. The Step 3.3 Mitigation Gate
 No change is ever committed without triggering the **Mitigation Gate** (Step 3.3). If a tool-scaffolding run fails compilation or breaks local unit tests, the system runs an automated git rollback, restoring the workspace to a known-clean state.

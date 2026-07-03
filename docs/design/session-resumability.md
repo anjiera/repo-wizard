@@ -50,7 +50,7 @@ Key fields in `session.json`:
   "answers": {
     "targetAudience": "production-service",
     "complianceTargets": ["soc2", "gdpr"],
-    "enabledCategories": ["vcs-workflow", "legal-neutrality-scanner"],
+    "enabledCategories": ["vcs-workflow-engineer", "legal-neutrality-auditor"],
     "scaffoldingMode": "backlog"
   }
 }
@@ -70,14 +70,14 @@ Key fields in `manifest.json`:
   "repoName": "my-application",
   "mode": "backlog",
   "contracts": {
-    "legal-neutrality-agent": {
+    "legal-neutrality-auditor-agent": {
       "status": "pending_agent_fallback",
       "params": {
         "keywords": ["warning", "caution", "advice"],
         "targetExtensions": [".js", ".jsx", ".md"]
       }
     },
-    "vcs-workflow-agent": {
+    "vcs-workflow-engineer-agent": {
       "status": "completed",
       "params": {
         "vcs": "git",

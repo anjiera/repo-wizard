@@ -32,7 +32,7 @@ Recommended for local developer onboarding and interactive configuration.
 * **Process:**
   1. **TOS Gate:** Prompts you to accept the Terms of Service.
   2. **Opt-In Categories:** At the start of each section (Testing, Compliance, etc.), it asks if you want to configure tools or skip that category entirely.
-  3. **Screening Ledgers:** Screens candidate tools via `tool-evaluator` and prompts you to select preferred tools.
+  3. **Screening Ledgers:** Screens candidate tools via `tool-auditor` and prompts you to select preferred tools.
   4. **Scaffolding/Backlog Handoff:** Installs tools and generates reports.
 
 ### Mode 2: Headless Local Mode (`MODE=HEADLESS_LOCAL`)
@@ -74,7 +74,7 @@ To optimize token usage and avoid redundant analyses on large codebases, the lea
 ```
 
 * **High / Medium Relevance:** The specialist agent is queued to run its full check.
-* **Low Relevance:** Bypassed completely. For example, if no Python files or notebooks exist, the `notebook-sanitizer-agent` returns `Low` relevance, and its checklist is skipped.
+* **Low Relevance:** Bypassed completely. For example, if no Python files or notebooks exist, the `notebook-auditor-agent` returns `Low` relevance, and its checklist is skipped.
 
 ---
 

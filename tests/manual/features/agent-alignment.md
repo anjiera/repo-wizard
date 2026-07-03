@@ -1,4 +1,4 @@
-# Feature Test Plan: Agent Alignment & /rw-agent-align
+# Feature Test Plan: Agent Alignment & /rw-agent-alignment-auditor
 
 This test plan defines the manual verification procedure for **Agent Alignment** audits and command parity.
 
@@ -18,11 +18,11 @@ This test plan defines the manual verification procedure for **Agent Alignment**
     - Prints a clear message: `[ERROR] temp-test-agent.md is missing required evaluation suite under evals/temp-test-agent.js` or `missing mandatory heading: ## Step 3`.
 - [ ] **3. Clean up**: Delete `agents/temp-test-agent.md`.
 
-### Scenario 2: Running the /rw-agent-align Command
+### Scenario 2: Running the /rw-agent-alignment-auditor Command
 - [ ] **4. Run alignment scanner command**: In your agent environment, execute:
   ```bash
-  /rw-agent-align
+  /rw-agent-alignment-auditor
   ```
   - *Expected*:
-    - The orchestrator invokes the `agent-alignment-pilot` subagent.
+    - The orchestrator invokes the `agent-alignment-auditor` subagent.
     - The subagent reviews your agent files, scans for missing steps, and outputs a prompt alignment audit report showing that all 27 specialist agent prompts comply with the required headers.

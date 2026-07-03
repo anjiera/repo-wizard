@@ -35,7 +35,7 @@ Verify that the plugin is loaded by typing `/plugins` in the chat window.
 Once loaded, Claude Code will register the custom command:
 
 ```bash
-/rw-legal-neutrality
+/rw-legal-neutrality-auditor
 ```
 
-Typing this slash command will invoke the `legal-neutrality-scanner` skill and delegate the execution to the `legal-neutrality-agent` persona, starting the interactive scoping alignment before scanning.
+Typing this slash command will invoke the `legal-neutrality-auditor` skill and delegate the execution to the `legal-neutrality-auditor-agent` persona, starting the interactive scoping alignment before scanning.

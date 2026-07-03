@@ -199,9 +199,9 @@ graph TD
 - [ ] **6.1 Individual Slash Commands**
   - Trigger one of the individual specialist commands in your agent environment chat input:
     ```bash
-    /rw-legal-neutrality
+    /rw-legal-neutrality-auditor
     ```
   - *Expected Outcome*:
-    - The agent adopts the `legal-neutrality-agent` persona and references the `legal-neutrality-scanner` skill.
+    - The agent adopts the `legal-neutrality-auditor-agent` persona and references the `legal-neutrality-auditor` skill.
     - Prompts you with the scoping alignment question (file extensions, keywords, target languages).
     - Perform the scan and verify it groups results in batches of no more than 20.

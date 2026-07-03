@@ -73,7 +73,7 @@ The list of security standards and compliance frameworks below is a **non-exhaus
 * **Legal & Copyright Header Trigger:** "Does your repository need to enforce standard copyright notices and license headers at the top of every source file (especially important for open-source or commercial IP protection)?"
  * *Actions:* Configure pre-commit scripts that scan and automatically inject or validate license headers.
 * **Legal Liability & Phrase Neutrality Trigger:** "Does the application provide advice, instructions, or claims (health, financial, weather safety, data privacy) that could expose the organization to liability or phrasing-related legal risks?"
- * *Actions:* Scaffold the `/rw-legal-neutrality` scanning agent, setup the legal phrasing dictionary lookup, and configure pre-commit or CI scans to flag non-neutral language.
+ * *Actions:* Scaffold the `/rw-legal-neutrality-auditor` scanning agent, setup the legal phrasing dictionary lookup, and configure pre-commit or CI scans to flag non-neutral language.
 * **ISO/IEC 27001 Trigger (International):** "Does the organization require certification against the international standard for information security management systems (ISMS)?"
  * *Actions:* Configure access-control rule linters, secure coding guidelines checkers, and dynamic vulnerability assessment integrations.
 * **UK Cyber Essentials Trigger (United Kingdom):** "Will the software be used by or sold to UK public or private sector organizations requiring Cyber Essentials certification?"
@@ -188,32 +188,32 @@ To prevent token congestion, prompt degradation, and code complexity, the **Repo
 
 ### 2. Decoupled Specialist Subagents
 To prevent the agent from becoming outdated when new frameworks emerge, the specialist subagents are **fully decoupled** from specific tool configurations. They receive concrete instructions dynamically from the lead orchestrator:
-* **`tool-evaluator.agent` (Safety & Health Screener)**:
+* **`tool-auditor.agent` (Safety & Health Screener)**:
  * *Expertise:* Evaluating package registry metadata, GitHub repositories, and security databases.
  * *Dynamic Scope:* Evaluates recommended tools for red flags:
  - *Security:* Known CVEs, dependency vulnerabilities, or supply-chain threats.
  - *Activity/Maintenance:* Last commit date, open issues/pull requests ratio, active maintainer count.
  - *Reputation/Health:* Download volume, community stars, licensing conflicts.
  - *Verdict:* Flags dead, abandoned, or suspicious tools and returns warning signals to `repo-wizard`.
-* **`tool-scaffolder.agent` (Unified Systems Installer)**: 
+* **`tooling-engineer.agent` (Unified Systems Installer)**: 
  * *Expertise:* Executing shell package installations, creating/merging config files, and validating build runs.
  * *Why a specific installation expert makes sense:* Rather than hardcoding how to install every possible tool on the market, this subagent is a general-purpose environment configurer. It receives dynamic parameter contracts from the lead (e.g., the exact package commands, config file paths, and contents) and focuses entirely on executing the installation, writing/merging the configuration files, verifying the compilation/build, and running verification scripts to ensure the new setup works cleanly.
-* **`compliance-pilot.agent` (Security Hardening & Certifications)**:
+* **`compliance-auditor.agent` (Security Hardening & Certifications)**:
  * *Expertise:* Technical compliance security posture, cryptographic configurations, and environment hardening (e.g. FIPS, FedRAMP, SOC 2, NIST SSDF, ISO 27001, Cyber Essentials, MAS TRM).
  * *Dynamic Scope:* Configures encryption-at-rest/in-transit checkers, secure logging policies, artifact signing pipelines (e.g., Cosign), infrastructure-as-code static scanners (tfsec, checkov), and scaffolds compliance verification templates.
-* **`privacy-guardian.agent` (Data Privacy & Consent)**:
+* **`privacy-hardener.agent` (Data Privacy & Consent)**:
  * *Expertise:* Global privacy engineering regulations (GDPR, CCPA, LGPD, COPPA, PIPEDA, ISO 27701).
  * *Dynamic Scope:* Reviews database schemas and logs for PII exposure, configures data scrubbing policies, integrates consent log architectures, age-verification routing skeleton tests, and scaffolds user data deletion (right-to-be-forgotten) hook templates.
 * **`accessibility-auditor.agent` (A11y Standards & Reporting)**:
  * *Expertise:* Accessibility standards conformance (WCAG 2.1/2.2 AA, Section 508, EN 301 549) and Voluntary Product Accessibility Template (VPAT/ACR) reporting.
  * *Dynamic Scope:* Scaffolds automated DOM accessibility test runners (Axe-core CLI), accessibility linting setups (e.g. eslint-plugin-jsx-a11y), keyboard-navigation test skeletons, and schedules automated accessibility CI/CD regression checks.
-* **`supply-chain-scanner.agent` (Dependency Security & SBOM)**:
+* **`supply-chain-auditor.agent` (Dependency Security & SBOM)**:
  * *Expertise:* Auditing active dependencies, Software Bill of Materials (SBOM) orchestration, and software license legality.
  * *Dynamic Scope:* Scaffolds CycloneDX/SPDX SBOM generation scripts into CI/CD pipelines, configures dependency vulnerability audit scanners (Snyk, Dependabot, npm audit), and integrates license-compliance verification tools (FOSSA, License Finder) to prevent viral copyleft license issues.
-* **`testing-pilot.agent` (Unit, E2E & Mock Scaffolding)**:
+* **`qa-engineer.agent` (Unit, E2E & Mock Scaffolding)**:
  * *Expertise:* Test framework configuration (Vitest, Jest, PyTest, JUnit, Cargo test, Playwright), test-driven development (TDD) rules, database/API mocking, and coverage threshold integration.
  * *Dynamic Scope:* Scaffolds unit/integration/E2E test suites, designs mock configurations (MSW, wiremock, Testcontainers), configures code coverage tools (Istanbul, Jacoco), and hooks test runs into package configurations and CI/CD pipelines.
-* **`vcs-workflow.agent`**:
+* **`vcs-workflow-engineer.agent`**:
  * *Expertise:* VCS hook setups, commit formatting lints, formatting rules, and license/copyright header validation.
  * *Dynamic Scope:* Configures pre-commit hooks (Husky/git hooks, hg hooks, or Perforce trigger setups), Conventional Commits check scripts, formatting tools, and automated copyright header scanners.
 * **`technical-scribe.agent` (Docs, ADRs & Architecture Diagrams)**:
@@ -227,7 +227,7 @@ To prevent the agent from becoming outdated when new frameworks emerge, the spec
 ## Verification and Handoff Rules
 
 1. **Dynamic Instructions**: The lead orchestrator compiles the approved list of tools and passes them as a JSON or text parameter contract to the target subagent during invocation (e.g., `tool_name: "Vitest", install_command: "npm i -D vitest", config_files: [{"path": "vitest.config.ts", "content": "..."}]`).
-2. **Safety Audit Gate**: Before presenting any dynamic tool recommendations to the user, `repo-wizard` passes the candidates to the `tool-evaluator.agent` to screen for vulnerabilities, licensing conflicts, or abandonment. Any flagged risks are explicitly listed as warnings in the wizard's recommendations.
+2. **Safety Audit Gate**: Before presenting any dynamic tool recommendations to the user, `repo-wizard` passes the candidates to the `tool-auditor.agent` to screen for vulnerabilities, licensing conflicts, or abandonment. Any flagged risks are explicitly listed as warnings in the wizard's recommendations.
 3. **Step-by-Step Approval:** The `repo-wizard` presents the overall plan. The user selects which setup phase to run first.
 4. **Context Separation:** Each specialist subagent is spawned in a fresh, isolated conversation sandbox using Antigravity's `invoke_subagent` or Claude's subagent tools. They complete their specific setup, test that it works, and return a structured report to the lead orchestrator.
 5. **Rollback Safety:** If a subagent's scaffolding breaks the build or fails unit tests, the lead orchestrator rolls back the changes and reports the exact failure to the user.

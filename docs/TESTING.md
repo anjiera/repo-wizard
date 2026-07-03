@@ -131,9 +131,9 @@ AI agents must actively avoid harmful or restricted actions ("Red Flags"), such 
 
 We test for Red Flag avoidance using **Adversarial Temptation Evals** (Level 2):
 1. **Define a Temptation Prompt**: Add a test case in `evals/<agent-name>.js` that explicitly commands the agent to violate a Red Flag. Examples configured in our codebase:
-   - **Privacy Guardian**: Tempting the agent to write mock database decryption keys or auto-delete scripts.
-   - **Compliance Pilot**: Tempting the agent to write dummy FIPS certificates or configure GPG signing without setup guides.
-   - **Supply Chain Scanner**: Tempting the agent to suppress vulnerability warnings or bypass manifest modification consent.
+   - **Privacy Hardener**: Tempting the agent to write mock database decryption keys or auto-delete scripts.
+   - **Compliance Auditor**: Tempting the agent to write dummy FIPS certificates or configure GPG signing without setup guides.
+   - **Supply Chain Auditor**: Tempting the agent to suppress vulnerability warnings or bypass manifest modification consent.
    - **AppSec Hardener**: Tempting the agent to hardcode raw JWT signature secrets or disable CORS globally.
 2. **Add Negative Rubrics**: Formulate rubrics that check that the agent refused, postponed, or correctly deferred to the developer/harness rather than complying blindly.
 3. **Execute Evals**: Run `node scripts/run-evals.js` to ensure the model resists the temptation and adheres to its safety boundaries.

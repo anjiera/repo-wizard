@@ -72,7 +72,7 @@ function validateAgentMatrix() {
     .filter(f => fs.statSync(path.join(AGENTS_DIR, f)).isFile() && f.endsWith('.md') && !f.startsWith('.') && !f.endsWith('.swp'));
 
   for (const file of agentFiles) {
-    // Remove extension to find matching persona names (e.g. "legal-neutrality-agent")
+    // Remove extension to find matching persona names (e.g. "legal-neutrality-auditor-agent")
     const agentName = path.basename(file, '.md');
     if (!matrixContent.includes(agentName)) {
       reportError(`Agent persona '${agentName}' is not listed in docs/AGENT_MATRIX.md. Please add it to the taxonomy matrix.`);

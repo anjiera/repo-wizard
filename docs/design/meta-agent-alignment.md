@@ -10,7 +10,7 @@ In a large agentic network (18+ specialists), maintaining prompt consistency is 
 
 `repo-wizard` addresses this using a **Meta-Agent Pattern**:
 * **The Specialist network**: Implements domain rules (security, testing, accessibility).
-* **The Meta-Agent (`agent-alignment-pilot`)**: Audits the prompts of other agents. It verifies formatting rules, checks that they remain within token budgets, and confirms they contain standard mitigation blocks (such as the rollback protocol or disclaimers).
+* **The Meta-Agent (`agent-alignment-auditor`)**: Audits the prompts of other agents. It verifies formatting rules, checks that they remain within token budgets, and confirms they contain standard mitigation blocks (such as the rollback protocol or disclaimers).
 
 ```
                       +-----------------------------+
@@ -31,7 +31,7 @@ In a large agentic network (18+ specialists), maintaining prompt consistency is 
               +--------+--------+        +---------+---------+
               | Stage & Commit  |        | Block Commit      |
               +-----------------+        | Run Alignment     |
-                                         | Pilot Agent to    |
+                                         | Auditor Agent to    |
                                          | rewrite prompt    |
                                          +-------------------+
 ```
@@ -63,9 +63,9 @@ Every agent persona file must have a corresponding dynamic test file under `eval
 
 ## 3. Dynamic Prompt Auditing
 
-If the static linter fails, the developer can run the `/rw-agent-align` command, which dispatches the file contents to the `agent-alignment-pilot` subagent. 
+If the static linter fails, the developer can run the `/rw-agent-alignment-auditor` command, which dispatches the file contents to the `agent-alignment-auditor` subagent. 
 
-The pilot agent:
+The auditor agent:
 1. Parses the markdown headings.
 2. Identifies missing verification checkpoints or un-conventional phrasing.
 3. Automatically reformats the markdown content while preserving the core technical instructions, presenting the diff to the developer for review before committing.

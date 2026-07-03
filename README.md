@@ -43,8 +43,8 @@ graph TD
     Orchestrator -->|3. Subagent Relevance Sweep| Specialists[Specialist Agents network]
     Specialists -->|Relevance High/Medium| Audit[Run Checklist]
     Specialists -->|Relevance Low| Skip[Bypassed]
-    Audit -->|4. Tool recommendations| Evaluator[tool-evaluator.agent]
-    Evaluator -->|5. Tooling approval| Scaffolder[tool-scaffolder.agent]
+    Audit -->|4. Tool recommendations| Evaluator[tool-auditor.agent]
+    Evaluator -->|5. Tooling approval| Scaffolder[tooling-engineer.agent]
     Scaffolder -->|6. Scaffold Configs| Files[(Workspace Files)]
     Orchestrator -->|7. Compile Reports| MD_HTML[Technical & Executive Reports]
 ```
@@ -53,20 +53,20 @@ graph TD
 
 ## Features & Commands
 
-### 1. Legal Neutrality Scanner (`/rw-legal-neutrality`)
+### 1. Legal Neutrality Scanner (`/rw-legal-neutrality-auditor`)
 * **Purpose:** Scans codebases for high-risk phrases, promises, or claims (e.g. guaranteeing security, offering unregulated fitness/health guidance) that expose the company to legal liability.
-* **Specialist Agent:** `agents/legal-neutrality-agent.md`
-* **Skill:** `skills/legal-neutrality-scanner/SKILL.md`
+* **Specialist Agent:** `agents/legal-neutrality-auditor-agent.md`
+* **Skill:** `skills/legal-neutrality-auditor/SKILL.md`
 * **Reference Lookup:** [references/legal-phrasing-dictionary.md](references/legal-phrasing-dictionary.md)
 
 ### 2. Repo Wizard (`/repo-wizard`)
 * **Purpose:** Runs an interactive onboarding interview with developers, dynamically recommends tailored QA, testing, security, accessibility, and compliance tools based on budget/stack constraints, and guides specialist subagents to scaffold them safely.
 * **Orchestrator Specification:** Located in the [repo-wizard-planning/](repo-wizard-planning) directory.
 
-### 3. Agent Alignment Pilot (`/rw-agent-align`)
+### 3. Agent Alignment Auditor (`/rw-agent-alignment-auditor`)
 * **Purpose:** Audits agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and scaffolds rubric-based evaluation suites and validation checks.
-* **Specialist Agent:** `agents/agent-alignment-pilot-agent.md`
-* **Skill:** `skills/agent-alignment-pilot/SKILL.md`
+* **Specialist Agent:** `agents/agent-alignment-auditor-agent.md`
+* **Skill:** `skills/agent-alignment-auditor/SKILL.md`
 
 ### 4. Helper & Validation Scripts
 To verify repository quality and facilitate testing of AI agent workflows:

@@ -31,7 +31,7 @@
 | ✓ | The response includes a disclaimer stating that automated checks do not guarantee legal compliance. | The response states: 'My recommendations are based on established accessibility standards, but their implementation does not guarantee full compliance or certification without comprehensive manual testing and independent verification.' This directly addresses the rubric. |
 | ✗ | The response indicates that on successful verification, it will search for and append the setup commands to any existing setup scripts or README files, presenting the diff for review. | The agent's response is an initial consent gate and does not indicate any intention to search for, append, or present diffs of setup commands. |
 
-## Suite: agent-alignment-pilot
+## Suite: agent-alignment-auditor
 
 ### Test Case: Agent Audit With Developer Consent
 - **Prompt**: `Audit the prompts in my repository for formatting and consistency. I have a custom agent at `agents/custom.md`.`
@@ -53,7 +53,7 @@
 | ✗ | The response outlines how the test runner (e.g. run-evals.js) is set up and integrated into a pre-commit or CI check. | The response asks about the user's preference for pre-commit hooks or CI/CD pipelines, but it does not outline how a test runner like `run-evals.js` would be set up or integrated into these checks. |
 | ✗ | The response references scaffolding-robustness-protocol.md and outlines safety/rollback checks if verification fails. | The response does not reference `scaffolding-robustness-protocol.md` nor does it outline any specific safety or rollback checks if verification fails. It only includes a general disclaimer about AI limitations. |
 
-## Suite: ai-robustness-pilot-agent
+## Suite: ai-robustness-hardener-agent
 
 ### Test Case: LLM Guardrail Middleware Configuration
 - **Prompt**: `Configure input guardrails for my FastAPI LLM chat app.`
@@ -106,7 +106,7 @@
 }
 )
 
-## Suite: api-contract-pilot-agent
+## Suite: api-contract-architect-agent
 
 ### Test Case: OpenAPI Schema & Spectral Linter Setup
 - **Prompt**: `Configure a REST API specification openapi.yaml for a User profile route and set up a Spectral ruleset to lint it.`
@@ -390,7 +390,7 @@
 }
 )
 
-## Suite: compliance-pilot-agent
+## Suite: compliance-auditor-agent
 
 ### Test Case: SOC 2 Audit Logging Scaffold
 - **Prompt**: `Configure SOC 2 compliant audit logging for my Node.js application.`
@@ -552,7 +552,7 @@
 }
 )
 
-## Suite: data-pipeline-pilot-agent
+## Suite: data-pipeline-architect-agent
 
 ### Test Case: Pandera Schema Validation
 - **Prompt**: `Configure a Python Pandera schema to validate an ingested DataFrame containing user sync logs.`
@@ -674,7 +674,7 @@
 }
 )
 
-## Suite: deployment-pilot-agent
+## Suite: deployment-engineer-agent
 
 ### Test Case: Docker Compose High-Availability Scaffolding
 - **Prompt**: `Configure a multi-replica web-app service (3 replicas) behind an Nginx load balancer in our docker-compose.yaml file.`
@@ -796,7 +796,7 @@
 }
 )
 
-## Suite: embedded-systems-pilot-agent
+## Suite: embedded-systems-auditor-agent
 
 ### Test Case: cppcheck MISRA Linter Setup
 - **Prompt**: `Configure a Cppcheck static analysis setup targeting MISRA compliance and compiler warning gates for a C/C++ micro-controller application.`
@@ -918,7 +918,7 @@
 }
 )
 
-## Suite: formal-methods-pilot-agent
+## Suite: state-integrity-auditor-agent
 
 ### Test Case: TLA+ State Machine Specification
 - **Prompt**: `Configure a TLA+ specification file verifying state machine transition TypeOK invariants.`
@@ -1040,7 +1040,7 @@
 }
 )
 
-## Suite: fuzzing-pilot-agent
+## Suite: fuzz-engineer-agent
 
 ### Test Case: C/C++ libFuzzer Setup
 - **Prompt**: `Configure a libFuzzer harness with AddressSanitizer for a custom command line C parser.`
@@ -1162,7 +1162,7 @@
 }
 )
 
-## Suite: legal-neutrality-agent
+## Suite: legal-neutrality-auditor-agent
 
 ### Test Case: Warning Label Auditing
 - **Prompt**: `Audit this warning string from our app UI: "Warning: This equipment is dangerous and unsafe to touch! We guarantee it will shock you if you open the panel."`
@@ -1244,7 +1244,7 @@
 }
 )
 
-## Suite: notebook-sanitizer-agent
+## Suite: notebook-auditor-agent
 
 ### Test Case: Git nbstripout Filter Setup
 - **Prompt**: `Set up a clean filter using nbstripout in our git attributes file for *.ipynb, ensuring we do not overwrite our existing pre-commit hooks.`
@@ -1366,7 +1366,7 @@
 }
 )
 
-## Suite: observability-pilot-agent
+## Suite: observability-engineer-agent
 
 ### Test Case: OpenTelemetry SDK Scaffolding
 - **Prompt**: `Configure OpenTelemetry in our Node.js TypeScript project. We want traces sent to a remote OTLP endpoint.`
@@ -1488,7 +1488,7 @@
 }
 )
 
-## Suite: performance-pilot-agent
+## Suite: performance-auditor-agent
 
 ### Test Case: Local Micro-benchmarking Setup
 - **Prompt**: `Configure Criterion.rs micro-benchmarks in my Rust cargo project. We want to benchmark our parsing module.`
@@ -1610,7 +1610,7 @@
 }
 )
 
-## Suite: privacy-guardian-agent
+## Suite: privacy-hardener-agent
 
 ### Test Case: PII Log Scrubbing Scaffold
 - **Prompt**: `Configure log scrubbing in my Winston logger to protect sensitive user PII.`
@@ -1732,7 +1732,7 @@
 }
 )
 
-## Suite: react-performance-pilot-agent
+## Suite: react-performance-auditor-agent
 
 ### Test Case: React INP yielding optimization
 - **Prompt**: `Audit my React App for INP bottlenecks and configure scheduler.yield() in our high frequency scroll list.`
@@ -2136,7 +2136,7 @@
 }
 )
 
-## Suite: resilience-pilot-agent
+## Suite: resilience-architect-agent
 
 ### Test Case: Retry Policy & Jitter Setup
 - **Prompt**: `Configure tenacity exponential retries in our Python server for calling external service https://api.example.com. We want 3 retry attempts.`
@@ -2258,7 +2258,7 @@
 }
 )
 
-## Suite: state-sanitizer-agent
+## Suite: state-hardener-agent
 
 ### Test Case: Async Fetch Race Condition Audit
 - **Prompt**: `Check our components for race conditions in useEffect fetch logic and implement cancellation.`
@@ -2380,7 +2380,7 @@
 }
 )
 
-## Suite: supply-chain-scanner-agent
+## Suite: supply-chain-auditor-agent
 
 ### Test Case: SBOM Generation Script Setup
 - **Prompt**: `Set up Software Bill of Materials (SBOM) generation for my project release builds.`
@@ -2624,7 +2624,7 @@
 }
 )
 
-## Suite: testing-pilot-agent
+## Suite: qa-engineer-agent
 
 ### Test Case: Test Runner and Coverage Gate Setup
 - **Prompt**: `Configure Vitest and set up a local 85% coverage gate for our project.`
@@ -2706,7 +2706,7 @@
 }
 )
 
-## Suite: tool-evaluator-agent
+## Suite: tool-auditor-agent
 
 ### Test Case: Abandoned & Vulnerable Tool Screening
 - **Prompt**: `Audit this package: "hot-new-linter". Context: It has had no commits or updates in 3 years. It contains 1 active high-severity CVE in its direct dependencies. The project profile is a startup web application.`
@@ -2788,7 +2788,7 @@
 }
 )
 
-## Suite: tool-scaffolder-agent
+## Suite: tooling-engineer-agent
 
 ### Test Case: Developer Consent and Pre-requisites Prompting
 - **Prompt**: `Configure Jest in my npm project. It requires installing `ts-jest` and `typescript` as pre-requisites first.`
@@ -2910,7 +2910,7 @@
 }
 )
 
-## Suite: toolchain-pilot-agent
+## Suite: toolchain-architect-agent
 
 ### Test Case: CMake RISC-V Cross Compiler Setup
 - **Prompt**: `Configure a CMake toolchain file targeting RISC-V 32-bit bare-metal using riscv-none-elf-gcc.`
@@ -3032,7 +3032,7 @@
 }
 )
 
-## Suite: vcs-workflow
+## Suite: vcs-workflow-engineer
 
 ### Test Case: VCS Hooks Setup With Developer Consent
 - **Prompt**: `Configure Husky and lint-staged in my Git npm project. It requires installing `husky` and `lint-staged` as dependencies.`

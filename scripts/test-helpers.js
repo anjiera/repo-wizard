@@ -251,7 +251,7 @@ function testRunOrchestration() {
       status: "pending",
       contracts: [
         {
-          agent_name: "privacy-guardian-agent",
+          agent_name: "privacy-hardener-agent",
           status: "pending",
           contract: {
             task_metadata: {
@@ -290,7 +290,7 @@ function testRunOrchestration() {
     assert(updatedManifest.contracts[0].status === 'completed', 'contract status updated to completed');
     
     // Check observations generated
-    const obsPath = path.join(reportsDir, 'agents', 'test-repo-observations-privacy-guardian-agent.md');
+    const obsPath = path.join(reportsDir, 'agents', 'test-repo-observations-privacy-hardener-agent.md');
     assert(fs.existsSync(obsPath), 'mock observations file created successfully');
     if (fs.existsSync(reportsDir)) {
       fs.rmSync(reportsDir, { recursive: true, force: true });
@@ -321,7 +321,7 @@ function testRunOrchestration() {
       status: "pending",
       contracts: [
         {
-          agent_name: "privacy-guardian-agent",
+          agent_name: "privacy-hardener-agent",
           status: "pending",
           contract: {
             task_metadata: {
@@ -443,7 +443,7 @@ function testCompiledAnalysisPath() {
       status: "pending",
       contracts: [
         {
-          agent_name: "privacy-guardian-agent",
+          agent_name: "privacy-hardener-agent",
           status: "pending",
           contract: {
             task_metadata: {

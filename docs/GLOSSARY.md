@@ -10,7 +10,7 @@ Welcome to the **Repo Wizard Glossary**! This document is specifically designed 
 ## 1. AI & Agentic System Terms
 
 ### Agent-to-Agent (A2A)
-A design pattern where multiple specialized AI agents communicate and coordinate with each other to solve a complex task. In `repo-wizard`, a lead **Orchestrator** agent dispatches specific auditing subtasks to specialist subagents (e.g., the `privacy-guardian-agent`).
+A design pattern where multiple specialized AI agents communicate and coordinate with each other to solve a complex task. In `repo-wizard`, a lead **Orchestrator** agent dispatches specific auditing subtasks to specialist subagents (e.g., the `privacy-hardener-agent`).
 
 ### Contract Schema
 A structured JSON definition specifying the exact parameters and types that the orchestrator must pass to a specialist agent. This prevents "prompt rot" and ensures deterministic communication between LLM-driven components.

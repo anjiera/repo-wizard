@@ -48,13 +48,13 @@ Once installed, you can trigger a legal neutrality check in two ways:
 ### 1. Slash Command
 Type the custom slash command in the chat input:
 ```bash
-/rw-legal-neutrality
+/rw-legal-neutrality-auditor
 ```
-The command automatically invokes the `legal-neutrality-scanner` skill and adopts the `legal-neutrality-agent` auditor persona.
+The command automatically invokes the `legal-neutrality-auditor` skill and adopts the `legal-neutrality-auditor-agent` auditor persona.
 
 ### 2. On-Demand Skill Activation
 Antigravity automatically discovers the `skills/` directory. If you ask the agent:
 > *"Audit my warning alert strings for liability"*
 > *"Look at this UI description and verify it has neutral phrasing"*
 
-The agent will detect the intent, prompt you for permission to load the `legal-neutrality-scanner` skill, and start the interactive alignment dialogue.
+The agent will detect the intent, prompt you for permission to load the `legal-neutrality-auditor` skill, and start the interactive alignment dialogue.

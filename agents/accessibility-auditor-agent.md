@@ -41,7 +41,7 @@ Scan the codebase to evaluate accessibility conformance for the selected standar
 
 - **Headless Mode Override:** Refer to Step 3 of [Headless Mode Override Protocol](../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-accessibility-auditor-agent.md`).
 
-Coordinate with the `tool-scaffolder.agent` to deploy accessibility controls, adhering to the following rules:
+Coordinate with the `tooling-engineer.agent` to deploy accessibility controls, adhering to the following rules:
 
 ### 3.1 Developer Consent & Interactive Review
 1. **Shared Robustness Protocol:** Follow the **Interactive Consultation & Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Welcomingly answer any questions before prompting for decisions.

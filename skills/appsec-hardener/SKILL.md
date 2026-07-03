@@ -15,7 +15,7 @@ Use this skill when:
 - Configuring rate limits to prevent brute-force attacks on authentication endpoints.
 - Setting up origin restriction policies (CORS) for client-server integrations.
 - Scaffold static security linters (Semgrep config rules).
-- Invoking the slash command: `/rw-appsec`.
+- Invoking the slash command: `/rw-appsec-hardener`.
 
 ## Core Process
 
@@ -37,7 +37,7 @@ Audit the codebase to check current configurations:
 
 ### Phase 3: Interactive Scaffolding Guidance
 - **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-appsec-hardener-agent.md`).
-Draft all configurations, middlewares, and scripts in coordination with `tool-scaffolder.agent`, following these rules:
+Draft all configurations, middlewares, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or performing package installations, writing new middleware files, or modifying server configuration scripts.
 2. **Interactive Code Review:** Display generated CORS settings, helmet integrations, and rate limit rules to the developer and prompt them for review and confirmation.
 3. **Decoupled Reference Use:** Use [Application Security (AppSec) Hardening Guide](../../references/appsec-hardening-guide.md) as the source of truth for secure header metrics, rate limits, and sanitizers.

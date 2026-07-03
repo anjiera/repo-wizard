@@ -24,8 +24,8 @@ Every skill includes:
 Currently, the suite includes:
 
 ### 1. Legal Neutrality Scanner
-* **Skill**: [skills/legal-neutrality-scanner/SKILL.md](../skills/legal-neutrality-scanner/SKILL.md)
-* **Auditor Persona**: [agents/legal-neutrality-agent.md](../agents/legal-neutrality-agent.md)
+* **Skill**: [skills/legal-neutrality-auditor/SKILL.md](../skills/legal-neutrality-auditor/SKILL.md)
+* **Auditor Persona**: [agents/legal-neutrality-auditor-agent.md](../agents/legal-neutrality-auditor-agent.md)
 * **Goal**: Scans user-facing UI labels, notifications, errors, and terminal scripts for high-liability phrases (e.g. verging on medical/health/financial advice) and suggests legally neutral, comfort-based alternatives without editing source files directly.
 * **Reference Guide**: [references/legal-phrasing-dictionary.md](../references/legal-phrasing-dictionary.md)
 
@@ -42,31 +42,31 @@ To protect your repository across all compliance and security vectors, our speci
 
 ### Green Team (Defensive Coding & Building)
 Focuses on writing secure code, configuring correct dependency frameworks, and setting up static linters to prevent vulnerabilities from being compiled.
-* **API Hardening (`/rw-appsec`):** Scaffolds CORS origin policies, Helmet secure header middlewares, and rate-limiting rules.
-* **Supply Chain Scanner (`/rw-supply-chain`):** Audits active dependency vulnerabilities and blocks viral copyleft package licenses.
-* **VCS Automation (`/rw-vcs-workflow`):** Scaffolds commit lint validation hooks and copyright header scanners.
-* **API Contract Validation (`/rw-api-contract`):** Scaffolds OpenAPI specs, gRPC Protobuf definitions, GraphQL schemas, and linter checks.
-* **Notebook Git Hygiene (`/rw-notebook-sanitizer`):** Scaffolds Jupyter Notebook git filters, nbqa linters, and python virtual environments.
+* **API Hardening (`/rw-appsec-hardener`):** Scaffolds CORS origin policies, Helmet secure header middlewares, and rate-limiting rules.
+* **Supply Chain Auditor (`/rw-supply-chain`):** Audits active dependency vulnerabilities and blocks viral copyleft package licenses.
+* **VCS Automation (`/rw-vcs-workflow-engineer`):** Scaffolds commit lint validation hooks and copyright header scanners.
+* **API Contract Validation (`/rw-api-contract-architect`):** Scaffolds OpenAPI specs, gRPC Protobuf definitions, GraphQL schemas, and linter checks.
+* **Notebook Git Hygiene (`/rw-notebook-auditor`):** Scaffolds Jupyter Notebook git filters, nbqa linters, and python virtual environments.
 
 ### Blue Team (Active Defense & System Visibility)
 Focuses on auditing system events, configuring tracing telemetry, and tuning alerts to catch failures instantly.
-* **Observability Pilot (`/rw-observability`):** Scaffolds OpenTelemetry instrumentation SDKs, Grafana dashboards, and Alertmanager metrics.
-* **Privacy Guardian (`/rw-privacy`):** Sanitizes exported logs and trace contexts to scrub PII data.
-* **Fuzzing Pilot (`/rw-fuzzing`):** Scaffolds coverage-guided fuzz targets (libFuzzer, cargo-fuzz, Atheris) and sanitizers to find crash defects on untrusted parser entry points.
+* **Observability Engineer (`/rw-observability-engineer`):** Scaffolds OpenTelemetry instrumentation SDKs, Grafana dashboards, and Alertmanager metrics.
+* **Privacy Hardener (`/rw-privacy`):** Sanitizes exported logs and trace contexts to scrub PII data.
+* **Fuzz Engineer (`/rw-fuzz-engineer`):** Scaffolds coverage-guided fuzz targets (libFuzzer, cargo-fuzz, Atheris) and sanitizers to find crash defects on untrusted parser entry points.
 
 ### White Team (Governance & Audit Compliance)
 Focuses on establishing code quality rules, mapping regulatory controls, and verifying repository hygiene.
 * **Repo Wizard (`/repo-wizard`):** The interactive orchestrator that scopes your project, screens tools, and coordinates handoffs.
-* **Compliance Pilot (`/rw-compliance`):** Verifies technical compliance configurations (SOC 2, ISO 27001, FIPS lists).
+* **Compliance Auditor (`/rw-compliance`):** Verifies technical compliance configurations (SOC 2, ISO 27001, FIPS lists).
 * **Accessibility Auditor (`/rw-accessibility`):** Configures accessibility linters (ESLint JSX-a11y) and headless axe-core scanners.
-* **Formal Methods Pilot (`/rw-formal-methods`):** Scaffolds mathematical proof verifications (TLA+ specs, Rust Kani harnesses) to prove execution invariants.
+* **State Integrity Auditor (`/rw-state-integrity-auditor`):** Scaffolds mathematical proof verifications (TLA+ specs, Rust Kani harnesses) to prove execution invariants.
 
 ### Yellow Team (System Builders & Deployment)
 Focuses on configuring build automation, deployment replication, container scaling, and recovery systems.
-* **Deployment Pilot (`/rw-deployment`):** Scaffolds Docker Compose replicas, Kubernetes health probes, and database backups.
-* **Data Pipeline Pilot (`/rw-data-pipeline`):** Scaffolds database connection pooling, schema validations, and workflow orchestrators.
-* **Embedded Systems Pilot (`/rw-embedded-systems`):** Scaffolds static analysis rulesets (MISRA via cppcheck), compiler warning/stack limits, QEMU target testing, and local circular ring buffer loggers.
-* **Toolchain Pilot (`/rw-toolchain`):** Scaffolds cross-compilation configurations (CMake files, cargo targets, link scripts) and sysroots.
+* **Deployment Engineer (`/rw-deployment-engineer`):** Scaffolds Docker Compose replicas, Kubernetes health probes, and database backups.
+* **Data Pipeline Architect (`/rw-data-pipeline-architect`):** Scaffolds database connection pooling, schema validations, and workflow orchestrators.
+* **Embedded Systems Auditor (`/rw-embedded-systems-auditor`):** Scaffolds static analysis rulesets (MISRA via cppcheck), compiler warning/stack limits, QEMU target testing, and local circular ring buffer loggers.
+* **Toolchain Architect (`/rw-toolchain-architect`):** Scaffolds cross-compilation configurations (CMake files, cargo targets, link scripts) and sysroots.
 
 ---
 
@@ -141,7 +141,7 @@ Once set up, developers can run individual validation and utility scripts:
 
 Since the repository is built on standard markdown files, you can use these skills in any agent environment:
 
-1. **System Prompts**: Paste the contents of `agents/legal-neutrality-agent.md` directly into your ChatGPT, Claude, or Copilot chat.
+1. **System Prompts**: Paste the contents of `agents/legal-neutrality-auditor-agent.md` directly into your ChatGPT, Claude, or Copilot chat.
 2. **Rules Files**: Copy the skill and persona contents into your project's rules file (e.g., `.cursorrules`, `CLAUDE.md`, or `.agents/AGENTS.md`) for persistent execution.
 3. **Dedicated Tool Integrations**: Read the setup guides below for native slash command and plugin setups:
    - [Google Antigravity Setup](antigravity-setup.md)

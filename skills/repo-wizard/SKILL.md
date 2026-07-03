@@ -79,7 +79,7 @@ Before performing codebase analysis, sizing, or session resume operations:
 
 
 ### Dynamic Screening & Tool Selection
-For each capability needed, recommend candidate tools dynamically after screening them via `tool-evaluator.agent` to check vulnerabilities, activity/maintenance, and license compliance.
+For each capability needed, recommend candidate tools dynamically after screening them via `tool-auditor.agent` to check vulnerabilities, activity/maintenance, and license compliance.
 
 ### Optimization & Handoff
 1. **Local Interactive Mode**: Finish the interview first, deduplicate candidates. If running inside the Antigravity chat session, natively invoke the specialist subagents in parallel using the `invoke_subagent` tool (passing custom path parameters and redaction/anonymization instructions directly in the prompt), bypassing the CLI runner. Run verification and VCS rollback on failure.
@@ -152,7 +152,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Active session is checked on startup, prompting Resume/Revisit/Report/Start Fresh.
 - [ ] Prior configs/session files are archived with YYYYMMDD_HHMMSS timestamp suffixes in `.repo-wizard/history/` before overwrites.
 - [ ] Opt-in/Skip questions are asked at the beginning of each category.
-- [ ] Tool recommendations are dynamically audited by `tool-evaluator.agent`.
+- [ ] Tool recommendations are dynamically audited by `tool-auditor.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback verification checks.
 - [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless modes).

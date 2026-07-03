@@ -22,7 +22,7 @@ Before performing any target stack alignment, codebase scanning, profiling, or c
 When aligning with a developer on the target stack (typically in Step 1):
 1. **Strictly Optional & Conditional:** Explicitly inform the developer that all recommended configurations, tools, testing frameworks, and linters are strictly conditional, optional, and opt-in. The developer can choose none, one, or multiple tools.
 2. **Preference Collection:** Ask the developer if they have any preferred tools, libraries, or configuration rulesets for the domain.
-3. **Dynamic Security Screening:** If the developer has no preference, asks for a recommendation, or is unsure what tools exist for their specific tech stack, you must suggest candidate tools dynamically *only after* screening them via the `tool-evaluator.agent` to check their security, licensing compatibility, and maintenance reputation.
+3. **Dynamic Security Screening:** If the developer has no preference, asks for a recommendation, or is unsure what tools exist for their specific tech stack, you must suggest candidate tools dynamically *only after* screening them via the `tool-auditor.agent` to check their security, licensing compatibility, and maintenance reputation.
 
 ---
 
@@ -66,7 +66,7 @@ To ensure a reliable path for recovery, verify the environment before and after 
 If the verification command fails (non-zero exit code) or the installation corrupts the environment, follow these steps to restore the workspace:
 1. **Report & Debug:** Immediately report the exact failure output to the developer, and explain what went wrong. Propose or attempt a correction/fix for the error.
 2. **Developer Consultation:** Explain what was tried. Ask the developer for explicit permission/consent before performing any rollback, allowing them the option to investigate and resolve the issue manually.
-3. **Execute Rollback:** If debugging fails or the developer consents to it, instruct the `tool-scaffolder.agent` to run the rollback commands appropriate for the detected Version Control System (VCS):
+3. **Execute Rollback:** If debugging fails or the developer consents to it, instruct the `tooling-engineer.agent` to run the rollback commands appropriate for the detected Version Control System (VCS):
    * **Git:**
      ```bash
      git checkout -- .
@@ -101,7 +101,7 @@ To protect against legal liability:
 ## 9. Backlog Generation Mode Protocol
 
 If the incoming parameter contract specifies `execution_mode: "backlog"`:
-1. **Bypass Scaffolding & VCS Actions:** Do NOT run any package installation commands, do NOT create or edit configuration files in the active workspace, and do NOT invoke the `tool-scaffolder.agent`.
+1. **Bypass Scaffolding & VCS Actions:** Do NOT run any package installation commands, do NOT create or edit configuration files in the active workspace, and do NOT invoke the `tooling-engineer.agent`.
 2. **Collect Recommendations:** Utilize your domain checklists to identify relevant setup tasks, refactoring jobs, security improvements, or compliance policies.
 3. **Format Task Outputs:** Return a structured JSON object containing a list of tasks. Each task must follow this schema:
    * `title`: A short, descriptive title (e.g., `[WCAG 2.2] Configure axe-core CLI check in CI`).

@@ -665,7 +665,7 @@ function checkFilesExist(dir, predicate, maxDepth = 4) {
 
 function checkAgentRelevance(agentName, targetDir, contract) {
   // Always relevant core agents
-  if (['supply-chain-scanner-agent', 'vcs-workflow-agent', 'technical-scribe-agent'].includes(agentName)) {
+  if (['supply-chain-auditor-agent', 'vcs-workflow-engineer-agent', 'technical-scribe-agent'].includes(agentName)) {
     return { relevance: 'High', rationale: 'Core governance/VCS agent' };
   }
 
@@ -681,16 +681,16 @@ function checkAgentRelevance(agentName, targetDir, contract) {
     return checkFilesExist(dir, (file) => names.includes(file));
   };
 
-  // Notebook Sanitizer
-  if (agentName === 'notebook-sanitizer-agent') {
+  // Notebook Auditor
+  if (agentName === 'notebook-auditor-agent') {
     if (!hasExtension(targetDir, '.ipynb')) {
       return { relevance: 'Low', rationale: 'No Jupyter Notebooks (.ipynb) found in workspace' };
     }
     return { relevance: 'High', rationale: 'Jupyter Notebooks detected' };
   }
 
-  // React Performance / State Sanitizer
-  if (['react-performance-pilot-agent', 'state-sanitizer-agent'].includes(agentName)) {
+  // React Performance / State Hardener
+  if (['react-performance-auditor-agent', 'state-hardener-agent'].includes(agentName)) {
     let hasReact = false;
     const pkgJsonPath = path.join(targetDir, 'package.json');
     if (fs.existsSync(pkgJsonPath)) {
@@ -725,7 +725,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Embedded Systems
-  if (agentName === 'embedded-systems-pilot-agent') {
+  if (agentName === 'embedded-systems-auditor-agent') {
     const isFirmware = hasAnyFileOf(targetDir, ['CMakeLists.txt', 'Makefile']) || hasExtension(targetDir, '.ino');
     if (!isFirmware) {
       return { relevance: 'Low', rationale: 'No firmware build files (CMakeLists.txt, Makefile) or Arduino files found' };
@@ -734,16 +734,16 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Toolchain / Formal Methods / Fuzzing
-  if (['toolchain-pilot-agent', 'formal-methods-pilot-agent', 'fuzzing-pilot-agent'].includes(agentName)) {
+  if (['toolchain-architect-agent', 'state-integrity-auditor-agent', 'fuzz-engineer-agent'].includes(agentName)) {
     const hasRust = hasFile(targetDir, 'Cargo.toml');
     const hasCpp = hasExtension(targetDir, '.cpp') || hasExtension(targetDir, '.c') || hasExtension(targetDir, '.h');
     const hasGo = hasFile(targetDir, 'go.mod');
     
-    if (agentName === 'formal-methods-pilot-agent' || agentName === 'fuzzing-pilot-agent') {
+    if (agentName === 'state-integrity-auditor-agent' || agentName === 'fuzz-engineer-agent') {
       if (!hasRust && !hasCpp && !hasGo) {
         return { relevance: 'Low', rationale: 'No Rust, Go, or C/C++ files found for formal verification or fuzzing' };
       }
-    } else { // toolchain-pilot-agent
+    } else { // toolchain-architect-agent
       const hasToolchainStack = hasRust || hasCpp || hasFile(targetDir, 'CMakeLists.txt');
       if (!hasToolchainStack) {
         return { relevance: 'Low', rationale: 'No compiled language toolchain files (Cargo.toml, C/C++ source) found' };
@@ -753,7 +753,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Data Pipeline
-  if (agentName === 'data-pipeline-pilot-agent') {
+  if (agentName === 'data-pipeline-architect-agent') {
     const hasDataStack = hasAnyFileOf(targetDir, ['dags', 'airflow', 'prefect']) || hasExtension(targetDir, '.py');
     if (!hasDataStack) {
       return { relevance: 'Low', rationale: 'No Python scripts or Airflow DAG folders found' };
@@ -761,8 +761,8 @@ function checkAgentRelevance(agentName, targetDir, contract) {
     return { relevance: 'Medium', rationale: 'Python or data pipeline files present' };
   }
 
-  // Deployment Pilot
-  if (agentName === 'deployment-pilot-agent') {
+  // Deployment Engineer
+  if (agentName === 'deployment-engineer-agent') {
     const hasDocker = hasAnyFileOf(targetDir, ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']);
     if (!hasDocker) {
       return { relevance: 'Low', rationale: 'No Dockerfile or docker-compose files found in workspace' };

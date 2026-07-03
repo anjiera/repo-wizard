@@ -44,7 +44,7 @@ The test suite runs using a two-stage LLM evaluation loop:
 ```
 
 ### Step 1: Candidate Generation
-The runner (`scripts/run-evals.js`) loads the candidate agent prompt (e.g. `agents/privacy-guardian-agent.md`) and passes it as system instructions to Gemini along with the test case input. The runner enforces `temperature: 0.0` to minimize variability.
+The runner (`scripts/run-evals.js`) loads the candidate agent prompt (e.g. `agents/privacy-hardener-agent.md`) and passes it as system instructions to Gemini along with the test case input. The runner enforces `temperature: 0.0` to minimize variability.
 
 ### Step 2: Semantic Judging
 The generated response is forwarded to a separate instance of the model acting as the **Judge**. The Judge is given:

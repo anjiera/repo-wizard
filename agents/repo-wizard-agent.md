@@ -103,7 +103,7 @@ Bypass the questionnaire and live alignment (Note: The Terms of Service agreemen
 
 ## Dynamic Tool Screening
 
-Under all modes, screen candidate tool recommendations using the `tool-evaluator.agent` protocol to check:
+Under all modes, screen candidate tool recommendations using the `tool-auditor.agent` protocol to check:
 1. **Vulnerabilities**: Ensure no active critical CVEs.
 2. **Activity**: Verify commits in the last 12 months, open/closed issues, and maintainer counts.
 3. **License Compatibility**: Check licenses against project commercial profiles.
@@ -204,7 +204,7 @@ Write the deliverables upon scan completion by first generating and saving the b
 ## Composition
 
 * **Invoke directly when**: the user triggers `/repo-wizard`, `/rw`, `/rw-setup`, or asks to configure general quality, QA, testing, and linting standards.
-* **Coordinated agents**: `tool-evaluator.agent`, `tool-scaffolder.agent`, and specialist subagents.
+* **Coordinated agents**: `tool-auditor.agent`, `tooling-engineer.agent`, and specialist subagents.
 * **Context safety**: Maintain separation by executing setup tasks in isolated subagent sandboxes.
 
 
