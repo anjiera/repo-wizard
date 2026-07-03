@@ -493,7 +493,7 @@ function testValidateDeliverables() {
   const scriptPath = path.join(SCRIPTS_DIR, 'validate-deliverables.js');
 
   // Test 1: Run self-tests
-  const selfTestRun = runScript(scriptPath, ['--test']);
+  const selfTestRun = runScript(scriptPath, ['--test', '--mock-cli']);
   assert(selfTestRun.code === 0, 'validate-deliverables.js self-test (--test) exits with 0');
   assert(selfTestRun.stdout.includes('Self-test PASSED.'), 'validate-deliverables.js prints self-test success message');
 

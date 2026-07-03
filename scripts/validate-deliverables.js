@@ -487,6 +487,11 @@ function runValidation(targetDir) {
  */
 // mock-start
 function runSelfTest() {
+  const isMockCli = process.argv.includes('--mock-cli') || process.env.MOCK_CLI === 'true';
+  if (!isMockCli) {
+    console.log('Self-test skipped: mock-cli is false/not active.');
+    process.exit(0);
+  }
   console.log('Running validate-deliverables self-test...');
   const tempDir = path.join(__dirname, 'temp_test_deliverables');
   if (!fs.existsSync(tempDir)) {
