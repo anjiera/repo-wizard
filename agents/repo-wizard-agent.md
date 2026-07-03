@@ -158,7 +158,8 @@ Write the deliverables upon scan completion by first generating and saving the b
        * `papercuts`: An array of markdown bullet point strings representing Papercuts / Quality of Life recommendations.
        * `strategicDebt`: An array of markdown bullet point strings representing Strategic Debt recommendations.
        * `backlog`: An array of stories, each containing `summary`, `desc`, `type` (e.g. `"Story"`), `epic`, `agent` (recommending agent), `goal`, and `priority` (`quick-win`, `high-value-project`, or `papercut`).
-   - Run the compilation utility `node scripts/reports-compile.js` to compile the final reports.
+    - Run the compilation utility `node scripts/reports-compile.js` to compile the final reports.
+    - **Deliverables Validation & Self-Correction Gate:** Run `node scripts/validate-deliverables.js` to verify that all compiled HTML and Markdown files are valid and contain no honesty violations, bracketed placeholder tags, or formatting bugs. If the validator finds any errors, you MUST read the errors, adjust the compiled analysis values in `.repo-wizard/session.json`, re-compile, and re-validate until the checks pass.
 
 2. **Compiled Deliverables**:
    The compiler engine will build the deliverables under `.repo-wizard/reports/<repo-name-here>/` using the custom session data:
