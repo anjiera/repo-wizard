@@ -296,14 +296,30 @@ function inlineParse(text) {
     return `@@LINKPLACEHOLDER${id}@@`;
   });
 
+  const codes = [];
+  // Extract code blocks next from the remaining text to shield their contents from formatting and HTML escaping
+  parsed = parsed.replace(/`(.*?)`/g, (match, codeText) => {
+    const id = codes.length;
+    codes.push(codeText);
+    return `@@CODEPLACEHOLDER${id}@@`;
+  });
+
   // Escape HTML on the rest of the text content
   parsed = escapeHtml(parsed);
 
-  // Parse bold, italics and inline code on the escaped text
+  // Parse bold and italics on the escaped text
   parsed = parsed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   parsed = parsed.replace(/\*(.*?)\*/g, '<em>$1</em>');
   parsed = parsed.replace(/_([^_]+)_/g, '<em>$1</em>');
-  parsed = parsed.replace(/`(.*?)`/g, '<code>$1</code>');
+
+  // Restore code blocks (escaping their contents first)
+  parsed = parsed.replace(/@@CODEPLACEHOLDER(\d+)@@/g, (match, id) => {
+    const codeIndex = parseInt(id, 10);
+    if (codeIndex < 0 || codeIndex >= codes.length) {
+      return match;
+    }
+    return `<code>${escapeHtml(codes[codeIndex])}</code>`;
+  });
 
   // Restore and safely format URLs and link text
   parsed = parsed.replace(/@@LINKPLACEHOLDER(\d+)@@/g, (match, id) => {
@@ -315,10 +331,17 @@ function inlineParse(text) {
     let safeText = escapeHtml(link.linkText);
     // Allow bold and code formatting inside link text
     safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    safeText = safeText.replace(/`(.*?)`/g, '<code>$1</code>');
+    safeText = safeText.replace(/`(.*?)`/g, (m, codeText) => `<code>${escapeHtml(codeText)}</code>`);
     
     return `<a href="${escapeHtml(sanitizeUrl(link.url))}">${safeText}</a>`;
   });
+
+  // Final validation check to ensure no placeholder patterns remain in the returned text
+  if (parsed.includes('@@CODEPLACEHOLDER') || parsed.includes('@@LINKPLACEHOLDER')) {
+    parsed = parsed
+      .replace(/@@CODEPLACEHOLDER\d+@@/g, '')
+      .replace(/@@LINKPLACEHOLDER\d+@@/g, '');
+  }
 
   return parsed;
 }
@@ -676,5 +699,5 @@ function main() {
 if (require.main === module) {
   main();
 } else {
-  module.exports = { convertMdToHtml };
+  module.exports = { convertMdToHtml, inlineParse };
 }
