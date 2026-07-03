@@ -33,9 +33,9 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 Before performing codebase analysis, sizing, or session resume operations:
 1. **Parameter Routing Check**: Parse the command parameters and enforce their default values:
    - **Mode Defaults**:
-     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and default to executing a shallow clone (Approach A) once Legal Terms, Parameter Routing & Consent Gate passes.
+     - If `--target-path <URL>` is a remote repository URL: Set `MODE=HEADLESS_REMOTE` and default to executing a shallow clone (Approach A) once Legal Terms, Parameter Routing & Consent Gate passes.
      - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
-     - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
+     - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided and the target path is not a remote URL, even if `--target-path` points to a directory different from the current workspace.
    - **Parameter Default Values**:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
      - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
