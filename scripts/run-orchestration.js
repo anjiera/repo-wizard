@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
-const { generateMockCustomReport } = require('./mock-report-generator');
+const { generateMockCompiledAnalysis } = require('./mock-report-generator');
 const { archiveSession } = require('./reports-archive');
 const { redactReportFiles } = require('./reports-compiler-engine');
 
@@ -778,7 +778,7 @@ function completeOrchestration(manifest) {
   manifest.status = 'completed';
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
 
-  // Ensure session.json is updated/created with valid customReport payload for mock runs
+  // Ensure session.json is updated/created with valid compiledAnalysis payload for mock runs
   const sessionPath = path.join(path.dirname(manifestPath), 'session.json');
   let session = {};
   if (fs.existsSync(sessionPath)) {
@@ -795,8 +795,8 @@ function completeOrchestration(manifest) {
   session.answersInferred = session.answersInferred !== undefined ? session.answersInferred : true;
   session.reportStyle = reportStyle || 'whitepaper';
   
-  if (!session.customReport) {
-    session.customReport = generateMockCustomReport(targetPath);
+  if (isMock && !session.compiledAnalysis) {
+    session.compiledAnalysis = generateMockCompiledAnalysis(targetPath);
   }
   
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf8');

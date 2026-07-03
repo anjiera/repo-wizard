@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-function generateMockCustomReport(targetPath) {
+function generateMockCompiledAnalysis(targetPath) {
   const repoName = path.basename(path.resolve(targetPath)).replace(/[^a-zA-Z0-9_\-\.]/g, '') || 'project';
 
   const makeMockSection = (title, summary, overviewText) => {
@@ -107,5 +107,5 @@ function generateMockCustomReport(targetPath) {
 }
 
 module.exports = {
-  generateMockCustomReport
+  generateMockCompiledAnalysis
 };

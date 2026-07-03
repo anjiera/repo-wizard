@@ -158,7 +158,7 @@ function testSessionArchiving() {
   }
 }
 
-function testE2ECustomReportPath() {
+function testE2ECompiledAnalysisPath() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing E2E custom report path archiving and compilation...${RESET}`);
   
   const customReportDir = path.join(SANDBOX_DIR, 'custom_reports');
@@ -173,7 +173,7 @@ function testE2ECustomReportPath() {
     reportPath: customReportDir,
     status: 'completed',
     answersInferred: true,
-    customReport: {
+    compiledAnalysis: {
       maturityStates: {
         SECURITY: 'Level 1',
         PERFORMANCE: 'Level 1',
@@ -220,7 +220,7 @@ function testE2ECustomTosPath() {
     tosPath: customTosDir,
     status: 'paused',
     answersInferred: true,
-    customReport: {}
+    compiledAnalysis: {}
   };
 
   let activeTosFile = path.join(SANDBOX_DIR, '.repo-wizard', '.tos_agreed');
@@ -408,7 +408,7 @@ async function runE2E() {
     setupSandbox();
     testGitignoreAppend();
     testSessionArchiving();
-    testE2ECustomReportPath();
+    testE2ECompiledAnalysisPath();
     testE2ECustomTosPath();
     testE2EDeliverablesValidator();
     await testPresetsAndParallelism();

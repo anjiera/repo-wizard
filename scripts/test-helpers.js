@@ -426,7 +426,7 @@ function testRunOrchestration() {
   }
 }
 
-function testCustomReportPath() {
+function testCompiledAnalysisPath() {
   console.log('Testing orchestration with custom --report-path...');
   const scriptPath = path.join(SCRIPTS_DIR, 'run-orchestration.js');
   const customReportDir = path.join(ROOT, 'temp_custom_reports');
@@ -538,7 +538,7 @@ function runAll() {
     testValidateSkills();
     testValidateDocs();
     testRunOrchestration();
-    testCustomReportPath();
+    testCompiledAnalysisPath();
     testValidateDeliverables();
     testReportStyling();
 

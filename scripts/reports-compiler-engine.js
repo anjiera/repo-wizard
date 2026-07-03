@@ -114,7 +114,7 @@ function compileRealReports(session) {
     executedAgents.push('General Quality Auditor');
   }
 
-  const customReport = session.customReport || {};
+  const compiledAnalysis = session.compiledAnalysis || {};
   const missingFields = [];
 
   const isAndroid = frameworks.includes('android') || frameworks.includes('kotlin') || platforms.includes('android');
@@ -122,10 +122,10 @@ function compileRealReports(session) {
 
   // Format maturity model guidance
   let maturityGuidance = '## 3. Maturity Model Guidance\n\n';
-  if (!customReport.maturityStates) {
+  if (!compiledAnalysis.maturityStates) {
     missingFields.push('maturityStates');
   }
-  const maturityStates = customReport.maturityStates || {
+  const maturityStates = compiledAnalysis.maturityStates || {
     SECURITY: 'Error: Security maturity model guidance was not generated.',
     PERFORMANCE: 'Error: Performance maturity model guidance was not generated.',
     ARCHITECTURE: 'Error: Architecture maturity model guidance was not generated.',
@@ -178,15 +178,15 @@ function compileRealReports(session) {
   const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   // Dynamically select whitepaper content based on repository profile
-  if (!customReport.section1) missingFields.push('section1');
-  if (!customReport.section2) missingFields.push('section2');
-  if (!customReport.section3) missingFields.push('section3');
-  if (!customReport.conclusion) missingFields.push('conclusion');
+  if (!compiledAnalysis.section1) missingFields.push('section1');
+  if (!compiledAnalysis.section2) missingFields.push('section2');
+  if (!compiledAnalysis.section3) missingFields.push('section3');
+  if (!compiledAnalysis.conclusion) missingFields.push('conclusion');
 
-  let sec1Text = customReport.section1 || `*Error: Section 1 (Codebase Health & Strengths) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 1. Please re-run the sweep and verify that the specialist agents executed successfully.`;
-  let sec2Text = customReport.section2 || `*Error: Section 2 (Tooling & Compliance Opportunities) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 2. Please re-run the sweep and verify that the specialist agents executed successfully.`;
-  let sec3Text = customReport.section3 || `*Error: Section 3 (Rollout Roadmap) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 3. Please re-run the sweep and verify that the specialist agents executed successfully.`;
-  let conclusionText = customReport.conclusion || DEFAULT_CONCLUSION;
+  let sec1Text = compiledAnalysis.section1 || `*Error: Section 1 (Codebase Health & Strengths) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 1. Please re-run the sweep and verify that the specialist agents executed successfully.`;
+  let sec2Text = compiledAnalysis.section2 || `*Error: Section 2 (Tooling & Compliance Opportunities) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 2. Please re-run the sweep and verify that the specialist agents executed successfully.`;
+  let sec3Text = compiledAnalysis.section3 || `*Error: Section 3 (Rollout Roadmap) data was not provided by the subagent sweep.*\n\nOverview: Error compiling section.\n\n### Technical Overview\n\n#### Detail\nThe orchestration agent failed to generate the Technical Overview data for Section 3. Please re-run the sweep and verify that the specialist agents executed successfully.`;
+  let conclusionText = compiledAnalysis.conclusion || DEFAULT_CONCLUSION;
 
   const execSummary = `# Repo Wizard Executive Summary - ${repoName}
 
@@ -239,27 +239,27 @@ ${DISCLAIMER_TEXT}
     return Array.from(exclusions).map(e => `\`${e}\``).join(', ');
   };
 
-  if (!Array.isArray(customReport.quickWins)) missingFields.push('quickWins');
-  if (!Array.isArray(customReport.highValue)) missingFields.push('highValue');
-  if (!Array.isArray(customReport.papercuts)) missingFields.push('papercuts');
-  if (!Array.isArray(customReport.strategicDebt)) missingFields.push('strategicDebt');
-  if (typeof customReport.suggestedAdjustments !== 'string' || !customReport.suggestedAdjustments.trim()) {
+  if (!Array.isArray(compiledAnalysis.quickWins)) missingFields.push('quickWins');
+  if (!Array.isArray(compiledAnalysis.highValue)) missingFields.push('highValue');
+  if (!Array.isArray(compiledAnalysis.papercuts)) missingFields.push('papercuts');
+  if (!Array.isArray(compiledAnalysis.strategicDebt)) missingFields.push('strategicDebt');
+  if (typeof compiledAnalysis.suggestedAdjustments !== 'string' || !compiledAnalysis.suggestedAdjustments.trim()) {
     missingFields.push('suggestedAdjustments');
   }
 
-  const quickWins = Array.isArray(customReport.quickWins) ? customReport.quickWins : [
+  const quickWins = Array.isArray(compiledAnalysis.quickWins) ? compiledAnalysis.quickWins : [
     `- **Error:** Quick Wins recommendations list was not generated by the sweep.`
   ];
 
-  const highValue = Array.isArray(customReport.highValue) ? customReport.highValue : [
+  const highValue = Array.isArray(compiledAnalysis.highValue) ? compiledAnalysis.highValue : [
     `- **Error:** High-Value Projects recommendations list was not generated by the sweep.`
   ];
 
-  const papercuts = Array.isArray(customReport.papercuts) ? customReport.papercuts : [
+  const papercuts = Array.isArray(compiledAnalysis.papercuts) ? compiledAnalysis.papercuts : [
     `- **Error:** Papercuts recommendations list was not generated by the sweep.`
   ];
 
-  const strategicDebt = Array.isArray(customReport.strategicDebt) ? customReport.strategicDebt : [
+  const strategicDebt = Array.isArray(compiledAnalysis.strategicDebt) ? compiledAnalysis.strategicDebt : [
     `- **Error:** Strategic Debt recommendations list was not generated by the sweep.`
   ];
 
@@ -374,7 +374,7 @@ ${DISCLAIMER_TEXT}
 `;
 
   // 3. Observations Summary
-  const suggestedAdjustmentsText = customReport.suggestedAdjustments || `- **Error:** Suggested adjustments recommendations were not generated by the sweep.`;
+  const suggestedAdjustmentsText = compiledAnalysis.suggestedAdjustments || `- **Error:** Suggested adjustments recommendations were not generated by the sweep.`;
 
   const observationsSummary = `# Repo Wizard Observations Summary - ${repoName}
 
@@ -392,7 +392,7 @@ ${suggestedAdjustmentsText}
 ${DISCLAIMER_TEXT}
 `;
 
-  if (session.mode === 'backlog' && !Array.isArray(customReport.backlog)) {
+  if (session.mode === 'backlog' && !Array.isArray(compiledAnalysis.backlog)) {
     missingFields.push('backlog');
   }
 
@@ -428,7 +428,7 @@ ${DISCLAIMER_TEXT}
       const csvPath = path.join(reportsDir, 'backlog.csv');
       let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
 
-      const stories = Array.isArray(customReport.backlog) ? customReport.backlog : [];
+      const stories = Array.isArray(compiledAnalysis.backlog) ? compiledAnalysis.backlog : [];
 
       const escapeCsv = (str) => {
         if (!str) return '';
