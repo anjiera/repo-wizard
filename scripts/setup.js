@@ -170,11 +170,19 @@ function checkAgyCli() {
       logWarning('Antigravity plugin validation returned warnings or errors.');
     }
   } else {
-    console.log('');
-    logWarning('Google Antigravity CLI (agy) was not found in your environment path.');
-    console.log(`  To use this repository as a native Antigravity plugin, make sure the CLI is installed.`);
-    console.log(`  You can register this local plugin directory via:`);
-    console.log(`    node scripts/register-plugin.js`);
+    // Check if running inside Google Antigravity native chat sandbox.
+    // The ANTIGRAVITY_AGENT environment variable is automatically set to '1' by the platform.
+    // This indicates the capability to spawn parallel specialist subagents natively via invoke_subagent.
+    if (process.env.ANTIGRAVITY_AGENT === '1') {
+      console.log('');
+      logSuccess('Verified active Google Antigravity chat sandbox environment (Subagent capability available).');
+    } else {
+      console.log('');
+      logWarning('Google Antigravity CLI (agy) was not found in your environment path.');
+      console.log(`  To use this repository as a native Antigravity plugin, make sure the CLI is installed.`);
+      console.log(`  You can register this local plugin directory via:`);
+      console.log(`    node scripts/register-plugin.js`);
+    }
   }
 }
 
