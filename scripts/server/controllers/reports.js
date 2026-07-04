@@ -143,11 +143,13 @@ function handlePostAnalyzeTarget(req, res, correlationId, reportRoot) {
       // Run initial codebase scan first
       try {
         const scanScriptPath = path.join(ROOT, 'scripts', 'initial-codebase-scan.js');
-        let cmd = `node "${scanScriptPath}" --target-path "${targetPath}"`;
+        const { execFileSync } = require('child_process');
+        const args = [scanScriptPath, '--target-path', targetPath];
         if (reportRoot) {
-          cmd += ` --report-path "${reportRoot}"`;
+          args.push('--report-path', reportRoot);
         }
-        execSync(cmd, { stdio: 'pipe' });
+        execFileSync('node', args, { stdio: 'pipe' });
+
 
         const repoName = getSafeRepoName(targetPath);
         const activeReportRootFinal = reportRoot;

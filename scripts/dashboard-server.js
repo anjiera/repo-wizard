@@ -157,7 +157,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (url.pathname === '/api/stop-scan' && req.method === 'POST') {
+  if ((url.pathname === '/api/stop-scan' || url.pathname === '/api/cancel-scan') && req.method === 'POST') {
     scanController.handlePostStopScan(req, res, correlationId);
     return;
   }
