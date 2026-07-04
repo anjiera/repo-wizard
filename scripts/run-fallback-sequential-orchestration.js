@@ -279,6 +279,17 @@ async function main() {
     }
     resolvedTarget = path.resolve(checkoutPath);
 
+    console.log(`\n${BLUE}==> Running in Remote Scan Mode for URL: ${targetPath}${RESET}`);
+    console.log(`    - Why? A remote Git URL indicates you are running a report on a repository you are not actively developing on.`);
+    console.log(`    - Non-interactive (headless) mode has been automatically enabled.`);
+    console.log(`    - A temporary shallow clone (--depth=1) will be downloaded to the checkout path.`);
+    if (!keepCheckout) {
+      console.log(`    - Note: This clone directory is temporary and will be deleted upon completion.`);
+    } else {
+      console.log(`    - Note: This clone directory will be preserved on disk since --keep-checkout was specified.`);
+    }
+    console.log('');
+
     // GitHub size estimation & connectivity warnings
     console.log(`Checking connection and estimating size for remote repository: ${targetPath}...`);
     const info = await getRemoteRepoInfo(targetPath);
