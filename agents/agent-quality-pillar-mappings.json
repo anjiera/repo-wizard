@@ -110,5 +110,9 @@
   "maintainability-auditor": {
     "pillar": "ARCHITECTURE",
     "color": "GREEN"
+  },
+  "database-lifecycle-auditor": {
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW"
   }
 }

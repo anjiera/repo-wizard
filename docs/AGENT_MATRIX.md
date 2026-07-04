@@ -42,6 +42,7 @@ Focuses on system boundaries, cross-compilation toolchains, schemas, and structu
 | Data Pipeline Architect | `data-pipeline-architect` | 🟡 Yellow Team | `data-pipeline-architect` | `/rw-data-pipeline-architect` | [data-pipeline-standards.md](../references/coding-standards/data-pipeline-standards.md) | Audits data workflows, schemas, retries, and database connection pool configurations. |
 | State Integrity Auditor | `state-integrity-auditor` | ⚪ White Team | `state-integrity-auditor` | `/rw-state-integrity-auditor` | [formal-methods-patterns.md](../references/formal-methods-patterns.md) | Audits codebase state machines, specifications (TLA+), and proof verification harnesses. |
 | Maintainability Auditor | `maintainability-auditor` | 🟢 Green Team | `maintainability-auditor` | `/rw-maintainability-auditor` | *None* | Audits codebase structure, DRY compliance, and identifies Fowler code smells tailored to development profiles. |
+| Database Lifecycle Auditor | `database-lifecycle-auditor` | 🟡 Yellow Team | `database-lifecycle-auditor` | `/rw-database-lifecycle-auditor` | [database-lifecycle](../references/database-lifecycle/) | Audits database migrations, schemas, and queries for complexity and performance patterns based on inferred stacks. |
 
 ---
 

@@ -25,5 +25,6 @@
   "tooling-engineer": "Safely installs tools and edits config files using AST-based modifications.",
   "toolchain-architect": "Audits build target constraints and cross-compilation toolchain parameters.",
   "vcs-workflow-engineer": "Audits and configures pre-commit hooks, Conventional Commit validations, and copyright headers.",
-  "maintainability-auditor": "Audits codebase structure, DRY compliance, and identifies Fowler code smells tailored to development profiles."
+  "maintainability-auditor": "Audits codebase structure, DRY compliance, and identifies Fowler code smells tailored to development profiles.",
+  "database-lifecycle-auditor": "Audits database migrations, schemas, and queries for complexity and performance patterns based on inferred stacks."
 }

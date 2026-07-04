@@ -46,7 +46,8 @@ const SPECIALISTS = [
   'ai-robustness-hardener',
   'react-performance-auditor',
   'state-hardener',
-  'maintainability-auditor'
+  'maintainability-auditor',
+  'database-lifecycle-auditor'
 ];
 
 const { DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./report-constants');

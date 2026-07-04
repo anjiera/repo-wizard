@@ -46,7 +46,8 @@ const SPECIALISTS = [
   'ai-robustness-hardener',
   'react-performance-auditor',
   'state-hardener',
-  'maintainability-auditor'
+  'maintainability-auditor',
+  'database-lifecycle-auditor'
 ];
 
 function printUsageAndExit(err) {

@@ -171,6 +171,26 @@ function checkAgentRelevance(agentName, targetDir) {
     return { relevance: 'Medium', rationale: 'Python or data pipeline files present' };
   }
 
+  // Database Lifecycle Auditor
+  if (agentName === 'database-lifecycle-auditor') {
+    const hasSql = hasExtension(targetDir, '.sql');
+    const hasDbLib = hasAnyFileOf(targetDir, ['prisma', 'drizzle']) || checkFilesExist(targetDir, (file, fullPath) => {
+      if (file === 'package.json') {
+        try {
+          const pkg = JSON.parse(fs.readFileSync(fullPath, 'utf8'));
+          const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+          const libs = ['pg', 'pg-pool', 'mysql2', 'sequelize', 'mongoose', 'mongodb', 'redis', 'ioredis', 'sqlite3', 'better-sqlite3', '@supabase/supabase-js', 'firebase-admin', 'aws-sdk', 'cassandra-driver'];
+          return libs.some(lib => deps[lib] !== undefined);
+        } catch (e) { /* ignore */ }
+      }
+      return false;
+    }, 5, targetDir);
+    if (!hasSql && !hasDbLib) {
+      return { relevance: 'Low', rationale: 'No SQL files or direct database library dependencies found' };
+    }
+    return { relevance: 'High', rationale: 'SQL files or database dependencies detected' };
+  }
+
   // Deployment Engineer
   if (agentName === 'deployment-engineer') {
     const hasDocker = hasAnyFileOf(targetDir, ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']);
