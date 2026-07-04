@@ -26,5 +26,6 @@
   "toolchain-architect": "Audits build target constraints and cross-compilation toolchain parameters.",
   "vcs-workflow-engineer": "Audits and configures pre-commit hooks, Conventional Commit validations, and copyright headers.",
   "maintainability-auditor": "Audits codebase structure, DRY compliance, and identifies Fowler code smells tailored to development profiles.",
-  "database-lifecycle-auditor": "Audits database migrations, schemas, and queries for complexity and performance patterns based on inferred stacks."
+  "database-lifecycle-auditor": "Audits database migrations, schemas, and queries for complexity and performance patterns based on inferred stacks.",
+  "dev-onboarding-auditor": "Audits repository setup files, README installation steps, environment examples, and contributor onboarding templates for alignment and consistency patterns."
 }

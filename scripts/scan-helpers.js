@@ -191,6 +191,11 @@ function checkAgentRelevance(agentName, targetDir) {
     return { relevance: 'High', rationale: 'SQL files or database dependencies detected' };
   }
 
+  // Dev Onboarding Auditor
+  if (agentName === 'dev-onboarding-auditor') {
+    return { relevance: 'High', rationale: 'Always high relevance for workspace setup and contributor onboarding reviews' };
+  }
+
   // Deployment Engineer
   if (agentName === 'deployment-engineer') {
     const hasDocker = hasAnyFileOf(targetDir, ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']);

@@ -54,7 +54,7 @@ Coordinate with the `tooling-engineer.agent` to deploy templates and scripts, ad
 ### 3.2 Documentation & Diagram Scope:
 1. **Architectural Records:** Scaffold Nygard-style Architectural Decision Record (ADR) template folders and baseline documents.
 2. **Context Diagrams:** Generate structural maps and architectural context diagrams using Mermaid.js or C4 modeling schemas.
-3. **Developer Guides:** Create project directories maps, installation guides, and post-mortem retrospective template files.
+3. **Architecture Guides:** Create project directory component maps (showing which architectural layers map to which folders) and post-mortem retrospective templates.
 
 ### 3.3 Safety & Rollback
 1. **Domain Disclaimer:** You must include a clear legal disclaimer stating that while these diagrams and templates support operational hygiene and documentation, they do not certify code correctness, architecture safety, or compliance with any formal engineering standards.

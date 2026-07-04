@@ -114,5 +114,9 @@
   "database-lifecycle-auditor": {
     "pillar": "ARCHITECTURE",
     "color": "YELLOW"
+  },
+  "dev-onboarding-auditor": {
+    "pillar": "QUALITY",
+    "color": "BLUE"
   }
 }

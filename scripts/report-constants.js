@@ -36,7 +36,8 @@ const MOCK_CAPABILITY_MAP = {
   'react-performance-auditor': 'React Performance Auditing',
   'state-hardener': 'State Sanitization Auditing',
   'maintainability-auditor': 'Maintainability Auditing',
-  'database-lifecycle-auditor': 'Database Lifecycle Auditing'
+  'database-lifecycle-auditor': 'Database Lifecycle Auditing',
+  'dev-onboarding-auditor': 'Developer Onboarding Auditing'
 };
 
 const MOCK_TOOL_MAP = {
@@ -61,7 +62,8 @@ const MOCK_TOOL_MAP = {
   'react-performance-auditor': 'react-scan',
   'state-hardener': 'eslint-plugin-react-hooks',
   'maintainability-auditor': 'eslint-plugin-complexity',
-  'database-lifecycle-auditor': 'atlas'
+  'database-lifecycle-auditor': 'atlas',
+  'dev-onboarding-auditor': 'dotenv-linter'
 };
 
 const INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
