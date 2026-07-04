@@ -22,7 +22,6 @@ const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/c
 
 const AGENTS_DIR = path.resolve(__dirname, '..', 'agents');
 const EVALS_FILE = path.resolve(__dirname, 'run-evals.js');
-const MAPPINGS_FILE = path.resolve(__dirname, '..', 'agents', 'agent-quality-pillar-mappings.json');
 const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS } = require('./report-constants');
 
@@ -80,26 +79,30 @@ function main() {
 
     // Quality Pillar & Team Color mapping validation
     const agentKey = file.replace(/\.md$/, '');
-    if (!fs.existsSync(MAPPINGS_FILE)) {
-      errors.push('Missing agent-quality-pillar-mappings.json file.');
+    const registryFile = path.resolve(__dirname, '..', 'agents', 'agent-registry.json');
+    if (!fs.existsSync(registryFile)) {
+      errors.push('Missing agent-registry.json file.');
     } else {
-      let mappings;
+      let registry;
       try {
-        mappings = JSON.parse(fs.readFileSync(MAPPINGS_FILE, 'utf8'));
+        registry = JSON.parse(fs.readFileSync(registryFile, 'utf8'));
       } catch (err) {
-        errors.push(`Failed to parse agent-quality-pillar-mappings.json: ${err.message}`);
+        errors.push(`Failed to parse agent-registry.json: ${err.message}`);
       }
 
-      if (mappings) {
-        const mapping = mappings[agentKey];
+      if (registry) {
+        const mapping = registry[agentKey];
         if (!mapping) {
-          errors.push(`Missing entry in agent-quality-pillar-mappings.json for agent key "${agentKey}".`);
+          errors.push(`Missing entry in agent-registry.json for agent key "${agentKey}".`);
         } else {
           if (!mapping.pillar || !QUALITY_PILLARS[mapping.pillar]) {
             errors.push(`Invalid or missing Quality Pillar key: "${mapping.pillar || 'none'}"`);
           }
           if (!mapping.color || !TEAM_COLORS[mapping.color]) {
             errors.push(`Invalid or missing Cybersecurity Team Color key: "${mapping.color || 'none'}"`);
+          }
+          if (!mapping.description) {
+            errors.push(`Invalid or missing description inside registry for key "${agentKey}"`);
           }
         }
       }
@@ -214,6 +217,89 @@ function main() {
         console.log(`       ${RED}ERROR:${RESET} ${msg}`);
       }
       totalErrors += errors.length;
+    }
+  }
+
+  // Registry Schema Assertion Checks
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Running Agent Registry schema validation tests...${RESET}`);
+  const registryFile = path.resolve(__dirname, '..', 'agents', 'agent-registry.json');
+  if (!fs.existsSync(registryFile)) {
+    console.log(`  ${RED}✗${RESET}  agent-registry.json does not exist.`);
+    totalErrors++;
+  } else {
+    let registry;
+    try {
+      registry = JSON.parse(fs.readFileSync(registryFile, 'utf8'));
+      
+      const registryKeys = Object.keys(registry);
+      const agentKeysFromFiles = agentFiles.map(f => f.replace(/\.md$/, ''));
+
+      // 1. Coverage Assertions
+      for (const k of registryKeys) {
+        if (!agentKeysFromFiles.includes(k)) {
+          console.log(`  ${RED}✗${RESET}  Registry key "${k}" has no matching agents/${k}.md file.`);
+          totalErrors++;
+        }
+      }
+
+      for (const k of agentKeysFromFiles) {
+        if (!registryKeys.includes(k)) {
+          console.log(`  ${RED}✗${RESET}  Agent file "${k}.md" has no entry in agent-registry.json.`);
+          totalErrors++;
+        }
+      }
+
+      // 2. Schema and Prefix Assertions
+      for (const [key, value] of Object.entries(registry)) {
+        let entryErrors = 0;
+        
+        if (typeof value.title !== 'string' || value.title.trim().length === 0) {
+          console.log(`  ${RED}✗${RESET}  "${key}": Missing or empty "title"`);
+          entryErrors++;
+        }
+        if (typeof value.description !== 'string' || value.description.trim().length === 0) {
+          console.log(`  ${RED}✗${RESET}  "${key}": Missing or empty "description"`);
+          entryErrors++;
+        }
+        if (typeof value.pillar !== 'string' || !QUALITY_PILLARS[value.pillar]) {
+          console.log(`  ${RED}✗${RESET}  "${key}": Invalid or missing "pillar" ("${value.pillar || 'none'}")`);
+          entryErrors++;
+        }
+        if (typeof value.color !== 'string' || !TEAM_COLORS[value.color]) {
+          console.log(`  ${RED}✗${RESET}  "${key}": Invalid or missing "color" ("${value.color || 'none'}")`);
+          entryErrors++;
+        }
+
+        // Mock naming conventions (prefixed with "Mock " / "mock-")
+        if (value.mockCapability !== null && value.mockCapability !== undefined) {
+          if (typeof value.mockCapability !== 'string' || !value.mockCapability.startsWith('Mock ')) {
+            console.log(`  ${RED}✗${RESET}  "${key}": "mockCapability" must be null or start with "Mock " (found: "${value.mockCapability}")`);
+            entryErrors++;
+          }
+        }
+        if (value.mockTool !== null && value.mockTool !== undefined) {
+          if (typeof value.mockTool !== 'string' || !value.mockTool.startsWith('mock-')) {
+            console.log(`  ${RED}✗${RESET}  "${key}": "mockTool" must be null or start with "mock-" (found: "${value.mockTool}")`);
+            entryErrors++;
+          }
+        }
+
+        if (value.command !== null && value.command !== undefined) {
+          if (typeof value.command !== 'string' || (value.command.length > 0 && !value.command.startsWith('/'))) {
+            console.log(`  ${RED}✗${RESET}  "${key}": "command" must be null or start with "/" (found: "${value.command}")`);
+            entryErrors++;
+          }
+        }
+
+        if (entryErrors === 0) {
+          console.log(`  ${GREEN}✓${RESET}  "${key}" schema verification`);
+        } else {
+          totalErrors += entryErrors;
+        }
+      }
+    } catch (err) {
+      console.log(`  ${RED}✗${RESET}  Registry parse error: ${err.message}`);
+      totalErrors++;
     }
   }
 

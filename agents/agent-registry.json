@@ -1,0 +1,302 @@
+{
+  "accessibility-auditor": {
+    "title": "Digital Accessibility Specialist",
+    "description": "Audits codebase files and configurations for compliance with digital accessibility standards (WCAG).",
+    "pillar": "QUALITY",
+    "color": "WHITE",
+    "mockCapability": "Mock Accessibility Auditing",
+    "mockTool": "mock-axe-core",
+    "command": "/rw-accessibility-auditor",
+    "reference": "accessibility-checklist.md"
+  },
+  "agent-alignment-auditor": {
+    "title": "AI Agent Alignment Specialist",
+    "description": "Audits agent prompts, configurations, and workflows for consistency, style, formatting, and token limits.",
+    "pillar": "QUALITY",
+    "color": "WHITE",
+    "mockCapability": "Mock Agent Alignment Auditing",
+    "mockTool": "mock-llm-guard",
+    "command": "/rw-agent-alignment-auditor",
+    "reference": null
+  },
+  "ai-robustness-hardener": {
+    "title": "AI/ML Robustness Hardener",
+    "description": "Audits AI/ML components and LLM integrations, configuring secure input/output guardrails.",
+    "pillar": "SECURITY",
+    "color": "YELLOW",
+    "mockCapability": "Mock AI Input/Output Guardrails",
+    "mockTool": "mock-llm-guard",
+    "command": "/rw-ai-robustness-hardener",
+    "reference": "ai-robustness-checklist.md"
+  },
+  "api-contract-architect": {
+    "title": "API Contract Architect",
+    "description": "Audits API boundaries, designs schemas, and integrates Buf/Spectral Linters.",
+    "pillar": "ARCHITECTURE",
+    "color": "GREEN",
+    "mockCapability": "Mock API Linting & Schema Checking",
+    "mockTool": "mock-spectral",
+    "command": "/rw-api-contract-architect",
+    "reference": "api-contract-standards.md"
+  },
+  "appsec-hardener": {
+    "title": "Application Security Specialist",
+    "description": "Audits security configurations and scaffolds secure HTTP header middlewares, CORS, and rate limits.",
+    "pillar": "SECURITY",
+    "color": "GREEN",
+    "mockCapability": "Mock Application Hardening",
+    "mockTool": "mock-helmet",
+    "command": "/rw-appsec-hardener",
+    "reference": "appsec-hardening-guide.md"
+  },
+  "compliance-auditor": {
+    "title": "Compliance Auditor Specialist",
+    "description": "Audits and scaffolds security and compliance configurations for industry standards (SOC 2, ISO 27001).",
+    "pillar": "SECURITY",
+    "color": "WHITE",
+    "mockCapability": "Mock Compliance Hardening",
+    "mockTool": "mock-checkov",
+    "command": "/rw-compliance-auditor",
+    "reference": "security-hardening-checklist.md"
+  },
+  "data-pipeline-architect": {
+    "title": "Data Pipeline Architect",
+    "description": "Audits data workflows, schemas, retries, and database connection pool configurations.",
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW",
+    "mockCapability": "Mock Data Integrity Checks",
+    "mockTool": "mock-pandera",
+    "command": "/rw-data-pipeline-architect",
+    "reference": "data-pipeline-standards.md"
+  },
+  "database-lifecycle-auditor": {
+    "title": "Database Lifecycle Auditor",
+    "description": "Audits database migrations, schemas, and queries for complexity and performance patterns based on inferred stacks.",
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW",
+    "mockCapability": "Mock Database Lifecycle Auditing",
+    "mockTool": "mock-atlas",
+    "command": "/rw-database-lifecycle-auditor",
+    "reference": "database-lifecycle"
+  },
+  "deployment-engineer": {
+    "title": "Deployment Engineer",
+    "description": "Audits container files, HA replicas, Kubernetes probes, and backup scripts.",
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW",
+    "mockCapability": "Mock Container Orchestration & Backup",
+    "mockTool": "mock-docker-compose",
+    "command": "/rw-deployment-engineer",
+    "reference": "deployment-patterns.md"
+  },
+  "dev-onboarding-auditor": {
+    "title": "Developer Onboarding Auditor",
+    "description": "Audits repository setup files, README installation steps, environment examples, and contributor onboarding templates for alignment and consistency patterns.",
+    "pillar": "QUALITY",
+    "color": "BLUE",
+    "mockCapability": "Mock Developer Onboarding Auditing",
+    "mockTool": "mock-dotenv-linter",
+    "command": "/rw-dev-onboarding-auditor",
+    "reference": null
+  },
+  "embedded-systems-auditor": {
+    "title": "Embedded Systems Auditor",
+    "description": "Audits low-level firmware robustness, static analysis (MISRA), and compiler warning flags.",
+    "pillar": "QUALITY",
+    "color": "YELLOW",
+    "mockCapability": "Mock Embedded Warning Linters",
+    "mockTool": "mock-cppcheck",
+    "command": "/rw-embedded-systems-auditor",
+    "reference": "embedded-standards.md"
+  },
+  "fuzz-engineer": {
+    "title": "Fuzz Engineer",
+    "description": "Audits parsing blocks to identify crash-prone sections and scaffolds fuzz-testing harnesses.",
+    "pillar": "QUALITY",
+    "color": "BLUE",
+    "mockCapability": "Mock Fuzz Testing Harnesses",
+    "mockTool": "mock-cargo-fuzz",
+    "command": "/rw-fuzz-engineer",
+    "reference": "fuzzing-patterns.md"
+  },
+  "legal-neutrality-auditor": {
+    "title": "Legal Neutrality Auditor",
+    "description": "Audits user-facing UI copy warning alerts, Terms of Service, and UI descriptions for legal neutrality.",
+    "pillar": "SECURITY",
+    "color": "WHITE",
+    "mockCapability": "Mock Legal Neutrality Auditing",
+    "mockTool": null,
+    "command": "/rw-legal-neutrality-auditor",
+    "reference": "legal-phrasing-dictionary.md"
+  },
+  "maintainability-auditor": {
+    "title": "Maintainability Auditor",
+    "description": "Audits codebase structure, DRY compliance, and identifies Fowler code smells tailored to development profiles.",
+    "pillar": "ARCHITECTURE",
+    "color": "GREEN",
+    "mockCapability": "Mock Maintainability Auditing",
+    "mockTool": "mock-eslint-plugin-complexity",
+    "command": "/rw-maintainability-auditor",
+    "reference": null
+  },
+  "notebook-auditor": {
+    "title": "Notebook Auditor",
+    "description": "Audits data science repositories and configures nbstripout pre-commit filters.",
+    "pillar": "QUALITY",
+    "color": "GREEN",
+    "mockCapability": "Mock Jupyter Notebook Cleaners",
+    "mockTool": "mock-nbstripout",
+    "command": "/rw-notebook-auditor",
+    "reference": "notebook-standards.md"
+  },
+  "observability-engineer": {
+    "title": "Observability Engineer",
+    "description": "Audits observability configurations, OpenTelemetry integration, and Honeycomb/Grafana dashboards.",
+    "pillar": "PERFORMANCE",
+    "color": "BLUE",
+    "mockCapability": "Mock Observability Engineering",
+    "mockTool": "mock-opentelemetry",
+    "command": "/rw-observability-engineer",
+    "reference": "observability-patterns.md"
+  },
+  "performance-auditor": {
+    "title": "Performance Auditor",
+    "description": "Audits codebase performance setups, benchmarking, and CI performance budgets.",
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW",
+    "mockCapability": "Mock Performance Auditing",
+    "mockTool": "mock-autocannon",
+    "command": "/rw-performance-auditor",
+    "reference": "performance-patterns/performance-patterns.md"
+  },
+  "privacy-hardener": {
+    "title": "Data Privacy Specialist",
+    "description": "Audits data storage schemas and configurations for CCPA/GDPR regulatory privacy compliance.",
+    "pillar": "SECURITY",
+    "color": "BLUE",
+    "mockCapability": "Mock PII Logging Audits",
+    "mockTool": "mock-gdpr-sanitizer",
+    "command": "/rw-privacy-hardener",
+    "reference": "data-privacy-checklist.md"
+  },
+  "qa-engineer": {
+    "title": "Testing QA Specialist",
+    "description": "Audits and configures unit, integration, and E2E test runners and code coverage gates.",
+    "pillar": "QUALITY",
+    "color": "YELLOW",
+    "mockCapability": "Mock Unit Testing",
+    "mockTool": "mock-vitest",
+    "command": "/rw-qa-engineer",
+    "reference": "testing-patterns.md"
+  },
+  "react-performance-auditor": {
+    "title": "React Performance Auditor",
+    "description": "Audits React client-side rendering speed, re-renders, layout shifts, and bfcache.",
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW",
+    "mockCapability": "Mock React Performance Auditing",
+    "mockTool": "mock-react-scan",
+    "command": "/rw-react-performance-auditor",
+    "reference": "performance-patterns/performance-patterns-react.md"
+  },
+  "repo-wizard": {
+    "title": "Lead Onboarding Orchestrator",
+    "description": "Orchestrates the repository onboarding checklist, dynamic QA setups, and multi-agent scanning loops.",
+    "pillar": "ORCHESTRATOR",
+    "color": "WHITE",
+    "mockCapability": null,
+    "mockTool": null,
+    "command": "/repo-wizard",
+    "reference": null
+  },
+  "resilience-architect": {
+    "title": "Fault Tolerance Specialist",
+    "description": "Audits fault-tolerance configurations, retry policies, backoffs, and circuit breakers.",
+    "pillar": "PERFORMANCE",
+    "color": "YELLOW",
+    "mockCapability": "Mock Retry & Circuit Breaker Setup",
+    "mockTool": "mock-opossum",
+    "command": "/rw-resilience-architect",
+    "reference": "resilience-patterns.md"
+  },
+  "state-hardener": {
+    "title": "State Hardener",
+    "description": "Audits React codebase hooks and states for stale closures, memory leaks, and async fetch race conditions.",
+    "pillar": "QUALITY",
+    "color": "GREEN",
+    "mockCapability": "Mock State Sanitization Auditing",
+    "mockTool": "mock-eslint-plugin-react-hooks",
+    "command": "/rw-state-hardener",
+    "reference": "state-sanitization-rules.md"
+  },
+  "state-integrity-auditor": {
+    "title": "State Integrity Auditor",
+    "description": "Audits codebase state machines, specifications (TLA+), and proof verification harnesses.",
+    "pillar": "ARCHITECTURE",
+    "color": "WHITE",
+    "mockCapability": "Mock Formal Model Verification",
+    "mockTool": "mock-kani",
+    "command": "/rw-state-integrity-auditor",
+    "reference": "formal-methods-patterns.md"
+  },
+  "supply-chain-auditor": {
+    "title": "Dependency Compliance Specialist",
+    "description": "Audits codebase dependencies for vulnerabilities and copyleft licenses.",
+    "pillar": "SECURITY",
+    "color": "GREEN",
+    "mockCapability": "Mock Dependency Licensing",
+    "mockTool": "mock-fossa",
+    "command": "/rw-supply-chain-auditor",
+    "reference": "supply-chain-audit-checklist.md"
+  },
+  "technical-scribe": {
+    "title": "Technical Documentation",
+    "description": "Audits and scaffolds ADR documentation systems and generates C4/architecture flowcharts.",
+    "pillar": "ARCHITECTURE",
+    "color": "BLUE",
+    "mockCapability": "Mock ADR & Architecture Diagrams",
+    "mockTool": "mock-mermaid-cli",
+    "command": "/rw-technical-scribe",
+    "reference": "documentation-standards.md"
+  },
+  "tool-auditor": {
+    "title": "Tool Auditor Specialist",
+    "description": "Audits recommended packages and libraries against security databases and licensing rules.",
+    "pillar": "HELPER",
+    "color": "WHITE",
+    "mockCapability": null,
+    "mockTool": null,
+    "command": null,
+    "reference": null
+  },
+  "tooling-engineer": {
+    "title": "Tooling Engineer Specialist",
+    "description": "Safely installs tools and edits config files using AST-based modifications.",
+    "pillar": "HELPER",
+    "color": "WHITE",
+    "mockCapability": null,
+    "mockTool": null,
+    "command": null,
+    "reference": null
+  },
+  "toolchain-architect": {
+    "title": "Toolchain Architect",
+    "description": "Audits build target constraints and cross-compilation toolchain parameters.",
+    "pillar": "ARCHITECTURE",
+    "color": "YELLOW",
+    "mockCapability": "Mock Cross-Compilation Toolchains",
+    "mockTool": "mock-riscv-gcc",
+    "command": "/rw-toolchain-architect",
+    "reference": "toolchain-standards.md"
+  },
+  "vcs-workflow-engineer": {
+    "title": "VCS Integration Specialist",
+    "description": "Audits and configures pre-commit hooks, Conventional Commit validations, and copyright headers.",
+    "pillar": "QUALITY",
+    "color": "GREEN",
+    "mockCapability": "Mock Git Hook Automation",
+    "mockTool": "mock-husky",
+    "command": "/rw-vcs-workflow-engineer",
+    "reference": "vcs-discipline-rules.md"
+  }
+}

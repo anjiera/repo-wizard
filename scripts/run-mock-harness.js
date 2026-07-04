@@ -25,31 +25,10 @@ const BLUE = '\x1b[34m';
 const { validateContract } = require('./validate-contracts');
 
 const ROOT = path.resolve(__dirname, '..');
-const SPECIALISTS = [
-  'accessibility-auditor',
-  'compliance-auditor',
-  'privacy-hardener',
-  'supply-chain-auditor',
-  'qa-engineer',
-  'vcs-workflow-engineer',
-  'technical-scribe',
-  'appsec-hardener',
-  'resilience-architect',
-  'deployment-engineer',
-  'api-contract-architect',
-  'data-pipeline-architect',
-  'notebook-auditor',
-  'embedded-systems-auditor',
-  'fuzz-engineer',
-  'toolchain-architect',
-  'state-integrity-auditor',
-  'ai-robustness-hardener',
-  'react-performance-auditor',
-  'state-hardener',
-  'maintainability-auditor',
-  'database-lifecycle-auditor',
-  'dev-onboarding-auditor'
-];
+const agentRegistry = require('../agents/agent-registry.json');
+const SPECIALISTS = Object.keys(agentRegistry).filter(
+  key => agentRegistry[key].pillar !== 'ORCHESTRATOR' && agentRegistry[key].pillar !== 'HELPER'
+);
 
 const { DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./report-constants');
 

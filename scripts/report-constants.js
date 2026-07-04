@@ -14,57 +14,19 @@ const TEAM_COLORS = {
 
 const DISCLAIMER_TEXT = 'Disclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.';
 
-const MOCK_CAPABILITY_MAP = {
-  'accessibility-auditor': 'Accessibility Auditing',
-  'compliance-auditor': 'Compliance Hardening',
-  'privacy-hardener': 'PII Logging Audits',
-  'supply-chain-auditor': 'Dependency Licensing',
-  'qa-engineer': 'Unit Testing',
-  'vcs-workflow-engineer': 'Git Hook Automation',
-  'technical-scribe': 'ADR & Architecture Diagrams',
-  'appsec-hardener': 'Application Hardening',
-  'resilience-architect': 'Retry & Circuit Breaker Setup',
-  'deployment-engineer': 'Container Orchestration & Backup',
-  'api-contract-architect': 'API Linting & Schema Checking',
-  'data-pipeline-architect': 'Data Integrity Checks',
-  'notebook-auditor': 'Jupyter Notebook Cleaners',
-  'embedded-systems-auditor': 'Embedded Warning Linters',
-  'fuzz-engineer': 'Fuzz Testing Harnesses',
-  'toolchain-architect': 'Cross-Compilation Toolchains',
-  'state-integrity-auditor': 'Formal Model Verification',
-  'ai-robustness-hardener': 'AI Input/Output Guardrails',
-  'react-performance-auditor': 'React Performance Auditing',
-  'state-hardener': 'State Sanitization Auditing',
-  'maintainability-auditor': 'Maintainability Auditing',
-  'database-lifecycle-auditor': 'Database Lifecycle Auditing',
-  'dev-onboarding-auditor': 'Developer Onboarding Auditing'
-};
+const agentRegistry = require('../agents/agent-registry.json');
 
-const MOCK_TOOL_MAP = {
-  'accessibility-auditor': 'axe-core',
-  'compliance-auditor': 'checkov',
-  'privacy-hardener': 'gdpr-sanitizer',
-  'supply-chain-auditor': 'fossa',
-  'qa-engineer': 'vitest',
-  'vcs-workflow-engineer': 'husky',
-  'technical-scribe': 'mermaid-cli',
-  'appsec-hardener': 'helmet',
-  'resilience-architect': 'opossum',
-  'deployment-engineer': 'docker-compose',
-  'api-contract-architect': 'spectral',
-  'data-pipeline-architect': 'pandera',
-  'notebook-auditor': 'nbstripout',
-  'embedded-systems-auditor': 'cppcheck',
-  'fuzz-engineer': 'cargo-fuzz',
-  'toolchain-architect': 'riscv-gcc',
-  'state-integrity-auditor': 'kani',
-  'ai-robustness-hardener': 'llm-guard',
-  'react-performance-auditor': 'react-scan',
-  'state-hardener': 'eslint-plugin-react-hooks',
-  'maintainability-auditor': 'eslint-plugin-complexity',
-  'database-lifecycle-auditor': 'atlas',
-  'dev-onboarding-auditor': 'dotenv-linter'
-};
+const MOCK_CAPABILITY_MAP = {};
+const MOCK_TOOL_MAP = {};
+
+for (const [key, value] of Object.entries(agentRegistry)) {
+  if (value.mockCapability) {
+    MOCK_CAPABILITY_MAP[key] = value.mockCapability;
+  }
+  if (value.mockTool) {
+    MOCK_TOOL_MAP[key] = value.mockTool;
+  }
+}
 
 const INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
 

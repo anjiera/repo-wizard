@@ -67,15 +67,50 @@ function validateAgentMatrix() {
     return;
   }
 
+  const registryFile = path.join(ROOT, 'agents', 'agent-registry.json');
+  if (!fs.existsSync(registryFile)) {
+    reportError('agents/agent-registry.json is missing.');
+    return;
+  }
+
+  let registry;
+  try {
+    registry = JSON.parse(fs.readFileSync(registryFile, 'utf8'));
+  } catch (err) {
+    reportError(`Failed to parse agent-registry.json: ${err.message}`);
+    return;
+  }
+
   const matrixContent = fs.readFileSync(MATRIX_FILE, 'utf8');
+  const matrixLines = matrixContent.split('\n');
+
   const agentFiles = fs.readdirSync(AGENTS_DIR)
     .filter(f => fs.statSync(path.join(AGENTS_DIR, f)).isFile() && f.endsWith('.md') && !f.startsWith('.') && !f.endsWith('.swp'));
 
   for (const file of agentFiles) {
-    // Remove extension to find matching persona names (e.g. "legal-neutrality-auditor")
     const agentName = path.basename(file, '.md');
-    if (!matrixContent.includes(agentName)) {
+    
+    // Find the row in AGENT_MATRIX.md containing this agent persona key
+    const matchingRow = matrixLines.find(line => {
+      const parts = line.split('|').map(s => s.trim());
+      return parts.length > 2 && parts[2] === `\`${agentName}\``;
+    });
+
+    if (!matchingRow) {
       reportError(`Agent persona '${agentName}' is not listed in docs/AGENT_MATRIX.md. Please add it to the taxonomy matrix.`);
+      continue;
+    }
+
+    const registryEntry = registry[agentName];
+    if (registryEntry) {
+      const parts = matchingRow.split('|').map(s => s.trim());
+      // Description is in column index 7
+      const matrixDescription = parts[7];
+      if (matrixDescription !== registryEntry.description) {
+        reportError(`Description for agent '${agentName}' in docs/AGENT_MATRIX.md does not match agents/agent-registry.json.\n` +
+                    `    Expected: "${registryEntry.description}"\n` +
+                    `    Found:    "${matrixDescription}"`);
+      }
     }
   }
 }
