@@ -23,6 +23,8 @@ const { TEAM_COLORS, DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = req
 const { DEFAULT_CONCLUSION } = require('./report-templates-helper');
 const { compileRealReports, getSafeRepoName, redactReportFiles } = require('./reports-compiler-engine');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
+const { writeLog, findOpenPort } = require('./server/utils');
+
 
 // Parse --report-path from startup arguments
 const cliReportPathIdx = process.argv.indexOf('--report-path');
@@ -82,35 +84,6 @@ let activeScanProcess = null;
 let scanLogs = [];
 let isScanning = false;
 const { spawn, execSync } = require('child_process');
-
-function writeLog(level, message, correlationId = '', extra = {}) {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    level,
-    correlation_id: correlationId,
-    message,
-    ...extra
-  };
-  console.log(JSON.stringify(logEntry));
-}
-
-/**
- * Searches for an open port using the native net package
- */
-function findOpenPort(startPort, callback) {
-  if (startPort > 65535) {
-    callback(new Error('No open ports found in range 3000-65535'));
-    return;
-  }
-  const server = net.createServer();
-  server.listen(startPort, '127.0.0.1', () => {
-    server.once('close', () => callback(null, startPort));
-    server.close();
-  });
-  server.on('error', () => {
-    findOpenPort(startPort + 1, callback);
-  });
-}
 
 // Initialize in-memory sessionState cache from disk on startup
 let sessionState = {};
