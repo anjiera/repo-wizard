@@ -81,7 +81,7 @@ if (fs.existsSync(LAST_SESSION_POINTER)) {
 let activeScanProcess = null;
 let scanLogs = [];
 let isScanning = false;
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 
 function writeLog(level, message, correlationId = '', extra = {}) {
   const logEntry = {
@@ -1100,6 +1100,36 @@ const server = http.createServer((req, res) => {
         if (!targetPath || !fs.existsSync(targetPath)) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Invalid or missing target directory path.' }));
+          return;
+        }
+
+        // Run initial codebase scan first
+        try {
+          const scanScriptPath = path.join(ROOT, 'scripts', 'initial-codebase-scan.js');
+          let cmd = `node "${scanScriptPath}" --target-path "${targetPath}"`;
+          if (reportRoot) {
+            cmd += ` --report-path "${reportRoot}"`;
+          }
+          execSync(cmd, { stdio: 'pipe' });
+
+          const repoName = getSafeRepoName(targetPath);
+          const activeReportRootFinal = reportRoot;
+          const activeReportsRootDirFinal = path.join(activeReportRootFinal, '.repo-wizard', 'reports');
+          const newSessionFile = path.join(activeReportsRootDirFinal, repoName, 'session.json');
+
+          if (fs.existsSync(newSessionFile)) {
+            sessionState = JSON.parse(fs.readFileSync(newSessionFile, 'utf8'));
+            currentSessionFile = newSessionFile;
+
+            // Save pointer atomically
+            const tempPointer = LAST_SESSION_POINTER + '.tmp';
+            fs.writeFileSync(tempPointer, JSON.stringify({ lastSessionPath: currentSessionFile }, null, 2), 'utf8');
+            fs.renameSync(tempPointer, LAST_SESSION_POINTER);
+          }
+        } catch (scanErr) {
+          writeLog('error', 'Initial codebase scan script failed', correlationId, { error: scanErr.message });
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: `Initial codebase scan failed: ${scanErr.stderr ? scanErr.stderr.toString() : scanErr.message}` }));
           return;
         }
 

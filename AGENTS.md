@@ -47,6 +47,9 @@ Before running full sweeps, the Lead Agent dispatches a relevance check to each 
 
 For details on the architecture, see the specifications in the [repo-wizard-planning/](repo-wizard-planning/) folder.
 
+### Unified Codebase Setup & Scan Phase
+Before running the sequential orchestrator or launching the alignment questionnaire, the Lead Agent (or Dashboard UI) must always execute the pre-scan setup: `node scripts/initial-codebase-scan.js --target-path <targetPath>`. You must verify the command exited with `0` (success) before proceeding. You must never run the orchestrator script on a missing manifest or setup failure.
+
 ## Workflow: Mandatory Verification & Review Gate for Programming Tasks
 
 This workflow applies strictly to tasks that involve writing, modifying, or refactoring code. It does NOT apply to planning, brainstorming, research, or exploratory tasks.
