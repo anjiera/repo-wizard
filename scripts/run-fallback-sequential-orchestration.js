@@ -486,9 +486,6 @@ async function main() {
       // Run the fast codebase relevance check
       const { relevance, rationale } = checkAgentRelevance(agentName, resolvedTarget, entry.contract);
       if (relevance === 'Low') {
-        const skippedContent = `# Observations for ${agentName}\n\nSkipped: Low relevance to the workspace.\n\nRationale: ${rationale}\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`;
-        fs.writeFileSync(obsPath, skippedContent, 'utf8');
-        
         entry.status = 'skipped';
         completed++;
         

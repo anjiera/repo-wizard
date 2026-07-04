@@ -33,7 +33,11 @@ function run() {
     assert(session.repoSize === 'XS', 'inferred repoSize is XS for a small target repo');
     
     const notebookObs = path.join(reportsDir, 'agents', 'temp_initial_scan_test_repo-observations-notebook-auditor.md');
-    assert(fs.existsSync(notebookObs), 'skipped observations report generated for low-relevance notebook auditor');
+    assert(!fs.existsSync(notebookObs), 'skipped observations report is not generated for low-relevance notebook auditor');
+    
+    const manifest = JSON.parse(fs.readFileSync(manifestJsonPath, 'utf8'));
+    const notebookContract = manifest.contracts.find(c => c.agent_name === 'notebook-auditor');
+    assert(notebookContract && notebookContract.status === 'skipped', 'notebook-auditor status is skipped in manifest');
     
   } finally {
     fs.rmSync(tempScanDir, { recursive: true, force: true });

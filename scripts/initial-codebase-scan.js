@@ -199,18 +199,6 @@ for (const spec of SPECIALISTS) {
   let status = 'pending';
   if (relevance === 'Low') {
     status = 'skipped';
-    // Write skipped observation report
-    const skippedContent = `# Observations for ${spec}\n\nSkipped: Low relevance to the workspace.\n\nRationale: ${rationale}\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`;
-    fs.writeFileSync(path.join(obsDir, `${repoName}-observations-${spec}.md`), skippedContent, 'utf8');
-    
-    // Write skipped contract
-    const skippedContract = {
-      contract_version: '1.0.0',
-      packages: [],
-      configs: [],
-      verification_command: 'echo "Skipped agent"'
-    };
-    fs.writeFileSync(path.join(contractsDir, `${spec}-contract.json`), JSON.stringify(skippedContract, null, 2), 'utf8');
   } else if (isNativeChat) {
     status = 'pending_agent_fallback';
   }

@@ -120,6 +120,10 @@ function run() {
     const skippedManifestUpdated = JSON.parse(fs.readFileSync(targetManifestPath, 'utf8'));
     assert(skippedManifestUpdated.contracts[0].status === 'skipped', 'skipped contracts remain status skipped');
     assert(skippedManifestUpdated.contracts[1].status === 'completed', 'pending contracts are completed');
+    
+    const skippedObsPath = path.join(reportsDir, 'agents', 'test-repo-observations-notebook-auditor.md');
+    assert(!fs.existsSync(skippedObsPath), 'observations file is not created for skipped agent in orchestration');
+
     if (fs.existsSync(reportsDir)) {
       fs.rmSync(reportsDir, { recursive: true, force: true });
     }
