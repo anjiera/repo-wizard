@@ -1,8 +1,21 @@
 'use strict';
 
 // Word-count thresholds for Executive Summary sections.
-// This is the single canonical source; all other files reference these constants.
-const SECTION_WORD_COUNT_MIN = 800;
+const SIZING_THRESHOLDS = {
+  XS: { min: 50, max: 600, minParagraphs: 1 },
+  S:  { min: 150, max: 1000, minParagraphs: 1 },
+  M:  { min: 300, max: 2000, minParagraphs: 2 },
+  L:  { min: 500, max: 3000, minParagraphs: 3 },
+  XL: { min: 800, max: 4000, minParagraphs: 3 }
+};
+
+function getSectionLimits(repoSize) {
+  const size = (repoSize || 'L').toUpperCase();
+  return SIZING_THRESHOLDS[size] || SIZING_THRESHOLDS.L;
+}
+
+// Default values for backwards compatibility (Tier L values)
+const SECTION_WORD_COUNT_MIN = 500;
 const SECTION_WORD_COUNT_MAX = 3000;
 
 const TEAM_COLORS = {
@@ -33,6 +46,7 @@ const INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
 module.exports = {
   SECTION_WORD_COUNT_MIN,
   SECTION_WORD_COUNT_MAX,
+  getSectionLimits,
   TEAM_COLORS,
   DISCLAIMER_TEXT,
   MOCK_CAPABILITY_MAP,

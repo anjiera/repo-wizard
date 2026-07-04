@@ -19,7 +19,7 @@ const path = require('path');
 const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
 const { parseCSV } = require('../solo-dev-toolkit/scripts/csv-parser-helper');
 
-const { DISCLAIMER_TEXT, SECTION_WORD_COUNT_MIN, SECTION_WORD_COUNT_MAX } = require('./report-constants');
+const { DISCLAIMER_TEXT, getSectionLimits } = require('./report-constants');
 
 // Expected CSV Columns
 const CSV_COLUMNS = [
@@ -121,12 +121,14 @@ function countWords(str) {
 /**
  * Validates a single markdown or HTML file
  */
-function validateFile(filePath) {
+function validateFile(filePath, repoSize = 'L') {
   const errors = [];
   const content = fs.readFileSync(filePath, 'utf8');
   const filename = path.basename(filePath);
   const isHtml = filePath.endsWith('.html');
   const seenSentences = new Set();
+
+  const { min: wordCountMin, max: wordCountMax, minParagraphs } = getSectionLimits(repoSize);
 
   // 1. Check Developer Empowerment Disclaimer
   if (!content.includes(DISCLAIMER_TEXT)) {
@@ -207,25 +209,29 @@ function validateFile(filePath) {
               errors.push(`HTML Section "${headings[i].title}" must have at least 1 paragraph.`);
             }
           } else {
-            if (paragraphs.length < 3) {
-              errors.push(`HTML Section "${headings[i].title}" must have at least 3 paragraphs (found ${paragraphs.length}).`);
+            if (paragraphs.length < minParagraphs) {
+              errors.push(`HTML Section "${headings[i].title}" must have at least ${minParagraphs} paragraphs (found ${paragraphs.length}).`);
             } else {
               // Check BLUF
-              const bluf = paragraphs[0];
-              const isItalic = bluf.startsWith('<em>') && bluf.endsWith('</em>');
-              if (!isItalic) {
-                errors.push(`HTML Section "${headings[i].title}" first paragraph must be wrapped in italics (<em>...</em>).`);
-              }
-              if (bluf.includes('BLUF:')) {
-                errors.push(`HTML Section "${headings[i].title}" first paragraph must not contain the literal prefix 'BLUF:'.`);
+              if (paragraphs.length > 0) {
+                const bluf = paragraphs[0];
+                const isItalic = bluf.startsWith('<em>') && bluf.endsWith('</em>');
+                if (!isItalic) {
+                  errors.push(`HTML Section "${headings[i].title}" first paragraph must be wrapped in italics (<em>...</em>).`);
+                }
+                if (bluf.includes('BLUF:')) {
+                  errors.push(`HTML Section "${headings[i].title}" first paragraph must not contain the literal prefix 'BLUF:'.`);
+                }
               }
               // Check Overview
-              const overview = paragraphs[1];
-              if (!overview.includes('Overview:')) {
-                errors.push(`HTML Section "${headings[i].title}" second paragraph must contain 'Overview:'.`);
+              if (paragraphs.length > 1) {
+                const overview = paragraphs[1];
+                if (!overview.includes('Overview:')) {
+                  errors.push(`HTML Section "${headings[i].title}" second paragraph must contain 'Overview:'.`);
+                }
               }
 
-              // Check Technical Overview paragraphs for 3-6 sentences count rule
+              // Check Technical Overview paragraphs for 1-8 sentences count rule
               for (let j = 2; j < paragraphs.length; j++) {
                 const pText = paragraphs[j];
                 // Exempt list intros (paragraphs ending with a colon)
@@ -233,8 +239,8 @@ function validateFile(filePath) {
                   continue;
                 }
                 const sentences = countSentences(pText);
-                if (sentences < 3 || sentences > 6) {
-                  errors.push(`HTML Section "${headings[i].title}" Technical Overview paragraph ${j + 1} has ${sentences} sentences (must be between 3 and 6).`);
+                if (sentences < 1 || sentences > 8) {
+                  errors.push(`HTML Section "${headings[i].title}" Technical Overview paragraph ${j + 1} has ${sentences} sentences (must be between 1 and 8).`);
                 }
               }
               checkDuplicateSentences(paragraphs, errors, `HTML Section "${headings[i].title}"`, seenSentences);
@@ -256,8 +262,8 @@ function validateFile(filePath) {
                 technicalContent = sectionContent.slice(idx);
               }
               const words = countWords(technicalContent);
-              if (words < SECTION_WORD_COUNT_MIN || words > SECTION_WORD_COUNT_MAX) {
-                errors.push(`HTML Section "${headings[i].title}" Technical Overview word count is ${words} (must be between ${SECTION_WORD_COUNT_MIN} and ${SECTION_WORD_COUNT_MAX}).`);
+              if (words < wordCountMin || words > wordCountMax) {
+                errors.push(`HTML Section "${headings[i].title}" Technical Overview word count is ${words} (must be between ${wordCountMin} and ${wordCountMax}).`);
               }
             }
           }
@@ -328,25 +334,29 @@ function validateFile(filePath) {
               errors.push(`Section "${sec.heading}" must have at least 1 paragraph.`);
             }
           } else {
-            if (sec.paragraphs.length < 3) {
-              errors.push(`Section "${sec.heading}" must have at least 3 paragraphs (found ${sec.paragraphs.length}).`);
+            if (sec.paragraphs.length < minParagraphs) {
+              errors.push(`Section "${sec.heading}" must have at least ${minParagraphs} paragraphs (found ${sec.paragraphs.length}).`);
             } else {
               // Check BLUF
-              const bluf = sec.paragraphs[0];
-              const isItalic = (bluf.startsWith('*') && bluf.endsWith('*')) || (bluf.startsWith('_') && bluf.endsWith('_'));
-              if (!isItalic) {
-                errors.push(`Section "${sec.heading}" first paragraph must be wrapped in italics (starting with '*' or '_' and ending with '*' or '_').`);
-              }
-              if (bluf.includes('BLUF:')) {
-                errors.push(`Section "${sec.heading}" first paragraph must not contain the literal prefix 'BLUF:'.`);
+              if (sec.paragraphs.length > 0) {
+                const bluf = sec.paragraphs[0];
+                const isItalic = (bluf.startsWith('*') && bluf.endsWith('*')) || (bluf.startsWith('_') && bluf.endsWith('_'));
+                if (!isItalic) {
+                  errors.push(`Section "${sec.heading}" first paragraph must be wrapped in italics (starting with '*' or '_' and ending with '*' or '_').`);
+                }
+                if (bluf.includes('BLUF:')) {
+                  errors.push(`Section "${sec.heading}" first paragraph must not contain the literal prefix 'BLUF:'.`);
+                }
               }
               // Check Overview
-              const overview = sec.paragraphs[1];
-              if (!overview.includes('Overview:')) {
-                errors.push(`Section "${sec.heading}" second paragraph must contain 'Overview:'.`);
+              if (sec.paragraphs.length > 1) {
+                const overview = sec.paragraphs[1];
+                if (!overview.includes('Overview:')) {
+                  errors.push(`Section "${sec.heading}" second paragraph must contain 'Overview:'.`);
+                }
               }
 
-              // Check Technical Overview paragraphs for 3-6 sentences count rule
+              // Check Technical Overview paragraphs for 1-8 sentences count rule
               for (let j = 2; j < sec.paragraphs.length; j++) {
                 const pText = sec.paragraphs[j];
                 const trimmed = pText.trim();
@@ -359,8 +369,8 @@ function validateFile(filePath) {
                   continue;
                 }
                 const sentences = countSentences(pText);
-                if (sentences < 3 || sentences > 6) {
-                  errors.push(`Section "${sec.heading}" Technical Overview paragraph ${j + 1} has ${sentences} sentences (must be between 3 and 6).`);
+                if (sentences < 1 || sentences > 8) {
+                  errors.push(`Section "${sec.heading}" Technical Overview paragraph ${j + 1} has ${sentences} sentences (must be between 1 and 8).`);
                 }
               }
               checkDuplicateSentences(sec.paragraphs, errors, `Section "${sec.heading}"`, seenSentences);
@@ -369,8 +379,8 @@ function validateFile(filePath) {
               const technicalParagraphs = sec.paragraphs.slice(2);
               const totalText = technicalParagraphs.join(' ');
               const words = countWords(totalText);
-              if (words < SECTION_WORD_COUNT_MIN || words > SECTION_WORD_COUNT_MAX) {
-                errors.push(`Section "${sec.heading}" Technical Overview word count is ${words} (must be between ${SECTION_WORD_COUNT_MIN} and ${SECTION_WORD_COUNT_MAX}).`);
+              if (words < wordCountMin || words > wordCountMax) {
+                errors.push(`Section "${sec.heading}" Technical Overview word count is ${words} (must be between ${wordCountMin} and ${wordCountMax}).`);
               }
             }
           }
@@ -431,6 +441,28 @@ function validateCSV(filePath) {
 }
 
 /**
+ * Helper to resolve repo size from session.json
+ */
+function resolveRepoSize(targetDir) {
+  let dir = targetDir;
+  for (let i = 0; i < 3; i++) {
+    const sessionPath = path.join(dir, 'session.json');
+    if (fs.existsSync(sessionPath)) {
+      try {
+        const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
+        if (session && session.repoSize) {
+          return session.repoSize;
+        }
+      } catch (e) {}
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return 'L'; // fallback
+}
+
+/**
  * Runs validation on all deliverables in a directory
  */
 function runValidation(targetDir) {
@@ -438,6 +470,9 @@ function runValidation(targetDir) {
     console.log(`Directory does not exist: ${targetDir}`);
     return 0;
   }
+
+  const repoSize = resolveRepoSize(targetDir);
+  console.log(`Resolved codebase size tier: ${repoSize}`);
 
   let totalErrors = 0;
 
@@ -467,7 +502,7 @@ function runValidation(targetDir) {
       } else if (file.endsWith('.md') || file.endsWith('.html')) {
         if (file.includes('report') || file.includes('executive-summary') || file.includes('observations')) {
           console.log(`  Auditing report: ${fullPath}`);
-          const reportErrors = validateFile(fullPath);
+          const reportErrors = validateFile(fullPath, repoSize);
           if (reportErrors.length === 0) {
             console.log(`    ${GREEN}✓ Passed${RESET}`);
           } else {

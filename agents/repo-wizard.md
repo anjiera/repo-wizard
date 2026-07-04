@@ -155,21 +155,22 @@ Write the deliverables upon scan completion by first generating and saving the b
      * You must write genuine, unique technical summaries and analysis. You are strictly forbidden from copying or looping sentences/paragraphs or using repetitive boilerplate phrases to artificially pad the section word counts.
    - Generate a custom backlog task list representing the actual suggested actions compiled from the specialist audits, categorized under the 4 pillars.
    - Construct and write a JSON object to `.repo-wizard/session.json` (merging with existing session data) containing:
-     * `answersInferred`: boolean (`true` if headless/inferred, `false` if interactive).
+     * `answersInferred`: boolean (`true` if headless/inferred, `false` if interactive)
      * `compiledAnalysis`: An object with keys:
-        * `section1`: Section 1 of the Executive Summary (BLUF/Overview/Technical Overview). First paragraph must be wrapped in italics, second paragraph must start with "Overview:", remaining paragraphs must have between 3 and 6 sentences each, and the total section word count must be between `SECTION_WORD_COUNT_MIN` and `SECTION_WORD_COUNT_MAX` words (as defined in `scripts/report-constants.js`).
-        * `section2`: Section 2 of the Executive Summary. (Same paragraph/word constraints).
-        * `section3`: Section 3 of the Executive Summary. (Same paragraph/word constraints).
-       * `maturityGuidance`: Maturity model guidance paragraphs aligned with the 4 pillars.
-       * `conclusion`: Hopeworthy conclusion text summarizing findings and next steps.
-       * `suggestedAdjustments`: Markdown bullet points representing suggested adjustments.
-       * `quickWins`: An array of markdown bullet point strings representing Quick Wins recommendations.
-       * `highValue`: An array of markdown bullet point strings representing High-Value Projects recommendations.
-       * `papercuts`: An array of markdown bullet point strings representing Papercuts / Quality of Life recommendations.
-       * `strategicDebt`: An array of markdown bullet point strings representing Strategic Debt recommendations.
-       * `backlog`: An array of stories, each containing `summary`, `desc`, `type` (e.g. `"Story"`), `epic`, `agent` (recommending agent), `goal`, and `priority` (`quick-win`, `high-value-project`, or `papercut`).
-    - Run the compilation utility `node scripts/reports-compile.js` to compile the final reports.
-    - **Deliverables Validation & Self-Correction Gate:** Run `node scripts/validate-deliverables.js` to verify that all compiled HTML and Markdown files are valid and contain no honesty violations, bracketed placeholder tags, or formatting bugs. If the validator finds any errors, you MUST read the errors, adjust the compiled analysis values in `.repo-wizard/session.json`, re-compile, and re-validate until the checks pass.
+         * `section1`: Section 1 of the Executive Summary (BLUF/Overview/Technical Overview). First paragraph must be wrapped in italics, second paragraph must start with "Overview:", remaining paragraphs must have between 1 and 8 sentences each to support truthfulness and conciseness, and the total section word count must align with the target limits for the active codebase sizing tier defined in `scripts/report-constants.js`.
+         * `section2`: Section 2 of the Executive Summary. (Same paragraph/word constraints).
+         * `section3`: Section 3 of the Executive Summary. (Same paragraph/word constraints).
+        * `maturityGuidance`: Maturity model guidance paragraphs aligned with the 4 pillars.
+        * `conclusion`: Hopeworthy conclusion text summarizing findings and next steps.
+        * `suggestedAdjustments`: Markdown bullet points representing suggested adjustments.
+        * `quickWins`: An array of markdown bullet point strings representing Quick Wins recommendations.
+        * `highValue`: An array of markdown bullet point strings representing High-Value Projects recommendations.
+        * `papercuts`: An array of markdown bullet point strings representing Papercuts / Quality of Life recommendations.
+        * `strategicDebt`: An array of markdown bullet point strings representing Strategic Debt recommendations.
+        * `backlog`: An array of stories, each containing `summary`, `desc`, `type` (e.g. `"Story"`), `epic`, `agent` (recommending agent), `goal`, and `priority` (`quick-win`, `high-value-project`, or `papercut`).
+     - **Logged Sizing Tier Safety Valve**: If you find that the target repository's density of authentic observations is mismatching the detected sizing tier (e.g., a large codebase with low complexity or vice versa), you are explicitly permitted to update the `repoSize` property in `.repo-wizard/session.json` up or down by one level. When doing so, you must prepend an HTML comment block to the top of your compiled report sections indicating the adjustment (e.g., `<!-- Sizing Tier Adjusted from L to M due to low complexity -->`).
+     - Run the compilation utility `node scripts/reports-compile.js` to compile the final reports.
+     - **Deliverables Validation & Self-Correction Gate:** Run `node scripts/validate-deliverables.js` to verify that all compiled HTML and Markdown files are valid and contain no honesty violations, bracketed placeholder tags, or formatting bugs. If the validator finds any errors, you MUST read the errors, adjust the compiled analysis values in `.repo-wizard/session.json`, re-compile, and re-validate until the checks pass.
 
 2. **Compiled Deliverables**:
    The compiler engine will build the deliverables under `.repo-wizard/reports/<repo-name-here>/` using the custom session data:

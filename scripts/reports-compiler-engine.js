@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = require('./root-resolver');
 const { QUALITY_PILLARS } = require('./quality-pillars');
-const { TEAM_COLORS, DISCLAIMER_TEXT, SECTION_WORD_COUNT_MIN, SECTION_WORD_COUNT_MAX } = require('./report-constants');
+const { TEAM_COLORS, DISCLAIMER_TEXT, getSectionLimits } = require('./report-constants');
 const { DEFAULT_CONCLUSION } = require('./report-templates-helper');
 const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 
@@ -194,7 +194,7 @@ function compileRealReports(session) {
     }
   }
 
-  // 1. Executive Summary - Detailed whitepaper blocks (must be between SECTION_WORD_COUNT_MIN and SECTION_WORD_COUNT_MAX words per section; see scripts/report-constants.js)
+  // 1. Executive Summary - Detailed whitepaper blocks (word count limits are dynamic based on repoSize; see scripts/report-constants.js)
   const currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   // Dynamically select whitepaper content based on repository profile

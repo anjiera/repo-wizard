@@ -57,8 +57,10 @@ sequenceDiagram
 
 ## 3. Mitigation of Fabrication Risks
 
-Enforcing rigid, high-volume word count limits on tiny codebases triggers a high probability of simulated or padded reports. To mitigate this:
-* **Proportional Constraints:** By adjusting the validation limits down to matching ranges (e.g., 150 - 450 words for XS repositories), subagents can report concise, authentic codebase observations without generating filler text.
+Enforcing rigid, high-volume word count limits on tiny codebases, or rigid sentence limits, triggers a high probability of simulated or padded reports. To mitigate this:
+* **Proportional Constraints:** Validation limits are dynamically scaled down based on the `repoSize` tier (e.g., XS requires only 50–600 words per section, and 1 minimum paragraph, rather than the static 800 words and 3 paragraphs).
+* **Relaxed Sentence Constraints:** Paragraph sentence count rules are relaxed to a flexible **1–8 sentences** per paragraph, permitting concise 1–2 sentence technical suggestions where appropriate while avoiding massive unreadable text blocks.
+* **Sizing Tier Safety Valve:** To handle mismatch between codebase size and technical density (e.g. large simple repos or small complex repos), the agent is explicitly permitted to adjust its sizing tier up or down by one level in `session.json`, provided it documents the adjustment with an HTML comment trail (e.g., `<!-- Sizing Tier Adjusted from L to M due to low complexity -->`).
 * **Repetition & Template Detection:** The deliverables validator enforces checks against serial template loops (e.g., iteration indices or boilerplate sentences) to verify that the generated text remains natural and representative of the codebase.
 
 ---
