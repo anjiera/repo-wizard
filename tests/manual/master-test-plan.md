@@ -1,6 +1,6 @@
 # Master Manual Test Plan & Regression Checklist
 
-This document is the high-level manual testing index for **Repo Wizard** (`repo-wizard`). It is designed to verify the entire system from core baselines up to live agent workflows and CLI integrations.
+This document is the high-level manual testing index for **Repo Wizard** (`repo-wizard`). It is designed to verify the entire system from core baselines up to live agent workflows, CLI integrations, and validation gates.
 
 Detailed step-by-step procedures for individual complex features are located in [tests/manual/features/](features/).
 
@@ -8,14 +8,14 @@ Detailed step-by-step procedures for individual complex features are located in 
 
 ## Testing Order Roadmap
 
-To verify components incrementally and minimize risk, execute tests in this order:
+To verify components incrementally and mitigate integration risks, execute tests in this order:
 
 ```mermaid
 graph TD
     L1[Level 1: System Baseline Setup] --> L2[Level 2: Dry-Run & Sandboxing]
     L2 --> L3[Level 3: Legal Consent & Local CLI]
-    L3 --> L4[Level 4: Remote Headless sweeps]
-    L4 --> L5[Level 5: IDE Plugin slash commands]
+    L3 --> L4[Level 4: Remote Headless Sweeps]
+    L4 --> L5[Level 5: IDE Plugin Slash Commands & Native Agents]
     
     style L1 fill:#4CAF50,stroke:#388E3C,color:#fff
     style L2 fill:#2196F3,stroke:#1976D2,color:#fff
@@ -45,23 +45,23 @@ graph TD
     node scripts/validate-agents.js
     node scripts/validate-commands.js
     node scripts/validate-skills.js
-    node scripts/validate-docs.js
+    node scripts/validate-project-docs.js
     ```
   - *Expected Outcome*:
     - `validate-agents.js`: Outputs checked agent list and returns `0 error(s) found`.
     - `validate-commands.js`: Outputs `25 commands checked — 0 error(s) — PASSED`.
     - `validate-skills.js`: Outputs `28 skills checked — 0 error(s) found`.
-    - `validate-docs.js`: Outputs `✓ All documentation upkeep audits passed successfully.`
+    - `validate-project-docs.js`: Outputs `✓ All documentation upkeep audits passed successfully.`
 
 - [ ] **1.3 Zero-Dependency Markdown-to-HTML Compiler**
   - Compile a test guide to HTML:
     ```bash
-    node solo-dev-toolkit/scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
+    node solo-dev-toolkit/scripts/md-to-html.js docs/getting-started.md docs/getting-started.html
     ```
   - *Expected Outcome*:
-    - Terminal prints: `Successfully compiled: TESTING.md -> TESTING.html`.
-    - Open `docs/TESTING.html` in your browser; verify it renders with premium dark-themed styling, headings, and tables.
-    - Run `git status` and verify `docs/TESTING.html` does **not** show up as an untracked file (fully ignored by `.gitignore`).
+    - Terminal prints: `Successfully compiled: getting-started.md -> getting-started.html`.
+    - Open `docs/getting-started.html` in your browser; verify it renders with premium dark-themed styling, headings, and tables.
+    - Run `git status` and verify `docs/getting-started.html` does **not** show up as an untracked file (fully ignored by `.gitignore`).
 
 ---
 
@@ -93,13 +93,12 @@ graph TD
 
 ---
 
-
 ## Level 3: Legal Consent & Local CLI Sweeps (Real Execution)
 
 **Goal**: Verify that the Step 0 Consent Gate blocks unauthorized scans, prompts for acceptance, writes the state file, and executes a local headless scan with TTY/non-TTY detection.
 *For detailed step-by-step procedures, see [features/hybrid-orchestration.md](features/hybrid-orchestration.md).*
 
-- [ ] **4.1 Step 0 Legal Consent Gate Block**
+- [ ] **3.1 Step 0 Legal Consent Gate Block**
   - Delete the consent agreement file if it exists:
     ```bash
     # PowerShell
@@ -107,38 +106,44 @@ graph TD
     # Bash
     rm -f .repo-wizard/.tos_agreed
     ```
-  - Trigger a local scan in your terminal (using the Antigravity CLI or your execution runner):
+  - Trigger a local scan in your terminal using the Antigravity CLI:
     ```bash
-    agy run /repo-wizard
+    agy --dangerously-skip-permissions -p "/repo-wizard --target-path <target-path>"
     ```
   - *Expected Outcome*:
     - The agent halts execution immediately, displays the standard disclaimer, and prompts: `Do you accept these terms? (y/N)`.
     - Respond with `n`. The command must exit with a refusal error and **not** run any scan.
 
-- [ ] **4.2 Step 0 Consent Acceptance**
-  - Run the `agy run /repo-wizard` command again. When prompted, type `y` and press Enter.
+- [ ] **3.2 Step 0 Consent Acceptance**
+  - Run the scan command again. When prompted, type `y` and press Enter.
   - *Expected Outcome*:
-    - Creates a JSON file at `.repo-wizard/.tos_agreed` containing:
-      ```json
-      {
-        "agreed_by": "dev-user",
-        "timestamp": "..."
-      }
-      ```
+    - Creates a JSON file at `.repo-wizard/.tos_agreed` containing the agreement details.
     - The scan proceeds past Step 0 into Step 1.
 
-- [ ] **4.3 Headless Local Scan & Progress Indicator (TTY vs Non-TTY)**
-  - Run the headless local command in a standard interactive terminal (TTY):
+- [ ] **3.3 Unified Codebase Setup & Scan Phase (Mandatory Setup)**
+  - Before running the orchestrator script, run the pre-scan setup:
     ```bash
-    agy run /repo-wizard --headless
-    ```
-  - Run the headless local command piping output to a text file (Non-TTY):
-    ```bash
-    agy run /repo-wizard --headless > scan-output.log
+    node scripts/initial-codebase-scan.js --target-path <target-path>
     ```
   - *Expected Outcome*:
-    - **TTY (Interactive Terminal)**: Renders a live, smooth progress bar updating in-place.
-    - **Non-TTY (Piped Log File)**: Prints clean, line-by-line milestones without control characters. Open `scan-output.log` and verify it contains clean logs.
+    - Script generates the initial manifest files in `.repo-wizard/` and exits with code `0`.
+
+- [ ] **3.4 Headless Local Scan via Orchestrator (Explicit Parameter Checks)**
+  - Attempt to run the CLI orchestrator without `--target-path`:
+    ```bash
+    node scripts/run-fallback-sequential-orchestration.js
+    ```
+    - *Expected*: Throws an error indicating `--target-path` is mandatory and exits with a non-zero code.
+  - Run the CLI orchestrator specifying `--target-path` in a standard interactive terminal (TTY):
+    ```bash
+    node scripts/run-fallback-sequential-orchestration.js --target-path <target-path>
+    ```
+    - *Expected*: Renders a live, colorized progress logging interface with ANSI escape codes.
+  - Run it redirecting output to a file (Non-TTY):
+    ```bash
+    node scripts/run-fallback-sequential-orchestration.js --target-path <target-path> > scan-output.log
+    ```
+    - *Expected*: Writes clean, line-by-line milestones without control characters. Open `scan-output.log` and verify it contains clean logs.
 
 ---
 
@@ -147,47 +152,52 @@ graph TD
 **Goal**: Verify that scanning remote repositories compiles correct observation summaries, full reports, and roadmap upgrade hooks.
 *For detailed step-by-step procedures, see [features/backlog-exporter.md](features/backlog-exporter.md).*
 
-- [ ] **5.1 Remote Profiling Scan**
-  - Run the remote scanner command by passing a public GitHub URL (e.g. `https://github.com/expressjs/express` or a small test repo):
+- [ ] **4.1 Remote Profiling Scan**
+  - Run the remote scanner command by passing a public GitHub URL:
     ```bash
-    agy run /repo-wizard https://github.com/expressjs/express
+    agy --dangerously-skip-permissions -p "/repo-wizard --headless --target-path <target-path>"
     ```
   - *Expected Outcome*:
-    - Automatically executes Approach A (shallow clone), clones the repository, and dispatches the relevant subagent sweeps.
-    - Generates a full Markdown report at `.repo-wizard/reports/repo-wizard-full-report.md` containing the executive summary, domain coverage list, and developer disclaimers.
+    - Automatically executes a shallow clone, clones the repository, and dispatches the relevant subagent sweeps.
+    - Generates a full Markdown report at `.repo-wizard/reports/repo-wizard-full-report.md`.
 
-- [ ] **5.2 Custom Checkout Path & Automatic Deletion Cleanup**
+- [ ] **4.2 Custom Checkout Path & Automatic Deletion Cleanup**
   - Run a remote scan with the custom `--checkout-path` parameter:
     ```bash
-    agy run /repo-wizard https://github.com/expressjs/express --checkout-path ./temp_checkout_test
+    agy --dangerously-skip-permissions -p "/repo-wizard --headless --target-path <target-path> --checkout-path ./temp_checkout_test"
     ```
   - *Expected Outcome*:
     - The repository is checked out shallowly to `./temp_checkout_test` locally.
-    - The orchestrator retrieves the size warning from the GitHub API.
     - Upon complete compilation of reports, the `./temp_checkout_test` folder is deleted recursively and cleanly.
 
-- [ ] **5.3 Checkout retention via `--keep-checkout`**
+- [ ] **4.3 Checkout Retention via `--keep-checkout`**
   - Run a remote scan specifying both custom path and retention flag:
     ```bash
-    agy run /repo-wizard https://github.com/expressjs/express --checkout-path ./temp_checkout_test --keep-checkout
+    agy --dangerously-skip-permissions -p "/repo-wizard --headless --target-path <target-path> --checkout-path ./temp_checkout_test --keep-checkout"
     ```
   - *Expected Outcome*:
     - The repository is checked out to `./temp_checkout_test`.
-    - After scanning and report compilation, the `./temp_checkout_test` folder is NOT deleted and remains on disk for human verification.
+    - After scanning and report compilation, the `./temp_checkout_test` folder is NOT deleted and remains on disk.
 
 ---
 
 ## Level 5: Specialist Slash Commands & IDE Integrations
 
-**Goal**: Verify that specialists and individual commands can be triggered directly in your IDE chat or terminal windows.
+**Goal**: Verify that specialists and individual commands can be triggered directly in your IDE chat or native agent workspace.
 *For detailed step-by-step procedures, see [features/agent-alignment.md](features/agent-alignment.md).*
 
-- [ ] **6.1 Individual Slash Commands**
-  - Trigger one of the individual specialist commands in your agent environment chat input:
+- [ ] **5.1 Individual Slash Commands**
+  - Trigger the legal neutrality specialist command in your agent chat environment:
     ```bash
     /rw-legal-neutrality-auditor
     ```
   - *Expected Outcome*:
-    - The agent adopts the `legal-neutrality-auditor` persona and references the `legal-neutrality-auditor` skill.
-    - Prompts you with the scoping alignment question (file extensions, keywords, target languages).
-    - Perform the scan and verify it groups results in batches of no more than 20.
+    - The agent adopts the `legal-neutrality-auditor` persona and references its skill page.
+    - Prompts you with scoping questions.
+    - Performs the check and returns batches of suggestions.
+
+- [ ] **5.2 Native Parallel Orchestration**
+  - Trigger `/repo-wizard` in the interactive Antigravity IDE chat sidebar.
+  - *Expected Outcome*:
+    - The Lead Agent uses the native `invoke_subagent` tool call to coordinate relevance checks and sweeps concurrently.
+    - Scans complete in parallel instead of sequentially fallback styling.
