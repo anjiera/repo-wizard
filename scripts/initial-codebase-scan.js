@@ -75,8 +75,29 @@ if (!fs.existsSync(resolvedTarget)) {
   process.exit(1);
 }
 
+// Verify read access to the target path
+try {
+  fs.accessSync(resolvedTarget, fs.constants.R_OK);
+} catch (err) {
+  console.error(`${RED}✗ Error: Read permission denied for target directory "${resolvedTarget}". Please fix the permissions to proceed.${RESET}`);
+  process.exit(1);
+}
+
 const ROOT = path.resolve(__dirname, '..');
 const resolvedReport = reportPath ? path.resolve(reportPath) : ROOT;
+
+// Verify write access to the report path
+const testDir = path.join(resolvedReport, '.repo-wizard');
+const dirToTest = fs.existsSync(testDir) ? testDir : (fs.existsSync(resolvedReport) ? resolvedReport : path.dirname(resolvedReport));
+try {
+  const testFile = path.join(dirToTest, `.write_test_${Date.now()}`);
+  fs.mkdirSync(path.dirname(testFile), { recursive: true });
+  fs.writeFileSync(testFile, 'test');
+  fs.unlinkSync(testFile);
+} catch (err) {
+  console.error(`${RED}✗ Error: Write permission denied for report directory "${resolvedReport}". Please verify write permissions to proceed.${RESET}`);
+  process.exit(1);
+}
 
 const parts = targetPath.split(/[\/\\]/);
 let repoName = parts[parts.length - 1] || 'project';

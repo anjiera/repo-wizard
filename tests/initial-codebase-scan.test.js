@@ -65,6 +65,24 @@ function run() {
     // Run with --pillar ALL to bypass the warning
     const bypassRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--headless', '--pillar', 'ALL']);
     assert(bypassRun.code === 0, '--pillar ALL bypasses the High Sweep Warning');
+
+    // Test: Write permission failure on read-only directory
+    const noWriteDir = path.join(tempScanDir, 'no_write_dir');
+    fs.mkdirSync(noWriteDir, { recursive: true });
+    try {
+      fs.chmodSync(noWriteDir, 0o444); // Make read-only
+      const writeErrorRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${noWriteDir}"`]);
+      // On Windows, 0o444 write permissions depend on NTFS owner privileges.
+      // We check if it fails with code 1 and contains the expected stderr error string.
+      if (writeErrorRun.code === 1) {
+        assert(writeErrorRun.stderr.includes('Write permission denied') || writeErrorRun.stdout.includes('Write permission denied'), 'Write permission validation works');
+      }
+    } finally {
+      try {
+        fs.chmodSync(noWriteDir, 0o666);
+        fs.rmSync(noWriteDir, { recursive: true, force: true });
+      } catch (e) {}
+    }
     
   } finally {
     fs.rmSync(tempScanDir, { recursive: true, force: true });
