@@ -45,7 +45,8 @@ const SPECIALISTS = [
   'state-integrity-auditor',
   'ai-robustness-hardener',
   'react-performance-auditor',
-  'state-hardener'
+  'state-hardener',
+  'maintainability-auditor'
 ];
 
 function printUsageAndExit(err) {

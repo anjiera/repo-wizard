@@ -30,8 +30,21 @@ function loadTestSuite() {
     process.exit(1);
   }
 
+  const args = process.argv.slice(2);
+  const agentIdx = args.indexOf('--agent');
+  let filterAgent = null;
+  if (agentIdx !== -1 && args[agentIdx + 1] && !args[agentIdx + 1].startsWith('-')) {
+    filterAgent = args[agentIdx + 1];
+  }
+
   const files = fs.readdirSync(EVALS_DIR)
-    .filter(f => f.endsWith('.js'))
+    .filter(f => {
+      if (!f.endsWith('.js')) return false;
+      if (filterAgent) {
+        return f === `${filterAgent}.js`;
+      }
+      return true;
+    })
     .sort();
 
   const suite = [];

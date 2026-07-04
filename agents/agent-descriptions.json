@@ -24,5 +24,6 @@
   "tool-auditor": "Audits recommended packages and libraries against security databases and licensing rules.",
   "tooling-engineer": "Safely installs tools and edits config files using AST-based modifications.",
   "toolchain-architect": "Audits build target constraints and cross-compilation toolchain parameters.",
-  "vcs-workflow-engineer": "Audits and configures pre-commit hooks, Conventional Commit validations, and copyright headers."
+  "vcs-workflow-engineer": "Audits and configures pre-commit hooks, Conventional Commit validations, and copyright headers.",
+  "maintainability-auditor": "Audits codebase structure, DRY compliance, and identifies Fowler code smells tailored to development profiles."
 }

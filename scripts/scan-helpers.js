@@ -76,7 +76,7 @@ function checkFilesExist(dir, predicate, maxDepth = 4, targetDir = dir) {
 
 function checkAgentRelevance(agentName, targetDir) {
   // Always relevant core agents
-  if (['supply-chain-auditor', 'vcs-workflow-engineer', 'technical-scribe'].includes(agentName)) {
+  if (['supply-chain-auditor', 'vcs-workflow-engineer', 'technical-scribe', 'maintainability-auditor'].includes(agentName)) {
     return { relevance: 'High', rationale: 'Core governance/VCS agent' };
   }
 

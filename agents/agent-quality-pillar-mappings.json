@@ -106,5 +106,9 @@
   "vcs-workflow-engineer": {
     "pillar": "QUALITY",
     "color": "GREEN"
+  },
+  "maintainability-auditor": {
+    "pillar": "ARCHITECTURE",
+    "color": "GREEN"
   }
 }

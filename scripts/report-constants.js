@@ -34,7 +34,8 @@ const MOCK_CAPABILITY_MAP = {
   'state-integrity-auditor': 'Formal Model Verification',
   'ai-robustness-hardener': 'AI Input/Output Guardrails',
   'react-performance-auditor': 'React Performance Auditing',
-  'state-hardener': 'State Sanitization Auditing'
+  'state-hardener': 'State Sanitization Auditing',
+  'maintainability-auditor': 'Maintainability Auditing'
 };
 
 const MOCK_TOOL_MAP = {
@@ -57,7 +58,8 @@ const MOCK_TOOL_MAP = {
   'state-integrity-auditor': 'kani',
   'ai-robustness-hardener': 'llm-guard',
   'react-performance-auditor': 'react-scan',
-  'state-hardener': 'eslint-plugin-react-hooks'
+  'state-hardener': 'eslint-plugin-react-hooks',
+  'maintainability-auditor': 'eslint-plugin-complexity'
 };
 
 const INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
