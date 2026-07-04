@@ -27,6 +27,10 @@ const { checkAgentRelevance, buildFileCache } = require('./scan-helpers');
 const activeChildren = new Set();
 const runningAgents = new Map();
 
+let isRemote = false;
+let checkoutPath = null;
+let keepCheckout = false;
+
 // ANSI escape codes for premium console formatting
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
@@ -90,14 +94,13 @@ if (!targetPath) {
   process.exit(1);
 }
 
-const isRemote = /^(https?:\/\/|git@)/.test(targetPath);
-let checkoutPath = null;
+isRemote = /^(https?:\/\/|git@)/.test(targetPath);
 const checkoutIdx = process.argv.indexOf('--checkout-path');
 if (checkoutIdx !== -1 && process.argv[checkoutIdx + 1] && !process.argv[checkoutIdx + 1].startsWith('-')) {
   checkoutPath = process.argv[checkoutIdx + 1];
 }
 
-const keepCheckout = process.argv.includes('--keep-checkout');
+keepCheckout = process.argv.includes('--keep-checkout');
 
 let resolvedTarget = null;
 if (!isRemote) {
