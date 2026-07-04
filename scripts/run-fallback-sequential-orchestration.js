@@ -19,7 +19,7 @@ const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
 const { generateMockCompiledAnalysis } = require('./mock-report-generator');
 const { archiveSession } = require('./reports-archive');
-const { redactReportFiles } = require('./reports-compiler-engine');
+const { redactReportFiles } = require('./redactor');
 const { checkAgentRelevance, buildFileCache } = require('./scan-helpers');
 
 
