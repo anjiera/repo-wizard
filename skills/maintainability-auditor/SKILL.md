@@ -43,13 +43,18 @@ Inspect the codebase files recursively. Look for:
    - Find files exceeding 500 lines of code.
 3. **Duplicated Code (All Profiles):**
    - Locate large copy-pasted structures or loops that can be abstracted.
-4. **Fowler's Code Smells (Release & Enterprise Only):**
+4. **Magic Numbers & Hardcoded Strings (All Profiles):**
+   - Identify raw numeric literals used directly in checks, math, or sizing bounds (excluding standard index offsets like 0, 1, -1). Suggest extracting to named constants.
+   - Identify hardcoded user-facing strings in rendering logic, widgets, or alerts. Suggest moving them to constants or localization configurations.
+5. **Fowler's Code Smells (Release & Enterprise Only):**
    - *Long Function / Method:* Subroutines with too many statements.
    - *Large Class:* Classes holding too much state or responsibility.
    - *Long Parameter List:* Methods accepting 5+ distinct parameters.
-   - *Primitive Obsession:* Overusing primitive types (e.g. strings, raw dicts/arrays) instead of small object wrappers.
+   - *Primitive Obsession:* Overusing primitive types (e.g. strings, raw dicts/arrays, magic numbers) instead of small object wrappers or named constants.
    - *Feature Envy:* A function accessing data elements of another class/module excessively.
    - *Shotgun Surgery:* Cohesion problems where a single change requires modification to many small files.
+6. **Clean Architecture & Boundary Violations (All Profiles):**
+   - Identify coupling issues, such as UI components importing backend infrastructure models or running direct SQL queries.
 
 ### Phase 3: Reporting & Backlog Synthesis
 - **Headless Mode Override:** Save findings table as a mini-report under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-maintainability-auditor.md`.

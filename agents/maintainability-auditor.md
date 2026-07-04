@@ -35,14 +35,16 @@ Scan the codebase to evaluate maintainability conformance:
 2. **File Bloat (Length):** Highlight files exceeding 500 lines of code.
 3. **High-Impact Code Duplication:** Identify large duplicate blocks of copy-pasted logic (DRY violations).
 4. **Deep Nesting / High Branching Complexity:** Locate functions or blocks with three or more levels of nested loops/conditionals (heuristically estimating high complexity without requiring exact mathematical cyclomatic scores).
-5. **Fowler's Code Smells (Release & Enterprise Only):**
+5. **Magic Numbers & Hardcoded Strings:** Identify unassigned numeric literals (magic numbers) used directly in logical checks, and hardcoded inline UI strings that should be extracted to constants, configs, or localizations.
+6. **Fowler's Code Smells (Release & Enterprise Only):**
+   - **STRICT PROHIBITION FOR PERSONAL PROFILE:** If `project_goal` is `personal`, you are strictly forbidden from identifying, mentioning, or using Fowler terms like "Feature Envy", "Primitive Obsession", "Shotgun Surgery", "Data Clumps", or "Divergent Change". Use plain-English descriptions of layout or duplication instead.
    - *Long Function / Method:* Subroutines containing too many statements.
    - *Large Class:* Classes holding too much state or responsibility.
    - *Long Parameter List:* Methods accepting 5+ distinct parameters.
-   - *Primitive Obsession:* Overusing primitive types (e.g. strings, raw dicts/arrays) instead of dedicated domain objects.
+   - *Primitive Obsession:* Overusing primitive types (e.g. strings, raw dicts/arrays, magic numbers/constants) instead of dedicated domain objects or named constants.
    - *Feature Envy:* A function accessing data elements of another class/module excessively.
    - *Shotgun Surgery:* Cohesion problems where a single change requires modification to many small files.
-6. **Clean Architecture & Boundary Violations (All Profiles):**
+7. **Clean Architecture & Boundary Violations (All Profiles):**
    - Identify coupling issues, such as UI code directly calling database schemas/models or backend infrastructure leaks in clean layers.
 
 ---

@@ -53,6 +53,34 @@ module.exports = {
         'The response insists on analyzing the structure and flagging violations (e.g. nesting or file bloat) honestly.',
         'The response includes a disclaimer stating that maintainability recommendations do not guarantee bug prevention or compiler correctness.'
       ]
+    },
+    {
+      name: 'Clean Architecture Boundary Violations Check',
+      input: 'Perform a maintainability audit for a project with project_goal = "enterprise". Here is a frontend React component UI file src/components/Dashboard.jsx:\n' +
+             'import React from "react";\n' +
+             'import { DatabaseClient } from "../db/connection";\n' +
+             'export function Dashboard() {\n' +
+             '  const data = DatabaseClient.query("SELECT * FROM reports LIMIT 10");\n' +
+             '  return <div>{data.map(r => <p key={r.id}>{r.title}</p>)}</div>;\n' +
+             '}',
+      rubrics: [
+        'The response identifies a Clean Architecture or boundary violation where a UI component directly executes database queries.',
+        'The response suggests separating the query logic from the rendering component (e.g. via a custom hook, an API service call, or an adapter layer).'
+      ]
+    },
+    {
+      name: 'Magic Numbers and Hardcoded Strings Check',
+      input: 'Perform a maintainability audit for a project with project_goal = "personal". Here is a utility file src/utils.js:\n' +
+             'function checkTimeout(elapsed) {\n' +
+             '  if (elapsed > 86400000) {\n' +
+             '    console.log("Your session has timed out. Please log in again to continue working on your dashboard.");\n' +
+             '  }\n' +
+             '}',
+      rubrics: [
+        'The response identifies the magic number literal "86400000".',
+        'The response identifies the hardcoded user-facing inline string "Your session has timed out...".',
+        'The response recommends extracting the values to named constants (e.g. MS_PER_DAY).'
+      ]
     }
   ]
 };
