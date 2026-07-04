@@ -296,6 +296,60 @@ function testRunOrchestration() {
       fs.rmSync(reportsDir, { recursive: true, force: true });
     }
 
+    // Test 1b: Skipped contracts remain skipped
+    const mockManifestWithSkipped = {
+      status: "pending",
+      contracts: [
+        {
+          agent_name: "notebook-auditor",
+          status: "skipped",
+          contract: {
+            task_metadata: {
+              target_modules: ["/src"],
+              language: "javascript",
+              build_system: "npm",
+              execution_mode: "scaffold"
+            }
+          }
+        },
+        {
+          agent_name: "privacy-hardener",
+          status: "pending",
+          contract: {
+            task_metadata: {
+              target_modules: ["/src"],
+              language: "javascript",
+              build_system: "npm",
+              execution_mode: "scaffold"
+            }
+          }
+        }
+      ]
+    };
+    fs.writeFileSync(manifestPath, JSON.stringify(mockManifestWithSkipped, null, 2), 'utf8');
+
+    const runWithSkipped = (() => {
+      try {
+        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true`, {
+          cwd: ROOT,
+          stdio: 'pipe',
+          env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return { code: err.status || 1, stdout: err.stdout ? err.stdout.toString() : '', stderr: err.stderr ? err.stderr.toString() : '' };
+      }
+    })();
+
+    assert(runWithSkipped.code === 0, 'run-fallback-sequential-orchestration.js exits with 0 when handling skipped contracts');
+    const skippedManifestUpdated = JSON.parse(fs.readFileSync(targetManifestPath, 'utf8'));
+    assert(skippedManifestUpdated.contracts[0].status === 'skipped', 'skipped contracts remain status skipped');
+    assert(skippedManifestUpdated.contracts[1].status === 'completed', 'pending contracts are completed');
+    if (fs.existsSync(reportsDir)) {
+      fs.rmSync(reportsDir, { recursive: true, force: true });
+    }
+
+
     // Test 1.5: Invalid --mock-cli value checks
     const invalidMockRun = (() => {
       try {
