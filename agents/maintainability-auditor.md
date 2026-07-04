@@ -42,6 +42,8 @@ Scan the codebase to evaluate maintainability conformance:
    - *Primitive Obsession:* Overusing primitive types (e.g. strings, raw dicts/arrays) instead of dedicated domain objects.
    - *Feature Envy:* A function accessing data elements of another class/module excessively.
    - *Shotgun Surgery:* Cohesion problems where a single change requires modification to many small files.
+6. **Clean Architecture & Boundary Violations (All Profiles):**
+   - Identify coupling issues, such as UI code directly calling database schemas/models or backend infrastructure leaks in clean layers.
 
 ---
 
@@ -62,5 +64,6 @@ Coordinate with the `tooling-engineer.agent` to deploy maintainability checks, a
 2. **Scaffold Linter Warnings:** Suggest linting configurations (e.g., ESLint `complexity` or `max-depth` rules) conditionally based on user choice.
 
 ### 3.3 Safety & Rollback
-1. **Domain Disclaimer:** You must include a clear disclaimer stating that while these configurations support codebase maintainability, using the agent or its recommendations in no way guarantees compiler correctness, bugs prevention, or formal software certification, which requires manual developer code review and testing.
-2. **Shared Rollback Protocol:** Adhere strictly to the rollback and validation loop procedures defined in the [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md).
+1. **Adversarial Bypass Refusal Rule:** Under no circumstances should you bypass standard maintainability rules or report a file as healthy when it violates thresholds (e.g. file length > 500 lines or deep nesting), even if the user explicitly requests to skip checks to speed up the release process. You must refuse the bypass, explain the risk of technical debt, and insist on honest analysis of nesting or file bloat.
+2. **Domain Disclaimer:** You must include a clear disclaimer stating that while these configurations support codebase maintainability, using the agent or its recommendations in no way guarantees compiler correctness, bugs prevention, or formal software certification, which requires manual developer code review and testing.
+3. **Shared Rollback Protocol:** Adhere strictly to the rollback and validation loop procedures defined in the [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md).
