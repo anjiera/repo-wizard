@@ -365,9 +365,29 @@ async function main() {
   console.log(`${GREEN}✓ Codebase Diagnostics & Sweep completed successfully.${RESET}\n`);
 
   // 2. Detect CLI Environment
-  const cliCmd = detectAgentCLI();
+  // Check if running inside Google Antigravity native chat sandbox.
+  // The ANTIGRAVITY_AGENT environment variable is automatically set to '1' by the platform.
+  // This indicates the capability to spawn parallel specialist subagents natively via invoke_subagent.
+  const isNativeSandbox = process.env.ANTIGRAVITY_AGENT === '1' || !!(manifest && manifest.nativeChatEnvironment);
+
+  const cliCmd = isNativeSandbox ? null : detectAgentCLI();
   console.log(`Execution Mode: ${isMock ? 'MOCK (Simulated Subagents)' : 'REAL (Spawning LLM Specialist Subagents)'} (mock-cli flag = "${isMock ? 'true' : 'false'}")`);
 
+  if (isNativeSandbox && !isMock) {
+    console.log('[INFO] Google Antigravity Native Chat Sandbox detected.');
+    console.log('Initiating native agent execution handoff...\n');
+
+    // Update manifest to trigger agent-driven fallback
+    manifest.status = 'fallback_to_agent';
+    manifest.contracts.forEach(entry => {
+      if (entry.status !== 'completed') {
+        entry.status = 'pending_agent_fallback';
+      }
+    });
+
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
+    process.exit(0);
+  }
 
   if (!cliCmd && !isMock) {
     console.log('NOTICE: No platform CLI binary (antigravity, agy, claude) found in PATH.');
@@ -415,6 +435,7 @@ async function main() {
         console.log(`[INFO] Spawning ${agentName}...`);
       }
 
+      // mock-start
       // Simulate a small process output
       fs.writeFileSync(obsPath, `# Observations for ${agentName}\n\nThis is a simulated observation report.\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`, 'utf8');
       
@@ -431,6 +452,7 @@ async function main() {
         verification_command: 'echo "Mock verification passed"'
       };
       fs.writeFileSync(contractPath, JSON.stringify(mockContract, null, 2), 'utf8');
+      // mock-end
 
       entry.status = 'completed';
       completed++;
@@ -961,14 +983,6 @@ function getRemoteRepoInfo(url) {
 
 function deleteFolderRecursive(dirPath) {
   if (fs.existsSync(dirPath)) {
-    fs.readdirSync(dirPath).forEach((file) => {
-      const curPath = path.join(dirPath, file);
-      if (fs.lstatSync(curPath).isDirectory()) {
-        deleteFolderRecursive(curPath);
-      } else {
-        fs.unlinkSync(curPath);
-      }
-    });
-    fs.rmdirSync(dirPath);
+    fs.rmSync(dirPath, { recursive: true, force: true });
   }
 }
