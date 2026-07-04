@@ -38,6 +38,16 @@ Recommended for local developer onboarding and interactive configuration.
 ### Mode 2: Headless Local Mode (`MODE=HEADLESS_LOCAL`)
 A non-blocking scan of the active local repository, ideal for scripts or background sweeps.
 * **Command:** `/repo-wizard --headless`
+* **CLI Execution (via `agy` CLI):**
+  If running the command via the `agy` CLI's print mode (`-p` / `--print`), it may exceed the default 5-minute CLI timeout. To prevent this, increase the timeout or run interactively (`-i` / `--prompt-interactive`) to see live progress:
+  - **Option A (Increased print timeout):**
+    ```bash
+    agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --headless --target-path /path/to/target"
+    ```
+  - **Option B (Interactive live output):**
+    ```bash
+    agy --dangerously-skip-permissions -i "/repo-wizard --headless --target-path /path/to/target"
+    ```
 * **Process:**
   - Bypasses interactive prompts.
   - Detects tech stack and applies **best-guess heuristics** to determine recommendations.
@@ -46,6 +56,15 @@ A non-blocking scan of the active local repository, ideal for scripts or backgro
 ### Mode 3: Headless Remote Mode (`MODE=HEADLESS_REMOTE`)
 Used to scan a remote public Git repository.
 * **Command:** `/repo-wizard <github-url>` (e.g., `/repo-wizard https://github.com/user/my-library`)
+* **CLI Execution (via `agy` CLI):**
+  - **Option A (Increased print timeout):**
+    ```bash
+    agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --target-path https://github.com/user/my-library"
+    ```
+  - **Option B (Interactive live output):**
+    ```bash
+    agy --dangerously-skip-permissions -i "/repo-wizard --target-path https://github.com/user/my-library"
+    ```
 * **Process:**
   - Clones the repository to a temporary directory.
   - Conducts a decoupled subagent relevance sweep.

@@ -72,3 +72,24 @@ When you run the plugin, you can authorize command prefixes using the permission
 - To allow running helper validator scripts: Authorize prefix `node scripts/`
 - To allow running E2E tests: Authorize prefix `node scripts/run-e2e-tests.js`
 - To allow running the LOC count utility: Authorize prefix `node solo-dev-toolkit/scripts/count-loc.js`
+
+---
+
+## Running Commands via the CLI
+
+When executing slash commands like `/repo-wizard` directly from the command line using the `agy` CLI, you can choose between two output modes:
+
+### 1. Print Mode (`-p` / `--print`)
+This runs the prompt non-interactively and prints the final result only after the command completes. Because executing a full scan with parallel subagents can exceed the default 5-minute timeout of `agy`, you should explicitly increase the timeout limit using `--print-timeout`:
+```bash
+agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --headless --target-path /path/to/target"
+```
+
+### 2. Interactive Mode (`-i` / `--prompt-interactive`)
+This runs the command and streams live progress, agent thoughts, and tool executions to the terminal in real-time. This is the recommended option to monitor scans as they run:
+```bash
+agy --dangerously-skip-permissions -i "/repo-wizard --headless --target-path /path/to/target"
+```
+
+> [!NOTE]
+> **Native Chat UI:** Running `/repo-wizard` within the Antigravity native chat window in your IDE or editor does not face command-line timeout limits, as the session is persistent and streams responses continuously.
