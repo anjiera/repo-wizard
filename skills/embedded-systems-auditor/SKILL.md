@@ -37,7 +37,7 @@ Audit the repository to locate build configurations and linker files:
 4. **VCS Filters Check:** Ensure clean working trees and respect hooks/configs created by other agents.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-embedded-systems-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-embedded-systems-auditor.md`).
 Draft all configurations, warning overlays, and emulation scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, modifying linker configurations, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing build gates and CI configurations. You must **NOT** overwrite, alter, or remove configurations added by other agents (such as testing setups or AppSec configurations). Always request developer consent.

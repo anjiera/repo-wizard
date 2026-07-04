@@ -3,7 +3,7 @@ description: Audit repository for PII data handling and scaffold configurations 
 ---
 
 Invoke the agent-skills:privacy-hardener skill.
-Act as the privacy-hardener-agent persona.
+Act as the privacy-hardener persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target data privacy regulations (GDPR, CCPA/CPRA, COPPA, or general hardening).

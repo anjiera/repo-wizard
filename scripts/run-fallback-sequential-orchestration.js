@@ -750,7 +750,7 @@ function checkFilesExist(dir, predicate, maxDepth = 4) {
 
 function checkAgentRelevance(agentName, targetDir, contract) {
   // Always relevant core agents
-  if (['supply-chain-auditor-agent', 'vcs-workflow-engineer-agent', 'technical-scribe-agent'].includes(agentName)) {
+  if (['supply-chain-auditor', 'vcs-workflow-engineer', 'technical-scribe'].includes(agentName)) {
     return { relevance: 'High', rationale: 'Core governance/VCS agent' };
   }
 
@@ -767,7 +767,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   };
 
   // Notebook Auditor
-  if (agentName === 'notebook-auditor-agent') {
+  if (agentName === 'notebook-auditor') {
     if (!hasExtension(targetDir, '.ipynb')) {
       return { relevance: 'Low', rationale: 'No Jupyter Notebooks (.ipynb) found in workspace' };
     }
@@ -775,7 +775,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // React Performance / State Hardener
-  if (['react-performance-auditor-agent', 'state-hardener-agent'].includes(agentName)) {
+  if (['react-performance-auditor', 'state-hardener'].includes(agentName)) {
     let hasReact = false;
     const pkgJsonPath = path.join(targetDir, 'package.json');
     if (fs.existsSync(pkgJsonPath)) {
@@ -810,7 +810,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Embedded Systems
-  if (agentName === 'embedded-systems-auditor-agent') {
+  if (agentName === 'embedded-systems-auditor') {
     const isFirmware = hasAnyFileOf(targetDir, ['CMakeLists.txt', 'Makefile']) || hasExtension(targetDir, '.ino');
     if (!isFirmware) {
       return { relevance: 'Low', rationale: 'No firmware build files (CMakeLists.txt, Makefile) or Arduino files found' };
@@ -819,16 +819,16 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Toolchain / Formal Methods / Fuzzing
-  if (['toolchain-architect-agent', 'state-integrity-auditor-agent', 'fuzz-engineer-agent'].includes(agentName)) {
+  if (['toolchain-architect', 'state-integrity-auditor', 'fuzz-engineer'].includes(agentName)) {
     const hasRust = hasFile(targetDir, 'Cargo.toml');
     const hasCpp = hasExtension(targetDir, '.cpp') || hasExtension(targetDir, '.c') || hasExtension(targetDir, '.h');
     const hasGo = hasFile(targetDir, 'go.mod');
     
-    if (agentName === 'state-integrity-auditor-agent' || agentName === 'fuzz-engineer-agent') {
+    if (agentName === 'state-integrity-auditor' || agentName === 'fuzz-engineer') {
       if (!hasRust && !hasCpp && !hasGo) {
         return { relevance: 'Low', rationale: 'No Rust, Go, or C/C++ files found for formal verification or fuzzing' };
       }
-    } else { // toolchain-architect-agent
+    } else { // toolchain-architect
       const hasToolchainStack = hasRust || hasCpp || hasFile(targetDir, 'CMakeLists.txt');
       if (!hasToolchainStack) {
         return { relevance: 'Low', rationale: 'No compiled language toolchain files (Cargo.toml, C/C++ source) found' };
@@ -838,7 +838,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Data Pipeline
-  if (agentName === 'data-pipeline-architect-agent') {
+  if (agentName === 'data-pipeline-architect') {
     const hasDataStack = hasAnyFileOf(targetDir, ['dags', 'airflow', 'prefect']) || hasExtension(targetDir, '.py');
     if (!hasDataStack) {
       return { relevance: 'Low', rationale: 'No Python scripts or Airflow DAG folders found' };
@@ -847,7 +847,7 @@ function checkAgentRelevance(agentName, targetDir, contract) {
   }
 
   // Deployment Engineer
-  if (agentName === 'deployment-engineer-agent') {
+  if (agentName === 'deployment-engineer') {
     const hasDocker = hasAnyFileOf(targetDir, ['docker-compose.yml', 'docker-compose.yaml', 'Dockerfile']);
     if (!hasDocker) {
       return { relevance: 'Low', rationale: 'No Dockerfile or docker-compose files found in workspace' };

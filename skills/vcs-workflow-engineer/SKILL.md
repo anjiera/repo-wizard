@@ -44,7 +44,7 @@ Scan the codebase to evaluate current configuration setups:
 3. **File Header Scan:** Sample files to check if copyright blocks or standard headers are already present.
 
 ### Phase 3: VCS Hook Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-vcs-workflow-engineer-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-vcs-workflow-engineer.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations and config edits (e.g., husky, lint-staged, commitlint, or hgrc hook setups) only after receiving explicit developer permission.
 2. **Interactive Options & Nuances:** Explain configuration options and tradeoff decisions (e.g. local pre-commit hook validation speeds vs build server pipelines). Use generic time and performance descriptions (e.g. noting that partial checks are faster than running full test suites) rather than guaranteeing explicit execution durations in seconds, since test sizes vary by repository. Ask the developer to guide the configuration file modifications.

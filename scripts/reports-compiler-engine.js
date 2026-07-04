@@ -101,7 +101,7 @@ function compileRealReports(session) {
       for (const file of files) {
         if (file.startsWith(`${repoName}-observations-`) && file.endsWith('.md')) {
           const agentName = file.replace(`${repoName}-observations-`, '').replace(/\.md$/, '');
-          if (skippedAgents.has(agentName) || skippedAgents.has(agentName + '-agent')) {
+          if (skippedAgents.has(agentName)) {
             continue;
           }
           const content = fs.readFileSync(path.join(obsDir, file), 'utf8');
@@ -109,7 +109,7 @@ function compileRealReports(session) {
 
           const mapping = mappings[agentName] || { pillar: 'QUALITY', color: 'WHITE' };
           const pillar = mapping.pillar || 'QUALITY';
-          const desc = agentDescriptions[agentName] || agentDescriptions[agentName + '-agent'] || agentDescriptions[agentName.replace(/-agent$/, '')] || 'Specialized quality governance auditor.';
+          const desc = agentDescriptions[agentName] || 'Specialized quality governance auditor.';
 
           const agentData = {
             agentName,

@@ -3,7 +3,7 @@ description: Audit repository UI components and configure automated accessibilit
 ---
 
 Invoke the agent-skills:accessibility-auditor skill.
-Act as the accessibility-auditor-agent persona.
+Act as the accessibility-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target digital accessibility standards (WCAG 2.1 AA, WCAG 2.2 AA, EN 301 549, or none).

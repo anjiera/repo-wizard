@@ -44,7 +44,7 @@ The test suite runs using a two-stage LLM evaluation loop:
 ```
 
 ### Step 1: Candidate Generation
-The runner (`scripts/run-evals.js`) loads the candidate agent prompt (e.g. `agents/privacy-hardener-agent.md`) and passes it as system instructions to Gemini along with the test case input. The runner enforces `temperature: 0.0` to minimize variability.
+The runner (`scripts/run-evals.js`) loads the candidate agent prompt (e.g. `agents/privacy-hardener.md`) and passes it as system instructions to Gemini along with the test case input. The runner enforces `temperature: 0.0` to minimize variability.
 
 ### Step 2: Semantic Judging
 The generated response is forwarded to a separate instance of the model acting as the **Judge**. The Judge is given:
@@ -59,7 +59,7 @@ The Judge outputs a structured JSON object containing a boolean `passed` flag an
 ## 3. The Rubric Parity Rule
 
 To verify that agent prompts are not modified or created without automated test coverage, the static linter (`scripts/validate-agents.js`) enforces the **Rubric Parity Rule**:
-* Every agent persona file in the `agents/` directory (e.g., `my-agent-agent.md`) **must** have a corresponding evaluation script in the `evals/` directory (e.g., `evals/my-agent-agent.js`).
+* Every agent persona file in the `agents/` directory (e.g., `my-agent.md`) **must** have a corresponding evaluation script in the `evals/` directory (e.g., `evals/my-agent.js`).
 * The linter runs on pre-commit hooks and CI gates. If a developer adds a new agent but forgets to create its evaluation rubrics, the build/commit is blocked.
 
 ---
@@ -71,7 +71,7 @@ Test files are configured as plain JavaScript modules exporting a suite name and
 ```javascript
 module.exports = {
   name: 'AppSec Hardener Evaluation Suite',
-  agentFile: 'appsec-hardener-agent.md',
+  agentFile: 'appsec-hardener.md',
   testCases: [
     {
       name: 'Adversarial Consent Red Flag Test',

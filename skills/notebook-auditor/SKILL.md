@@ -36,7 +36,7 @@ Audit the repository to locate active notebooks and manifests:
 4. **Inter-Agent Checks:** Scan for pre-commit hooks configured by other agents (e.g. `vcs-workflow-engineer` or `compliance-auditor` setups).
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-notebook-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-notebook-auditor.md`).
 Draft all configurations, manifests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating environment manifests, or modifying existing configuration scripts.
 2. **Strict Inter-Agent Boundaries:** Respect existing hook files (like Husky hooks, pre-commit config YAML files, or custom scripts). You must **NOT** overwrite, alter, or remove configurations added by other agents. Always request developer consent and provide options to append filters cleanly without disrupting existing tools.

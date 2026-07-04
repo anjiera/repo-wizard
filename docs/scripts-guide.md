@@ -20,6 +20,18 @@ Compiles standard Markdown documentation into responsive HTML files. It automati
   ```
 * **Side-Effects:** Generates an HTML file at the specified output path. (Note: Locally compiled HTML files in `docs/` are git-ignored to prevent duplicate source files).
 
+### Project Docs Validator (`scripts/validate-project-docs.js`)
+Validates that project documentation is aligned across the workspace:
+* **Checks:**
+  - Verifies that all files in `references/` are listed in `references/README.md`.
+  - Asserts that all agents and skills are cataloged in `docs/AGENT_MATRIX.md`.
+  - Checks that all guides in `docs/` are linked in the root `README.md`.
+  - Enforces `AGENTS.md` length restrictions and audits for absolute paths or unapproved emojis.
+* **Usage:**
+  ```bash
+  node scripts/validate-project-docs.js
+  ```
+
 ---
 
 ## 2. Static Validation Linters (Zero-Dependency)
@@ -78,6 +90,16 @@ Checks that the parameter objects passed between the lead orchestrator and subag
   node scripts/validate-contracts.js
   ```
 
+### Developer Script Validator (`scripts/validate-scripts.js`)
+Statically checks utility scripts to ensure code styling compliance and AST rules safety.
+* **Checks:**
+  - Asserts mock data strings or structures are strictly contained within `// mock-start` and `// mock-end` blocks.
+  - Checks for zero-dependency requirements.
+* **Usage:**
+  ```bash
+  node scripts/validate-scripts.js
+  ```
+
 ---
 
 ## 3. Dynamic Evals & Test Runners
@@ -121,6 +143,17 @@ Executes internal unit tests for utilities like the YAML parser, JSON validators
   node scripts/test-helpers.js
   ```
 
+### CLI Agent Orchestrator Runner (`scripts/run-fallback-sequential-orchestration.js`)
+The core sequential scanning orchestrator engine that manages subagent execution pools.
+* **Behavior:**
+  - Dynamically detects codebase sizing and runs relevance sweeps.
+  - Coordinates headless sequential runs and prompts for path targets.
+  - Enforces mandatory parameters like `--target-path`.
+* **Usage:**
+  ```bash
+  node scripts/run-fallback-sequential-orchestration.js --target-path <path> [options]
+  ```
+
 ---
 
 ## 4. Setup & Hooks Utilities
@@ -140,6 +173,13 @@ Checks that the system meets node runtime versions, installs hooks, and runs sta
   node scripts/setup.js
   ```
 
+### Plugin Registration Tool (`scripts/register-plugin.js`)
+Registers this repository as an active agent customization plugin in the user's configuration directories.
+* **Usage:**
+  ```bash
+  node scripts/register-plugin.js
+  ```
+
 ---
 
 ## 5. Report & Archiving Utilities
@@ -156,5 +196,16 @@ Consolidates specialist agent mini-reports (observations) and compiles final rep
 * **Usage:**
   ```bash
   node scripts/reports-compile.js
+  ```
+
+---
+
+## 6. Dashboard & Visualization Server
+
+### Local UI Server (`scripts/dashboard-server.js`)
+Spins up a local Express server and serves the single-page application dashboard to visualize report metadata, backlogs, and metrics.
+* **Usage:**
+  ```bash
+  node scripts/dashboard-server.js
   ```
 

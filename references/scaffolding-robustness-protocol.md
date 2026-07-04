@@ -109,12 +109,12 @@ If the incoming parameter contract specifies `execution_mode: "backlog"`:
      - User story / goal.
      - Impacted codebase modules or files.
      - Step-by-step implementation checklist.
-     - The recommending agent identifier formatted as `Recommended by: repo-wizard [agent-persona-name]` (e.g., `Recommended by: repo-wizard accessibility-auditor-agent`).
+     - The recommending agent identifier formatted as `Recommended by: repo-wizard [agent-persona-name]` (e.g., `Recommended by: repo-wizard accessibility-auditor`).
      - The **Developer Empowerment Disclaimer** blockquote appended at the very bottom.
    * `issue_type`: The issue type (e.g., `Story`, `Epic`, `Task`).
    * `epic_name`: The parent Epic name (e.g., `Digital Accessibility Compliance`).
    * `frameworks_goals`: The frameworks or standards addressed (e.g., `WCAG-2.2`).
-4. **Attribution Column Mapping:** Ensure that your name (e.g., `accessibility-auditor-agent`) is clearly captured as the recommending entity so it can be exported to the CSV's `Recommended By (Sub-Agent)` column.
+4. **Attribution Column Mapping:** Ensure that your name (e.g., `accessibility-auditor`) is clearly captured as the recommending entity so it can be exported to the CSV's `Recommended By (Sub-Agent)` column.
 
 ---
 

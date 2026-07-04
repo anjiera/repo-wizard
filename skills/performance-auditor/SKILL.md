@@ -34,7 +34,7 @@ Scan the codebase to evaluate current performance configurations:
 3. **Module Profile:** Identify the key entry points, server routers, and database setups to locate critical code pathways.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-performance-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-performance-auditor.md`).
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying CI/CD configurations.
 2. **Interactive Code Review:** Display generated load-test scripts, benchmark configurations, and budget specifications to the user and prompt them for review and confirmation.

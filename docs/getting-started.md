@@ -25,13 +25,13 @@ Currently, the suite includes:
 
 ### 1. Legal Neutrality Scanner
 * **Skill**: [skills/legal-neutrality-auditor/SKILL.md](../skills/legal-neutrality-auditor/SKILL.md)
-* **Auditor Persona**: [agents/legal-neutrality-auditor-agent.md](../agents/legal-neutrality-auditor-agent.md)
+* **Auditor Persona**: [agents/legal-neutrality-auditor.md](../agents/legal-neutrality-auditor.md)
 * **Goal**: Scans user-facing UI labels, notifications, errors, and terminal scripts for high-liability phrases (e.g. verging on medical/health/financial advice) and suggests legally neutral, comfort-based alternatives without editing source files directly.
 * **Reference Guide**: [references/legal-phrasing-dictionary.md](../references/legal-phrasing-dictionary.md)
 
 ### 2. Remote & Local Headless Profiler
 * **Skill**: [skills/remote-profiler/SKILL.md](../skills/remote-profiler/SKILL.md)
-* **Orchestrator Persona**: [agents/repo-wizard-agent.md](../agents/repo-wizard-agent.md)
+* **Orchestrator Persona**: [agents/repo-wizard.md](../agents/repo-wizard.md)
 * **Goal**: Scans remote public GitHub repositories (via URL parameter) or local active workspaces (via `headless` or `--headless` options) in a non-blocking mode. Conducts decoupled subagent relevance check sweeps, supports mini-report resumability, and compiles observations, full technical, and executive summaries with strict honest-boundaries and roadmap upgrade hooks.
 
 
@@ -141,7 +141,7 @@ Once set up, developers can run individual validation and utility scripts:
 
 Since the repository is built on standard markdown files, you can use these skills in any agent environment:
 
-1. **System Prompts**: Paste the contents of `agents/legal-neutrality-auditor-agent.md` directly into your ChatGPT, Claude, or Copilot chat.
+1. **System Prompts**: Paste the contents of `agents/legal-neutrality-auditor.md` directly into your ChatGPT, Claude, or Copilot chat.
 2. **Rules Files**: Copy the skill and persona contents into your project's rules file (e.g., `.cursorrules`, `CLAUDE.md`, or `.agents/AGENTS.md`) for persistent execution.
 3. **Dedicated Tool Integrations**: Read the setup guides below for native slash command and plugin setups:
    - [Google Antigravity Setup](antigravity-setup.md)

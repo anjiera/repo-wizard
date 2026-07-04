@@ -1,6 +1,6 @@
 # Feature Test Plan: Scaffolding Engine & VCS Rollbacks
 
-This test plan defines the manual verification procedure for the **Repo Wizard Scaffolding Engine** (`tooling-engineer-agent`) and its git-rollback safety mechanism.
+This test plan defines the manual verification procedure for the **Repo Wizard Scaffolding Engine** (`tooling-engineer`) and its git-rollback safety mechanism.
 
 ---
 

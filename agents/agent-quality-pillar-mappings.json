@@ -1,109 +1,109 @@
 {
-  "accessibility-auditor-agent": {
+  "accessibility-auditor": {
     "pillar": "QUALITY",
     "color": "WHITE"
   },
-  "agent-alignment-auditor-agent": {
+  "agent-alignment-auditor": {
     "pillar": "QUALITY",
     "color": "WHITE"
   },
-  "ai-robustness-hardener-agent": {
+  "ai-robustness-hardener": {
     "pillar": "SECURITY",
     "color": "YELLOW"
   },
-  "api-contract-architect-agent": {
+  "api-contract-architect": {
     "pillar": "ARCHITECTURE",
     "color": "GREEN"
   },
-  "appsec-hardener-agent": {
+  "appsec-hardener": {
     "pillar": "SECURITY",
     "color": "GREEN"
   },
-  "compliance-auditor-agent": {
+  "compliance-auditor": {
     "pillar": "SECURITY",
     "color": "WHITE"
   },
-  "data-pipeline-architect-agent": {
+  "data-pipeline-architect": {
     "pillar": "ARCHITECTURE",
     "color": "YELLOW"
   },
-  "deployment-engineer-agent": {
+  "deployment-engineer": {
     "pillar": "PERFORMANCE",
     "color": "YELLOW"
   },
-  "embedded-systems-auditor-agent": {
+  "embedded-systems-auditor": {
     "pillar": "QUALITY",
     "color": "YELLOW"
   },
-  "state-integrity-auditor-agent": {
+  "state-integrity-auditor": {
     "pillar": "ARCHITECTURE",
     "color": "WHITE"
   },
-  "fuzz-engineer-agent": {
+  "fuzz-engineer": {
     "pillar": "QUALITY",
     "color": "BLUE"
   },
-  "legal-neutrality-auditor-agent": {
+  "legal-neutrality-auditor": {
     "pillar": "SECURITY",
     "color": "WHITE"
   },
-  "notebook-auditor-agent": {
+  "notebook-auditor": {
     "pillar": "QUALITY",
     "color": "GREEN"
   },
-  "observability-engineer-agent": {
+  "observability-engineer": {
     "pillar": "PERFORMANCE",
     "color": "BLUE"
   },
-  "performance-auditor-agent": {
+  "performance-auditor": {
     "pillar": "PERFORMANCE",
     "color": "YELLOW"
   },
-  "privacy-hardener-agent": {
+  "privacy-hardener": {
     "pillar": "SECURITY",
     "color": "BLUE"
   },
-  "react-performance-auditor-agent": {
+  "react-performance-auditor": {
     "pillar": "PERFORMANCE",
     "color": "YELLOW"
   },
-  "repo-wizard-agent": {
+  "repo-wizard": {
     "pillar": "ORCHESTRATOR",
     "color": "WHITE"
   },
-  "resilience-architect-agent": {
+  "resilience-architect": {
     "pillar": "PERFORMANCE",
     "color": "YELLOW"
   },
-  "state-hardener-agent": {
+  "state-hardener": {
     "pillar": "QUALITY",
     "color": "GREEN"
   },
-  "supply-chain-auditor-agent": {
+  "supply-chain-auditor": {
     "pillar": "SECURITY",
     "color": "GREEN"
   },
-  "technical-scribe-agent": {
+  "technical-scribe": {
     "pillar": "ARCHITECTURE",
     "color": "YELLOW"
   },
-  "qa-engineer-agent": {
+  "qa-engineer": {
     "pillar": "QUALITY",
     "color": "YELLOW"
   },
-  "tool-auditor-agent": {
+  "tool-auditor": {
     "pillar": "HELPER",
     "color": "WHITE"
   },
-  "tooling-engineer-agent": {
+  "tooling-engineer": {
     "pillar": "HELPER",
     "color": "WHITE"
   },
-  "toolchain-architect-agent": {
+  "toolchain-architect": {
     "pillar": "ARCHITECTURE",
     "color": "YELLOW"
   },
-  "vcs-workflow-engineer-agent": {
+  "vcs-workflow-engineer": {
     "pillar": "QUALITY",
     "color": "GREEN"
   }

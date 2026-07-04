@@ -1,6 +1,6 @@
 # Legal Phrasing Dictionary & Reference Guide
 
-This reference guide provides comprehensive lists of common high-liability phrases, explanations of their risks, and recommended legally neutral alternative templates. AI agents (like the `legal-neutrality-auditor-agent`) read this file on-demand during audits to make consistent and context-aware styling decisions.
+This reference guide provides comprehensive lists of common high-liability phrases, explanations of their risks, and recommended legally neutral alternative templates. AI agents (like the `legal-neutrality-auditor`) read this file on-demand during audits to make consistent and context-aware styling decisions.
 
 ---
 

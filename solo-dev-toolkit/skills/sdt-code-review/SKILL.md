@@ -49,7 +49,7 @@ Run all local compilers, unit tests, and linters:
 If the build or tests fail, you must fix them before proceeding.
 
 ### Step 3: Adversarial Review (Medium & High Risk)
-Spawn the reviewer agent (`code-reviewer`) using the definition and prompt rules in [code-reviewer-agent.md](../../agents/code-reviewer-agent.md) (or conduct a self-audit following those rules if subagents are unsupported) to inspect the files across the **Five Core Solo-Developer Axes**:
+Spawn the reviewer agent (`code-reviewer`) using the definition and prompt rules in [code-reviewer.md](../../agents/code-reviewer.md) (or conduct a self-audit following those rules if subagents are unsupported) to inspect the files across the **Five Core Solo-Developer Axes**:
 1.  **Correctness:** Are edge cases handled? (e.g., empty arrays, null values, network timeouts). Are errors caught and handled gracefully?
 2.  **Security:** Are inputs validated at system boundaries? Are there hardcoded secrets or prompt injection vulnerabilities?
 3.  **Performance:** Are there $N+1$ query patterns, unbounded loops, or unnecessary allocations in hot paths?

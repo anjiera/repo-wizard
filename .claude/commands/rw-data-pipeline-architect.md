@@ -3,7 +3,7 @@ description: Configure database connection pooling, schema validations (Pandera,
 ---
 
 Invoke the agent-skills:data-pipeline-architect skill.
-Act as the data-pipeline-architect-agent persona.
+Act as the data-pipeline-architect persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target database engine and connection pool specifications.

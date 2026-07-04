@@ -3,7 +3,7 @@ description: Audit React components for re-renders, INP yielding, variable font 
 ---
 
 Invoke the agent-skills:react-performance-auditor skill.
-Act as the react-performance-auditor-agent persona.
+Act as the react-performance-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Specific React performance bottlenecks (INP, CLS, or page transitions).

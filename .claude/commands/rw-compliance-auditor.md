@@ -3,7 +3,7 @@ description: Audit repository for security compliance controls (SOC 2, ISO 27001
 ---
 
 Invoke the agent-skills:compliance-auditor skill.
-Act as the compliance-auditor-agent persona.
+Act as the compliance-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target compliance frameworks (SOC 2, ISO 27001, FIPS 140-2/3, or general hardening).

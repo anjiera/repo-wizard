@@ -34,7 +34,7 @@ Scan the codebase to evaluate AI/ML components:
 3. **Dependencies:** Scan package manifests (`package.json`, `Cargo.toml`, `pyproject.toml`) for AI SDKs or validation frameworks.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-ai-robustness-hardener-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-ai-robustness-hardener.md`).
 Draft all configurations and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Explain Options & Tradeoffs:** Present guardrail options (e.g., regex/semantic PII scrubbing, structured JSON parser formats) and explain their performance and latency trade-offs.

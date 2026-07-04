@@ -32,7 +32,7 @@ Audit the codebase to check current state configurations:
 3. **Cleanup Audits:** Trace event listeners and intervals to ensure they have matching cleanup teardowns.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform file writes. Instead, write suggested additions directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-state-hardener-agent.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform file writes. Instead, write suggested additions directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-state-hardener.md`.
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying configuration files.
 2. **Interactive Code Review:** Display generated hooks, cleanup templates, or linter rules to the user and prompt them for review and confirmation.

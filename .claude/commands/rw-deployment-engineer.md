@@ -3,7 +3,7 @@ description: Configure high-availability container replicas, Kubernetes health p
 ---
 
 Invoke the agent-skills:deployment-engineer skill.
-Act as the deployment-engineer-agent persona.
+Act as the deployment-engineer persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target deployment environment (Docker Compose, Kubernetes, standalone VM).

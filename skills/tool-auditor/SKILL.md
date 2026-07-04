@@ -32,7 +32,7 @@ Evaluate the target package:
 4. **Reputation Assessment:** Confirm community trust via download volumes and GitHub stars.
 
 ### Phase 3: Verdict Formatting
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tool-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tool-auditor.md`).
 Construct and return a strict JSON output matching:
 ```json
 {

@@ -35,7 +35,7 @@ Scan the codebase to evaluate current observability configurations:
 3. **Framework Scan:** Identify routing libraries (e.g., Express, FastAPI, Actix-web, Gin) to know which auto-instrumentation plugins are needed.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-observability-engineer-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-observability-engineer.md`).
 Draft all SDK configurations, dashboard JSONs, and alerting rules in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenTelemetry setup files, dashboard layouts, and alert rules to the user and prompt them for review and confirmation.

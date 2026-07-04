@@ -3,7 +3,7 @@ description: Audit repository dependencies for vulnerability risks and license c
 ---
 
 Invoke the agent-skills:supply-chain-auditor skill.
-Act as the supply-chain-auditor-agent persona.
+Act as the supply-chain-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Targeted dependency checkers and SBOM standards (Snyk, Dependabot, CycloneDX, SPDX, or none).

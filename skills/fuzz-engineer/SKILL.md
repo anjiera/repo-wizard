@@ -51,7 +51,7 @@ Scan the repository to map inputs:
 3. **Compiler Checks:** Verify that `clang`, `gcc`, or `cargo` are available in the local execution path.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-fuzz-engineer-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-fuzz-engineer.md`).
 Draft all configurations, harness templates, and launch scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing compiler configurations, creating fuzzing directories, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing test structures. Do **NOT** overwrite, alter, or remove configurations added by other testing agents (such as Jest, Vitest, or JUnit configurations).

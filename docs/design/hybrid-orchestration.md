@@ -16,7 +16,7 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
 ```
                                   +-----------------------+
                                   |  Lead Agent (LLM)     |
-                                  | (repo-wizard-agent)   |
+                                  | (repo-wizard)   |
                                   +-----------+-----------+
                                               |
                                               | 1. Writes Manifest

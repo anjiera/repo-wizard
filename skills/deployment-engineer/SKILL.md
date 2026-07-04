@@ -36,7 +36,7 @@ Audit the codebase to assess current infrastructure setups:
 4. **Script & Tool Scan:** Check for existing backup utility scripts, cron definitions, or recovery routines.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-deployment-engineer-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-deployment-engineer.md`).
 Draft all configurations, manifests, and scripts in coordination with `tooling-engineer.agent`, adhering to these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated Compose multi-replica blocks, Kubernetes probe sections, and database backup scripts to the developer, prompting them for review and confirmation.

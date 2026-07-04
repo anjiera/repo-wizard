@@ -34,7 +34,7 @@ Scan the codebase to evaluate current documentation patterns:
 3. **VCS Check:** Verify the active version control system configuration to know how to integrate hooks or setup scripts.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe.md`).
 Draft all documentation and configuration templates. Adhere strictly to these rules:
 1. **Explicit Consent:** Ask the user for permission before creating directories or writing helper scripts.
 2. **Interactive Code Review:** Display generated script files, diagrams, and templates to the user and prompt them to guide or review changes.

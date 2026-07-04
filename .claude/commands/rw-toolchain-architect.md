@@ -3,7 +3,7 @@ description: Configure CMake cross-compilation files, cargo target variables, sy
 ---
 
 Invoke the agent-skills:toolchain-architect skill.
-Act as the toolchain-architect-agent persona.
+Act as the toolchain-architect persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target hardware processor architecture and model.

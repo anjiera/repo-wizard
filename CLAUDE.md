@@ -6,7 +6,7 @@ Repo Wizard is a collection of production-grade security, data privacy, accessib
 
 ```
 skills/           → Core skills (SKILL.md per directory)
-agents/           → Reusable agent personas (legal-neutrality-auditor-agent, repo-wizard-agent, etc.)
+agents/           → Reusable agent personas (legal-neutrality-auditor, repo-wizard, etc.)
 .claude/commands/ → Claude Code slash command configurations
 .gemini/commands/ → Gemini CLI slash command configurations
 commands/         → Antigravity CLI slash command configurations

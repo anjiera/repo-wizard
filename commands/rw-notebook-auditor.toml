@@ -2,7 +2,7 @@ description = "Configure Jupyter Notebook Git clean filters (nbstripout), notebo
 
 prompt = """
 Invoke the notebook-auditor skill.
-Act as the notebook-auditor-agent persona.
+Act as the notebook-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target python virtual environment manager (Conda, Poetry, Pipenv).

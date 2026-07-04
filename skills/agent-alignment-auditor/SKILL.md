@@ -33,9 +33,9 @@ Evaluate target agent configurations:
 4. **Token Footprint:** Audit prompt size. If the file is >150 lines or contains large checklists/dictionaries, recommend moving them to the `references/` directory.
 
 ### Phase 3: Validation & Test Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-agent-alignment-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-agent-alignment-auditor.md`).
 Configure quality gates for the agent files:
-1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`../../evals/<agent-name>-agent.js`) containing concrete test cases and verification rubrics.
+1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`../../evals/<agent-name>.js`) containing concrete test cases and verification rubrics.
 2. **Structural Validators:** Add structural validators (e.g., extending `validate-agents.js`) to check prompt syntax and required headers.
 3. **CI/CD Hook Integration:** Configure hooks to run validation and evaluations on pre-commit or CI pipelines, integrating VCS rollback mechanisms.
 

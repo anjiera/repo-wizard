@@ -45,7 +45,7 @@ Once parameters are approved:
 3. **Variable/Symbol Filter**: Ignore database queries, internal configuration keys, or code symbols that do not get rendered in the UI.
 
 ### Phase 3: Analysis & Batching
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-legal-neutrality-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-legal-neutrality-auditor.md`).
 For each match found:
 1. **Assess Legal Risk**: Evaluate why the phrasing lacks neutrality (e.g., "Telling the user the weather is 'Safe & Pleasant' could be construed as a health or safety guarantee, exposing the app to liability if the user experiences heat stress"), referring to the [Legal Phrasing Dictionary & Reference Guide](../../references/legal-phrasing-dictionary.md) as your source of truth for high-liability phrases and recommended alternatives.
 2. **Suggest Alternatives**: Provide up to **5 alternative phrasings** that use subjective, comfort-based language (e.g., "Safe Now" → "Within Comfort Range", "Conditions Met", "Temp: OK").

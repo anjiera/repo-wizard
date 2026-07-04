@@ -3,7 +3,7 @@ description: Configure TLA+ specification files, SMT solver parameters, Rust Kan
 ---
 
 Invoke the agent-skills:state-integrity-auditor skill.
-Act as the state-integrity-auditor-agent persona.
+Act as the state-integrity-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target state machine, synchronizer lock, or code module to verify.

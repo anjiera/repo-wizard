@@ -3,7 +3,7 @@ description: Configure OpenAPI specifications, gRPC Protobuf schemas, GraphQL SD
 ---
 
 Invoke the agent-skills:api-contract-architect skill.
-Act as the api-contract-architect-agent persona.
+Act as the api-contract-architect persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target API paradigms (REST, gRPC, GraphQL).

@@ -38,4 +38,4 @@ Once loaded, Claude Code will register the custom command:
 /rw-legal-neutrality-auditor
 ```
 
-Typing this slash command will invoke the `legal-neutrality-auditor` skill and delegate the execution to the `legal-neutrality-auditor-agent` persona, starting the interactive scoping alignment before scanning.
+Typing this slash command will invoke the `legal-neutrality-auditor` skill and delegate the execution to the `legal-neutrality-auditor` persona, starting the interactive scoping alignment before scanning.

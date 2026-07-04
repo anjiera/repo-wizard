@@ -221,6 +221,6 @@ graph TD
     /rw-legal-neutrality-auditor
     ```
   - *Expected Outcome*:
-    - The agent adopts the `legal-neutrality-auditor-agent` persona and references the `legal-neutrality-auditor` skill.
+    - The agent adopts the `legal-neutrality-auditor` persona and references the `legal-neutrality-auditor` skill.
     - Prompts you with the scoping alignment question (file extensions, keywords, target languages).
     - Perform the scan and verify it groups results in batches of no more than 20.

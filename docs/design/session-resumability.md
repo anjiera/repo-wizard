@@ -70,14 +70,14 @@ Key fields in `manifest.json`:
   "repoName": "my-application",
   "mode": "backlog",
   "contracts": {
-    "legal-neutrality-auditor-agent": {
+    "legal-neutrality-auditor": {
       "status": "pending_agent_fallback",
       "params": {
         "keywords": ["warning", "caution", "advice"],
         "targetExtensions": [".js", ".jsx", ".md"]
       }
     },
-    "vcs-workflow-engineer-agent": {
+    "vcs-workflow-engineer": {
       "status": "completed",
       "params": {
         "vcs": "git",

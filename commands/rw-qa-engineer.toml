@@ -2,7 +2,7 @@ description = "Configure unit, integration, and E2E test runners, set up API moc
 
 prompt = """
 Invoke the qa-engineer skill.
-Act as the qa-engineer-agent persona.
+Act as the qa-engineer persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target test runner framework (Jest, Vitest, PyTest, JUnit, Cargo test, or none).

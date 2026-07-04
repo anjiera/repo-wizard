@@ -3,7 +3,7 @@ description: Audit React and frontend components for stale closures, event liste
 ---
 
 Invoke the agent-skills:state-hardener skill.
-Act as the state-hardener-agent persona.
+Act as the state-hardener persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Stale closure or rendering consistency issues noticed in state.

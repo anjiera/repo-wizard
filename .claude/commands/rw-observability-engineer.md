@@ -3,7 +3,7 @@ description: Scaffold OpenTelemetry SDK instrumentations, Grafana/Honeycomb dash
 ---
 
 Invoke the agent-skills:observability-engineer skill.
-Act as the observability-engineer-agent persona.
+Act as the observability-engineer persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Telemetry targets (traces, metrics, logs) and target backend endpoints (Honeycomb, Grafana, Jaeger).

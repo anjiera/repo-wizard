@@ -7,7 +7,7 @@
 
 ---
 
-## Suite: accessibility-auditor-agent
+## Suite: accessibility-auditor
 
 ### Test Case: ESLint A11y Plugin Configuration
 - **Prompt**: `Set up accessibility lint rules for my React project.`
@@ -53,7 +53,7 @@
 | ✗ | The response outlines how the test runner (e.g. run-evals.js) is set up and integrated into a pre-commit or CI check. | The response asks about the user's preference for pre-commit hooks or CI/CD pipelines, but it does not outline how a test runner like `run-evals.js` would be set up or integrated into these checks. |
 | ✗ | The response references scaffolding-robustness-protocol.md and outlines safety/rollback checks if verification fails. | The response does not reference `scaffolding-robustness-protocol.md` nor does it outline any specific safety or rollback checks if verification fails. It only includes a general disclaimer about AI limitations. |
 
-## Suite: ai-robustness-hardener-agent
+## Suite: ai-robustness-hardener
 
 ### Test Case: LLM Guardrail Middleware Configuration
 - **Prompt**: `Configure input guardrails for my FastAPI LLM chat app.`
@@ -106,7 +106,7 @@
 }
 )
 
-## Suite: api-contract-architect-agent
+## Suite: api-contract-architect
 
 ### Test Case: OpenAPI Schema & Spectral Linter Setup
 - **Prompt**: `Configure a REST API specification openapi.yaml for a User profile route and set up a Spectral ruleset to lint it.`
@@ -228,7 +228,7 @@
 }
 )
 
-## Suite: appsec-hardener-agent
+## Suite: appsec-hardener
 
 ### Test Case: Secure Headers and CORS Setup
 - **Prompt**: `Configure Helmet and strict CORS policy in our Express Node.js backend. Only allow origin https://example.com.`
@@ -390,7 +390,7 @@
 }
 )
 
-## Suite: compliance-auditor-agent
+## Suite: compliance-auditor
 
 ### Test Case: SOC 2 Audit Logging Scaffold
 - **Prompt**: `Configure SOC 2 compliant audit logging for my Node.js application.`
@@ -552,7 +552,7 @@
 }
 )
 
-## Suite: data-pipeline-architect-agent
+## Suite: data-pipeline-architect
 
 ### Test Case: Pandera Schema Validation
 - **Prompt**: `Configure a Python Pandera schema to validate an ingested DataFrame containing user sync logs.`
@@ -674,7 +674,7 @@
 }
 )
 
-## Suite: deployment-engineer-agent
+## Suite: deployment-engineer
 
 ### Test Case: Docker Compose High-Availability Scaffolding
 - **Prompt**: `Configure a multi-replica web-app service (3 replicas) behind an Nginx load balancer in our docker-compose.yaml file.`
@@ -796,7 +796,7 @@
 }
 )
 
-## Suite: embedded-systems-auditor-agent
+## Suite: embedded-systems-auditor
 
 ### Test Case: cppcheck MISRA Linter Setup
 - **Prompt**: `Configure a Cppcheck static analysis setup targeting MISRA compliance and compiler warning gates for a C/C++ micro-controller application.`
@@ -918,7 +918,7 @@
 }
 )
 
-## Suite: state-integrity-auditor-agent
+## Suite: state-integrity-auditor
 
 ### Test Case: TLA+ State Machine Specification
 - **Prompt**: `Configure a TLA+ specification file verifying state machine transition TypeOK invariants.`
@@ -1040,7 +1040,7 @@
 }
 )
 
-## Suite: fuzz-engineer-agent
+## Suite: fuzz-engineer
 
 ### Test Case: C/C++ libFuzzer Setup
 - **Prompt**: `Configure a libFuzzer harness with AddressSanitizer for a custom command line C parser.`
@@ -1162,7 +1162,7 @@
 }
 )
 
-## Suite: legal-neutrality-auditor-agent
+## Suite: legal-neutrality-auditor
 
 ### Test Case: Warning Label Auditing
 - **Prompt**: `Audit this warning string from our app UI: "Warning: This equipment is dangerous and unsafe to touch! We guarantee it will shock you if you open the panel."`
@@ -1244,7 +1244,7 @@
 }
 )
 
-## Suite: notebook-auditor-agent
+## Suite: notebook-auditor
 
 ### Test Case: Git nbstripout Filter Setup
 - **Prompt**: `Set up a clean filter using nbstripout in our git attributes file for *.ipynb, ensuring we do not overwrite our existing pre-commit hooks.`
@@ -1366,7 +1366,7 @@
 }
 )
 
-## Suite: observability-engineer-agent
+## Suite: observability-engineer
 
 ### Test Case: OpenTelemetry SDK Scaffolding
 - **Prompt**: `Configure OpenTelemetry in our Node.js TypeScript project. We want traces sent to a remote OTLP endpoint.`
@@ -1488,7 +1488,7 @@
 }
 )
 
-## Suite: performance-auditor-agent
+## Suite: performance-auditor
 
 ### Test Case: Local Micro-benchmarking Setup
 - **Prompt**: `Configure Criterion.rs micro-benchmarks in my Rust cargo project. We want to benchmark our parsing module.`
@@ -1610,7 +1610,7 @@
 }
 )
 
-## Suite: privacy-hardener-agent
+## Suite: privacy-hardener
 
 ### Test Case: PII Log Scrubbing Scaffold
 - **Prompt**: `Configure log scrubbing in my Winston logger to protect sensitive user PII.`
@@ -1732,7 +1732,7 @@
 }
 )
 
-## Suite: react-performance-auditor-agent
+## Suite: react-performance-auditor
 
 ### Test Case: React INP yielding optimization
 - **Prompt**: `Audit my React App for INP bottlenecks and configure scheduler.yield() in our high frequency scroll list.`
@@ -1854,7 +1854,7 @@
 }
 )
 
-## Suite: repo-wizard-agent
+## Suite: repo-wizard
 
 ### Test Case: Legal Terms and Consent Gate Trigger
 - **Prompt**: `Can you onboarding my repository? I am running the wizard for the first time with no prior setup.`
@@ -2136,7 +2136,7 @@
 }
 )
 
-## Suite: resilience-architect-agent
+## Suite: resilience-architect
 
 ### Test Case: Retry Policy & Jitter Setup
 - **Prompt**: `Configure tenacity exponential retries in our Python server for calling external service https://api.example.com. We want 3 retry attempts.`
@@ -2258,7 +2258,7 @@
 }
 )
 
-## Suite: state-hardener-agent
+## Suite: state-hardener
 
 ### Test Case: Async Fetch Race Condition Audit
 - **Prompt**: `Check our components for race conditions in useEffect fetch logic and implement cancellation.`
@@ -2380,7 +2380,7 @@
 }
 )
 
-## Suite: supply-chain-auditor-agent
+## Suite: supply-chain-auditor
 
 ### Test Case: SBOM Generation Script Setup
 - **Prompt**: `Set up Software Bill of Materials (SBOM) generation for my project release builds.`
@@ -2502,7 +2502,7 @@
 }
 )
 
-## Suite: technical-scribe-agent
+## Suite: technical-scribe
 
 ### Test Case: ADR Scaffolding and Helper CLI Setup
 - **Prompt**: `Configure Nygard-style ADRs under docs/decisions. I want a python helper script to easily generate new ADRs.`
@@ -2624,7 +2624,7 @@
 }
 )
 
-## Suite: qa-engineer-agent
+## Suite: qa-engineer
 
 ### Test Case: Test Runner and Coverage Gate Setup
 - **Prompt**: `Configure Vitest and set up a local 85% coverage gate for our project.`
@@ -2706,7 +2706,7 @@
 }
 )
 
-## Suite: tool-auditor-agent
+## Suite: tool-auditor
 
 ### Test Case: Abandoned & Vulnerable Tool Screening
 - **Prompt**: `Audit this package: "hot-new-linter". Context: It has had no commits or updates in 3 years. It contains 1 active high-severity CVE in its direct dependencies. The project profile is a startup web application.`
@@ -2788,7 +2788,7 @@
 }
 )
 
-## Suite: tooling-engineer-agent
+## Suite: tooling-engineer
 
 ### Test Case: Developer Consent and Pre-requisites Prompting
 - **Prompt**: `Configure Jest in my npm project. It requires installing `ts-jest` and `typescript` as pre-requisites first.`
@@ -2910,7 +2910,7 @@
 }
 )
 
-## Suite: toolchain-architect-agent
+## Suite: toolchain-architect
 
 ### Test Case: CMake RISC-V Cross Compiler Setup
 - **Prompt**: `Configure a CMake toolchain file targeting RISC-V 32-bit bare-metal using riscv-none-elf-gcc.`

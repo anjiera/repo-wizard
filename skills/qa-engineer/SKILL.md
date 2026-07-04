@@ -44,7 +44,7 @@ Scan the codebase to evaluate current testing structures:
 4. **Passive Audit Boundary:** Do not run test suites (e.g. npm test, pytest, ./gradlew test) or compile code during this phase. Auditing is strictly static and passive to prevent execution delays, timeouts, or environment clashes.
 
 ### Phase 3: Testing Scaffolding Handoff
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-qa-engineer-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-qa-engineer.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., vitest, jest, msw, @testing-library/react) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., local pre-commit test runner execution speeds vs CI robustness, mock strictness). Ask the developer to guide the configuration file modifications.

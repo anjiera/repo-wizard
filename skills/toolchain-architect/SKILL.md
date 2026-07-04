@@ -35,7 +35,7 @@ Scan the host platform:
 3. **AST Build Tool Check:** Scan the workspace structure (CMakeLists.txt, Cargo.toml) to understand active target rules.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-toolchain-architect-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-toolchain-architect.md`).
 Draft all configurations, CMake toolchain configs, and setup wrappers in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending compiler settings, creating toolchain folders, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing build configurations. Do **NOT** overwrite, alter, or remove configurations added by other build or test agents (such as testing setups, coverage rules, or appsec hardeners).

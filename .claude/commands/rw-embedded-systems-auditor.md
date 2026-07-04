@@ -3,7 +3,7 @@ description: Configure low-level firmware robustness guidelines, static analysis
 ---
 
 Invoke the agent-skills:embedded-systems-auditor skill.
-Act as the embedded-systems-auditor-agent persona.
+Act as the embedded-systems-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target microcontroller architecture & hardware MCU family.

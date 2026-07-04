@@ -20,7 +20,7 @@ We welcome contributions to expand our agent capabilities, checklists, and confi
 
 ## ‍ How to Add a New Persona
 
-1. **Create the Agent File:** Add a markdown file under `agents/` named after the role (e.g., `agents/accessibility-auditor-agent.md`).
+1. **Create the Agent File:** Add a markdown file under `agents/` named after the role (e.g., `agents/accessibility-auditor.md`).
 2. **Anatomy of a Persona:**
  * **Role & Focus:** Define the persona's core area of expertise.
  * **Scope of Work:** What tasks they are authorized to perform.

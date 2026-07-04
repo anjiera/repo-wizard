@@ -267,60 +267,60 @@ function generateManifestFromSession(session) {
   const selectedAgents = new Set();
   
   // Always include basic general agents
-  selectedAgents.add('supply-chain-auditor-agent');
-  selectedAgents.add('vcs-workflow-engineer-agent');
-  selectedAgents.add('technical-scribe-agent');
+  selectedAgents.add('supply-chain-auditor');
+  selectedAgents.add('vcs-workflow-engineer');
+  selectedAgents.add('technical-scribe');
 
   // Compliance
   if (answers.compliance && answers.compliance.length > 0) {
-    selectedAgents.add('compliance-auditor-agent');
-    selectedAgents.add('privacy-hardener-agent');
+    selectedAgents.add('compliance-auditor');
+    selectedAgents.add('privacy-hardener');
   }
 
   // Testing
   if (answers.testing === true) {
-    selectedAgents.add('qa-engineer-agent');
+    selectedAgents.add('qa-engineer');
   }
 
   // Stack/Frameworks
   const frameworks = answers.frameworks || [];
   if (frameworks.includes('react') || frameworks.includes('node')) {
-    selectedAgents.add('react-performance-auditor-agent');
-    selectedAgents.add('state-hardener-agent');
-    selectedAgents.add('appsec-hardener-agent');
+    selectedAgents.add('react-performance-auditor');
+    selectedAgents.add('state-hardener');
+    selectedAgents.add('appsec-hardener');
   }
   if (frameworks.includes('rust')) {
-    selectedAgents.add('toolchain-architect-agent');
-    selectedAgents.add('state-integrity-auditor-agent');
+    selectedAgents.add('toolchain-architect');
+    selectedAgents.add('state-integrity-auditor');
   }
   if (frameworks.includes('c#') || frameworks.includes('.net') || frameworks.includes('unity')) {
-    selectedAgents.add('toolchain-architect-agent');
+    selectedAgents.add('toolchain-architect');
   }
   if (frameworks.includes('swift') || frameworks.includes('android')) {
-    selectedAgents.add('toolchain-architect-agent');
+    selectedAgents.add('toolchain-architect');
   }
   if (frameworks.includes('php')) {
-    selectedAgents.add('appsec-hardener-agent');
+    selectedAgents.add('appsec-hardener');
   }
 
   // Platforms
   const platforms = answers.platforms || [];
   if (platforms.includes('web')) {
-    selectedAgents.add('appsec-hardener-agent');
-    selectedAgents.add('accessibility-auditor-agent');
+    selectedAgents.add('appsec-hardener');
+    selectedAgents.add('accessibility-auditor');
   }
   if (platforms.includes('iphone') || platforms.includes('android')) {
-    selectedAgents.add('privacy-hardener-agent');
+    selectedAgents.add('privacy-hardener');
   }
   if (platforms.includes('nintendo switch 2')) {
-    selectedAgents.add('toolchain-architect-agent');
+    selectedAgents.add('toolchain-architect');
   }
   if (platforms.includes('firmware')) {
-    selectedAgents.add('embedded-systems-auditor-agent');
-    selectedAgents.add('toolchain-architect-agent');
+    selectedAgents.add('embedded-systems-auditor');
+    selectedAgents.add('toolchain-architect');
   }
   if (platforms.includes('windows') || platforms.includes('macos') || platforms.includes('linux')) {
-    selectedAgents.add('deployment-engineer-agent');
+    selectedAgents.add('deployment-engineer');
   }
 
   // Build contract objects

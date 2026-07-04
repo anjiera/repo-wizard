@@ -3,7 +3,7 @@ description: Scan the codebase for user-facing phrasings that lack legal neutral
 ---
 
 Invoke the agent-skills:legal-neutrality-auditor skill.
-Act as the legal-neutrality-auditor-agent persona.
+Act as the legal-neutrality-auditor persona.
 
 Before scanning, follow the interactive alignment phase by asking the user:
 1. Spoken and programming languages/file types to prioritize (specifically confirming script/UI extensions like .sh, .bat, .swift, .cs).

@@ -34,7 +34,7 @@ Scan the repository to target verification:
 3. **State Variable Audit:** Scan module entry points to map out variable ranges.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-state-integrity-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-state-integrity-auditor.md`).
 Draft all specifications, proof harnesses, and SMT solver configurations in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending model checks, creating formal files, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing test and build configurations. Do **NOT** overwrite, alter, or remove configurations added by other agents.

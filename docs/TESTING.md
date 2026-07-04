@@ -42,7 +42,7 @@ These scripts check configuration, command, and prompt files for syntactic corre
 ### Level 2: LLM-as-a-Judge Prompt Evaluations
 Catches prompt regressions by evaluating agent intent:
 - **[run-evals.js](../scripts/run-evals.js)**: Feeds the agent persona and a mock prompt into Gemini, then passes the output to a second Gemini call (the judge) to verify specific rubrics.
-- **Evals definitions**: Stored under [evals/](../evals) (e.g., [repo-wizard-agent.js](../evals/repo-wizard-agent.js)).
+- **Evals definitions**: Stored under [evals/](../evals) (e.g., [repo-wizard.js](../evals/repo-wizard.js)).
 - *Reference:* For more details, see the standalone [prompt-evaluations.md](design/prompt-evaluations.md) guide.
 
 ### Level 3: Contract Validation
@@ -100,7 +100,7 @@ Linters and unit/sandbox tests should run on every commit or pull request. The C
 
 ### A. Adding a New Agent Evaluation Test Case
 When adding a new subagent or modifying an existing agent prompt:
-1. Locate or create its test file in `evals/<agent-name>-agent.js`.
+1. Locate or create its test file in `evals/<agent-name>.js`.
 2. Add a new test case object inside `testCases`:
    ```javascript
    {
@@ -147,7 +147,7 @@ We test for Red Flag avoidance using **Adversarial Temptation Evals** (Level 2):
 ### A. Static Linter Failures (Level 1)
 If `node scripts/validate-agents.js` or `validate-skills.js` fail:
 * **Missing Agent Persona Headers:** Check that your agent persona file in `agents/` includes the mandatory header structure (`Step 1`, `Step 2`, `Step 3`, `3.1`, `3.2`, `3.3`).
-* **Rubric Parity Rule Violation:** If you create a new agent (e.g., `agents/my-new-agent.md`), you **must** also create a corresponding dynamic evaluation file under `evals/my-new-agent.js`.
+* **Rubric Parity Rule Violation:** If you create a new agent (e.g., `agents/my-new-agent.md`), you **must** also create a corresponding dynamic evaluation file under `evals/my-new.js`.
 * **Command Definition Mismatch:** If `validate-commands.js` fails, it means you updated a slash command (e.g. in `.gemini/commands/`) but forgot to synchronize the duplicate config files in `.claude/commands/` or `commands/`. Run `node scripts/validate-commands.js` to see the exact field mismatch, then copy the updated settings.
 
 ### B. LLM-as-a-Judge Rejections (Level 2)

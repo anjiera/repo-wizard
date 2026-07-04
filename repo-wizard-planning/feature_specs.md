@@ -86,7 +86,7 @@ A standard Agile-compliant CSV file designed for bulk-importing into JIRA, Click
   * `Issue Type`: Categorization (e.g., `Epic`, `Story`, `Task`).
   * `Epic Name / Parent`: Captures hierarchical relationships.
   * `Labels`: Comma-separated tags (e.g., `repo-wizard`, domain labels).
-  * `Recommended By (Sub-Agent)`: The specific recommending agent name (e.g., `repo-wizard privacy-hardener-agent`).
+  * `Recommended By (Sub-Agent)`: The specific recommending agent name (e.g., `repo-wizard privacy-hardener`).
   * `Frameworks/Goals`: The framework or compliance standard addressed (e.g., `GDPR`).
 
 #### 1.5.4 Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)

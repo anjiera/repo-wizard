@@ -3,7 +3,7 @@ description: Audit agent prompt files, formatting, style guidelines, and consist
 ---
 
 Invoke the agent-skills:agent-alignment-auditor skill.
-Act as the agent-alignment-auditor-agent persona.
+Act as the agent-alignment-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target agent files and prompt directory paths.

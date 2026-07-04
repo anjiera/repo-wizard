@@ -2,7 +2,7 @@ description = "Audit codebase for crash-prone parsing libraries, configure cover
 
 prompt = """
 Invoke the fuzz-engineer skill.
-Act as the fuzz-engineer-agent persona.
+Act as the fuzz-engineer persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target codebase parsing module or untrusted input boundary.

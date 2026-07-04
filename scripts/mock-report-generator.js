@@ -28,63 +28,63 @@ function generateMockCompiledAnalysis(targetPath) {
   const defaultAdjustments = `- Establish standard lint rules.\n- Set up pre-commit validation.`;
 
   const quickWins = [
-    `- **Credential Leak Checks:** [Configure Gitleaks pre-commit hooks](#specialist-agent-compliance-auditor-agent).`,
-    `- **Dependency License Audits:** [Integrate FOSSA scanner](#specialist-agent-supply-chain-auditor-agent).`,
-    `- **VCS Hook Automation:** [Install Git pre-commit hooks](#specialist-agent-vcs-workflow-engineer-agent).`,
-    `- **Commit prefix validation:** [Enforce Conventional Commits](#specialist-agent-vcs-workflow-engineer-agent).`
+    `- **Credential Leak Checks:** [Configure Gitleaks pre-commit hooks](#specialist-agent-compliance-auditor).`,
+    `- **Dependency License Audits:** [Integrate FOSSA scanner](#specialist-agent-supply-chain-auditor).`,
+    `- **VCS Hook Automation:** [Install Git pre-commit hooks](#specialist-agent-vcs-workflow-engineer).`,
+    `- **Commit prefix validation:** [Enforce Conventional Commits](#specialist-agent-vcs-workflow-engineer).`
   ];
 
   const highValue = [
-    `- **Unit Testing Framework:** [Configure Vitest test runner](#specialist-agent-qa-engineer-agent).`,
-    `- **E2E Browser Validation:** [Setup Playwright](#specialist-agent-qa-engineer-agent).`,
-    `- **Coverage gates:** [Enforce 80% coverage limits in Vitest](#specialist-agent-qa-engineer-agent).`,
-    `- **Rendering audits:** [Install react-scan](#specialist-agent-react-performance-auditor-agent).`
+    `- **Unit Testing Framework:** [Configure Vitest test runner](#specialist-agent-qa-engineer).`,
+    `- **E2E Browser Validation:** [Setup Playwright](#specialist-agent-qa-engineer).`,
+    `- **Coverage gates:** [Enforce 80% coverage limits in Vitest](#specialist-agent-qa-engineer).`,
+    `- **Rendering audits:** [Install react-scan](#specialist-agent-react-performance-auditor).`
   ];
 
   const papercuts = [
-    `- **ADR Templates:** [Scaffolding ADR template folder](#specialist-agent-technical-scribe-agent).`,
-    `- **Visual Diagrams:** [Generate Mermaid architecture flows](#specialist-agent-technical-scribe-agent).`
+    `- **ADR Templates:** [Scaffolding ADR template folder](#specialist-agent-technical-scribe).`,
+    `- **Visual Diagrams:** [Generate Mermaid architecture flows](#specialist-agent-technical-scribe).`
   ];
 
   const strategicDebt = [
-    `- **System Hardening:** [Configure network security configs](#specialist-agent-appsec-hardener-agent).`,
-    `- **Environment Scaling:** [Configure CI/CD automated build pipelines](#specialist-agent-deployment-engineer-agent).`
+    `- **System Hardening:** [Configure network security configs](#specialist-agent-appsec-hardener).`,
+    `- **Environment Scaling:** [Configure CI/CD automated build pipelines](#specialist-agent-deployment-engineer).`
   ];
 
   const backlog = [
     {
       summary: '[Supply Chain] Install and configure FOSSA for license scanning',
-      desc: `Install FOSSA locally and configure it in the CI pipeline to run license audits and reduce licensing incompatibilities on public open-source releases. Recommended by: repo-wizard supply-chain-auditor-agent.`,
+      desc: `Install FOSSA locally and configure it in the CI pipeline to run license audits and reduce licensing incompatibilities on public open-source releases. Recommended by: repo-wizard supply-chain-auditor.`,
       type: 'Story',
       epic: 'Licensing',
-      agent: 'supply-chain-auditor-agent',
+      agent: 'supply-chain-auditor',
       goal: 'Open Source',
       priority: 'quick-win'
     },
     {
       summary: '[VCS] Install and configure Husky and lint-staged',
-      desc: `Set up Husky git hooks and lint-staged to run linters, formatters, and unit tests on commit. Recommended by: repo-wizard vcs-workflow-engineer-agent.`,
+      desc: `Set up Husky git hooks and lint-staged to run linters, formatters, and unit tests on commit. Recommended by: repo-wizard vcs-workflow-engineer.`,
       type: 'Story',
       epic: 'Git Automation',
-      agent: 'vcs-workflow-engineer-agent',
+      agent: 'vcs-workflow-engineer',
       goal: 'General',
       priority: 'quick-win'
     },
     {
       summary: '[VCS] Enforce Conventional Commits via commitlint',
-      desc: `Install and configure commitlint to validate that git commit messages follow the Conventional Commits specification. Recommended by: repo-wizard vcs-workflow-engineer-agent.`,
+      desc: `Install and configure commitlint to validate that git commit messages follow the Conventional Commits specification. Recommended by: repo-wizard vcs-workflow-engineer.`,
       type: 'Story',
       epic: 'Git Automation',
-      agent: 'vcs-workflow-engineer-agent',
+      agent: 'vcs-workflow-engineer',
       goal: 'General',
       priority: 'quick-win'
     },
     {
       summary: '[VCS] Add PR size limit guardrail',
-      desc: `Set up a PR checker or local hook to block or warn on large changesets exceeding 250 lines of code. Recommended by: repo-wizard vcs-workflow-engineer-agent.`,
+      desc: `Set up a PR checker or local hook to block or warn on large changesets exceeding 250 lines of code. Recommended by: repo-wizard vcs-workflow-engineer.`,
       type: 'Story',
       epic: 'Git Automation',
-      agent: 'vcs-workflow-engineer-agent',
+      agent: 'vcs-workflow-engineer',
       goal: 'General',
       priority: 'quick-win'
     }

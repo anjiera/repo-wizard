@@ -3,7 +3,7 @@ description: Audit AI/ML and LLM components, secure integrations against prompt 
 ---
 
 Invoke the agent-skills:ai-robustness-hardener skill.
-Act as the ai-robustness-hardener-agent persona.
+Act as the ai-robustness-hardener persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. AI model stack, orchestration frameworks (LangChain, LlamaIndex, custom), and database components.

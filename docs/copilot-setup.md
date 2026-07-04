@@ -24,7 +24,7 @@ GitHub Copilot reads `.github/copilot-instructions.md` at the root of a workspac
    ```markdown
    # Legal Neutrality Instructions
    
-   [Copy and paste the instructions from repo-wizard/agents/legal-neutrality-auditor-agent.md]
+   [Copy and paste the instructions from repo-wizard/agents/legal-neutrality-auditor.md]
    ```
    Copilot will now respect these legal neutrality rules and validation checkpoints for all UI-related file generations in the project.
 
@@ -37,5 +37,5 @@ When using the Copilot Chat panel in VS Code or JetBrains, you can reference spe
 1. Open the Chat Panel.
 2. Reference the skill file using `#file`:
    > *"Scan my file `strings.xml` for liability using `#file:legal-neutrality-auditor.md`"*
-   > *"Give me 5 neutral alternatives for this wording based on the rules in `#file:legal-neutrality-auditor-agent.md` and `#file:legal-phrasing-dictionary.md`"*
+   > *"Give me 5 neutral alternatives for this wording based on the rules in `#file:legal-neutrality-auditor.md` and `#file:legal-phrasing-dictionary.md`"*
 3. Copilot will read the selected files and follow their step-by-step processes exactly.

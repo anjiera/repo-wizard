@@ -57,5 +57,5 @@ This test plan defines the manual verification procedure for the **Hybrid Decoup
     - The script updates `.repo-wizard/manifest.json` status to `fallback_to_agent`.
     - Each contract status is updated to `pending_agent_fallback`.
     - Exits cleanly with code `0`.
-- [ ] **6. Run sequential fallback**: Trigger the lead agent (`repo-wizard-agent.md`) using `agy run /repo-wizard`.
+- [ ] **6. Run sequential fallback**: Trigger the lead agent (`repo-wizard.md`) using `agy run /repo-wizard`.
   - *Expected*: The lead agent reads the manifest, sees `fallback_to_agent`, and spawns the specialists sequentially using the `invoke_subagent` tool calls.

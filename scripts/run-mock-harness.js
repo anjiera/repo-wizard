@@ -26,26 +26,26 @@ const { validateContract } = require('./validate-contracts');
 
 const ROOT = path.resolve(__dirname, '..');
 const SPECIALISTS = [
-  'accessibility-auditor-agent',
-  'compliance-auditor-agent',
-  'privacy-hardener-agent',
-  'supply-chain-auditor-agent',
-  'qa-engineer-agent',
-  'vcs-workflow-engineer-agent',
-  'technical-scribe-agent',
-  'appsec-hardener-agent',
-  'resilience-architect-agent',
-  'deployment-engineer-agent',
-  'api-contract-architect-agent',
-  'data-pipeline-architect-agent',
-  'notebook-auditor-agent',
-  'embedded-systems-auditor-agent',
-  'fuzz-engineer-agent',
-  'toolchain-architect-agent',
-  'state-integrity-auditor-agent',
-  'ai-robustness-hardener-agent',
-  'react-performance-auditor-agent',
-  'state-hardener-agent'
+  'accessibility-auditor',
+  'compliance-auditor',
+  'privacy-hardener',
+  'supply-chain-auditor',
+  'qa-engineer',
+  'vcs-workflow-engineer',
+  'technical-scribe',
+  'appsec-hardener',
+  'resilience-architect',
+  'deployment-engineer',
+  'api-contract-architect',
+  'data-pipeline-architect',
+  'notebook-auditor',
+  'embedded-systems-auditor',
+  'fuzz-engineer',
+  'toolchain-architect',
+  'state-integrity-auditor',
+  'ai-robustness-hardener',
+  'react-performance-auditor',
+  'state-hardener'
 ];
 
 const { DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./report-constants');

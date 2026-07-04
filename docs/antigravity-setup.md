@@ -50,7 +50,7 @@ Type the custom slash command in the chat input:
 ```bash
 /rw-legal-neutrality-auditor
 ```
-The command automatically invokes the `legal-neutrality-auditor` skill and adopts the `legal-neutrality-auditor-agent` auditor persona.
+The command automatically invokes the `legal-neutrality-auditor` skill and adopts the `legal-neutrality-auditor` auditor persona.
 
 ### 2. On-Demand Skill Activation
 Antigravity automatically discovers the `skills/` directory. If you ask the agent:

@@ -32,7 +32,7 @@ Audit the codebase to check current React performance configurations:
 3. **Event Listener Check:** Search for `window.addEventListener('unload')` patterns.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform file writes. Instead, write suggested additions directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-react-performance-auditor-agent.md`.
+- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform file writes. Instead, write suggested additions directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-react-performance-auditor.md`.
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying configuration files.
 2. **Interactive Code Review:** Display generated React hooks, style adjustments, or page event listeners to the user and prompt them for review and confirmation.

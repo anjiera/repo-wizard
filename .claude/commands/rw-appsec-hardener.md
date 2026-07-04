@@ -3,7 +3,7 @@ description: Scaffold secure HTTP header middlewares, CORS origin constraints, s
 ---
 
 Invoke the agent-skills:appsec-hardener skill.
-Act as the appsec-hardener-agent persona.
+Act as the appsec-hardener persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target whitelisted CORS origins and credentials settings.

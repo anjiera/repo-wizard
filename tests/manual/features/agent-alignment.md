@@ -15,7 +15,7 @@ This test plan defines the manual verification procedure for **Agent Alignment**
 - [ ] **2. Simulate a validation error**: Create a mock agent file `agents/temp-test-agent.md` and omit the required `## Step 3` header or omit its corresponding eval file. Run the script again.
   - *Expected*:
     - The validator fails.
-    - Prints a clear message: `[ERROR] temp-test-agent.md is missing required evaluation suite under evals/temp-test-agent.js` or `missing mandatory heading: ## Step 3`.
+    - Prints a clear message: `[ERROR] temp-test-agent.md is missing required evaluation suite under evals/temp-test.js` or `missing mandatory heading: ## Step 3`.
 - [ ] **3. Clean up**: Delete `agents/temp-test-agent.md`.
 
 ### Scenario 2: Running the /rw-agent-alignment-auditor Command

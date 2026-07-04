@@ -3,7 +3,7 @@ description: Scaffold local micro-benchmarking suites, concurrent HTTP load test
 ---
 
 Invoke the agent-skills:performance-auditor skill.
-Act as the performance-auditor-agent persona.
+Act as the performance-auditor persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Performance goals (micro-benchmarking vs concurrent API load testing).

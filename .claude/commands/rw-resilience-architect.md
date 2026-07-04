@@ -3,7 +3,7 @@ description: Scaffold retry policies with backoff/jitter, wrap HTTP clients with
 ---
 
 Invoke the agent-skills:resilience-architect skill.
-Act as the resilience-architect-agent persona.
+Act as the resilience-architect persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. Target external API endpoints and database clients needing fault-tolerance wrappers.

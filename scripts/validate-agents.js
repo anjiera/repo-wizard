@@ -6,7 +6,7 @@
  * evaluation tests and rubrics defined in run-evals.js.
  *
  * Checks:
- *   - Every *-agent.md file has a matching test suite in run-evals.js
+ *   - Every <agent-name>.md file has a matching test suite in run-evals.js
  *   - The matching test suite has at least one test case
  *   - Every test case has at least one rubric
  *
@@ -53,7 +53,7 @@ function main() {
   }
 
   const agentFiles = fs.readdirSync(AGENTS_DIR)
-    .filter(f => f.endsWith('-agent.md'))
+    .filter(f => f.endsWith('.md'))
     .sort();
 
   let totalErrors = 0;
@@ -170,10 +170,10 @@ function main() {
 
       // Structural validations for execution agents (excluding helpers/orchestrators)
       const EXEMPT_AGENTS = [
-        'repo-wizard-agent.md',
-        'legal-neutrality-auditor-agent.md',
-        'tool-auditor-agent.md',
-        'tooling-engineer-agent.md'
+        'repo-wizard.md',
+        'legal-neutrality-auditor.md',
+        'tool-auditor.md',
+        'tooling-engineer.md'
       ];
 
       if (!EXEMPT_AGENTS.includes(file)) {

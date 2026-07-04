@@ -42,7 +42,7 @@ Scan the codebase to evaluate accessibility conformance for the selected standar
 3. **Aria Role Verification:** Check if custom interactive components use WAI-ARIA role structures.
 
 ### Phase 3: Accessibility Scaffolding Handoff
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-accessibility-auditor-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-accessibility-auditor.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., eslint-plugin-jsx-a11y, axe-core CLI) to the scaffolder.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (ruleset strictness levels, pre-commit local execution speed vs CI robustness). Ask the developer to guide the configuration file modifications.

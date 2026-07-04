@@ -3,7 +3,7 @@ description: Orchestrate repository onboarding, compliance checking, and tool co
 ---
 
 Invoke the agent-skills:repo-wizard skill.
-Act as the repo-wizard-agent persona.
+Act as the repo-wizard persona.
 
 Check the input parameters:
 - If a URL is provided as a parameter (e.g. `/repo-wizard <URL>`): Set `MODE=HEADLESS_REMOTE` and default to executing a shallow clone once the TOS check passes.

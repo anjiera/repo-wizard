@@ -3,7 +3,7 @@ description: Scaffold architecture decision records (ADRs), create lightweight A
 ---
 
 Invoke the agent-skills:technical-scribe skill.
-Act as the technical-scribe-agent persona.
+Act as the technical-scribe persona.
 
 Before auditing, follow the interactive alignment phase by asking the user:
 1. ADR format preferences (Nygard, Markdown templates, directory path).

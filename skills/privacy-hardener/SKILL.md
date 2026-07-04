@@ -42,7 +42,7 @@ Scan the codebase to evaluate existing privacy controls:
 3. **Account Routes:** Look for account registration or deletion routes.
 
 ### Phase 3: Deliverables Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-privacy-hardener-agent.md`).
+- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-privacy-hardener.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **PII Logging Scrubbers:** Recommend and scaffold filters to mask or redact sensitive terms (emails, passwords, API tokens) before logs write to output.
 2. **Route Templates & Placeholders:** Draft stubs and controllers for data deletion (Right to be Forgotten) and data export (Portability) requests.

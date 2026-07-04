@@ -104,7 +104,7 @@ description: Malformed agent missing Step 1
 [scaffolding-robustness-protocol.md](../references/scaffolding-robustness-protocol.md)
 `;
   // We need to temporarily add a dummy eval case for it to avoid missing-eval error first
-  const tempEvalPath = path.join(ROOT, 'evals', 'temp-malformed-agent.js');
+  const tempEvalPath = path.join(ROOT, 'evals', 'temp-malformed.js');
   const tempEvalContent = `
 module.exports = {
   agent: 'temp-malformed',
@@ -251,7 +251,7 @@ function testRunOrchestration() {
       status: "pending",
       contracts: [
         {
-          agent_name: "privacy-hardener-agent",
+          agent_name: "privacy-hardener",
           status: "pending",
           contract: {
             task_metadata: {
@@ -290,7 +290,7 @@ function testRunOrchestration() {
     assert(updatedManifest.contracts[0].status === 'completed', 'contract status updated to completed');
     
     // Check observations generated
-    const obsPath = path.join(reportsDir, 'agents', 'test-repo-observations-privacy-hardener-agent.md');
+    const obsPath = path.join(reportsDir, 'agents', 'test-repo-observations-privacy-hardener.md');
     assert(fs.existsSync(obsPath), 'mock observations file created successfully');
     if (fs.existsSync(reportsDir)) {
       fs.rmSync(reportsDir, { recursive: true, force: true });
@@ -321,7 +321,7 @@ function testRunOrchestration() {
       status: "pending",
       contracts: [
         {
-          agent_name: "privacy-hardener-agent",
+          agent_name: "privacy-hardener",
           status: "pending",
           contract: {
             task_metadata: {
@@ -443,7 +443,7 @@ function testCompiledAnalysisPath() {
       status: "pending",
       contracts: [
         {
-          agent_name: "privacy-hardener-agent",
+          agent_name: "privacy-hardener",
           status: "pending",
           contract: {
             task_metadata: {

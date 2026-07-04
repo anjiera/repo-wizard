@@ -74,7 +74,7 @@ To optimize token usage and avoid redundant analyses on large codebases, the lea
 ```
 
 * **High / Medium Relevance:** The specialist agent is queued to run its full check.
-* **Low Relevance:** Bypassed completely. For example, if no Python files or notebooks exist, the `notebook-auditor-agent` returns `Low` relevance, and its checklist is skipped.
+* **Low Relevance:** Bypassed completely. For example, if no Python files or notebooks exist, the `notebook-auditor` returns `Low` relevance, and its checklist is skipped.
 
 ---
 
