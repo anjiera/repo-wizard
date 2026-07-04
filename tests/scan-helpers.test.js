@@ -35,6 +35,24 @@ function run() {
     const relVCS = checkAgentRelevance('vcs-workflow-engineer', tempTestDir);
     assert(relVCS.relevance === 'High', 'vcs-workflow-engineer always has High relevance');
 
+    // Test 3: ensureReportDirectories
+    const { ensureReportDirectories, promoteStateFiles, archiveSession } = require('../scripts/scan-helpers');
+    const { reportsDir, agentsDir, contractsDir } = ensureReportDirectories(tempTestDir, 'test-repo');
+    assert(fs.existsSync(reportsDir), 'ensureReportDirectories creates reportsDir');
+    assert(fs.existsSync(agentsDir), 'ensureReportDirectories creates agentsDir');
+    assert(fs.existsSync(contractsDir), 'ensureReportDirectories creates contractsDir');
+
+    // Test 4: promoteStateFiles
+    const wizardDir = path.join(tempTestDir, '.repo-wizard');
+    fs.writeFileSync(path.join(wizardDir, 'session.json'), '{"repoSize":"S"}', 'utf8');
+    promoteStateFiles(tempTestDir, 'test-repo');
+    assert(fs.existsSync(path.join(reportsDir, 'session.json')), 'promoteStateFiles copies session.json to reports directory');
+
+    // Test 5: archiveSession
+    archiveSession(tempTestDir, { repoName: 'test-repo' });
+    const historyBase = path.join(reportsDir, '..', 'history', 'test-repo');
+    assert(fs.existsSync(historyBase), 'archiveSession creates history subdirectory');
+
   } finally {
     fs.rmSync(tempTestDir, { recursive: true, force: true });
     clearFileCache();

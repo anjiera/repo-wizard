@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { getRepoSize, checkAgentRelevance, clearFileCache } = require('./scan-helpers');
+const { getRepoSize, checkAgentRelevance, clearFileCache, ensureReportDirectories } = require('./scan-helpers');
 
 
 const RESET = '\x1b[0m';
@@ -177,18 +177,12 @@ const repoSize = getRepoSize(totalLOC, totalFiles);
 console.log(`✓ Classified repo size: ${repoSize}`);
 
 // 3. Build manifest.json and session.json
-const REPORTS_DIR = path.join(resolvedReport, '.repo-wizard', 'reports', repoName);
-fs.mkdirSync(REPORTS_DIR, { recursive: true });
+const { reportsDir: REPORTS_DIR, agentsDir: obsDir, contractsDir } = ensureReportDirectories(resolvedReport, repoName);
 
 // Check if running inside Google Antigravity native chat sandbox.
 // The ANTIGRAVITY_AGENT environment variable is automatically set to '1' by the platform.
 // This indicates the capability to spawn parallel specialist subagents natively via invoke_subagent.
 const isNativeChat = process.env.ANTIGRAVITY_AGENT === '1';
-
-const obsDir = path.join(REPORTS_DIR, 'agents');
-const contractsDir = path.join(REPORTS_DIR, 'contracts');
-fs.mkdirSync(obsDir, { recursive: true });
-fs.mkdirSync(contractsDir, { recursive: true });
 
 clearFileCache();
 

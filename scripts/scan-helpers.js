@@ -223,10 +223,237 @@ function getRepoSize(totalLOC, totalFiles) {
   }
 }
 
+function getSafeRepoName(targetPath) {
+  if (!targetPath || typeof targetPath !== 'string') return 'project';
+  const resolved = path.resolve(targetPath);
+  let name = path.basename(resolved);
+  name = name.replace(/[^a-zA-Z0-9_\-\.]/g, '');
+  if (!name || name === '.' || name === '..' || name.toLowerCase() === 'reports' || name.toLowerCase() === 'history') {
+    return 'project';
+  }
+  return name;
+}
+
+function archiveSession(reportRoot = process.cwd(), options = {}) {
+  const wsPath = (reportRoot && typeof reportRoot === 'string') ? reportRoot : process.cwd();
+  const opt = options || {};
+  const wizardDir = path.join(wsPath, '.repo-wizard');
+  const repoName = opt.repoName || getSafeRepoName(wsPath);
+
+  if (!fs.existsSync(wizardDir)) {
+    return;
+  }
+
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  const rootSession = path.join(wizardDir, 'session.json');
+  const reportsSession = path.join(reportsDir, 'session.json');
+
+  const formatTimestamp = (date) => {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_` +
+           `${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
+  };
+
+  let sessionTime = new Date();
+  try {
+    if (fs.existsSync(rootSession)) {
+      sessionTime = fs.statSync(rootSession).mtime;
+    } else if (fs.existsSync(reportsSession)) {
+      sessionTime = fs.statSync(reportsSession).mtime;
+    }
+  } catch (err) {
+    // Fallback
+  }
+  const timestamp = formatTimestamp(sessionTime);
+
+  const historyDir = path.join(wizardDir, 'reports', 'history', repoName, timestamp);
+
+  try {
+    if (!fs.existsSync(historyDir)) {
+      fs.mkdirSync(historyDir, { recursive: true });
+    }
+  } catch (err) {
+    console.error('Failed to create history directory:', err.message);
+    return;
+  }
+
+  const archivedFiles = [];
+
+  const archiveFile = (srcPath) => {
+    if (fs.existsSync(srcPath)) {
+      const ext = path.extname(srcPath);
+      const base = path.basename(srcPath, ext);
+      const isReportFile = srcPath.startsWith(reportsDir);
+      const prefix = isReportFile && (base === 'session' || base === 'manifest') ? 'reports_' : '';
+      const destPath = path.join(historyDir, `${prefix}${base}_${timestamp}${ext}`);
+      
+      try {
+        fs.copyFileSync(srcPath, destPath);
+        fs.unlinkSync(srcPath);
+        archivedFiles.push({
+          original: path.relative(wsPath, srcPath),
+          archived: path.relative(wsPath, destPath)
+        });
+      } catch (e) {
+        // Ignore
+      }
+    }
+  };
+
+  const rmRecursive = (dirPath) => {
+    if (fs.existsSync(dirPath)) {
+      if (fs.rmSync) {
+        try {
+          fs.rmSync(dirPath, { recursive: true, force: true });
+        } catch (e) {}
+      } else {
+        const items = fs.readdirSync(dirPath);
+        for (const item of items) {
+          const itemPath = path.join(dirPath, item);
+          if (fs.lstatSync(itemPath).isDirectory()) {
+            rmRecursive(itemPath);
+          } else {
+            try {
+              fs.unlinkSync(itemPath);
+            } catch (e) {}
+          }
+        }
+        try {
+          fs.rmdirSync(dirPath);
+        } catch (e) {}
+      }
+    }
+  };
+
+  // Ensure reportsDir exists
+  try {
+    if (!fs.existsSync(reportsDir)) {
+      fs.mkdirSync(reportsDir, { recursive: true });
+    }
+  } catch (err) {
+    console.error('Failed to create reports directory:', err.message);
+    return;
+  }
+
+  let answersInferred = true;
+  try {
+    const sessionFileToCheck = fs.existsSync(rootSession) ? rootSession : (fs.existsSync(reportsSession) ? reportsSession : null);
+    if (sessionFileToCheck) {
+      const sess = JSON.parse(fs.readFileSync(sessionFileToCheck, 'utf8'));
+      if (sess.answersInferred === false) {
+        answersInferred = false;
+      }
+    }
+  } catch (e) {}
+
+  const rootManifest = path.join(wizardDir, 'manifest.json');
+  const reportsManifest = path.join(reportsDir, 'manifest.json');
+
+  if (answersInferred) {
+    archiveFile(reportsSession);
+  }
+  archiveFile(reportsManifest);
+
+  if (fs.existsSync(rootSession) && answersInferred) {
+    try {
+      fs.copyFileSync(rootSession, reportsSession);
+    } catch (e) {}
+  }
+
+  if (fs.existsSync(rootManifest)) {
+    try {
+      fs.copyFileSync(rootManifest, reportsManifest);
+    } catch (e) {}
+  }
+
+  if (answersInferred) {
+    archiveFile(rootSession);
+  }
+  archiveFile(rootManifest);
+
+  if (fs.existsSync(reportsDir)) {
+    try {
+      const items = fs.readdirSync(reportsDir);
+      for (const item of items) {
+        const itemPath = path.join(reportsDir, item);
+        try {
+          if (fs.statSync(itemPath).isFile()) {
+            const ext = path.extname(item);
+            if (ext === '.md' || ext === '.html') {
+              archiveFile(itemPath);
+            }
+          }
+        } catch (e) {}
+      }
+    } catch (e) {}
+  }
+
+  const agentsDir = path.join(reportsDir, 'agents');
+  rmRecursive(agentsDir);
+
+  if (opt.pruneContracts === true) {
+    const contractsDir = path.join(reportsDir, 'contracts');
+    rmRecursive(contractsDir);
+  }
+
+  try {
+    if (fs.readdirSync(reportsDir).length === 0) {
+      fs.rmdirSync(reportsDir);
+      const reportsParent = path.dirname(reportsDir);
+      if (fs.readdirSync(reportsParent).length === 0) {
+        fs.rmdirSync(reportsParent);
+      }
+    }
+  } catch (e) {}
+
+  if (archivedFiles.length > 0) {
+    console.log(`\n\x1b[1m\x1b[34m==>\x1b[0m \x1b[1mArchived prior wizard configurations and reports to history:\x1b[0m`);
+    archivedFiles.forEach(f => {
+      console.log(`  \x1b[32m✓\x1b[0m ${f.original} -> ${f.archived}`);
+    });
+  }
+}
+
+function promoteStateFiles(reportRoot, repoName) {
+  const wizardDir = path.join(reportRoot, '.repo-wizard');
+  const rootSession = path.join(wizardDir, 'session.json');
+  const rootManifest = path.join(wizardDir, 'manifest.json');
+  
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  
+  if (!fs.existsSync(reportsDir)) {
+    fs.mkdirSync(reportsDir, { recursive: true });
+  }
+  
+  if (fs.existsSync(rootSession)) {
+    fs.copyFileSync(rootSession, path.join(reportsDir, 'session.json'));
+  }
+  if (fs.existsSync(rootManifest)) {
+    fs.copyFileSync(rootManifest, path.join(reportsDir, 'manifest.json'));
+  }
+}
+
+function ensureReportDirectories(reportRoot, repoName) {
+  const wizardDir = path.join(reportRoot, '.repo-wizard');
+  const reportsDir = path.join(wizardDir, 'reports', repoName);
+  const agentsDir = path.join(reportsDir, 'agents');
+  const contractsDir = path.join(reportsDir, 'contracts');
+  
+  fs.mkdirSync(agentsDir, { recursive: true });
+  fs.mkdirSync(contractsDir, { recursive: true });
+  
+  return { reportsDir, agentsDir, contractsDir };
+}
+
 module.exports = {
   buildFileCache,
   clearFileCache,
   checkFilesExist,
   checkAgentRelevance,
-  getRepoSize
+  getRepoSize,
+  getSafeRepoName,
+  archiveSession,
+  promoteStateFiles,
+  ensureReportDirectories
 };
+

@@ -18,12 +18,13 @@ const path = require('path');
 const { spawn, execSync } = require('child_process');
 const { validateContract } = require('./validate-contracts');
 const { generateMockCompiledAnalysis } = require('./mock-report-generator');
-const { archiveSession } = require('./reports-archive');
 const { redactReportFiles } = require('./redactor');
-const { checkAgentRelevance, buildFileCache } = require('./scan-helpers');
-
-
-
+const { checkAgentRelevance, buildFileCache, archiveSession, promoteStateFiles, ensureReportDirectories } = require('./scan-helpers');
+function ensureDirExists(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
 const activeChildren = new Set();
 const runningAgents = new Map();
 
@@ -173,24 +174,14 @@ if (!isMock) {
   archiveSession(reportRoot, { repoName });
 }
 
-const REPORTS_DIR = path.join(reportRoot, '.repo-wizard', 'reports', repoName);
-const OBSERVATIONS_DIR = path.join(REPORTS_DIR, 'agents');
-const CONTRACTS_DIR = path.join(REPORTS_DIR, 'contracts');
-
-function ensureDirExists(dir) {
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
+const { reportsDir: REPORTS_DIR, agentsDir: OBSERVATIONS_DIR, contractsDir: CONTRACTS_DIR } = ensureReportDirectories(reportRoot, repoName);
+const manifestPath = path.join(REPORTS_DIR, 'manifest.json');
 
 const rootManifest = path.join(reportRoot, '.repo-wizard', 'manifest.json');
-const manifestPath = path.join(REPORTS_DIR, 'manifest.json');
 
 // Promotion of fresh manifest written by the lead agent
 if (fs.existsSync(rootManifest)) {
-  ensureDirExists(REPORTS_DIR);
-  fs.copyFileSync(rootManifest, manifestPath);
+  promoteStateFiles(reportRoot, repoName);
   try {
     fs.unlinkSync(rootManifest);
   } catch (e) {
