@@ -124,6 +124,18 @@ if (reportPathIdx !== -1 && process.argv[reportPathIdx + 1] && !process.argv[rep
 }
 const reportRoot = reportPath ? path.resolve(reportPath) : ROOT;
 
+// Parse --pillar flag
+let pillarFilter = null;
+const pillarIdx = process.argv.indexOf('--pillar');
+if (pillarIdx !== -1 && process.argv[pillarIdx + 1] && !process.argv[pillarIdx + 1].startsWith('-')) {
+  pillarFilter = process.argv[pillarIdx + 1].toUpperCase();
+}
+const ALLOWED_PILLARS = ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY', 'ALL'];
+if (pillarFilter && !ALLOWED_PILLARS.includes(pillarFilter)) {
+  console.error(`ERROR: Invalid pillar option '${pillarFilter}'. Allowed options are: ${ALLOWED_PILLARS.join(', ')}.`);
+  process.exit(1);
+}
+
 // Parse --report-style flag
 let reportStyle = 'whitepaper';
 const styleIdx = process.argv.indexOf('--report-style');
@@ -171,7 +183,7 @@ if (!fs.existsSync(path.join(reportRoot, '.repo-wizard'))) {
 
 // Archive prior session and report files before beginning orchestration
 if (!isMock) {
-  archiveSession(reportRoot, { repoName });
+  archiveSession(reportRoot, { repoName, pillar: pillarFilter });
 }
 
 const { reportsDir: REPORTS_DIR, agentsDir: OBSERVATIONS_DIR, contractsDir: CONTRACTS_DIR } = ensureReportDirectories(reportRoot, repoName);
@@ -479,12 +491,18 @@ async function main() {
 
       // Run the fast codebase relevance check
       const { relevance, rationale } = checkAgentRelevance(agentName, resolvedTarget, entry.contract);
-      if (relevance === 'Low') {
+      const agentRegistry = require('../agents/agent-registry.json');
+      const agentInfo = agentRegistry[agentName];
+      const specPillar = agentInfo ? agentInfo.pillar : null;
+      const isPillarMatch = !pillarFilter || pillarFilter === 'ALL' || specPillar === pillarFilter;
+
+      if (relevance === 'Low' || !isPillarMatch) {
+        const skipRationale = !isPillarMatch ? `Pillar mismatch (target: ${pillarFilter})` : `Low relevance: ${rationale}`;
         entry.status = 'skipped';
         completed++;
         
         if (!isTTY) {
-          console.log(`[SKIPPED] ${agentName} (Low relevance: ${rationale})`);
+          console.log(`[SKIPPED] ${agentName} (${skipRationale})`);
         }
         resolve();
         return;

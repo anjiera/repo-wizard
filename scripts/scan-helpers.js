@@ -366,34 +366,75 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
     } catch (e) {}
   }
 
-  if (answersInferred) {
-    archiveFile(rootSession);
-  }
-  archiveFile(rootManifest);
+  const pillarFilter = opt.pillar ? opt.pillar.toUpperCase() : null;
+  const isIncremental = pillarFilter && pillarFilter !== 'ALL';
 
-  if (fs.existsSync(reportsDir)) {
-    try {
-      const items = fs.readdirSync(reportsDir);
-      for (const item of items) {
-        const itemPath = path.join(reportsDir, item);
-        try {
-          if (fs.statSync(itemPath).isFile()) {
-            const ext = path.extname(item);
-            if (ext === '.md' || ext === '.html') {
-              archiveFile(itemPath);
+  if (!isIncremental) {
+    if (answersInferred) {
+      archiveFile(rootSession);
+    }
+    archiveFile(rootManifest);
+
+    if (fs.existsSync(reportsDir)) {
+      try {
+        const items = fs.readdirSync(reportsDir);
+        for (const item of items) {
+          const itemPath = path.join(reportsDir, item);
+          try {
+            if (fs.statSync(itemPath).isFile()) {
+              const ext = path.extname(item);
+              if (ext === '.md' || ext === '.html') {
+                archiveFile(itemPath);
+              }
             }
-          }
-        } catch (e) {}
-      }
-    } catch (e) {}
+          } catch (e) {}
+        }
+      } catch (e) {}
+    }
   }
 
   const agentsDir = path.join(reportsDir, 'agents');
-  rmRecursive(agentsDir);
+  const contractsDir = path.join(reportsDir, 'contracts');
 
-  if (opt.pruneContracts === true) {
-    const contractsDir = path.join(reportsDir, 'contracts');
-    rmRecursive(contractsDir);
+  const pruneDirectoryByPillar = (dirPath, isContract = false) => {
+    if (!fs.existsSync(dirPath)) return;
+    const agentRegistry = require('../agents/agent-registry.json');
+    const items = fs.readdirSync(dirPath);
+    for (const item of items) {
+      const itemPath = path.join(dirPath, item);
+      let agentName = null;
+      if (isContract) {
+        // contract file: <repoName>-contract-<agentName>.json
+        const match = item.match(new RegExp(`-contract-(.+)\\.json$`));
+        if (match) agentName = match[1];
+      } else {
+        // observation file: <repoName>-observations-<agentName>.md
+        const match = item.match(new RegExp(`-observations-(.+)\\.md$`));
+        if (match) agentName = match[1];
+      }
+
+      if (agentName) {
+        const agentInfo = agentRegistry[agentName];
+        const specPillar = agentInfo ? agentInfo.pillar : null;
+        if (specPillar === pillarFilter) {
+          try {
+            fs.unlinkSync(itemPath);
+          } catch (e) {}
+        }
+      }
+    }
+  };
+
+  if (isIncremental) {
+    pruneDirectoryByPillar(agentsDir, false);
+    if (opt.pruneContracts === true) {
+      pruneDirectoryByPillar(contractsDir, true);
+    }
+  } else {
+    rmRecursive(agentsDir);
+    if (opt.pruneContracts === true) {
+      rmRecursive(contractsDir);
+    }
   }
 
   try {

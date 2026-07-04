@@ -41,6 +41,30 @@ function run() {
     const manifest = JSON.parse(fs.readFileSync(manifestJsonPath, 'utf8'));
     const notebookContract = manifest.contracts.find(c => c.agent_name === 'notebook-auditor');
     assert(notebookContract && notebookContract.status === 'skipped', 'notebook-auditor status is skipped in manifest');
+
+    // Test: Invalid pillar option exits with 1
+    const invalidPillarRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--pillar', 'INVALID_PILLAR']);
+    assert(invalidPillarRun.code === 1, 'Invalid pillar option exits with 1');
+
+    // Test: Valid pillar filter SECURITY
+    const pillarRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--pillar', 'SECURITY']);
+    assert(pillarRun.code === 0, 'Pillar filtered run exits with 0');
+    const filteredManifest = JSON.parse(fs.readFileSync(manifestJsonPath, 'utf8'));
+    const qaContract = filteredManifest.contracts.find(c => c.agent_name === 'accessibility-auditor'); // QUALITY pillar
+    assert(qaContract && qaContract.status === 'skipped', 'accessibility-auditor (QUALITY) is skipped under SECURITY pillar filter');
+
+    // Test: High Sweep Warning exits with 2 in headless mode when active > 6 and no pillar is specified
+    fs.writeFileSync(path.join(tempScanDir, 'notebook.ipynb'), '{}');
+    fs.writeFileSync(path.join(tempScanDir, 'db.sql'), 'SELECT 1;');
+    
+    // We pass '--headless' (or since process.env.ANTIGRAVITY_AGENT !== '1' in test process spawn, it defaults to headless)
+    // Run without --pillar to trigger the warning exit code 2
+    const warningRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--headless']);
+    assert(warningRun.code === 2, 'High Sweep Warning exits with 2 when active > 6 and no pillar specified');
+
+    // Run with --pillar ALL to bypass the warning
+    const bypassRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--headless', '--pillar', 'ALL']);
+    assert(bypassRun.code === 0, '--pillar ALL bypasses the High Sweep Warning');
     
   } finally {
     fs.rmSync(tempScanDir, { recursive: true, force: true });

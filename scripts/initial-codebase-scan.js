@@ -51,6 +51,20 @@ if (reportIdx !== -1 && args[reportIdx + 1] && !args[reportIdx + 1].startsWith('
   reportPath = args[reportIdx + 1];
 }
 
+let pillarFilter = null;
+const pillarIdx = args.indexOf('--pillar');
+if (pillarIdx !== -1 && args[pillarIdx + 1] && !args[pillarIdx + 1].startsWith('-')) {
+  pillarFilter = args[pillarIdx + 1].toUpperCase();
+}
+
+const ALLOWED_PILLARS = ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY', 'ALL'];
+if (pillarFilter && !ALLOWED_PILLARS.includes(pillarFilter)) {
+  console.error(`${RED}✗ Error: Invalid pillar option '${pillarFilter}'. Allowed options are: ${ALLOWED_PILLARS.join(', ')}.${RESET}`);
+  process.exit(1);
+}
+
+const isHeadless = args.includes('--headless') || process.env.HEADLESS === 'true' || process.env.ANTIGRAVITY_AGENT !== '1';
+
 if (!targetPath) {
   printUsageAndExit('Missing required parameter "--target-path".');
 }
@@ -179,6 +193,21 @@ console.log(`✓ Classified repo size: ${repoSize}`);
 // 3. Build manifest.json and session.json
 const { reportsDir: REPORTS_DIR, agentsDir: obsDir, contractsDir } = ensureReportDirectories(resolvedReport, repoName);
 
+let existingManifest = null;
+let existingSession = null;
+const existingManifestPath = path.join(REPORTS_DIR, 'manifest.json');
+const existingSessionPath = path.join(REPORTS_DIR, 'session.json');
+if (fs.existsSync(existingManifestPath)) {
+  try {
+    existingManifest = JSON.parse(fs.readFileSync(existingManifestPath, 'utf8'));
+  } catch (e) {}
+}
+if (fs.existsSync(existingSessionPath)) {
+  try {
+    existingSession = JSON.parse(fs.readFileSync(existingSessionPath, 'utf8'));
+  } catch (e) {}
+}
+
 // Check if running inside Google Antigravity native chat sandbox.
 // The ANTIGRAVITY_AGENT environment variable is automatically set to '1' by the platform.
 // This indicates the capability to spawn parallel specialist subagents natively via invoke_subagent.
@@ -190,11 +219,22 @@ const manifestContracts = [];
 
 for (const spec of SPECIALISTS) {
   const { relevance, rationale } = checkAgentRelevance(spec, resolvedTarget);
+  const specPillar = agentRegistry[spec].pillar;
+  const isPillarMatch = !pillarFilter || pillarFilter === 'ALL' || specPillar === pillarFilter;
+
   let status = 'pending';
-  if (relevance === 'Low') {
+  if (relevance === 'Low' || !isPillarMatch) {
     status = 'skipped';
   } else if (isNativeChat) {
     status = 'pending_agent_fallback';
+  }
+
+  // Preserve existing completed status for non-target pillars during incremental runs
+  if (pillarFilter && pillarFilter !== 'ALL' && specPillar !== pillarFilter && existingManifest) {
+    const existingContract = existingManifest.contracts.find(c => c.agent_name === spec);
+    if (existingContract && existingContract.status === 'completed') {
+      status = 'completed';
+    }
   }
 
   manifestContracts.push({
@@ -211,6 +251,21 @@ for (const spec of SPECIALISTS) {
       tooling_specification: []
     }
   });
+}
+
+const activeCount = manifestContracts.filter(c => c.status !== 'skipped').length;
+const hasPillarArg = args.includes('--pillar');
+if (isHeadless && activeCount > 6 && !hasPillarArg) {
+  console.log(`${YELLOW}⚠ High Sweep Warning: The system identified ${activeCount} relevant specialist agents.${RESET}`);
+  console.log(`Running all of them at once will consume significant AI tokens.`);
+  console.log(`\nTo run your audits in stages, please run individual pillars:`);
+  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar SECURITY`);
+  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar PERFORMANCE`);
+  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar ARCHITECTURE`);
+  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar QUALITY`);
+  console.log(`\nTo bypass this warning and run all specialists, run explicitly with:`);
+  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar ALL`);
+  process.exit(2);
 }
 
 const manifest = {
@@ -233,7 +288,8 @@ const session = {
     platforms: [],
     compliance: [],
     scaffoldingMode: 'scaffold',
-    friction: 'medium'
+    friction: 'medium',
+    ...(existingSession ? existingSession.answers : {})
   }
 };
 
