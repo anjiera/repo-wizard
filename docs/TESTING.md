@@ -64,7 +64,7 @@ Asserts physical workspace transformations:
 ## 3. How and When to Run Tests
 
 ### Running Locally (Manual Executions)
-All test scripts are self-contained and run with zero external npm dependencies. For more details on the architecture behind these zero-dependency scripts, see [zero-dependency-scripting.md](design/zero-dependency-scripting.md).
+All test scripts are self-contained and run with zero external npm dependencies. For more details on the architecture behind these zero-dependency scripts, see [zero-dependency-scripting.md](../solo-dev-toolkit/docs/design/zero-dependency-scripting.md).
 
 ```bash
 # Run all static checks

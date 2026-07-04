@@ -97,7 +97,42 @@ To optimize token usage and avoid redundant analyses on large codebases, the lea
 
 ---
 
-## 4. How to Interact with the Onboarding Questionnaire
+## 4. Staged Sweeps (Pillar Filters) & Sweep Warning Gates
+
+Auditing large or complex codebases can consume significant AI tokens. To mitigate this risk, `repo-wizard` supports **Staged Sweeps** (also known as Quality Pillar Sweeps) and enforces warning gates during headless scans.
+
+### 4.1 Staged Sweep Routing (`--pillar`)
+Instead of running all 27 specialized agents concurrently, you can restrict audits to a specific Quality Pillar by passing the `--pillar` command-line parameter. If this parameter is omitted, it defaults to executing a full sweep of all relevant quality pillars. Valid options are:
+*   `SECURITY` (e.g. Rate limiting, API hardening, CORS policies)
+*   `PERFORMANCE` (e.g. Memory leaks, async race conditions, render cycles)
+*   `ARCHITECTURE` (e.g. OpenAPI schemas, compiled toolchains, formal proofs)
+*   `QUALITY` (e.g. Accessibility WCAG compliance, unit testing, git hook setups)
+*   `ALL` (Bypasses staging gates to sweep all relevant pillars simultaneously)
+
+**Example Staging Commands:**
+```bash
+# 1. Run only the security pillar
+node scripts/initial-codebase-scan.js --target-path <path> --pillar SECURITY
+node scripts/run-fallback-sequential-orchestration.js --target-path <path>
+
+# 2. Run performance audits incrementally on top of security results
+node scripts/initial-codebase-scan.js --target-path <path> --pillar PERFORMANCE
+node scripts/run-fallback-sequential-orchestration.js --target-path <path>
+```
+
+### 4.2 State Merging & Incremental Archiving
+Staged sweeps leverage two safety features to prevent data loss:
+1.  **Incremental State Merging**: Subsequent setup scans automatically read the existing manifest and preserve the `completed` status of other pillars. For example, running the `PERFORMANCE` setup scan will keep prior `SECURITY` audit results marked as `completed` rather than overwriting them.
+2.  **Incremental Archiving**: The cleanup engine automatically target-prunes only observation and contract files in the `agents/` and `contracts/` folders belonging to the active `--pillar` stage. Other pillars' observations are left untouched, enabling the compiler to compile a single comprehensive document when all stages are complete.
+
+### 4.3 High Sweep Warning Gate
+To prevent unintentional massive token consumption during headless scans:
+*   If the relevance sweep identifies **more than 6 active relevant specialists** for a codebase, and no `--pillar` parameter is specified, the setup scan fails fast and **exits with code 2**.
+*   The terminal output will display instructions on how to stage your sweep by pillar, or how to explicitly bypass the warning by passing `--pillar ALL`.
+
+---
+
+## 5. How to Interact with the Onboarding Questionnaire
 
 When running in **Interactive Local Mode**, `repo-wizard` prints the alignment questionnaire and asks you to reply with adjustments or say "Proceed". Depending on how you invoke the agent, your interaction flow will differ:
 

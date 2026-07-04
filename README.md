@@ -19,7 +19,7 @@ To help you get started quickly, please refer to the following guides:
 * **[hybrid-orchestration.md](docs/design/hybrid-orchestration.md)** — Architectural design of the manifest-driven hybrid runner and TTY execution model.
 * **[passive-data-boundaries.md](docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
 * **[prompt-evaluations.md](docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
-* **[zero-dependency-scripting.md](docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
+* **[zero-dependency-scripting.md](solo-dev-toolkit/docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
 * **[scaffolding-and-rollback-safety.md](docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
 * **[meta-agent-alignment.md](docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
 * **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.

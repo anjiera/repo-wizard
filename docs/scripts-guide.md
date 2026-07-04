@@ -143,15 +143,40 @@ Executes internal unit tests for utilities like the YAML parser, JSON validators
   node scripts/test-helpers.js
   ```
 
+### Pre-scan Setup Utility (`scripts/initial-codebase-scan.js`)
+Prepares the target repository and validates paths before executing sweeps.
+* **Behavior:**
+  - Verifies target directory read permissions (`R_OK`) and report directory write permissions. Exits with code `1` if permissions are denied.
+  - Analyzes codebase line counts to class size tiers (XS, S, M, L, XL).
+  - Determines framework stack properties (e.g. React).
+  - Triggers **High Sweep Warning** (exits with code `2`) if active relevant agents exceed 6 in headless mode, unless filtered by a specific quality pillar.
+  - Generates initial `manifest.json` and `session.json` state files.
+  - Supports merging of previous runs when executing incremental staging sweeps.
+* **Parameters:**
+  - `--target-path <path>` (Required): The workspace repository target path to audit.
+  - `--report-path <path>` (Optional): Custom root destination to save reports. (Defaults to the workspace root directory).
+  - `--pillar <PILLAR>` (Optional): Staged sweep target (`SECURITY`, `PERFORMANCE`, `ARCHITECTURE`, `QUALITY`, `ALL`). (Defaults to scanning all quality pillars).
+  - `--headless` (Optional): Executes setup in headless/non-interactive mode. (Defaults to false / interactive prompting).
+* **Usage:**
+  ```bash
+  node scripts/initial-codebase-scan.js --target-path <path> --pillar SECURITY
+  ```
+
 ### CLI Agent Orchestrator Runner (`scripts/run-fallback-sequential-orchestration.js`)
 The core sequential scanning orchestrator engine that manages subagent execution pools.
 * **Behavior:**
   - Dynamically detects codebase sizing and runs relevance sweeps.
   - Coordinates headless sequential runs and prompts for path targets.
   - Enforces mandatory parameters like `--target-path`.
+  - Supports `--pillar` staged execution filtering to run targeted subsets.
+* **Parameters:**
+  - `--target-path <path>` (Required): Target directory or Git remote repository URL.
+  - `--report-path <path>` (Optional): Custom path for writing reports. (Defaults to the workspace root directory).
+  - `--pillar <PILLAR>` (Optional): Filter to match staging configurations. (Defaults to executing all pending or enabled contracts in the manifest).
+  - `--mock-cli <true|false>` (Optional): Runs mock simulation. (Defaults to false).
 * **Usage:**
   ```bash
-  node scripts/run-fallback-sequential-orchestration.js --target-path <path> [options]
+  node scripts/run-fallback-sequential-orchestration.js --target-path <path> --pillar SECURITY
   ```
 
 ---
