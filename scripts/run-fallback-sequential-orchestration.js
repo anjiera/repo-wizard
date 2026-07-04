@@ -735,9 +735,9 @@ function completeOrchestration(manifest) {
   }
   
   session.status = 'completed';
-  session.targetPath = targetPath;
+  session.targetPath = targetPath ? targetPath.replace(/\\/g, '/') : targetPath;
   if (reportPath) {
-    session.reportPath = reportPath;
+    session.reportPath = reportPath.replace(/\\/g, '/');
   }
   session.answersInferred = session.answersInferred !== undefined ? session.answersInferred : true;
   session.reportStyle = reportStyle || 'whitepaper';

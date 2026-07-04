@@ -227,8 +227,8 @@ const manifest = {
 
 const session = {
   status: 'in_progress',
-  targetPath: resolvedTarget,
-  reportPath: resolvedReport,
+  targetPath: resolvedTarget.replace(/\\/g, '/'),
+  reportPath: resolvedReport.replace(/\\/g, '/'),
   repoSize,
   answersInferred: true,
   reportStyle: 'whitepaper',

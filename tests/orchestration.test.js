@@ -309,7 +309,7 @@ function run() {
     const targetSessionPath = path.join(reportsDir, 'session.json');
     assert(fs.existsSync(targetSessionPath), 'session.json generated under custom report path');
     const session = JSON.parse(fs.readFileSync(targetSessionPath, 'utf8'));
-    assert(session.reportPath === customReportDir, 'session.json correctly persisted reportPath');
+    assert(path.resolve(session.reportPath) === path.resolve(customReportDir), 'session.json correctly persisted reportPath');
 
   } finally {
     if (fs.existsSync(customReportDir)) {
