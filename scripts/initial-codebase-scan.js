@@ -1,0 +1,245 @@
+#!/usr/bin/env node
+/**
+ * scripts/initial-codebase-scan.js
+ *
+ * Unified setup and static codebase analyzer script.
+ * - Resolves target path and checks existence
+ * - Runs count-loc.js to retrieve metrics and exceedsAdoptionThreshold status
+ * - Infers codebase properties: primary language, build system, frameworks
+ * - Generates manifest.json and session.json files
+ * - Exits with 0 on success, or 1 on failure
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+const RESET = '\x1b[0m';
+const BOLD = '\x1b[1m';
+const GREEN = '\x1b[32m';
+const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
+const YELLOW = '\x1b[33m';
+
+const SPECIALISTS = [
+  'accessibility-auditor',
+  'compliance-auditor',
+  'privacy-hardener',
+  'supply-chain-auditor',
+  'qa-engineer',
+  'vcs-workflow-engineer',
+  'technical-scribe',
+  'appsec-hardener',
+  'resilience-architect',
+  'deployment-engineer',
+  'api-contract-architect',
+  'data-pipeline-architect',
+  'notebook-auditor',
+  'embedded-systems-auditor',
+  'fuzz-engineer',
+  'toolchain-architect',
+  'state-integrity-auditor',
+  'ai-robustness-hardener',
+  'react-performance-auditor',
+  'state-hardener'
+];
+
+function printUsageAndExit(err) {
+  if (err) console.error(`${RED}✗ Error: ${err}${RESET}`);
+  console.log(`Usage: node scripts/initial-codebase-scan.js --target-path <target_path> [--report-path <report_path>]`);
+  process.exit(1);
+}
+
+// Simple parameter parsing
+const args = process.argv.slice(2);
+let targetPath = null;
+let reportPath = null;
+
+const targetIdx = args.indexOf('--target-path');
+if (targetIdx !== -1 && args[targetIdx + 1] && !args[targetIdx + 1].startsWith('-')) {
+  targetPath = args[targetIdx + 1];
+}
+
+const reportIdx = args.indexOf('--report-path');
+if (reportIdx !== -1 && args[reportIdx + 1] && !args[reportIdx + 1].startsWith('-')) {
+  reportPath = args[reportIdx + 1];
+}
+
+if (!targetPath) {
+  printUsageAndExit('Missing required parameter "--target-path".');
+}
+
+const resolvedTarget = path.resolve(targetPath);
+if (!fs.existsSync(resolvedTarget)) {
+  console.error(`${RED}✗ Error: Target directory "${resolvedTarget}" does not exist.${RESET}`);
+  process.exit(1);
+}
+
+const ROOT = path.resolve(__dirname, '..');
+const resolvedReport = reportPath ? path.resolve(reportPath) : ROOT;
+
+const parts = targetPath.split(/[\/\\]/);
+let repoName = parts[parts.length - 1] || 'project';
+if (repoName.endsWith('.git')) {
+  repoName = repoName.slice(0, -4);
+}
+repoName = repoName.replace(/[^a-zA-Z0-9_\-\.]/g, '');
+if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase() === 'reports' || repoName.toLowerCase() === 'history') {
+  repoName = 'project';
+}
+
+console.log(`${BLUE}==>${RESET} ${BOLD}Starting initial codebase scan for: ${repoName}...${RESET}`);
+
+// 1. Run count-loc.js to collect metrics
+let exceedsAdoptionThreshold = false;
+let totalLOC = 0;
+let totalFiles = 0;
+try {
+  const countLocPath = path.join(ROOT, 'solo-dev-toolkit', 'scripts', 'count-loc.js');
+  const result = execSync(`node "${countLocPath}" --target-path "${resolvedTarget}" --json`, { encoding: 'utf8' });
+  const stats = JSON.parse(result);
+  exceedsAdoptionThreshold = !!stats.exceedsAdoptionThreshold;
+  totalLOC = stats.totalLOC || 0;
+  totalFiles = stats.totalFiles || 0;
+  console.log(`✓ Sizing analysis completed: ${totalFiles} files, ${totalLOC} LOC.`);
+  if (exceedsAdoptionThreshold) {
+    console.log(`${YELLOW}⚠ WARNING: Codebase size exceeds incremental adoption threshold.${RESET}`);
+  }
+} catch (err) {
+  console.warn(`${YELLOW}⚠ Warning: Could not run count-loc.js successfully. Falling back to default limits.${RESET}`);
+}
+
+// 2. Perform static file checking to infer language, build system, and frameworks
+let language = 'javascript';
+let buildSystem = 'none';
+const frameworks = [];
+
+const fileCache = [];
+function traverse(dir, depth = 0) {
+  if (depth > 5 || fileCache.length > 5000) return;
+  let files;
+  try {
+    files = fs.readdirSync(dir);
+  } catch (e) {
+    return;
+  }
+  for (const file of files) {
+    if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj'].includes(file)) {
+      continue;
+    }
+    const fullPath = path.join(dir, file);
+    try {
+      const stat = fs.statSync(fullPath);
+      if (stat.isFile()) {
+        fileCache.push({ name: file.toLowerCase(), path: fullPath });
+      } else if (stat.isDirectory()) {
+        traverse(fullPath, depth + 1);
+      }
+    } catch (e) {}
+  }
+}
+traverse(resolvedTarget);
+
+const fileNames = new Set(fileCache.map(f => f.name));
+const extensions = new Set(fileCache.map(f => path.extname(f.name)));
+
+if (fileNames.has('cargo.toml') || extensions.has('.rs')) {
+  language = 'rust';
+  buildSystem = 'cargo';
+  frameworks.push('rust');
+} else if (fileNames.has('go.mod') || extensions.has('.go')) {
+  language = 'go';
+  buildSystem = 'go-modules';
+  frameworks.push('go');
+} else if (fileNames.has('pom.xml')) {
+  language = 'java';
+  buildSystem = 'maven';
+  frameworks.push('java');
+} else if (fileNames.has('build.gradle') || fileNames.has('build.gradle.kts')) {
+  language = extensions.has('.kt') ? 'kotlin' : 'java';
+  buildSystem = 'gradle';
+  frameworks.push(language);
+} else if (extensions.has('.cs')) {
+  language = 'c#';
+  buildSystem = 'dotnet';
+  if (fileNames.has('csproj') || fileNames.has('sln')) {
+    buildSystem = 'msbuild';
+  }
+} else if (extensions.has('.bas') || extensions.has('.prg') || extensions.has('.basic')) {
+  language = 'basic';
+  buildSystem = 'none';
+  frameworks.push('basic');
+} else if (fileNames.has('package.json') || extensions.has('.js') || extensions.has('.jsx') || extensions.has('.ts') || extensions.has('.tsx')) {
+  language = (extensions.has('.ts') || extensions.has('.tsx')) ? 'typescript' : 'javascript';
+  buildSystem = 'npm';
+  if (fileNames.has('package.json')) {
+    try {
+      const pkg = JSON.parse(fs.readFileSync(path.join(resolvedTarget, 'package.json'), 'utf8'));
+      if ((pkg.dependencies && pkg.dependencies.react) || (pkg.devDependencies && pkg.devDependencies.react)) {
+        frameworks.push('react');
+      }
+    } catch (e) {}
+  }
+  if (!frameworks.includes('react') && (extensions.has('.jsx') || extensions.has('.tsx'))) {
+    frameworks.push('react');
+  }
+}
+
+console.log(`✓ Inferred profile: language=${language}, build_system=${buildSystem}, frameworks=[${frameworks.join(', ')}]`);
+
+// 3. Build manifest.json and session.json
+const REPORTS_DIR = path.join(resolvedReport, '.repo-wizard', 'reports', repoName);
+fs.mkdirSync(REPORTS_DIR, { recursive: true });
+
+const manifest = {
+  status: 'pending',
+  contracts: SPECIALISTS.map(spec => ({
+    agent_name: spec,
+    status: 'pending',
+    contract: {
+      task_metadata: {
+        target_modules: [resolvedTarget],
+        language,
+        build_system: buildSystem,
+        execution_mode: 'scaffold'
+      },
+      compliance_targets: [],
+      tooling_specification: []
+    }
+  }))
+};
+
+const session = {
+  status: 'in_progress',
+  targetPath: resolvedTarget,
+  reportPath: resolvedReport,
+  answersInferred: true,
+  reportStyle: 'whitepaper',
+  exceedsAdoptionThreshold,
+  answers: {
+    frameworks,
+    platforms: [],
+    compliance: [],
+    scaffoldingMode: 'scaffold',
+    friction: 'medium'
+  }
+};
+
+// Write files to target report folder and copy manifest to root pointer
+fs.writeFileSync(path.join(REPORTS_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');
+fs.writeFileSync(path.join(REPORTS_DIR, 'session.json'), JSON.stringify(session, null, 2), 'utf8');
+
+// Copy manifest to root so run-fallback-sequential-orchestration.js can consume & promote it
+const rootWizardDir = path.join(resolvedReport, '.repo-wizard');
+fs.mkdirSync(rootWizardDir, { recursive: true });
+fs.writeFileSync(path.join(rootWizardDir, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');
+
+// Write last session pointer for reports-compile.js ease of use
+fs.writeFileSync(path.join(rootWizardDir, 'last_session_path.json'), JSON.stringify({
+  lastSessionPath: path.join(REPORTS_DIR, 'session.json')
+}, null, 2), 'utf8');
+
+console.log(`${GREEN}✓ Pre-scan setup complete. manifest.json and session.json written successfully.${RESET}\n`);
+process.exit(0);
