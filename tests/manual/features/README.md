@@ -1,12 +1,11 @@
 # Feature-Specific Manual Test Plans
 
-This directory holds detailed, step-by-step manual test scripts for individual features (e.g., dashboard interactive controls, detailed rollback audits, CLI command boundaries).
+This directory holds detailed, step-by-step manual test scripts for individual features (e.g., detailed rollback audits, CLI command boundaries).
 
 ---
 
 ## Folder Structure
 
-- `tests/manual/features/dashboard.md`: Detailed browser walkthroughs, questionnaire options, edge cases.
 - `tests/manual/features/scaffolding-rollback.md`: Walkthroughs of creating compile-breaking configurations to verify git rollbacks.
 - `tests/manual/features/prompt-injection.md`: Walks through testing manual file creation with hijack instructions.
 

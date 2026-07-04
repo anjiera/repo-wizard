@@ -96,16 +96,7 @@ If you run `agy --dangerously-skip-permissions -p "/repo-wizard ..."` on the com
   ```
   The agent will automatically read your saved session, apply your response, and continue the execution.
 
-### Option C: Via the Local Dashboard UI
-If you prefer a visual web interface:
-1. Run the local dashboard server:
-   ```bash
-   node scripts/dashboard-server.js
-   ```
-2. Open `http://localhost:3000` in your browser.
-3. You can review compiled reports, view active manifests, and manage your backlog configuration presets interactively.
-
-### Option D: Relocating Output Paths (Advanced Settings)
+### Option C: Relocating Output Paths (Advanced Settings)
 By default, the wizard creates a `.repo-wizard/` folder in the root of the targeted repository to store manifests, sessions, observations, and compiled deliverables, and looks for `.tos_agreed` in the tool's installation root. You can customize these locations using the following parameters:
 
 #### `--report-path <path>`
@@ -114,7 +105,6 @@ Relocates all generated reports, manifest parameters, and session JSON files for
   ```bash
   /repo-wizard --report-path D:\DevSandbox\custom_reports
   ```
-* **Dashboard UI**: Expand the **Advanced Settings** accordion on the codebase selector page to configure the custom parent path.
 
 #### `--tos-path <path>`
 Relocates the `.tos_agreed` Terms of Service signature validation file to the specified custom directory.
@@ -122,7 +112,6 @@ Relocates the `.tos_agreed` Terms of Service signature validation file to the sp
   ```bash
   /repo-wizard --tos-path D:\DevSandbox\custom_tos
   ```
-* **Dashboard UI**: Expand the **Advanced Settings** accordion on the codebase selector page to customize the TOS validation path.
 
 ---
 

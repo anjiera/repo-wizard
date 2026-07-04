@@ -36,7 +36,7 @@ The framework separates the definition of the Quality Pillars from the active sp
      |                                                                                   |
      v                                                                                   v
 +----+----------------------------------+                           +--------------------+------------------+
-|  scripts/validate-agents.js           |                           |  scripts/dashboard-server.js          |
+|  scripts/validate-agents.js           |                           |  scripts/reports-compile.js           |
 |  (Pre-commit Validation Gate)          |                           |  (Report & Backlog Generation Engine) |
 +----+----------------------------------+                           +--------------------+------------------+
      |                                                                                   |

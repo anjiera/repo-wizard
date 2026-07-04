@@ -17,22 +17,22 @@ This decoupled architecture separates **planning** (conducted by the Lead Agent)
 ```mermaid
 sequenceDiagram
     autonumber
+    participant D as Developer
     participant L as Lead Agent
-    participant D as Dashboard Server
     participant O as Orchestrator Runner
     participant S as Specialist Agent CLI
     
-    L->>D: Save Session & Mode (full / backlog)
-    L->>D: Write Contract Manifest (manifest.json)
-    D->>O: Spawn run-orchestration.js
+    D->>L: Invoke /repo-wizard
+    L->>L: Save Session & Mode
+    L->>L: Write Contract Manifest (manifest.json)
+    D->>O: Spawn run-fallback-sequential-orchestration.js
     Note over O: Detect CLI (agy) & Concurrency
     loop Every Contract
         O->>S: Spawn agy --dangerously-skip-permissions
         S-->>O: Stream Output & Observations (Markdown)
-        O-->>D: Stream Log Lines in Real-Time
+        O-->>O: Log Output & Save observations.md
     end
-    O-->>D: Completed State & Exit 0
-    D->>D: compileRealReports()
+    O-->>O: Compile Reports & Exit 0
 ```
 
 ### Key Elements:

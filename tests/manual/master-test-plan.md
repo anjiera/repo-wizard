@@ -1,6 +1,6 @@
 # Master Manual Test Plan & Regression Checklist
 
-This document is the high-level manual testing index for **Repo Wizard** (`repo-wizard`). It is designed to verify the entire system from core baselines up to live agent workflows and UI dashboard integrations.
+This document is the high-level manual testing index for **Repo Wizard** (`repo-wizard`). It is designed to verify the entire system from core baselines up to live agent workflows and CLI integrations.
 
 Detailed step-by-step procedures for individual complex features are located in [tests/manual/features/](features/).
 
@@ -13,17 +13,15 @@ To verify components incrementally and minimize risk, execute tests in this orde
 ```mermaid
 graph TD
     L1[Level 1: System Baseline Setup] --> L2[Level 2: Dry-Run & Sandboxing]
-    L2 --> L3[Level 3: Interactive SPA Dashboard]
-    L3 --> L4[Level 4: Legal Consent & Local CLI]
-    L4 --> L5[Level 5: Remote Headless sweeps]
-    L5 --> L6[Level 6: IDE Plugin slash commands]
+    L2 --> L3[Level 3: Legal Consent & Local CLI]
+    L3 --> L4[Level 4: Remote Headless sweeps]
+    L4 --> L5[Level 5: IDE Plugin slash commands]
     
     style L1 fill:#4CAF50,stroke:#388E3C,color:#fff
     style L2 fill:#2196F3,stroke:#1976D2,color:#fff
-    style L3 fill:#9C27B0,stroke:#7B1FA2,color:#fff
-    style L4 fill:#FF9800,stroke:#F57C00,color:#fff
-    style L5 fill:#E91E63,stroke:#C2185B,color:#fff
-    style L6 fill:#607D8B,stroke:#455A64,color:#fff
+    style L3 fill:#FF9800,stroke:#F57C00,color:#fff
+    style L4 fill:#E91E63,stroke:#C2185B,color:#fff
+    style L5 fill:#607D8B,stroke:#455A64,color:#fff
 ```
 
 ---
@@ -95,39 +93,8 @@ graph TD
 
 ---
 
-## Level 3: Interactive SPA Dashboard (UI & Express API)
 
-**Goal**: Run the React SPA web interface, start the Node.js Express server, select a repository, and click through the onboarding interview to generate a session state file on disk.
-*For detailed step-by-step UI scripts, see [features/dashboard.md](features/dashboard.md).*
-
-- [ ] **3.1 API Server Dynamic Port Binding**
-  - Start the Express backend:
-    ```bash
-    node scripts/dashboard-server.js
-    ```
-  - *Expected Outcome*:
-    - Binds to port `3000` (or `3001` if `3000` is occupied) and outputs:
-      ```text
-      Repo Wizard Interactive Dashboard is Live!
-      Access URL: http://localhost:3000
-      ```
-
-- [ ] **3.2 React SPA Client Interface**
-  - Open the Access URL in your web browser (or `npm run dev` port if modifying dashboard source code).
-  - *Expected Outcome*:
-    - The browser loads the Workspace Picker page.
-    - No console errors are present in your browser's Developer Tools.
-
-- [ ] **3.3 Onboarding Questionnaire & Session State Sync**
-  - Paste the absolute path of your active repository (e.g., `/absolute/path/to/your/repo-wizard` or similar) in the Workspace input and click **Select**.
-  - Click through steps: select operational context, compliance targets, adjust the friction slider, and save settings.
-  - *Expected Outcome*:
-    - UI confirms settings are saved.
-    - Open `.repo-wizard/session.json` in your editor; verify it contains a JSON payload reflecting your UI choices.
-
----
-
-## Level 4: Legal Consent & Local CLI Sweeps (Real Execution)
+## Level 3: Legal Consent & Local CLI Sweeps (Real Execution)
 
 **Goal**: Verify that the Step 0 Consent Gate blocks unauthorized scans, prompts for acceptance, writes the state file, and executes a local headless scan with TTY/non-TTY detection.
 *For detailed step-by-step procedures, see [features/hybrid-orchestration.md](features/hybrid-orchestration.md).*
@@ -175,7 +142,7 @@ graph TD
 
 ---
 
-## Level 5: Remote Headless Scan (Remote Profiling)
+## Level 4: Remote Headless Scan (Remote Profiling)
 
 **Goal**: Verify that scanning remote repositories compiles correct observation summaries, full reports, and roadmap upgrade hooks.
 *For detailed step-by-step procedures, see [features/backlog-exporter.md](features/backlog-exporter.md).*
@@ -210,7 +177,7 @@ graph TD
 
 ---
 
-## Level 6: Specialist Slash Commands & IDE Integrations
+## Level 5: Specialist Slash Commands & IDE Integrations
 
 **Goal**: Verify that specialists and individual commands can be triggered directly in your IDE chat or terminal windows.
 *For detailed step-by-step procedures, see [features/agent-alignment.md](features/agent-alignment.md).*

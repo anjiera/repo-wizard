@@ -20,7 +20,6 @@ To help you get started quickly, please refer to the following guides:
 * **[passive-data-boundaries.md](docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
 * **[prompt-evaluations.md](docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
 * **[zero-dependency-scripting.md](docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
-* **[dashboard-architecture.md](docs/design/dashboard-architecture.md)** — Architectural layout of the local SPA client dashboard and Express backend.
 * **[scaffolding-and-rollback-safety.md](docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
 * **[meta-agent-alignment.md](docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
 * **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
@@ -83,7 +82,6 @@ These folders contain the code, configurations, and skills packaged and shipped 
 *   `skills/` — The core audit and scaffolding workflows (copied into user codebases).
 *   `agents/` — Reusable agent persona instructions (used during scans).
 *   `commands/`, `.claude/`, `.gemini/` — CLI slash command configurations for different client environments.
-*   `dashboard/` — The local visual dashboard UI and server.
 
 ### 2. Developer Infrastructure (The Builder)
 These folders and files are used locally by developers and AI coding assistants to build, test, and maintain `repo-wizard`:

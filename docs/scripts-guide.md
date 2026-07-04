@@ -198,14 +198,5 @@ Consolidates specialist agent mini-reports (observations) and compiles final rep
   node scripts/reports-compile.js
   ```
 
----
 
-## 6. Dashboard & Visualization Server
-
-### Local UI Server (`scripts/dashboard-server.js`)
-Spins up a local Express server and serves the single-page application dashboard to visualize report metadata, backlogs, and metrics.
-* **Usage:**
-  ```bash
-  node scripts/dashboard-server.js
-  ```
 
