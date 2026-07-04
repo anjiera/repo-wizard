@@ -193,8 +193,14 @@ console.log(`✓ Inferred profile: language=${language}, build_system=${buildSys
 const REPORTS_DIR = path.join(resolvedReport, '.repo-wizard', 'reports', repoName);
 fs.mkdirSync(REPORTS_DIR, { recursive: true });
 
+// Check if running inside Google Antigravity native chat sandbox.
+// The ANTIGRAVITY_AGENT environment variable is automatically set to '1' by the platform.
+// This indicates the capability to spawn parallel specialist subagents natively via invoke_subagent.
+const isNativeChat = process.env.ANTIGRAVITY_AGENT === '1';
+
 const manifest = {
   status: 'pending',
+  nativeChatEnvironment: isNativeChat,
   contracts: SPECIALISTS.map(spec => ({
     agent_name: spec,
     status: 'pending',
@@ -218,6 +224,7 @@ const session = {
   answersInferred: true,
   reportStyle: 'whitepaper',
   exceedsAdoptionThreshold,
+  nativeChatEnvironment: isNativeChat,
   answers: {
     frameworks,
     platforms: [],
