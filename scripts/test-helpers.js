@@ -531,6 +531,43 @@ function testReportStyling() {
   }
 }
 
+function testScanHelpers() {
+  console.log('Testing scan-helpers.js...');
+  const { getRepoSize, checkAgentRelevance, clearFileCache } = require('./scan-helpers');
+
+  // Test 1: getRepoSize thresholds
+  assert(getRepoSize(500, 5) === 'XS', 'getRepoSize returns XS for small codebase');
+  assert(getRepoSize(1500, 10) === 'S', 'getRepoSize returns S for small-medium codebase');
+  assert(getRepoSize(12000, 20) === 'M', 'getRepoSize returns M for medium codebase');
+  assert(getRepoSize(60000, 50) === 'L', 'getRepoSize returns L for large codebase');
+  assert(getRepoSize(200000, 100) === 'XL', 'getRepoSize returns XL for extra-large codebase');
+
+  // Test 2: checkAgentRelevance for notebook-auditor
+  const tempTestDir = path.join(ROOT, 'temp_scan_helpers_test_dir');
+  if (!fs.existsSync(tempTestDir)) {
+    fs.mkdirSync(tempTestDir, { recursive: true });
+  }
+
+  try {
+    clearFileCache();
+    const rel1 = checkAgentRelevance('notebook-auditor', tempTestDir);
+    assert(rel1.relevance === 'Low', 'notebook-auditor has Low relevance when no notebooks exist');
+
+    fs.writeFileSync(path.join(tempTestDir, 'test.ipynb'), '{}');
+    clearFileCache();
+    const rel2 = checkAgentRelevance('notebook-auditor', tempTestDir);
+    assert(rel2.relevance === 'High', 'notebook-auditor has High relevance when notebook is added');
+
+    clearFileCache();
+    const relVCS = checkAgentRelevance('vcs-workflow-engineer', tempTestDir);
+    assert(relVCS.relevance === 'High', 'vcs-workflow-engineer always has High relevance');
+
+  } finally {
+    fs.rmSync(tempTestDir, { recursive: true, force: true });
+    clearFileCache();
+  }
+}
+
 function runAll() {
   try {
     testValidateAgents();
@@ -541,6 +578,7 @@ function runAll() {
     testCompiledAnalysisPath();
     testValidateDeliverables();
     testReportStyling();
+    testScanHelpers();
 
     console.log(`\nAll helper validator tests complete: ${testsPassed} / ${testsRun} assertions passed.`);
     process.exit(0);
@@ -551,4 +589,5 @@ function runAll() {
 }
 
 runAll();
+
 
