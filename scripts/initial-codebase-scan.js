@@ -15,6 +15,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { getRepoSize, checkAgentRelevance, clearFileCache } = require('./scan-helpers');
+
 
 const RESET = '\x1b[0m';
 const BOLD = '\x1b[1m';
@@ -189,6 +191,9 @@ if (fileNames.has('cargo.toml') || extensions.has('.rs')) {
 
 console.log(`✓ Inferred profile: language=${language}, build_system=${buildSystem}, frameworks=[${frameworks.join(', ')}]`);
 
+const repoSize = getRepoSize(totalLOC, totalFiles);
+console.log(`✓ Classified repo size: ${repoSize}`);
+
 // 3. Build manifest.json and session.json
 const REPORTS_DIR = path.join(resolvedReport, '.repo-wizard', 'reports', repoName);
 fs.mkdirSync(REPORTS_DIR, { recursive: true });
@@ -198,12 +203,39 @@ fs.mkdirSync(REPORTS_DIR, { recursive: true });
 // This indicates the capability to spawn parallel specialist subagents natively via invoke_subagent.
 const isNativeChat = process.env.ANTIGRAVITY_AGENT === '1';
 
-const manifest = {
-  status: 'pending',
-  nativeChatEnvironment: isNativeChat,
-  contracts: SPECIALISTS.map(spec => ({
+const obsDir = path.join(REPORTS_DIR, 'agents');
+const contractsDir = path.join(REPORTS_DIR, 'contracts');
+fs.mkdirSync(obsDir, { recursive: true });
+fs.mkdirSync(contractsDir, { recursive: true });
+
+clearFileCache();
+
+const manifestContracts = [];
+
+for (const spec of SPECIALISTS) {
+  const { relevance, rationale } = checkAgentRelevance(spec, resolvedTarget);
+  let status = 'pending';
+  if (relevance === 'Low') {
+    status = 'skipped';
+    // Write skipped observation report
+    const skippedContent = `# Observations for ${spec}\n\nSkipped: Low relevance to the workspace.\n\nRationale: ${rationale}\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`;
+    fs.writeFileSync(path.join(obsDir, `${repoName}-observations-${spec}.md`), skippedContent, 'utf8');
+    
+    // Write skipped contract
+    const skippedContract = {
+      contract_version: '1.0.0',
+      packages: [],
+      configs: [],
+      verification_command: 'echo "Skipped agent"'
+    };
+    fs.writeFileSync(path.join(contractsDir, `${spec}-contract.json`), JSON.stringify(skippedContract, null, 2), 'utf8');
+  } else if (isNativeChat) {
+    status = 'pending_agent_fallback';
+  }
+
+  manifestContracts.push({
     agent_name: spec,
-    status: 'pending',
+    status,
     contract: {
       task_metadata: {
         target_modules: [resolvedTarget],
@@ -214,13 +246,20 @@ const manifest = {
       compliance_targets: [],
       tooling_specification: []
     }
-  }))
+  });
+}
+
+const manifest = {
+  status: isNativeChat ? 'fallback_to_agent' : 'pending',
+  nativeChatEnvironment: isNativeChat,
+  contracts: manifestContracts
 };
 
 const session = {
   status: 'in_progress',
   targetPath: resolvedTarget,
   reportPath: resolvedReport,
+  repoSize,
   answersInferred: true,
   reportStyle: 'whitepaper',
   exceedsAdoptionThreshold,
@@ -250,3 +289,4 @@ fs.writeFileSync(path.join(rootWizardDir, 'last_session_path.json'), JSON.string
 
 console.log(`${GREEN}✓ Pre-scan setup complete. manifest.json and session.json written successfully.${RESET}\n`);
 process.exit(0);
+
