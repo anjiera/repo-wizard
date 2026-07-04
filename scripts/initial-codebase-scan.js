@@ -247,10 +247,11 @@ const session = {
 fs.writeFileSync(path.join(REPORTS_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');
 fs.writeFileSync(path.join(REPORTS_DIR, 'session.json'), JSON.stringify(session, null, 2), 'utf8');
 
-// Copy manifest to root so run-fallback-sequential-orchestration.js can consume & promote it
+// Copy manifest and session to root so run-fallback-sequential-orchestration.js can consume & promote it
 const rootWizardDir = path.join(resolvedReport, '.repo-wizard');
 fs.mkdirSync(rootWizardDir, { recursive: true });
 fs.writeFileSync(path.join(rootWizardDir, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');
+fs.writeFileSync(path.join(rootWizardDir, 'session.json'), JSON.stringify(session, null, 2), 'utf8');
 
 // Write last session pointer for reports-compile.js ease of use
 fs.writeFileSync(path.join(rootWizardDir, 'last_session_path.json'), JSON.stringify({

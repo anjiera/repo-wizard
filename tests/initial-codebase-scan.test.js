@@ -29,6 +29,9 @@ function run() {
     assert(fs.existsSync(sessionJsonPath), 'session.json is created');
     assert(fs.existsSync(manifestJsonPath), 'manifest.json is created');
     
+    const rootSessionPath = path.join(tempScanDir, '.repo-wizard', 'session.json');
+    assert(fs.existsSync(rootSessionPath), 'root session.json is created');
+
     const session = JSON.parse(fs.readFileSync(sessionJsonPath, 'utf8'));
     assert(session.repoSize === 'XS', 'inferred repoSize is XS for a small target repo');
     
