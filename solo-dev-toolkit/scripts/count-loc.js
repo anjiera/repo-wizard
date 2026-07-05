@@ -11,6 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { walkWorkspaceDir } = require('../../scripts/scan-helpers');
 
 // Colors for terminal formatting
 const { RESET, BOLD, GREEN, RED, BLUE, YELLOW } = require('./cli-helpers');
@@ -126,62 +127,40 @@ const stats = {
   exceedsAdoptionThreshold: false
 };
 
-function walk(dir) {
-  let files;
-  try {
-    files = fs.readdirSync(dir);
-  } catch (err) {
-    return;
-  }
+walkWorkspaceDir(resolvedTarget, {
+  ignoreDirectories: Array.from(EXCLUDED_DIRS),
+  ignoreHidden: true,
+  onFile: (fileName, fullPath) => {
+    if (EXCLUDED_FILES.has(fileName)) {
+      return;
+    }
+    
+    const ext = path.extname(fileName).toLowerCase();
+    if (EXCLUDED_EXTENSIONS.has(ext)) {
+      return;
+    }
 
-  for (const file of files) {
-    const fullPath = path.join(dir, file);
-    let fileStat;
+    const langName = EXTENSION_MAP[ext] || 'Other/Unknown';
+
+    // Count lines
     try {
-      fileStat = fs.statSync(fullPath);
+      const content = fs.readFileSync(fullPath, 'utf8');
+      // Simple line count by matching newlines
+      const loc = content.split(/\r?\n/).length;
+
+      stats.totalFiles++;
+      stats.totalLOC += loc;
+
+      if (!stats.languages[langName]) {
+        stats.languages[langName] = { files: 0, loc: 0 };
+      }
+      stats.languages[langName].files++;
+      stats.languages[langName].loc += loc;
     } catch (err) {
-      continue;
-    }
-
-    if (fileStat.isDirectory()) {
-      if (file.startsWith('.') || EXCLUDED_DIRS.has(file)) {
-        continue;
-      }
-      walk(fullPath);
-    } else if (fileStat.isFile()) {
-      if (EXCLUDED_FILES.has(file)) {
-        continue;
-      }
-      
-      const ext = path.extname(file).toLowerCase();
-      if (EXCLUDED_EXTENSIONS.has(ext)) {
-        continue;
-      }
-
-      const langName = EXTENSION_MAP[ext] || 'Other/Unknown';
-
-      // Count lines
-      try {
-        const content = fs.readFileSync(fullPath, 'utf8');
-        // Simple line count by matching newlines
-        const loc = content.split(/\r?\n/).length;
-
-        stats.totalFiles++;
-        stats.totalLOC += loc;
-
-        if (!stats.languages[langName]) {
-          stats.languages[langName] = { files: 0, loc: 0 };
-        }
-        stats.languages[langName].files++;
-        stats.languages[langName].loc += loc;
-      } catch (err) {
-        // Skip unreadable files
-      }
+      // Skip unreadable files
     }
   }
-}
-
-walk(resolvedTarget);
+});
 
 stats.exceedsAdoptionThreshold = stats.totalLOC > INCREMENTAL_ADOPTION_THRESHOLD_LOC;
 
