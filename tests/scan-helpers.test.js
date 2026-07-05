@@ -48,10 +48,48 @@ function run() {
     promoteStateFiles(tempTestDir, 'test-repo');
     assert(fs.existsSync(path.join(reportsDir, 'session.json')), 'promoteStateFiles copies session.json to reports directory');
 
-    // Test 5: archiveSession
-    archiveSession(tempTestDir, { repoName: 'test-repo' });
+    // Test 5: archiveSession (Full & Incremental checks)
+    const mockAgentsDir = path.join(reportsDir, 'agents');
+    const mockContractsDir = path.join(reportsDir, 'contracts');
+    if (!fs.existsSync(mockAgentsDir)) fs.mkdirSync(mockAgentsDir, { recursive: true });
+    if (!fs.existsSync(mockContractsDir)) fs.mkdirSync(mockContractsDir, { recursive: true });
+
+    const mockReportFile = path.join(reportsDir, 'test-repo-full-report.md');
+    fs.writeFileSync(mockReportFile, '# Full Report Content');
+
+    const perfObsFile = path.join(mockAgentsDir, 'test-repo-observations-performance-auditor.md');
+    fs.writeFileSync(perfObsFile, 'Performance audit details');
+    const perfContractFile = path.join(mockContractsDir, 'test-repo-contract-performance-auditor.json');
+    fs.writeFileSync(perfContractFile, '{}');
+
+    const secObsFile = path.join(mockAgentsDir, 'test-repo-observations-appsec-hardener.md');
+    fs.writeFileSync(secObsFile, 'Security audit details');
+    const secContractFile = path.join(mockContractsDir, 'test-repo-contract-appsec-hardener.json');
+    fs.writeFileSync(secContractFile, '{}');
+
+    // Run incremental archive for PERFORMANCE
+    archiveSession(tempTestDir, { repoName: 'test-repo', pillar: 'PERFORMANCE', pruneContracts: true });
+
     const historyBase = path.join(reportsDir, '..', 'history', 'test-repo');
     assert(fs.existsSync(historyBase), 'archiveSession creates history subdirectory');
+
+    const historyTimestampDirs = fs.readdirSync(historyBase);
+    const newestHistoryDir = path.join(historyBase, historyTimestampDirs[historyTimestampDirs.length - 1]);
+
+    const archivedReportFile = fs.readdirSync(newestHistoryDir).find(f => f.startsWith('test-repo-full-report_') && f.endsWith('.md'));
+    assert(archivedReportFile !== undefined, 'Top-level report is archived');
+    assert(!fs.existsSync(mockReportFile), 'Original top-level report is unlinked');
+
+    const archivedPerfObs = fs.readdirSync(path.join(newestHistoryDir, 'agents')).find(f => f.startsWith('test-repo-observations-performance-auditor_') && f.endsWith('.md'));
+    assert(archivedPerfObs !== undefined, 'Performance observations are archived');
+    assert(!fs.existsSync(perfObsFile), 'Original performance observations are unlinked');
+
+    const archivedPerfContract = fs.readdirSync(path.join(newestHistoryDir, 'contracts')).find(f => f.startsWith('test-repo-contract-performance-auditor_') && f.endsWith('.json'));
+    assert(archivedPerfContract !== undefined, 'Performance contracts are archived');
+    assert(!fs.existsSync(perfContractFile), 'Original performance contracts are unlinked');
+
+    assert(fs.existsSync(secObsFile), 'Security observations are preserved during performance pillar sweep');
+    assert(fs.existsSync(secContractFile), 'Security contracts are preserved during performance pillar sweep');
 
     // Test 6: walkWorkspaceDir validation
     const { walkWorkspaceDir } = require('../scripts/scan-helpers');
