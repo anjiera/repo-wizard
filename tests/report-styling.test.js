@@ -28,6 +28,19 @@ function run() {
   } finally {
     console.error = originalConsoleError;
   }
+
+  // Test 4: Nested Lists rendering
+  const nestedListMd = `- Parent\n  - Child\n    - Grandchild`;
+  const nestedListHtml = convertMdToHtml(nestedListMd);
+  assert(nestedListHtml.includes('<ul>\n  <li>Parent<ul>\n  <li>Child<ul>\n  <li>Grandchild</li>\n</ul>\n</li>\n</ul>\n</li>\n</ul>'), 'Nested lists should be wrapped in nested <ul> blocks inside <li>');
+
+  // Test 5: Collapsible sections details wrapping
+  const h2Md = `## Section Title\nSome content`;
+  const h2Html = convertMdToHtml(h2Md);
+  assert(h2Html.includes('<details class="section-details" id="details-section-title">'), 'h2 sections should be wrapped in details tag');
+  assert(h2Html.includes('<summary class="section-summary"><h2 id="section-title" style="display: inline-block; margin: 0;">Section Title</h2></summary>'), 'h2 section header should be inside summary');
+  assert(h2Html.includes('<div class="section-content">'), 'h2 content should be wrapped in section-content div');
+  assert(h2Html.includes('</details>'), 'h2 details tag should be closed');
 }
 
 module.exports = { run };

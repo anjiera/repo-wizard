@@ -49,7 +49,8 @@ function parseMarkdown(md) {
   let html = '';
   const lines = md.split(/\r?\n/);
   
-  let inList = false;
+  let listStack = [];
+  let inDetailsBlock = false;
   let inCodeBlock = false;
   let inTable = false;
   let tableHeaderParsed = false;
@@ -131,25 +132,62 @@ function parseMarkdown(md) {
 
     // 2. Unordered List Handler
     const listMatch = line.match(/^([ \t]*)[-\*\+]\s+(.*)$/);
+    const isListContinuation = listStack.length > 0 && line.trim() !== '' &&
+      (line.startsWith(' ') || line.startsWith('\t') || (!line.match(/^[#<|]/) && line.trim() !== '---'));
+
+    if (listStack.length > 0 && !listMatch && !isListContinuation) {
+      if (line.trim() === '') {
+        const nextLine = lines[i + 1];
+        if (!nextLine || !nextLine.match(/^[ \t]*[-\*\+]\s+/)) {
+          while (listStack.length > 0) {
+            const popped = listStack.pop();
+            html += '</ul>\n';
+            if (popped.parentOpen) {
+              html += '</li>\n';
+            }
+          }
+        }
+        continue;
+      } else {
+        while (listStack.length > 0) {
+          const popped = listStack.pop();
+          html += '</ul>\n';
+          if (popped.parentOpen) {
+            html += '</li>\n';
+          }
+        }
+      }
+    }
+
     if (listMatch) {
       flushParagraph();
-      if (!inList) {
+      const indent = listMatch[1].replace(/\t/g, '    ').length;
+      const content = inlineParse(listMatch[2]);
+
+      if (listStack.length === 0) {
         html += '<ul>\n';
-        inList = true;
+        listStack.push({ indent, type: 'ul' });
+      } else {
+        let top = listStack[listStack.length - 1];
+        if (indent > top.indent) {
+          if (html.endsWith('</li>\n')) {
+            html = html.slice(0, -6);
+          }
+          html += '<ul>\n';
+          listStack.push({ indent, type: 'ul', parentOpen: true });
+        } else if (indent < top.indent) {
+          while (listStack.length > 1 && listStack[listStack.length - 1].indent > indent) {
+            const popped = listStack.pop();
+            html += '</ul>\n';
+            if (popped.parentOpen) {
+              html += '</li>\n';
+            }
+          }
+        }
       }
-      let content = inlineParse(listMatch[2]);
       html += `  <li>${content}</li>\n`;
       continue;
-    } else if (inList && line.trim() === '') {
-      // Empty line within list is ignored or marks the end if followed by non-list
-      const nextLine = lines[i + 1];
-      if (!nextLine || !nextLine.match(/^[ \t]*[-\*\+]\s+/)) {
-        html += '</ul>\n';
-        inList = false;
-      }
-      continue;
-    } else if (inList && (line.startsWith(' ') || line.startsWith('\t') || (!line.match(/^[#<|]/) && line.trim() !== '---'))) {
-      // Continuation of the current list item
+    } else if (isListContinuation) {
       let content = inlineParse(line.trim());
       if (html.endsWith('</li>\n')) {
         html = html.slice(0, -6) + ' ' + content + '</li>\n';
@@ -157,9 +195,6 @@ function parseMarkdown(md) {
         html += `  <li>${content}</li>\n`;
       }
       continue;
-    } else if (inList) {
-      html += '</ul>\n';
-      inList = false;
     }
 
     // Horizontal Rule Handler
@@ -198,8 +233,21 @@ function parseMarkdown(md) {
       
       const contentText = `${extraAnchor}${inlineParse(headingText)}`;
       
+      if (h1 || h2) {
+        if (inDetailsBlock) {
+          html += `  </div>\n</details>\n`;
+          inDetailsBlock = false;
+        }
+      }
+      
       if (h1) { html += `<h1 id="${id}">${contentText}</h1>\n`; continue; }
-      if (h2) { html += `<h2 id="${id}">${contentText}</h2>\n`; continue; }
+      if (h2) {
+        html += `<details class="section-details" id="details-${id}">\n`;
+        html += `  <summary class="section-summary"><h2 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h2></summary>\n`;
+        html += `  <div class="section-content">\n`;
+        inDetailsBlock = true;
+        continue;
+      }
       if (h3) { html += `<h3 id="${id}">${contentText}</h3>\n`; continue; }
       if (h4) { html += `<h4 id="${id}">${contentText}</h4>\n`; continue; }
       if (h5) { html += `<h5 id="${id}">${contentText}</h5>\n`; continue; }
@@ -226,7 +274,19 @@ function parseMarkdown(md) {
   }
 
   flushParagraph();
-  if (inList) html += '</ul>\n';
+  if (listStack.length > 0) {
+    while (listStack.length > 0) {
+      const popped = listStack.pop();
+      html += '</ul>\n';
+      if (popped.parentOpen) {
+        html += '</li>\n';
+      }
+    }
+  }
+  if (inDetailsBlock) {
+    html += `  </div>\n</details>\n`;
+    inDetailsBlock = false;
+  }
   if (inTable) html += '  </tbody>\n</table>\n';
   if (inCodeBlock) {
     html += `<pre><code class="language-${escapeHtml(codeBlockLang)}">${escapeHtml(codeLines.join('\n'))}</code></pre>\n`;
@@ -291,10 +351,19 @@ function inlineParse(text) {
   const salt = Math.random().toString(36).substring(2, 10);
   const codePlaceholderPrefix = `@@CODEPLACEHOLDER${salt}X`;
   const linkPlaceholderPrefix = `@@LINKPLACEHOLDER${salt}X`;
+  const anchorPlaceholderPrefix = `@@ANCHORPLACEHOLDER${salt}X`;
+
+  const anchors = [];
+  // Extract anchors first to shield them from formatting and HTML escaping
+  let parsed = (text || '').replace(/<a\s+id="([^"]+)">\s*<\/a>/gi, (match, anchorId) => {
+    const id = anchors.length;
+    anchors.push(anchorId);
+    return `${anchorPlaceholderPrefix}${id}@@`;
+  });
 
   const links = [];
-  // Extract links from raw text first to prevent double HTML escaping of URL parameters
-  let parsed = (text || '').replace(/\[([^\]]*?)\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g, (match, linkText, url) => {
+  // Extract links from raw text next to prevent double HTML escaping of URL parameters
+  parsed = parsed.replace(/\[([^\]]*?)\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g, (match, linkText, url) => {
     const id = links.length;
     links.push({ linkText, url });
     return `${linkPlaceholderPrefix}${id}@@`;
@@ -340,11 +409,21 @@ function inlineParse(text) {
     return `<a href="${escapeHtml(sanitizeUrl(link.url))}">${safeText}</a>`;
   });
 
+  // Restore anchors
+  parsed = parsed.replace(new RegExp(`${anchorPlaceholderPrefix}(\\d+)@@`, 'g'), (match, id) => {
+    const anchorIndex = parseInt(id, 10);
+    if (anchorIndex < 0 || anchorIndex >= anchors.length) {
+      return match;
+    }
+    return `<a id="${escapeHtml(anchors[anchorIndex])}"></a>`;
+  });
+
   // Final validation check to ensure no placeholder patterns remain in the returned text
-  if (parsed.includes(codePlaceholderPrefix) || parsed.includes(linkPlaceholderPrefix)) {
+  if (parsed.includes(codePlaceholderPrefix) || parsed.includes(linkPlaceholderPrefix) || parsed.includes(anchorPlaceholderPrefix)) {
     parsed = parsed
       .replace(new RegExp(`${codePlaceholderPrefix}\\d+@@`, 'g'), '')
-      .replace(new RegExp(`${linkPlaceholderPrefix}\\d+@@`, 'g'), '');
+      .replace(new RegExp(`${linkPlaceholderPrefix}\\d+@@`, 'g'), '')
+      .replace(new RegExp(`${anchorPlaceholderPrefix}\\d+@@`, 'g'), '');
   }
 
   return parsed;
@@ -547,6 +626,58 @@ function convertMdToHtml(mdContent, title = 'Documentation', styleName = 'whitep
       font-size: 1.6em;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 0.3em;
+    }
+
+    details.section-details {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin: 20px 0;
+      background-color: var(--bg-primary);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.section-details:hover {
+      border-color: var(--accent);
+    }
+
+    summary.section-summary {
+      padding: 14px 20px;
+      background-color: var(--quote-bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      list-style: none;
+      user-select: none;
+    }
+
+    summary.section-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary.section-summary::before {
+      content: "▶";
+      display: inline-block;
+      margin-right: 12px;
+      transition: transform 0.2s ease;
+      color: var(--accent);
+      font-size: 0.8em;
+    }
+
+    details[open] > summary.section-summary::before {
+      transform: rotate(90deg);
+    }
+
+    summary.section-summary h2 {
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+      margin: 0 !important;
+    }
+
+    .section-content {
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
     }
 
     h3 {
