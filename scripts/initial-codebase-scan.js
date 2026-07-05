@@ -168,6 +168,10 @@ if (fileNames.has('cargo.toml') || extensions.has('.rs')) {
   }
 }
 
+if (frameworks.length === 0) {
+  frameworks.push(language);
+}
+
 console.log(`✓ Inferred profile: language=${language}, build_system=${buildSystem}, frameworks=[${frameworks.join(', ')}]`);
 
 const repoSize = getRepoSize(totalLOC, totalFiles);
@@ -266,6 +270,18 @@ const manifest = {
   contracts: manifestContracts
 };
 
+const inferredPlatforms = [];
+const isAndroid = fileNames.has('androidmanifest.xml') || frameworks.includes('android');
+if (isAndroid) {
+  inferredPlatforms.push('mobile');
+} else if (buildSystem === 'npm' || language === 'javascript' || language === 'typescript') {
+  inferredPlatforms.push('web');
+} else {
+  inferredPlatforms.push('desktop');
+}
+
+const inferredCompliance = ['none'];
+
 const session = {
   status: 'in_progress',
   targetPath: resolvedTarget.replace(/\\/g, '/'),
@@ -277,8 +293,8 @@ const session = {
   nativeChatEnvironment: isNativeChat,
   answers: {
     frameworks,
-    platforms: [],
-    compliance: [],
+    platforms: inferredPlatforms,
+    compliance: inferredCompliance,
     scaffoldingMode: 'scaffold',
     strictness: 'medium',
     ...(existingSession ? existingSession.answers : {})
