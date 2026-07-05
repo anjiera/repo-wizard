@@ -29,10 +29,10 @@ Currently, the suite includes:
 * **Goal**: Scans user-facing UI labels, notifications, errors, and terminal scripts for high-liability phrases (e.g. verging on medical/health/financial advice) and suggests legally neutral, comfort-based alternatives without editing source files directly.
 * **Reference Guide**: [references/legal-phrasing-dictionary.md](../references/legal-phrasing-dictionary.md)
 
-### 2. Remote & Local Headless Profiler
+### 2. Headless Profiler
 * **Skill**: [skills/remote-profiler/SKILL.md](../skills/remote-profiler/SKILL.md)
 * **Orchestrator Persona**: [agents/repo-wizard.md](../agents/repo-wizard.md)
-* **Goal**: Scans remote public GitHub repositories (via URL parameter) or local active workspaces (via `headless` or `--headless` options) in a non-blocking mode. Conducts decoupled subagent relevance check sweeps, supports mini-report resumability, and compiles observations, full technical, and executive summaries with strict honest-boundaries and roadmap upgrade hooks.
+* **Goal**: Scans local active workspaces (via `headless` or `--headless` options) in a non-blocking mode. Conducts decoupled subagent relevance check sweeps, supports mini-report resumability, and compiles observations, full technical, and executive summaries.
 
 
 ---

@@ -316,9 +316,7 @@ ${DISCLAIMER_TEXT}
     profileSection += '_No interview choices were recorded._\n';
   }
 
-  const targetPathResolved = session.targetPath ? path.resolve(session.targetPath) : '';
-  const workspaceRoot = path.resolve(__dirname, '..');
-  const targetPathIsDefault = targetPathResolved === workspaceRoot;
+
 
   const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
 Run Date: ${currentDate}
@@ -349,7 +347,7 @@ Refer to the separate [Executive Summary](${repoName}-executive-summary.html) fo
 ## 2. Audit Scope & Environment Profile
 
 ### 2.1 Environment Profile
-- **Target Repository Target Path:** \`${session.targetPath}\`
+- **Target Repository Path:** \`${session.targetPath}\`
 - **Scan Date:** ${currentDate}
 - **Baseline Frameworks Detected:** ${detectedFrameworksStr}
 - **Primary Languages:** ${detectPrimaryLanguages(frameworks)}
@@ -357,7 +355,7 @@ Refer to the separate [Executive Summary](${repoName}-executive-summary.html) fo
 - **Scope Exclusions:** ${detectScopeExclusions(frameworks)}
 
 ### 2.2 Audit Parameters
-- **--target-path :** ${targetPathIsDefault ? `workspace path, \`${session.targetPath || ''}\` (default)` : `\`${session.targetPath || ''}\``}
+
 - **--report-path :** ${session.reportPath ? `\`${session.reportPath}\`` : 'workspace root (default)'}
 - **--tos-path :** ${session.tosPath ? `\`${session.tosPath}\`` : 'report path (default)'}
 - **--headless :** ${session.answersInferred === true ? 'true' : 'false (default)'}
