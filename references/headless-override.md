@@ -1,6 +1,6 @@
 # Headless Mode Override Protocol
 
-This document defines the canonical Headless Mode Override steps that all specialist agents and skills must follow under `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`.
+This document defines the canonical Headless Mode Override steps that all specialist agents and skills must follow under `MODE=HEADLESS`.
 
 ## Alignment & Target Stack
 - Bypass interactive alignment/questionnaires and use best-guess heuristics to infer target standards and stack based on existing codebase clues.

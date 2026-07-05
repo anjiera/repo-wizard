@@ -120,7 +120,7 @@ If the incoming parameter contract specifies `execution_mode: "backlog"`:
 
 ## 10. Headless Mode & Best-Guess Analysis Protocol
 
-If the incoming parameter contract specifies `execution_mode: "headless_remote"` or `execution_mode: "headless_local"` (or when the orchestrator indicates headless mode is active):
+If the incoming parameter contract specifies `execution_mode: "headless"` (or when the orchestrator indicates headless mode is active):
 1. **Bypass Interactive Alignment & Consent:** Skip all interactive checks, developer questions, opt-in dialogues, and scanning consent prompts (e.g., bypassing Section 2, 3, and 4). Proceed immediately to codebase analysis.
 2. **Relevance Queries:** When queried by the orchestrator for a relevance check, perform a fast scan of the codebase metadata, dependencies, and file structures. Immediately return a JSON object with:
    - `relevance`: `"High"` | `"Medium"` | `"Low"`
