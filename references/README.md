@@ -27,14 +27,17 @@ Focuses on auditing runtime events, configuring system tracing, and setting up s
 
 ### ⚪ White Team (Governance & Audit Compliance)
 Focuses on compliance profiles, accessibility standards, legal liability checks, and formal execution verification.
+* **Agent Registry Schema Definition:** [agent-registry-schema.json](agent-registry-schema.json)
 * **Agent Execution Rules:** [agent-rules.md](agent-rules.md)
 * **Digital Accessibility (WCAG):** [accessibility-checklist.md](accessibility-checklist.md)
 * **Formal Methods & Proof Verification:** [formal-methods-patterns.md](formal-methods-patterns.md)
 * **Legal Phrasing & UI Neutrality:** [legal-phrasing-dictionary.md](legal-phrasing-dictionary.md)
+* **Legally Dubious Wordlist Schema:** [legally-dubious-words-schema.json](legally-dubious-words-schema.json)
 * **Legally Dubious Wordlist:** [legally-dubious-words.json](legally-dubious-words.json)
 * **Regulatory Compliance Frameworks:** [security-hardening-checklist.md](security-hardening-checklist.md)
 * **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
 * **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
+* **Plugin Metadata Schema:** [plugin-schema.json](plugin-schema.json)
 * **Interactive Questionnaire Schema:** [questionnaire-spec.json](questionnaire-spec.json)
 * **Interactive Questionnaire Schema Definition:** [questionnaire-spec-schema.json](questionnaire-spec-schema.json)
 * **Headless Mode Override Protocol:** [headless-override.md](headless-override.md)
@@ -167,6 +170,13 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Common rules and formatting guidelines for specialist agents (Emoji Restrictions, Passive Data Boundaries, etc.).
 54. **[handoff-sandbox-constraints.md](handoff-sandbox-constraints.md)**
     - Unified safety rules, mock constraints, redacted mode compliance, and tool execution boundaries for specialist agents.
+55. **[agent-registry-schema.json](agent-registry-schema.json)**
+    - Schema defining all available specialist agents and their metadata configuration structure.
+56. **[legally-dubious-words-schema.json](legally-dubious-words-schema.json)**
+    - Schema defining the shared reference wordlist structure utilized by the legal neutrality auditor.
+57. **[plugin-schema.json](plugin-schema.json)**
+    - Schema defining metadata describing the Repo Wizard plugin.
+
 
 ---
 
