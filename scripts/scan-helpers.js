@@ -7,48 +7,13 @@ let fileCache = null;
 
 function buildFileCache(targetDir) {
   if (fileCache) return;
-  fileCache = [];
-  const visited = new Set();
-  const MAX_FILES = 10000;
-
-  const traverse = (dir, depth = 0) => {
-    if (depth > 8 || fileCache.length >= MAX_FILES) return;
-    let absPath;
-    try {
-      absPath = fs.realpathSync(dir);
-    } catch (e) {
-      absPath = path.resolve(dir);
-    }
-    if (visited.has(absPath)) return;
-    visited.add(absPath);
-
-    let files;
-    try {
-      files = fs.readdirSync(absPath);
-    } catch (e) {
-      return;
-    }
-
-    for (const file of files) {
-      if (fileCache.length >= MAX_FILES) return;
-      if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'].includes(file)) {
-        continue;
-      }
-      const fullPath = path.join(absPath, file);
-      try {
-        const stat = fs.lstatSync(fullPath);
-        if (stat.isSymbolicLink()) {
-          continue;
-        }
-        fileCache.push({ name: file, path: fullPath, isDir: stat.isDirectory() });
-        if (stat.isDirectory()) {
-          traverse(fullPath, depth + 1);
-        }
-      } catch (e) { /* ignore */ }
-    }
-  };
-
-  traverse(targetDir);
+  fileCache = walkWorkspaceDir(targetDir, {
+    maxDepth: 8,
+    maxFiles: 10000,
+    ignoreDirectories: ['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj', '.agents', 'temp_e2e_sandbox', 'temp_mock_repo'],
+    includeDirectories: true,
+    followSymlinks: false
+  });
 }
 
 function clearFileCache() {
