@@ -53,7 +53,7 @@ Before performing any codebase profiling, checks, or session state verification:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
      - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
      - `--report-path`: Defaults to the workspace root directory.
-     - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
+     - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (i.e. `<workspace-root>/.repo-wizard/`).
    - **Parameter Parsing**:
      - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output and state files under `.repo-wizard/` (including `manifest.json`, `session.json`, and `.tos_agreed`) will reside under `reportRoot`.
      - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).

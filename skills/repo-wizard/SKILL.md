@@ -39,11 +39,11 @@ Before performing codebase analysis, sizing, or session resume operations:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
      - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
      - `--report-path`: Defaults to the workspace root directory.
-     - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
+     - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (i.e. `<workspace-root>/.repo-wizard/`).
    - **Parameter Parsing**:
      - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output paths under `.repo-wizard/` will reside under `reportRoot`.
      - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
-2. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside the custom reports parent directory (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`) if `--report-path <path>` is configured, falling back to the `.repo-wizard/` directory of the `repo-wizard` tool installation root (i.e. `repo-wizard/.repo-wizard/.tos_agreed`).
+2. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside `<reportRoot>/.repo-wizard/` (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`). There is no global or tool-installation-root fallback: `reportRoot` always resolves to the active workspace root (`process.cwd()`) when no `--report-path` is provided.
 3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window by reading the canonical text in `references/terms-of-service.md` (located in the `repo-wizard` installation root). Do not run dynamic shell/powershell commands or search the target codebase to locate this text. Ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
 4. **Save Agreement**: If accepted:
    - Ensure the parent directory (either `tosPath` or `<reportRoot>/.repo-wizard/`) is created recursively first.

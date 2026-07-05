@@ -133,7 +133,7 @@ If you run `agy --dangerously-skip-permissions -p "/repo-wizard ..."` on the com
   The agent will automatically read your saved session, apply your response, and continue the execution.
 
 ### Option C: Relocating Output Paths (Advanced Settings)
-By default, the wizard creates a `.repo-wizard/` folder in the root of the targeted repository to store manifests, sessions, observations, and compiled deliverables, and looks for `.tos_agreed` in the tool's installation root. You can customize these locations using the following parameters:
+By default, the wizard creates a `.repo-wizard/` folder in the root of the targeted repository (the active workspace directory) to store manifests, sessions, observations, and compiled deliverables, and looks for `.tos_agreed` inside that same `.repo-wizard/` folder. You can customize these locations using the following parameters:
 
 #### `--report-path <path>`
 Relocates all generated reports, manifest parameters, and session JSON files for the current analysis to the specified custom parent directory.
