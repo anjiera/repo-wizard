@@ -14,14 +14,12 @@ To verify components incrementally and mitigate integration risks, execute tests
 graph TD
     L1[Level 1: System Baseline Setup] --> L2[Level 2: Dry-Run & Sandboxing]
     L2 --> L3[Level 3: Legal Consent & Local CLI]
-    L3 --> L4[Level 4: Remote Headless Sweeps]
-    L4 --> L5[Level 5: IDE Plugin Slash Commands & Native Agents]
+    L3 --> L4[Level 4: IDE Plugin Slash Commands & Native Agents]
     
     style L1 fill:#4CAF50,stroke:#388E3C,color:#fff
     style L2 fill:#2196F3,stroke:#1976D2,color:#fff
     style L3 fill:#FF9800,stroke:#F57C00,color:#fff
-    style L4 fill:#E91E63,stroke:#C2185B,color:#fff
-    style L5 fill:#607D8B,stroke:#455A64,color:#fff
+    style L4 fill:#607D8B,stroke:#455A64,color:#fff
 ```
 
 ---
@@ -143,7 +141,7 @@ graph TD
 
 ---
 
-## Level 5: Specialist Slash Commands & IDE Integrations
+## Level 4: Specialist Slash Commands & IDE Integrations
 
 **Goal**: Verify that specialists and individual commands can be triggered directly in your IDE chat or native agent workspace.
 *For detailed step-by-step procedures, see [features/agent-alignment.md](features/agent-alignment.md).*

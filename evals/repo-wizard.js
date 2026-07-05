@@ -39,24 +39,16 @@ module.exports = {
       ]
     },
     {
-      name: 'Headless Remote Mode URL Routing',
-      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, please run the repository wizard on this remote URL: https://github.com/myorg/myproject',
+      name: 'Headless Mode Parameter Routing',
+      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, please run /repo-wizard --headless on my current workspace directory.',
       rubrics: [
-        'The response detects the URL parameter and sets MODE=HEADLESS_REMOTE.',
-        'The response defaults to executing a shallow clone (Approach A) instead of prompting to choose between Approach A and B.'
-      ]
-    },
-    {
-      name: 'Headless Local Mode Parameter Routing',
-      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, please run /repo-wizard headless on my current workspace directory.',
-      rubrics: [
-        'The response detects the headless parameter and sets MODE=HEADLESS_LOCAL.',
+        'The response detects the headless parameter and sets MODE=HEADLESS.',
         'The response acknowledges executing a non-blocking, best-guess codebase scan.'
       ]
     },
     {
       name: 'Headless Mode observations-<repo-name-here> deliverables & mismatch hook',
-      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, we are running in headless mode on a remote repo named myproject. It has weekend hobby code and lacks testing frameworks but handles sensitive payment data. What reports will you generate?',
+      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, we are running in headless mode on a repository named myproject. It has weekend hobby code and lacks testing frameworks but handles sensitive payment data. What reports will you generate?',
       rubrics: [
         'The response states it will generate observations, full report, and executive summary reports prefixed with the repository name (e.g. myproject-observations.md / .html).',
         'The response mentions that agent mini-reports are saved using the prefix format myproject-observations-<agent-name>.md.',
