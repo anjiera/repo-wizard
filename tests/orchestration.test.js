@@ -44,7 +44,7 @@ function run() {
     // Run script with --mock-cli true parameter
     const mockRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true`, {
+        const stdout = execSync(`node "${scriptPath}" --mock-cli true`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
@@ -105,7 +105,7 @@ function run() {
 
     const runWithSkipped = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true`, {
+        const stdout = execSync(`node "${scriptPath}" --mock-cli true`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
@@ -131,7 +131,7 @@ function run() {
     // Test 1.5: Invalid --mock-cli value checks
     const invalidMockRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli invalid_value`, {
+        const stdout = execSync(`node "${scriptPath}" --mock-cli invalid_value`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
@@ -170,7 +170,7 @@ function run() {
 
     const badRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true`, {
+        const stdout = execSync(`node "${scriptPath}" --mock-cli true`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }
@@ -192,7 +192,7 @@ function run() {
     fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
     const fallbackRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}"`, {
+        const stdout = execSync(`node "${scriptPath}"`, {
           cwd: ROOT,
           stdio: 'pipe',
           env: { ...process.env, DISABLE_CLI: 'true', MOCK_REPO_NAME: 'test-repo' }
@@ -222,8 +222,8 @@ function run() {
 
     const redactRun = (() => {
       try {
-        const stdout = execSync(`node "${scriptPath}" --target-path "${resolvedTestRepo}" --mock-cli true`, {
-          cwd: ROOT,
+        const stdout = execSync(`node "${scriptPath}" --mock-cli true`, {
+          cwd: resolvedTestRepo,
           stdio: 'pipe',
           env: {
             ...process.env,
@@ -291,7 +291,7 @@ function run() {
     fs.writeFileSync(rootManifest, JSON.stringify(mockManifest, null, 2), 'utf8');
 
     // Run script with --mock-cli true and --report-path D:\...\temp_custom_reports
-    const stdout = execSync(`node "${scriptPath}" --target-path "${ROOT}" --mock-cli true --report-path "${customReportDir}"`, {
+    const stdout = execSync(`node "${scriptPath}" --mock-cli true --report-path "${customReportDir}"`, {
       cwd: ROOT,
       stdio: 'pipe',
       env: { ...process.env, MOCK_REPO_NAME: 'test-repo' }

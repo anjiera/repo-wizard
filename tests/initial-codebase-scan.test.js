@@ -19,7 +19,7 @@ function run() {
       fs.writeFileSync(path.join(tempScanDir, `file${i}.js`), 'console.log("hello");\n');
     }
     
-    const runResult = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`]);
+    const runResult = runScript(scriptPath, ['--report-path', `"${tempScanDir}"`], { cwd: tempScanDir });
     assert(runResult.code === 0, 'initial-codebase-scan.js exits with 0 on target path');
     
     const reportsDir = path.join(tempScanDir, '.repo-wizard', 'reports', 'temp_initial_scan_test_repo');
@@ -43,11 +43,11 @@ function run() {
     assert(notebookContract && notebookContract.status === 'skipped', 'notebook-auditor status is skipped in manifest');
 
     // Test: Invalid pillar option exits with 1
-    const invalidPillarRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--pillar', 'INVALID_PILLAR']);
+    const invalidPillarRun = runScript(scriptPath, ['--pillar', 'INVALID_PILLAR'], { cwd: tempScanDir });
     assert(invalidPillarRun.code === 1, 'Invalid pillar option exits with 1');
 
     // Test: Valid pillar filter SECURITY
-    const pillarRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--pillar', 'SECURITY']);
+    const pillarRun = runScript(scriptPath, ['--report-path', `"${tempScanDir}"`, '--pillar', 'SECURITY'], { cwd: tempScanDir });
     assert(pillarRun.code === 0, 'Pillar filtered run exits with 0');
     const filteredManifest = JSON.parse(fs.readFileSync(manifestJsonPath, 'utf8'));
     const qaContract = filteredManifest.contracts.find(c => c.agent_name === 'accessibility-auditor'); // QUALITY pillar
@@ -59,11 +59,11 @@ function run() {
     
     // We pass '--headless' (or since process.env.ANTIGRAVITY_AGENT !== '1' in test process spawn, it defaults to headless)
     // Run without --pillar to trigger the warning exit code 2
-    const warningRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--headless']);
+    const warningRun = runScript(scriptPath, ['--report-path', `"${tempScanDir}"`, '--headless'], { cwd: tempScanDir });
     assert(warningRun.code === 2, 'High Sweep Warning exits with 2 when active > 6 and no pillar specified');
 
     // Run with --pillar ALL to bypass the warning
-    const bypassRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${tempScanDir}"`, '--headless', '--pillar', 'ALL']);
+    const bypassRun = runScript(scriptPath, ['--report-path', `"${tempScanDir}"`, '--headless', '--pillar', 'ALL'], { cwd: tempScanDir });
     assert(bypassRun.code === 0, '--pillar ALL bypasses the High Sweep Warning');
 
     // Test: Write permission failure on read-only directory
@@ -71,7 +71,7 @@ function run() {
     fs.mkdirSync(noWriteDir, { recursive: true });
     try {
       fs.chmodSync(noWriteDir, 0o444); // Make read-only
-      const writeErrorRun = runScript(scriptPath, ['--target-path', `"${tempScanDir}"`, '--report-path', `"${noWriteDir}"`]);
+      const writeErrorRun = runScript(scriptPath, ['--report-path', `"${noWriteDir}"`], { cwd: tempScanDir });
       // On Windows, 0o444 write permissions depend on NTFS owner privileges.
       // We check if it fails with code 1 and contains the expected stderr error string.
       if (writeErrorRun.code === 1) {

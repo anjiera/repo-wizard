@@ -26,10 +26,10 @@ function assert(condition, message) {
 /**
  * Runs a command and returns its exit code and stdout/stderr
  */
-function runScript(scriptPath, args = []) {
+function runScript(scriptPath, args = [], options = {}) {
   try {
     const stdout = execSync(`node "${scriptPath}" ${args.join(' ')}`, {
-      cwd: ROOT,
+      cwd: options.cwd || ROOT,
       stdio: 'pipe',
       env: { ...process.env }
     }).toString();
