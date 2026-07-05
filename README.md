@@ -25,8 +25,15 @@ To help you get started quickly, please refer to the following guides:
 * **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
 * **[decoupled-orchestration.md](docs/design/decoupled-orchestration.md)** — Architectural design and lifecycle of the contract-based decoupled agent orchestration system.
 * **[session-resumability.md](docs/design/session-resumability.md)** — Design and state structures of the session recovery system and subagent manifest contracts.
-* **[papercut-tracking.md](docs/design/papercut-tracking.md)** — Design of the subagent papercut logging and frequency tracking system.
+* **[papercut-tracking.md](solo-dev-toolkit/docs/design/papercut-tracking.md)** — Design of the subagent papercut logging and frequency tracking system.
 * **[phase-splitting-scaffolding.md](docs/design/phase-splitting-scaffolding.md)** — Architectural design of the phase-splitting execution boundary and versioned JSON scaffolding contracts.
+* **[zero-dependency-json-validation.md](docs/design/zero-dependency-json-validation.md)** — Design of the zero-dependency schema-based validation for plugin and agent configurations.
+* **[markdown-duplication-validator.md](docs/design/markdown-duplication-validator.md)** — Design and processing pipeline of the DRY compliance checker for documentation and prompts.
+* **[quality-pillars-framework.md](docs/design/quality-pillars-framework.md)** — Structural design of quality pillars grouping specialist agent personas.
+* **[report-redaction-pipeline.md](docs/design/report-redaction-pipeline.md)** — Anonymization pipeline architecture for Git URLs, workspace paths, and repository names.
+* **[pillar-concurrency-limits.md](docs/design/pillar-concurrency-limits.md)** — Resource control design for concurrency limits and sequential batching of subagent execution.
+* **[repo-sizing-relevance-refactoring.md](docs/design/repo-sizing-relevance-refactoring.md)** — Technical design for proportional report requirements and setup-phase relevance checks.
+* **[questionnaire-spec.md](docs/design/questionnaire-spec.md)** — Formal specification schema and validator for onboarding questionnaire structures.
 
 ---
 
