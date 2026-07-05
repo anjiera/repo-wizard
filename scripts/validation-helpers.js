@@ -7,24 +7,21 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 
 const COLORS = require('../solo-dev-toolkit/scripts/cli-helpers');
 
+const { walkWorkspaceDir } = require('./scan-helpers');
+
 /**
  * Recursively scans directory for files matching the given extension
  */
 function scanDir(dirPath, extension = '.js', filesList = []) {
   if (!fs.existsSync(dirPath)) return filesList;
-  const items = fs.readdirSync(dirPath);
-
-  for (const item of items) {
-    const fullPath = path.join(dirPath, item);
-    const stat = fs.statSync(fullPath);
-
-    if (stat.isDirectory()) {
-      scanDir(fullPath, extension, filesList);
-    } else if (stat.isFile() && item.endsWith(extension)) {
-      filesList.push(fullPath);
+  const files = walkWorkspaceDir(dirPath, {
+    returnAbsolutePathsOnly: true
+  });
+  for (const file of files) {
+    if (file.endsWith(extension)) {
+      filesList.push(file);
     }
   }
-
   return filesList;
 }
 
