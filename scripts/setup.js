@@ -82,6 +82,7 @@ function runValidationsAndTests() {
     { name: 'validate-commands.js', cmd: 'node scripts/validate-commands.js' },
     { name: 'validate-agents.js', cmd: 'node scripts/validate-agents.js' },
     { name: 'validate-scripts.js', cmd: 'node scripts/validate-scripts.js' },
+    { name: 'validate-questionnaire.js', cmd: 'node scripts/validate-questionnaire.js' },
     { name: 'validate-project-docs.js', cmd: 'node scripts/validate-project-docs.js' },
     { name: 'test-helpers.js', cmd: 'node scripts/test-helpers.js' },
     { name: 'sdt-test-helpers.js', cmd: 'node solo-dev-toolkit/scripts/sdt-test-helpers.js' },

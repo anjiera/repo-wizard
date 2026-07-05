@@ -35,6 +35,8 @@ Focuses on compliance profiles, accessibility standards, legal liability checks,
 * **Regulatory Compliance Frameworks:** [security-hardening-checklist.md](security-hardening-checklist.md)
 * **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
 * **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
+* **Interactive Questionnaire Schema:** [questionnaire-spec.json](questionnaire-spec.json)
+* **Interactive Questionnaire Schema Definition:** [questionnaire-spec-schema.json](questionnaire-spec-schema.json)
 * **Headless Mode Override Protocol:** [headless-override.md](headless-override.md)
 * **Handoff & Sandbox Constraints:** [handoff-sandbox-constraints.md](handoff-sandbox-constraints.md)
 
@@ -147,19 +149,23 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - License validation checkers (blocking viral copyleft packages) and lockfile integrity scanning.
 45. **[performance-patterns-swift.md](performance-patterns/performance-patterns-swift.md)**
     - Swift Copy-on-Write value structures, avoiding strong cycles (weak/unowned), and Actor concurrency.
-46. **[testing-patterns.md](testing-patterns.md)**
+46. **[questionnaire-spec.json](questionnaire-spec.json)**
+    - Declarative questionnaire specification, mapping questions to session values and subagent contracts.
+47. **[questionnaire-spec-schema.json](questionnaire-spec-schema.json)**
+    - Formal JSON Schema definition for validating the questionnaire specification structure.
+48. **[testing-patterns.md](testing-patterns.md)**
     - Unit/integration mocking frameworks (Jest, Vitest, MSW), coverage budgets, and test setups.
-47. **[terms-of-service.md](terms-of-service.md)**
+49. **[terms-of-service.md](terms-of-service.md)**
     - Dynamic terms of service text, developer consent definitions, and data privacy clauses.
-48. **[toolchain-standards.md](coding-standards/toolchain-standards.md)**
+50. **[toolchain-standards.md](coding-standards/toolchain-standards.md)**
     - Cross-compilation settings, linker parameters, Emscripten targets, and sysroot mappings.
-49. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
+51. **[vcs-discipline-rules.md](vcs-discipline-rules.md)**
     - Pre-commit/commit-msg hook schemas, conventional commits formatters, and copyright header checks.
-50. **[headless-override.md](headless-override.md)**
+52. **[headless-override.md](headless-override.md)**
     - Canonical Headless Mode Override steps bypassing questionnaire/alignment and scanning consent prompts.
-51. **[agent-rules.md](agent-rules.md)**
+53. **[agent-rules.md](agent-rules.md)**
     - Common rules and formatting guidelines for specialist agents (Emoji Restrictions, Passive Data Boundaries, etc.).
-52. **[handoff-sandbox-constraints.md](handoff-sandbox-constraints.md)**
+54. **[handoff-sandbox-constraints.md](handoff-sandbox-constraints.md)**
     - Unified safety rules, mock constraints, redacted mode compliance, and tool execution boundaries for specialist agents.
 
 ---

@@ -1,0 +1,455 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Repo Wizard Questionnaire Specification",
+  "categories": [
+    {
+      "id": "context",
+      "title": "Project Context & Goals",
+      "questions": [
+        {
+          "id": "projectType",
+          "phrasing": "Is this a new greenfield project, or are we refactoring an existing repository?",
+          "type": "single-select",
+          "options": [
+            { "value": "greenfield", "label": "Greenfield / New Project" },
+            { "value": "refactor", "label": "Refactoring / Existing Repository" }
+          ],
+          "mapping": {
+            "session": { "answers.projectType": "$value" },
+            "manifest": { "global.project_type": "$value" }
+          }
+        },
+        {
+          "id": "developerProfile",
+          "phrasing": "What is your developer profile?",
+          "type": "single-select",
+          "options": [
+            { "value": "hobbyist", "label": "Solo Hobbyist / Weekend Coder" },
+            { "value": "maintainer", "label": "Open-Source Maintainer" },
+            { "value": "startup", "label": "Startup / Small Team" },
+            { "value": "enterprise", "label": "Regulated Enterprise Developer" }
+          ],
+          "mapping": {
+            "session": { "answers.developerProfile": "$value" },
+            "manifest": {
+              "global.budget_tier": {
+                "hobbyist": "free",
+                "maintainer": "free",
+                "startup": "mixed",
+                "enterprise": "enterprise"
+              }
+            }
+          }
+        },
+        {
+          "id": "releaseIntent",
+          "phrasing": "What is your commercial release intent?",
+          "type": "single-select",
+          "allowWriteIn": true,
+          "options": [
+            { "value": "oss", "label": "Open Source" },
+            { "value": "self-hosted", "label": "Self-Hosted Web App" },
+            { "value": "mobile-store", "label": "Consumer Mobile Store" },
+            { "value": "saas", "label": "B2B SaaS" },
+            { "value": "other", "label": "Other (Write-in)" }
+          ],
+          "mapping": {
+            "session": { "answers.releaseIntent": "$value" }
+          }
+        },
+        {
+          "id": "toolingBudget",
+          "phrasing": "What is your tooling budget and preference?",
+          "type": "single-select",
+          "options": [
+            { "value": "free-only", "label": "Restrict strictly to free/open-source tools" },
+            { "value": "enterprise-paid", "label": "Look at premium/paid enterprise offerings" },
+            { "value": "mixed", "label": "Evaluate a mix of free and paid offerings" }
+          ],
+          "mapping": {
+            "session": { "answers.toolingBudget": "$value" },
+            "manifest": {
+              "global.budget_tier": {
+                "free-only": "free",
+                "enterprise-paid": "enterprise",
+                "mixed": "mixed"
+              }
+            }
+          }
+        },
+        {
+          "id": "existingTools",
+          "phrasing": "Are you currently paying for any security, testing, or compliance tools/services (e.g. Snyk, SonarQube)? List them below (comma-separated, or 'none'):",
+          "type": "text",
+          "mapping": {
+            "session": { "answers.existingTools": "$value" }
+          }
+        }
+      ]
+    },
+    {
+      "id": "compliance",
+      "title": "Regulatory & Security Compliance",
+      "questions": [
+        {
+          "id": "needsCompliance",
+          "phrasing": "Does the codebase need to comply with any regulatory or security standards?",
+          "type": "boolean",
+          "mapping": {
+            "session": { "answers.needsCompliance": "$value" }
+          }
+        },
+        {
+          "id": "complianceCategories",
+          "phrasing": "Select the compliance categories that apply to this project:",
+          "type": "multi-select",
+          "dependsOn": {
+            "questionId": "needsCompliance",
+            "value": true
+          },
+          "options": [
+            { "value": "security", "label": "Security Standards (e.g. SOC 2, HIPAA, ISO 27001)" },
+            { "value": "privacy", "label": "Data Privacy Mandates (e.g. GDPR, CCPA, LGPD)" },
+            { "value": "accessibility", "label": "Accessibility Guidelines (e.g. WCAG, ADA)" },
+            { "value": "safety-critical", "label": "Safety-Critical & Industry-Specific (e.g. Automotive, Aerospace, Medical Devices, AI Safety)" }
+          ],
+          "mapping": {
+            "session": { "answers.complianceCategories": "$value" }
+          }
+        },
+        {
+          "id": "securityFrameworks",
+          "phrasing": "Which security standards and frameworks do you want to verify?",
+          "type": "multi-select",
+          "dependsOn": {
+            "questionId": "complianceCategories",
+            "contains": "security"
+          },
+          "options": [
+            { "value": "soc-2", "label": "SOC 2 Type I/II (SaaS Security)" },
+            { "value": "hipaa", "label": "HIPAA (Protected Health Information)" },
+            { "value": "iso-27001", "label": "ISO/IEC 27001 (Information Security Management)" },
+            { "value": "fips", "label": "FIPS 140-2/140-3 Cryptographic validation" },
+            { "value": "fedramp", "label": "FedRAMP (US Federal Cloud Services)" },
+            { "value": "nist-ssdf", "label": "NIST SSDF (Secure Software Development)" },
+            { "value": "cyber-essentials", "label": "UK Cyber Essentials" },
+            { "value": "essential-eight", "label": "Australia Essential Eight / IRAP" },
+            { "value": "ismap", "label": "Japan ISMAP" },
+            { "value": "bsi-grundschutz", "label": "Germany BSI IT-Grundschutz" },
+            { "value": "mas-trm", "label": "Singapore MAS TRM (Fintech Regulation)" },
+            { "value": "nis-2", "label": "EU NIS 2 Directive" },
+            { "value": "owasp-top-10", "label": "OWASP ASVS / Top 10" },
+            { "value": "cis-benchmarks", "label": "CIS Benchmarks (Container & Infrastructure Hardening)" }
+          ],
+          "mapping": {
+            "session": { "answers.securityFrameworks": "$value" },
+            "manifest": {
+              "contracts": {
+                "compliance-auditor": {
+                  "enabled_if_any": "$value",
+                  "params.frameworks": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "privacyFrameworks",
+          "phrasing": "Which privacy standards apply to this project?",
+          "type": "multi-select",
+          "dependsOn": {
+            "questionId": "complianceCategories",
+            "contains": "privacy"
+          },
+          "options": [
+            { "value": "gdpr-ccpa", "label": "GDPR / CCPA (EU & California)" },
+            { "value": "pipeda", "label": "Canada PIPEDA" },
+            { "value": "iso-27701", "label": "ISO/IEC 27701 (Privacy Information Management)" },
+            { "value": "coppa", "label": "COPPA (Children's Privacy Protection)" },
+            { "value": "lgpd", "label": "Brazil LGPD" }
+          ],
+          "mapping": {
+            "session": { "answers.privacyFrameworks": "$value" },
+            "manifest": {
+              "contracts": {
+                "privacy-hardener": {
+                  "enabled_if_any": "$value",
+                  "params.privacy_laws": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "accessibilityFrameworks",
+          "phrasing": "Which accessibility standards does the system require?",
+          "type": "multi-select",
+          "dependsOn": {
+            "questionId": "complianceCategories",
+            "contains": "accessibility"
+          },
+          "options": [
+            { "value": "a11y", "label": "WCAG 2.1 AA / US ADA" },
+            { "value": "en-301-549", "label": "EN 301 549 (European Accessibility Act)" },
+            { "value": "vpat", "label": "VPAT / Accessibility Conformance Report Templates" }
+          ],
+          "mapping": {
+            "session": { "answers.accessibilityFrameworks": "$value" },
+            "manifest": {
+              "contracts": {
+                "accessibility-auditor": {
+                  "enabled_if_any": "$value",
+                  "params.standards": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "safetyFrameworks",
+          "phrasing": "Which safety-critical or specialized standards are applicable?",
+          "type": "multi-select",
+          "dependsOn": {
+            "questionId": "complianceCategories",
+            "contains": "safety-critical"
+          },
+          "options": [
+            { "value": "automotive-safety", "label": "Automotive Functional Safety (ISO 26262 / MISRA)" },
+            { "value": "aerospace-safety", "label": "Aerospace Avionics (DO-178C)" },
+            { "value": "medical-device", "label": "Medical Device Software Lifecycle (IEC 62304)" },
+            { "value": "ai-safety", "label": "AI Safety & Governance (EU AI Act, OWASP LLM Top 10)" },
+            { "value": "gaming-rng", "label": "Wagering & Certified RNG Compliance" }
+          ],
+          "mapping": {
+            "session": { "answers.safetyFrameworks": "$value" },
+            "manifest": {
+              "contracts": {
+                "embedded-systems-auditor": {
+                  "enabled_if_any": ["automotive-safety", "aerospace-safety", "medical-device"],
+                  "params.standards": "$value"
+                },
+                "ai-robustness-hardener": {
+                  "enabled_if_any": ["ai-safety"],
+                  "params.active": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "stack",
+      "title": "Stack, Hardware & Performance Constraints",
+      "questions": [
+        {
+          "id": "primaryLanguages",
+          "phrasing": "Which programming languages are used in this codebase? (Select all that apply. Clarifies the scan, but the wizard will also analyze files found dynamically.)",
+          "type": "multi-select",
+          "allowWriteIn": true,
+          "options": [
+            { "value": "javascript", "label": "JavaScript" },
+            { "value": "typescript", "label": "TypeScript" },
+            { "value": "rust", "label": "Rust" },
+            { "value": "java", "label": "Java" },
+            { "value": "kotlin", "label": "Kotlin" },
+            { "value": "python", "label": "Python" }
+          ],
+          "mapping": {
+            "session": { "answers.primaryLanguages": "$value" },
+            "manifest": {
+              "global.languages": "$value"
+            }
+          }
+        },
+        {
+          "id": "buildSystems",
+          "phrasing": "Which build systems and package managers are used? (Select all that apply.)",
+          "type": "multi-select",
+          "allowWriteIn": true,
+          "options": [
+            { "value": "npm", "label": "npm" },
+            { "value": "yarn", "label": "Yarn" },
+            { "value": "pnpm", "label": "pnpm" },
+            { "value": "cargo", "label": "Cargo" },
+            { "value": "gradle", "label": "Gradle" },
+            { "value": "maven", "label": "Maven" },
+            { "value": "poetry", "label": "Poetry" },
+            { "value": "pip", "label": "pip" }
+          ],
+          "mapping": {
+            "session": { "answers.buildSystems": "$value" },
+            "manifest": {
+              "global.build_systems": "$value"
+            }
+          }
+        },
+        {
+          "id": "targetHardware",
+          "phrasing": "What are your target execution environments?",
+          "type": "multi-select",
+          "options": [
+            { "value": "desktop", "label": "Desktop / OS (macOS, Windows, Linux, etc.)" },
+            { "value": "mobile", "label": "Mobile (iOS, Android, wearables)" },
+            { "value": "iot", "label": "Embedded / IoT (Microcontrollers, ARM, RISC-V, etc.)" },
+            { "value": "containers", "label": "Containers (Docker/Kubernetes - control over OS libraries and service processes)" },
+            { "value": "serverless", "label": "Serverless (AWS Lambda/Cloud Run/Workers - dynamic per-request life cycles)" }
+          ],
+          "mapping": {
+            "session": { "answers.targetHardware": "$value" },
+            "manifest": {
+              "global.execution_environments": "$value",
+              "contracts": {
+                "deployment-engineer": {
+                  "enabled_if_any": ["containers", "serverless"],
+                  "params.platforms": "$value"
+                },
+                "toolchain-architect": {
+                  "enabled_if_any": ["iot", "mobile"],
+                  "params.targets": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "performanceTesting",
+          "phrasing": "Do you want to establish automated performance testing/benchmarking?",
+          "type": "boolean",
+          "mapping": {
+            "session": { "answers.performanceTesting": "$value" },
+            "manifest": {
+              "contracts": {
+                "performance-auditor": {
+                  "enabled_if": true,
+                  "params.benchmarks_enabled": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "strictness",
+      "title": "Workflow Rules & Strictness",
+      "questions": [
+        {
+          "id": "hasTests",
+          "phrasing": "Do you have existing tests in this repository?",
+          "type": "boolean",
+          "mapping": {
+            "session": { "answers.hasTests": "$value" }
+          }
+        },
+        {
+          "id": "scaffoldTests",
+          "phrasing": "Which testing frameworks do you want to scaffold or expand?",
+          "type": "multi-select",
+          "options": [
+            { "value": "none", "label": "None (Skip test framework configuration)" },
+            { "value": "vitest", "label": "Vitest / Jest (JS/TS)" },
+            { "value": "pytest", "label": "PyTest (Python)" },
+            { "value": "cargo", "label": "Cargo Test (Rust)" },
+            { "value": "junit", "label": "JUnit (Java/Kotlin)" }
+          ],
+          "mapping": {
+            "session": { "answers.scaffoldTests": "$value" },
+            "manifest": {
+              "contracts": {
+                "qa-engineer": {
+                  "enabled_if_not": ["none"],
+                  "params.frameworks": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "codeCoverageGate",
+          "phrasing": "What target code coverage threshold would you like to configure?",
+          "type": "single-select",
+          "options": [
+            { "value": "none", "label": "No coverage gate" },
+            { "value": "50", "label": "50% (Loose threshold)" },
+            { "value": "80", "label": "80% (Standard safety gate)" },
+            { "value": "90", "label": "90%+ (Strict coverage mandate)" }
+          ],
+          "mapping": {
+            "session": { "answers.codeCoverageGate": "$value" },
+            "manifest": {
+              "contracts": {
+                "qa-engineer": {
+                  "params.coverage_threshold": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "gateStrictness",
+          "phrasing": "Where should quality linters and formatting checks be enforced?",
+          "type": "single-select",
+          "options": [
+            { "value": "local-commit", "label": "Enforce locally before commits (using Git Pre-commit hooks)" },
+            { "value": "remote-ci", "label": "Enforce only on remote Pull Requests (using CI pipeline configurations)" },
+            { "value": "both", "label": "Enforce both locally (hooks) and remotely (CI pipelines)" }
+          ],
+          "mapping": {
+            "session": { "answers.gateStrictness": "$value" },
+            "manifest": {
+              "contracts": {
+                "vcs-workflow-engineer": {
+                  "params.hook_strictness": "$value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "conventionalCommits",
+          "phrasing": "Do you want to enforce Conventional Commits? (Conventional Commits define a structured format for commit messages, like 'feat(api): add endpoint' or 'fix(auth): solve race condition'. This enables automated changelog generation and semantic release tracking. Learn more at https://www.conventionalcommits.org/)",
+          "type": "boolean",
+          "mapping": {
+            "session": { "answers.conventionalCommits": "$value" },
+            "manifest": {
+              "contracts": {
+                "vcs-workflow-engineer": {
+                  "params.conventional_commits": "$value"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "adoption",
+      "title": "Adoption Strategy",
+      "subtitle": "Codebase Size & Token-Efficient Scaffolding",
+      "questions": [
+        {
+          "id": "legacyCodeStrategy",
+          "phrasing": "How should we handle existing legacy code that violates the new rules?",
+          "type": "single-select",
+          "options": [
+            { "value": "hard-gate", "label": "Hard Gate: Resolve all legacy errors before continuing" },
+            { "value": "soft-baseline", "label": "Soft Transition: Baseline ignore legacy files; scan new/edited files only" },
+            { "value": "backlog-migration", "label": "Backlog Migration: Log issues to backlog; audit iteratively" }
+          ],
+          "mapping": {
+            "session": { "answers.legacyCodeStrategy": "$value" },
+            "manifest": {
+              "global.legacy_strategy": "$value",
+              "contracts": {
+                "tooling-engineer": {
+                  "params.legacy_migration": "$value"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

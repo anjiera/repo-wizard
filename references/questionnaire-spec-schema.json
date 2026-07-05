@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Repo Wizard Questionnaire Specification Schema",
+  "type": "object",
+  "required": ["$schema", "title", "categories"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "title": { "type": "string" },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "questions"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z]+(-[a-z]+)*$" },
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "phrasing", "type"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-zA-Z0-9_]+$" },
+                "phrasing": { "type": "string" },
+                "type": { "type": "string", "enum": ["single-select", "multi-select", "boolean", "text"] },
+                "allowWriteIn": { "type": "boolean" },
+                "dependsOn": {
+                  "type": "object",
+                  "required": ["questionId"],
+                  "properties": {
+                    "questionId": { "type": "string" },
+                    "value": {},
+                    "contains": {}
+                  }
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["value", "label"],
+                    "properties": {
+                      "value": { "type": "string" },
+                      "label": { "type": "string" }
+                    }
+                  }
+                },
+                "mapping": {
+                  "type": "object",
+                  "properties": {
+                    "session": { "type": "object" },
+                    "manifest": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
