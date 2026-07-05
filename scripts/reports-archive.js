@@ -18,16 +18,7 @@ const { archiveSession, getSafeRepoName } = require('./scan-helpers');
 // Support executing directly from command line
 if (require.main === module) {
   const args = process.argv.slice(2);
-  const targetPathIdx = args.indexOf('--target-path');
-  if (targetPathIdx === -1) {
-    console.error('ERROR: Missing required parameter "--target-path".');
-    process.exit(1);
-  }
-  const targetDir = args[targetPathIdx + 1];
-  if (!targetDir || targetDir.startsWith('-')) {
-    console.error('ERROR: Missing value for parameter "--target-path".');
-    process.exit(1);
-  }
+  const targetDir = process.cwd();
 
   const reportPathIdx = args.indexOf('--report-path');
   let reportRoot = ROOT;

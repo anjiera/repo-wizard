@@ -42,36 +42,18 @@ A non-blocking scan of the active local repository, ideal for scripts or backgro
   If running the command via the `agy` CLI's print mode (`-p` / `--print`), it may exceed the default 5-minute CLI timeout. To prevent this, increase the timeout or run interactively (`-i` / `--prompt-interactive`) to see live progress:
   - **Option A (Increased print timeout):**
     ```bash
-    agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --headless --target-path /path/to/target"
+    agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --headless"
     ```
   - **Option B (Interactive live output):**
     ```bash
-    agy --dangerously-skip-permissions -i "/repo-wizard --headless --target-path /path/to/target"
+    agy --dangerously-skip-permissions -i "/repo-wizard --headless"
     ```
 * **Process:**
   - Bypasses interactive prompts.
   - Detects tech stack and applies **best-guess heuristics** to determine recommendations.
   - Automatically runs a subagent relevance sweep, audits tools, and outputs report files directly.
 
-### Mode 3: Headless Remote Mode (`MODE=HEADLESS_REMOTE`)
-Used to scan a remote public Git repository.
-* **Command:** `/repo-wizard <github-url>` (e.g., `/repo-wizard https://github.com/user/my-library`)
-* **CLI Execution (via `agy` CLI):**
-  - **Option A (Increased print timeout):**
-    ```bash
-    agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --target-path https://github.com/user/my-library"
-    ```
-  - **Option B (Interactive live output):**
-    ```bash
-    agy --dangerously-skip-permissions -i "/repo-wizard --target-path https://github.com/user/my-library"
-    ```
-* **Process:**
-  - Clones the repository to a temporary directory.
-  - Conducts a decoupled subagent relevance sweep.
-  - Performs best-guess recommendations based on codebase heuristics.
-  - Compiles the full technical report and executive summary.
 
----
 
 ## 3. Decoupled Subagent Relevance Sweep
 
@@ -112,12 +94,12 @@ Instead of running all 27 specialized agents concurrently, you can restrict audi
 **Example Staging Commands:**
 ```bash
 # 1. Run only the security pillar
-node scripts/initial-codebase-scan.js --target-path <path> --pillar SECURITY
-node scripts/run-fallback-sequential-orchestration.js --target-path <path>
+node scripts/initial-codebase-scan.js --pillar SECURITY
+node scripts/run-fallback-sequential-orchestration.js
 
 # 2. Run performance audits incrementally on top of security results
-node scripts/initial-codebase-scan.js --target-path <path> --pillar PERFORMANCE
-node scripts/run-fallback-sequential-orchestration.js --target-path <path>
+node scripts/initial-codebase-scan.js --pillar PERFORMANCE
+node scripts/run-fallback-sequential-orchestration.js
 ```
 
 ### 4.2 State Merging & Incremental Archiving

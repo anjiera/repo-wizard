@@ -108,7 +108,7 @@ graph TD
     ```
   - Trigger a local scan in your terminal using the Antigravity CLI:
     ```bash
-    agy --dangerously-skip-permissions -p "/repo-wizard --target-path <target-path>"
+    agy --dangerously-skip-permissions -p "/repo-wizard"
     ```
   - *Expected Outcome*:
     - The agent halts execution immediately, displays the standard disclaimer, and prompts: `Do you accept these terms? (y/N)`.
@@ -123,61 +123,23 @@ graph TD
 - [ ] **3.3 Unified Codebase Setup & Scan Phase (Mandatory Setup)**
   - Before running the orchestrator script, run the pre-scan setup:
     ```bash
-    node scripts/initial-codebase-scan.js --target-path <target-path>
+    node scripts/initial-codebase-scan.js
     ```
   - *Expected Outcome*:
     - Script generates the initial manifest files in `.repo-wizard/` and exits with code `0`.
 
-- [ ] **3.4 Headless Local Scan via Orchestrator (Explicit Parameter Checks)**
-  - Attempt to run the CLI orchestrator without `--target-path`:
+- [ ] **3.4 Headless Local Scan via Orchestrator (Active Workspace Scans)**
+  - Run the CLI orchestrator in a standard interactive terminal (TTY):
     ```bash
     node scripts/run-fallback-sequential-orchestration.js
-    ```
-    - *Expected*: Throws an error indicating `--target-path` is mandatory and exits with a non-zero code.
-  - Run the CLI orchestrator specifying `--target-path` in a standard interactive terminal (TTY):
-    ```bash
-    node scripts/run-fallback-sequential-orchestration.js --target-path <target-path>
     ```
     - *Expected*: Renders a live, colorized progress logging interface with ANSI escape codes.
   - Run it redirecting output to a file (Non-TTY):
     ```bash
-    node scripts/run-fallback-sequential-orchestration.js --target-path <target-path> > scan-output.log
+    node scripts/run-fallback-sequential-orchestration.js > scan-output.log
     ```
     - *Expected*: Writes clean, line-by-line milestones without control characters. Open `scan-output.log` and verify it contains clean logs.
 
----
-
-## Level 4: Remote Headless Scan (Remote Profiling)
-
-**Goal**: Verify that scanning remote repositories compiles correct observation summaries, full reports, and roadmap upgrade hooks.
-*For detailed step-by-step procedures, see [features/backlog-exporter.md](features/backlog-exporter.md).*
-
-- [ ] **4.1 Remote Profiling Scan**
-  - Run the remote scanner command by passing a public GitHub URL:
-    ```bash
-    agy --dangerously-skip-permissions -p "/repo-wizard --headless --target-path <target-path>"
-    ```
-  - *Expected Outcome*:
-    - Automatically executes a shallow clone, clones the repository, and dispatches the relevant subagent sweeps.
-    - Generates a full Markdown report at `.repo-wizard/reports/repo-wizard-full-report.md`.
-
-- [ ] **4.2 Custom Checkout Path & Automatic Deletion Cleanup**
-  - Run a remote scan with the custom `--checkout-path` parameter:
-    ```bash
-    agy --dangerously-skip-permissions -p "/repo-wizard --headless --target-path <target-path> --checkout-path ./temp_checkout_test"
-    ```
-  - *Expected Outcome*:
-    - The repository is checked out shallowly to `./temp_checkout_test` locally.
-    - Upon complete compilation of reports, the `./temp_checkout_test` folder is deleted recursively and cleanly.
-
-- [ ] **4.3 Checkout Retention via `--keep-checkout`**
-  - Run a remote scan specifying both custom path and retention flag:
-    ```bash
-    agy --dangerously-skip-permissions -p "/repo-wizard --headless --target-path <target-path> --checkout-path ./temp_checkout_test --keep-checkout"
-    ```
-  - *Expected Outcome*:
-    - The repository is checked out to `./temp_checkout_test`.
-    - After scanning and report compilation, the `./temp_checkout_test` folder is NOT deleted and remains on disk.
 
 ---
 

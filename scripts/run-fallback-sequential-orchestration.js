@@ -28,9 +28,7 @@ function ensureDirExists(dir) {
 const activeChildren = new Set();
 const runningAgents = new Map();
 
-let isRemote = false;
-let checkoutPath = null;
-let keepCheckout = false;
+
 
 // ANSI escape codes for premium console formatting
 const RESET = '\x1b[0m';
@@ -70,25 +68,12 @@ signals.forEach(sig => {
 
 process.on('exit', () => {
   cleanupChildren();
-  if (isRemote && !keepCheckout && checkoutPath) {
-    const resolvedPath = path.resolve(checkoutPath);
-    if (fs.existsSync(resolvedPath)) {
-      try {
-        deleteFolderRecursive(resolvedPath);
-      } catch (delErr) {
-        // ignore
-      }
-    }
-  }
 });
 
 const ROOT = require('./root-resolver');
 const https = require('https');
 
 let targetPath = process.cwd();
-isRemote = false;
-checkoutPath = null;
-keepCheckout = false;
 
 let resolvedTarget = path.resolve(targetPath);
 if (!fs.existsSync(resolvedTarget)) {
@@ -144,13 +129,7 @@ if (mockCliIdx !== -1) {
 
 let repoName = process.env.MOCK_REPO_NAME;
 if (!repoName) {
-  if (isRemote) {
-    const parts = targetPath.split('/');
-    const rawRepo = parts[parts.length - 1] || 'project';
-    repoName = rawRepo.replace(/\.git$/, '').replace(/[^a-zA-Z0-9_\-\.]/g, '');
-  } else {
-    repoName = path.basename(resolvedTarget).replace(/[^a-zA-Z0-9_\-\.]/g, '');
-  }
+  repoName = path.basename(resolvedTarget).replace(/[^a-zA-Z0-9_\-\.]/g, '');
   if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase() === 'reports' || repoName.toLowerCase() === 'history') {
     repoName = 'project';
   }

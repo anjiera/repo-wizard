@@ -47,19 +47,16 @@ You can run in one of two execution environments. You must detect your environme
 Before performing any codebase profiling, checks, or session state verification:
 1. **Parameter Routing Check**: Parse the command parameters from the user's input/slash command and enforce their default values:
    - **Mode Defaults**:
-     - If a URL is passed: Set `MODE=HEADLESS_REMOTE` and default to executing a shallow clone (Approach A) once Legal Terms, Parameter Routing & Consent Gate passes.
      - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
-     - Otherwise (even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
+     - Otherwise (even if other parameters like `--redact`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
    - **Parameter Default Values**:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
      - `--redact`: Defaults to `false`. Do not redact reports unless `--redact` or `--redact true` is passed.
-     - `--target-path`: Defaults to the active local workspace directory (which the invoking agent resolves and explicitly forwards to the orchestrator script to satisfy Rule 12 of `AGENTS.md`).
      - `--report-path`: Defaults to the workspace root directory.
      - `--tos-path`: Defaults to `<reportRoot>/.repo-wizard/` (or the tool installation root).
    - **Parameter Parsing**:
      - If `--report-path <path>` is passed: Parse the custom parent directory for reports (setting `reportRoot = <path>`). All output and state files under `.repo-wizard/` (including `manifest.json`, `session.json`, and `.tos_agreed`) will reside under `reportRoot`.
      - If `--tos-path <path>` is passed: Parse the custom directory for `.tos_agreed` (setting `tosPath = <path>`).
-     - If `--target-path <path>` is passed: Extract and set the target codebase directory or remote URL to scan (overriding the default active workspace directory). Note: Positional parameters for target paths are strictly forbidden per repository governance rules.
 2. **Check Agreement File**: Search for the local hidden state file `.tos_agreed` inside the custom TOS directory (setting `tosPath = <path>`) if `--tos-path <path>` is configured, or inside `reportRoot/.repo-wizard/` (i.e. `<reportRoot>/.repo-wizard/.tos_agreed`).
 3. **Present Disclaimer if Missing**: If this file is missing, do NOT proceed with codebase profiling or setup questions. Instead, immediately output the exact **Terms of Service & Developer Agreement** (disclaimer) in the chat window by reading the canonical text in `references/terms-of-service.md` (located in the `repo-wizard` installation root). Do not run dynamic shell/powershell commands or search the target codebase to locate this text. Ask the user to reply 'y' or 'yes' to agree. Do not perform any further steps until they agree.
 4. **Save Agreement**: If accepted:
@@ -74,13 +71,11 @@ Before performing any codebase profiling, checks, or session state verification:
 
 ## Codebase Sizing & Analysis
 
-1. **Target Path Verification Check**: Verify that the target path parameter is valid and accessible:
-   - If the target path is a remote URL: Verify that the URL is a valid Git remote address (e.g. by running a dry-run check or verifying connectivity). If it is invalid or inaccessible, halt execution, describe the error, and ask the user to correct the remote location.
-   - If the target path is a local filepath: Verify that the directory exists and is readable on disk. If the path does not exist, halt execution, explain that the target folder was not found, and ask the user to correct the target path.
-2. **Size the Repository**: For the scanned codebase (local workspace or shallow checkout for remote), size the repository to prevent token limit issues:
+1. **Target Path Verification Check**: Verify that the active directory `process.cwd()` is valid and readable. If the folder is not readable, halt execution, explain that permissions are missing, and ask the user to fix workspace access.
+2. **Size the Repository**: For the scanned codebase `process.cwd()`, size the repository to prevent token limit issues:
    - Measure LOC, count files, detect primary languages and build systems by running the helper script: `node solo-dev-toolkit/scripts/count-loc.js --target-path <resolved_target_path>`. Avoid running arbitrary dynamic shell scripts or recursive PowerShell expressions.
    - For `MODE=INTERACTIVE_LOCAL` or `MODE=HEADLESS_LOCAL`, if the codebase contains multiple submodules or the LOC counting script output indicates that the codebase size exceeds the incremental adoption threshold (which is configured as `INCREMENTAL_ADOPTION_THRESHOLD_LOC` in [report-constants.js](../scripts/report-constants.js), returning `exceedsAdoptionThreshold: true` in JSON), prompt the user for Incremental Adoption (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
-3. **Ignore Local States**: Only if `reportRoot` resides inside the target codebase path, verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`. If `reportRoot` is configured to a directory outside the codebase, do NOT modify the project's `.gitignore` file.
+3. **Ignore Local States**: Only if `reportRoot` resides inside the active workspace directory, verify that `.repo-wizard/` is added to the project's `.gitignore` or `.agentignore`. If `reportRoot` is configured to a directory outside the codebase, do NOT modify the project's `.gitignore` file.
 
 ---
 
@@ -152,7 +147,7 @@ Under all modes, screen candidate tool recommendations using the `tool-auditor.a
 3. Read and consolidate all subagents' mini-reports from `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 4. **Execution & Synchronization Rules**:
    - **Mock-CLI Default**: When spawning `run-fallback-sequential-orchestration.js` (CLI Fallback Mode Only), you MUST default to `--mock-cli false` (or omit the parameter) to ensure a real scan is performed. NEVER pass `--mock-cli true` unless the user explicitly requested it in the prompt.
-   - **Parameter Defaults**: Enforce parameter default values during scans (`--mock-cli` defaults to `false`, `--redact` defaults to `false`, `--target-path` defaults to the active local workspace directory, `--report-path` defaults to the workspace root, and `--tos-path` defaults to `<reportRoot>/.repo-wizard/`).
+   - **Parameter Defaults**: Enforce parameter default values during scans (`--mock-cli` defaults to `false`, `--redact` defaults to `false`, `--report-path` defaults to the workspace root, and `--tos-path` defaults to `<reportRoot>/.repo-wizard/`).
 
 ---
 

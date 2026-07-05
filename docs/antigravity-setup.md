@@ -82,13 +82,13 @@ When executing slash commands like `/repo-wizard` directly from the command line
 ### 1. Print Mode (`-p` / `--print`)
 This runs the prompt non-interactively and prints the final result only after the command completes. Because executing a full scan with parallel subagents can exceed the default 5-minute timeout of `agy`, you should explicitly increase the timeout limit using `--print-timeout`:
 ```bash
-agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --headless --target-path /path/to/target"
+agy --dangerously-skip-permissions --print-timeout 10m -p "/repo-wizard --headless"
 ```
 
 ### 2. Interactive Mode (`-i` / `--prompt-interactive`)
 This runs the command and streams live progress, agent thoughts, and tool executions to the terminal in real-time. This is the recommended option to monitor scans as they run:
 ```bash
-agy --dangerously-skip-permissions -i "/repo-wizard --headless --target-path /path/to/target"
+agy --dangerously-skip-permissions -i "/repo-wizard --headless"
 ```
 
 > [!NOTE]

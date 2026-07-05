@@ -18,7 +18,6 @@ A structured JSON definition specifying the exact parameters and types that the 
 ### Headless Scanning
 A non-interactive execution mode where the agent sweeps the repository without prompting the user for input at each step.
 * **Headless Local Mode:** Performs a non-blocking scan of the active local repository, outputting report summaries.
-* **Headless Remote Mode:** Clone and evaluate a public remote repository URL, completing a best-guess analysis.
 
 ### Lead Orchestrator
 The primary agent (mapped to `/repo-wizard`) that manages the user interaction lifecycle, sizing checks, recommendation engines, and hands off execution tasks to specialists.
