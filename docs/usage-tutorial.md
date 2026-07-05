@@ -107,10 +107,10 @@ Staged sweeps leverage two safety features to prevent data loss:
 1.  **Incremental State Merging**: Subsequent setup scans automatically read the existing manifest and preserve the `completed` status of other pillars. For example, running the `PERFORMANCE` setup scan will keep prior `SECURITY` audit results marked as `completed` rather than overwriting them.
 2.  **Incremental Archiving**: The cleanup engine automatically target-prunes only observation and contract files in the `agents/` and `contracts/` folders belonging to the active `--pillar` stage. Other pillars' observations are left untouched, enabling the compiler to compile a single comprehensive document when all stages are complete.
 
-### 4.3 High Sweep Warning Gate
-To prevent unintentional massive token consumption during headless scans:
+### 4.3 High Agent Count Warning Gate
+To mitigate token consumption during headless scans:
 *   If the relevance sweep identifies **more than 6 active relevant specialists** for a codebase, and no `--pillar` parameter is specified, the setup scan fails fast and **exits with code 2**.
-*   The terminal output will display instructions on how to stage your sweep by pillar, or how to explicitly bypass the warning by passing `--pillar ALL`.
+*   The terminal output will display instructions on how to stage your sweep by pillar, or how to bypass the warning by passing `--pillar ALL`.
 
 ---
 

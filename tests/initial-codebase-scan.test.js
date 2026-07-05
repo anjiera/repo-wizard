@@ -53,26 +53,26 @@ function run() {
     const qaContract = filteredManifest.contracts.find(c => c.agent_name === 'accessibility-auditor'); // QUALITY pillar
     assert(qaContract && qaContract.status === 'skipped', 'accessibility-auditor (QUALITY) is skipped under SECURITY pillar filter');
 
-    // Test: High Sweep Warning exits with 2 in headless mode when active > 6 and no pillar is specified
+    // Test: High Agent Count Warning exits with 2 in headless mode when active > 6 and no pillar is specified
     fs.writeFileSync(path.join(tempScanDir, 'notebook.ipynb'), '{}');
     fs.writeFileSync(path.join(tempScanDir, 'db.sql'), 'SELECT 1;');
     
     // We pass '--headless' (or since process.env.ANTIGRAVITY_AGENT !== '1' in test process spawn, it defaults to headless)
     // Run without --pillar to trigger the warning exit code 2
     const warningRun = runScript(scriptPath, ['--report-path', `"${tempScanDir}"`, '--headless'], { cwd: tempScanDir });
-    assert(warningRun.code === 2, 'High Sweep Warning exits with 2 when active > 6 and no pillar specified');
+    assert(warningRun.code === 2, 'High Agent Count Warning exits with 2 when active > 6 and no pillar specified');
     assert(warningRun.stdout.includes('Security ('), 'Warning reports Security pillar agent count');
-    assert(warningRun.stdout.includes('node scripts/initial-codebase-scan.js --pillar SECURITY'), 'Warning contains SECURITY command');
+    assert(warningRun.stdout.includes('--pillar SECURITY'), 'Warning contains SECURITY command');
     assert(warningRun.stdout.includes('Performance ('), 'Warning reports Performance pillar agent count');
-    assert(warningRun.stdout.includes('node scripts/initial-codebase-scan.js --pillar PERFORMANCE'), 'Warning contains PERFORMANCE command');
+    assert(warningRun.stdout.includes('--pillar PERFORMANCE'), 'Warning contains PERFORMANCE command');
     assert(warningRun.stdout.includes('Architecture ('), 'Warning reports Architecture pillar agent count');
-    assert(warningRun.stdout.includes('node scripts/initial-codebase-scan.js --pillar ARCHITECTURE'), 'Warning contains ARCHITECTURE command');
+    assert(warningRun.stdout.includes('--pillar ARCHITECTURE'), 'Warning contains ARCHITECTURE command');
     assert(warningRun.stdout.includes('Quality ('), 'Warning reports Quality pillar agent count');
-    assert(warningRun.stdout.includes('node scripts/initial-codebase-scan.js --pillar QUALITY'), 'Warning contains QUALITY command');
+    assert(warningRun.stdout.includes('--pillar QUALITY'), 'Warning contains QUALITY command');
 
     // Run with --pillar ALL to bypass the warning
     const bypassRun = runScript(scriptPath, ['--report-path', `"${tempScanDir}"`, '--headless', '--pillar', 'ALL'], { cwd: tempScanDir });
-    assert(bypassRun.code === 0, '--pillar ALL bypasses the High Sweep Warning');
+    assert(bypassRun.code === 0, '--pillar ALL bypasses the High Agent Count Warning');
 
     // Test: Write permission failure on read-only directory
     const noWriteDir = path.join(tempScanDir, 'no_write_dir');

@@ -142,7 +142,7 @@ function traverse(dir, depth = 0) {
       } else if (stat.isDirectory()) {
         traverse(fullPath, depth + 1);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 }
 traverse(resolvedTarget);
@@ -185,7 +185,7 @@ if (fileNames.has('cargo.toml') || extensions.has('.rs')) {
       if ((pkg.dependencies && pkg.dependencies.react) || (pkg.devDependencies && pkg.devDependencies.react)) {
         frameworks.push('react');
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   if (!frameworks.includes('react') && (extensions.has('.jsx') || extensions.has('.tsx'))) {
     frameworks.push('react');
@@ -207,12 +207,12 @@ const existingSessionPath = path.join(REPORTS_DIR, 'session.json');
 if (fs.existsSync(existingManifestPath)) {
   try {
     existingManifest = JSON.parse(fs.readFileSync(existingManifestPath, 'utf8'));
-  } catch (e) {}
+  } catch (e) { }
 }
 if (fs.existsSync(existingSessionPath)) {
   try {
     existingSession = JSON.parse(fs.readFileSync(existingSessionPath, 'utf8'));
-  } catch (e) {}
+  } catch (e) { }
 }
 
 // Check if running inside Google Antigravity native chat sandbox.
@@ -268,19 +268,19 @@ if (isHeadless && activeCount > 6 && !hasPillarArg) {
   const architectureCount = manifestContracts.filter(c => c.status !== 'skipped' && agentRegistry[c.agent_name].pillar === 'ARCHITECTURE').length;
   const qualityCount = manifestContracts.filter(c => c.status !== 'skipped' && agentRegistry[c.agent_name].pillar === 'QUALITY').length;
 
-  console.log(`${YELLOW}⚠ High Sweep Warning: The system identified ${activeCount} relevant specialist agents.${RESET}`);
-  console.log(`Running all of them at once will consume significant AI tokens.`);
-  console.log(`\nTo run your audits in stages, please run individual pillars:`);
+  console.log(`${YELLOW}⚠ High Agent Count Warning: The system identified ${activeCount} relevant specialist agents.${RESET}`);
+  console.log(`Running all of them at once may consume significant AI tokens.`);
+  console.log(`\nTo run your audits in stages, please run individual pillars using the --pillar flag:`);
   console.log(`\n  Security (${securityCount} agent${securityCount === 1 ? '' : 's'}):`);
-  console.log(`  node scripts/initial-codebase-scan.js --pillar SECURITY`);
+  console.log(`  --pillar SECURITY`);
   console.log(`\n  Performance (${performanceCount} agent${performanceCount === 1 ? '' : 's'}):`);
-  console.log(`  node scripts/initial-codebase-scan.js --pillar PERFORMANCE`);
+  console.log(`  --pillar PERFORMANCE`);
   console.log(`\n  Architecture (${architectureCount} agent${architectureCount === 1 ? '' : 's'}):`);
-  console.log(`  node scripts/initial-codebase-scan.js --pillar ARCHITECTURE`);
+  console.log(`  --pillar ARCHITECTURE`);
   console.log(`\n  Quality (${qualityCount} agent${qualityCount === 1 ? '' : 's'}):`);
-  console.log(`  node scripts/initial-codebase-scan.js --pillar QUALITY`);
+  console.log(`  --pillar QUALITY`);
   console.log(`\nTo bypass this warning and run all specialists, run explicitly with:`);
-  console.log(`  node scripts/initial-codebase-scan.js --pillar ALL`);
+  console.log(`  --pillar ALL`);
   process.exit(2);
 }
 

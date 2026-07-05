@@ -149,7 +149,7 @@ Prepares the target repository and validates paths before executing sweeps.
   - Verifies target directory read permissions (`R_OK`) and report directory write permissions. Exits with code `1` if permissions are denied.
   - Analyzes codebase line counts to class size tiers (XS, S, M, L, XL).
   - Determines framework stack properties (e.g. React).
-  - Triggers **High Sweep Warning** (exits with code `2`) if active relevant agents exceed 6 in headless mode, unless filtered by a specific quality pillar.
+  - Triggers **High Agent Count Warning** (exits with code `2`) if active relevant agents exceed 6 in headless mode, unless filtered by a specific quality pillar.
   - Generates initial `manifest.json` and `session.json` state files.
   - Supports merging of previous runs when executing incremental staging sweeps.
 * **Parameters:**

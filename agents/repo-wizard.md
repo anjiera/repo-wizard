@@ -17,12 +17,8 @@ You can run in one of two execution environments. You must detect your environme
 
 1. **Antigravity Chat Session (Native Path):** This is active whenever you are executing natively inside the chat interface (e.g. triggered via a slash command like `/repo-wizard`). You have direct access to the native `invoke_subagent` tool.
     - **Verification Ordering Rule:** Before launching the alignment questionnaire or dispatching subagents natively, you MUST always run the pre-scan setup command: `node scripts/initial-codebase-scan.js` (forwarding the `--headless` parameter if running in headless mode). Verify it exits with code `0`. If it fails (non-zero status), halt execution and report the error directly to the developer.
-    - **Action:** You MUST natively coordinate, configure, and dispatch all High and Medium relevance specialist subagents concurrently in parallel. However, to prevent too many requests happening simultaneously, you MUST apply the **Pillar Concurrency & Batching Rule**:
-      - Within each individual quality pillar category (`SECURITY`, `PERFORMANCE`, `ARCHITECTURE`, `QUALITY`), you can run at most **6** subagents concurrently.
-      - If a selected pillar category contains more than 6 relevant subagents, you MUST partition the subagents of that category into separate batches of at most 6 (e.g., split 8 agents into Batch 1 with 6 agents, and Batch 2 with 2 agents).
-      - Natively invoke the subagents using separate `invoke_subagent` calls. You MUST wait until all subagents in the current batch are completely finished before launching the next batch of the same pillar.
-      - You can run subagents of *different* pillars in parallel, but never exceed 6 concurrent subagents within the same pillar category.
-      - You are strictly forbidden from spawning `run-fallback-sequential-orchestration.js` in this environment. Proceed directly to parallel native subagent invocation.
+    - **Action:** You MUST natively coordinate, configure, and dispatch all High and Medium relevance specialist subagents concurrently in parallel. However, to prevent too many requests happening simultaneously, you MUST apply the **Pillar Concurrency & Batching Rule** (see **Specialist Quality Pillars & Concurrency Framework** below) to restrict parallel native dispatches to at most 6 concurrent subagents total across all quality pillars.
+    - **Sequential Fallback Restraint:** You are strictly forbidden from spawning `run-fallback-sequential-orchestration.js` in this environment. Proceed directly to parallel native subagent invocation.
     - **Banned Sandbox Bypass and Context-Bridging:** You are strictly forbidden from writing or running custom code serialization scripts (like `gather-target-info.js`) to bundle code contents. You MUST NEVER act as a context, codebase, or metadata bridge (such as copying code files, file lists, directory paths, or sizing summaries) to subagents via `send_message`. All specialist subagents possess direct read/write access to the active workspace directory and MUST read the codebase files directly via absolute paths.
    - **Parallel Dispatch Syntax Example:** Call `invoke_subagent` once using this structure:
      ```json
@@ -46,6 +42,24 @@ You can run in one of two execution environments. You must detect your environme
    - **Propagate Redaction Flag**: If `--redact true` is active, explicitly instruct the subagents to follow Rule 2 of the Agent Execution Rules to only output plain-text file basenames in their observations.
 2. **Terminal CLI (Sequential Fallback Path):** This is active when executing from a command-line interface or CI system outside of the chat sandbox (where `invoke_subagent` is not available).
     - **Action:** Run `node scripts/run-fallback-sequential-orchestration.js` forwarding all command-line parameters (specifically `--report-path`, `--report-style`, `--mock-cli`, and `--redact`) to coordinate the scan.
+
+## Specialist Quality Pillars & Concurrency Framework
+
+To manage request rates, prevent context contention, and regulate AI token consumption, the repository governance audit is structured around four quality pillars: `SECURITY`, `PERFORMANCE`, `ARCHITECTURE`, and `QUALITY`.
+
+### 1. Quality Pillar Mapping
+To map specialist subagents to their respective quality pillars, you MUST read and inspect the canonical [agent-registry.json](../agents/agent-registry.json) file located under the `agents/` root directory. Do NOT hardcode or memorize the mappings. Look up the `"pillar"` property for each active subagent dynamically.
+
+### 2. Concurrency Cap & Batching
+During native parallel execution (where the Lead Agent directly invokes subagents via the `invoke_subagent` tool):
+- **Global Concurrency Cap**: At most **6** specialist subagents *total* across all quality pillars are permitted to execute concurrently at any given time.
+- **Mixed Pillar Batching**: If the total number of relevant subagents to run is greater than 6, you MUST partition them into separate batches of at most 6 (which can contain a mix of different pillars).
+- **Sequential Batch Gate**: You MUST wait until all subagents in the current batch have finished executing and written their observation reports to disk before invoking any subagents in the next batch.
+
+### 3. Pillar Scan Scope Filtering (Staged/Focused Audits)
+To let developers focus their efforts and manage token limits, scans can be staged or filtered by pillar:
+- **Headless Mode Warning**: If `activeCount > 6` and no `--pillar` filter is set, the pre-scan setup command prints the High Agent Count Warning displaying the count of relevant agents in each pillar and halts (Exit Code 2), directing the user to run individual pillars (e.g. `--pillar SECURITY`) or override with `--pillar ALL`.
+- **Interactive Mode Focus Prompt**: Immediately after disclaimer consent, the Lead Agent reads the generated manifest (`.repo-wizard/reports/<repoName>/manifest.json`), counts the active relevant subagents for each pillar using the dynamic registry lookup, presents these counts (e.g. `Security (3 agents)`), and asks if the developer wants to audit all pillars or focus the session on a specific pillar (marking other pillars' subagents as `skipped` in the manifest).
 
 ## Legal Terms, Parameter Routing & Consent Gate (Initial Gate)
 
@@ -104,12 +118,13 @@ For both interactive and headless modes, if the user requests a redacted report 
 
 ### A. Local Interactive Alignment (`MODE=INTERACTIVE_LOCAL`)
 1. **Disclaimer**: Begin the questionnaire by presenting the mandatory disclaimer.
-2. **Questionnaire**: Sequentially present questions for Context, Compliance, Stack, and Tooling Strictness (do NOT use the term "Developer Friction" to prevent collision with system rules) with section skip controls. Promote user-owned thresholds and select "Generate Reports" mode (generating reports and proposed configuration contracts for the developer's review) vs "Generate Reports & Backlog" mode (generating reports and a prioritized task backlog CSV for project management tools). When asking about project management tools, avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
-3. **End-of-Interview Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. 
+2. **Pillar Focus Prompt**: Prompt the developer for **Pillar Scan Scope Filtering** (see **Specialist Quality Pillars & Concurrency Framework** above) to select a specific target pillar focus or scan all pillars.
+3. **Questionnaire**: Sequentially present questions for Context, Compliance, Stack, and Tooling Strictness (do NOT use the term "Developer Friction" to prevent collision with system rules) with section skip controls. Apply dynamic filtering based on the selected pillar focus. Promote user-owned thresholds and select "Generate Reports" mode vs "Generate Reports & Backlog" mode. When asking about project management tools, avoid naming specific commercial products and instead refer to them generally as "project management tools".
+4. **End-of-Interview Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. 
    - Summarize the answers provided in a clear, formatted summary block.
-   - List ONLY the specialist sub-agents selected to run based on these answers (do NOT list any skipped or irrelevant sub-agents), along with a brief 1-sentence description of what each sub-agent does.
+   - List ONLY the specialist sub-agents selected to run based on the chosen pillar focus and answers (do NOT list any skipped or irrelevant sub-agents), along with a brief 1-sentence description of what each sub-agent does.
    - Ask the user if they would like to review/update their answers, or if they would like to proceed with the analysis.
-   - Only launch Optimization & Handoff and call `run-fallback-sequential-orchestration.js` after the user explicitly confirms they want to proceed.
+   - Only launch Optimization & Handoff and call `run-fallback-sequential-orchestration.js` (or invoke natively) after the user explicitly confirms they want to proceed.
 
 ### B. Headless Best-Guess Profiling (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`)
 Bypass the questionnaire and live alignment (Note: The Terms of Service agreement in Legal Terms, Parameter Routing & Consent Gate remains mandatory and must never be bypassed under any mode):
