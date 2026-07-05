@@ -1,15 +1,13 @@
 ---
-description: Orchestrate repository onboarding, compliance checking, and tool configuration. Can run interactively on the local workspace or in headless remote/local mode.
+description: Orchestrate repository onboarding, compliance checking, and tool configuration. Can run interactively on the local workspace or in headless local mode.
 ---
 
 Invoke the agent-skills:repo-wizard skill.
 Act as the repo-wizard persona.
 
 Check the input parameters:
-- If a URL is provided as a parameter (e.g. `/repo-wizard <URL>`): Set `MODE=HEADLESS_REMOTE` and default to executing a shallow clone once the TOS check passes.
 - If `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active local codebase in headless mode.
-- Default to `MODE=INTERACTIVE_LOCAL` unless a URL or `--headless` is passed (meaning interactive local mode is the default mode even if other parameters like `--redact`, `--target-path`, `--report-path`, or `--tos-path` are passed). CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided, even if `--target-path` points to a directory different from the current workspace.
-- If `--target-path <path>` is provided: Extract and target that codebase directory for scanning, setting the custom target path for the orchestrator. Note: Positional parameters for target paths are strictly forbidden.
+- Default to `MODE=INTERACTIVE_LOCAL` unless `--headless` is passed. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
 - If `--report-path <path>` is provided: Extract the custom parent directory for reports (setting reportRoot).
 - If `--tos-path <path>` is provided: Extract the custom directory for `.tos_agreed` (setting tosPath).
 - Ensure that `--mock-cli` defaults to `false` and `--redact` defaults to `false` unless explicitly overridden.
