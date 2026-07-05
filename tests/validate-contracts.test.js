@@ -48,7 +48,37 @@ function run() {
       execution_mode: 'backlog'
     }
   });
-  assert(errors5.length > 0 && errors5.some(e => e.includes('Missing "backlog_parameters"')), 'fails on missing backlog_parameters in backlog mode');
+  assert(errors5.length > 0 && errors5.some(e => e.includes('Missing "backlog_parameters" object under task_metadata for backlog mode.')), 'fails on missing backlog_parameters in backlog mode');
+
+  // Test 6: Invalid granularity ('epic') in backlog mode
+  const errors6 = validateContract({
+    task_metadata: {
+      target_modules: ['/src'],
+      language: 'javascript',
+      build_system: 'npm',
+      execution_mode: 'backlog',
+      backlog_parameters: {
+        granularity: 'epic',
+        framework: 'Scrum'
+      }
+    }
+  });
+  assert(errors6.length > 0 && errors6.some(e => e.includes('backlog_parameters.granularity must be "granular"')), 'fails on epic granularity');
+
+  // Test 7: Valid granularity ('granular') in backlog mode
+  const errors7 = validateContract({
+    task_metadata: {
+      target_modules: ['/src'],
+      language: 'javascript',
+      build_system: 'npm',
+      execution_mode: 'backlog',
+      backlog_parameters: {
+        granularity: 'granular',
+        framework: 'Scrum'
+      }
+    }
+  });
+  assert(errors7.length === 0, 'accepts granular granularity');
 }
 
 module.exports = { run };

@@ -30,12 +30,12 @@ module.exports = {
       ]
     },
     {
-      name: 'Backlog Mode Selection & Deliverables',
-      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, let\'s start. I would like to configure my repository using the "backlog" execution mode. I want granular task stories and we use Scrum.',
+      name: 'Backlog CSV & Reports Deliverables',
+      input: 'Assuming we have already agreed to the TOS and .tos_agreed exists, let\'s start. I would like to configure my repository. I want user-story-level granular task stories and we use Scrum.',
       rubrics: [
-        'The response acknowledges the backlog execution mode toggle.',
+        'The response acknowledges generating both reports and the backlog CSV.',
         'The response mentions exporting a CSV backlog (.repo-wizard/reports/<repo-name>/backlog.csv), a full technical report (<repo-name>-full-report.md / .html), and a constructive 3-section executive summary (<repo-name>-executive-summary.md / .html).',
-        'The response acknowledges the Scrum planning framework and granularity.'
+        'The response acknowledges the Scrum planning framework and user-story-level granularity.'
       ]
     },
     {

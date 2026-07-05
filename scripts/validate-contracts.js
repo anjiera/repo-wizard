@@ -70,8 +70,8 @@ function validateContract(contract) {
         errors.push('Missing "backlog_parameters" object under task_metadata for backlog mode.');
       } else {
         const bp = meta.backlog_parameters;
-        if (typeof bp.granularity !== 'string' || !['granular', 'epic'].includes(bp.granularity)) {
-          errors.push('backlog_parameters.granularity must be "granular" or "epic".');
+        if (typeof bp.granularity !== 'string' || bp.granularity !== 'granular') {
+          errors.push('backlog_parameters.granularity must be "granular".');
         }
         if (typeof bp.framework !== 'string' || !['Scrum', 'Kanban'].includes(bp.framework)) {
           errors.push('backlog_parameters.framework must be "Scrum" or "Kanban".');
@@ -156,7 +156,11 @@ function runSelfTest() {
       build_system: 'npm-vite',
       budget_tier: 'free',
       execution_environments: ['pre-commit', 'CI'],
-      execution_mode: 'scaffold'
+      execution_mode: 'scaffold',
+      backlog_parameters: {
+        granularity: 'granular',
+        framework: 'Scrum'
+      }
     },
     compliance_targets: [
       {
@@ -219,7 +223,23 @@ function runSelfTest() {
           execution_mode: 'backlog'
         }
       },
-      expectedError: 'Missing "backlog_parameters"'
+      expectedError: 'Missing "backlog_parameters" object under task_metadata for backlog mode.'
+    },
+    {
+      description: 'Invalid granularity (epic) in backlog mode',
+      data: {
+        task_metadata: {
+          target_modules: ['/'],
+          language: 'python',
+          build_system: 'pip',
+          execution_mode: 'backlog',
+          backlog_parameters: {
+            granularity: 'epic',
+            framework: 'Scrum'
+          }
+        }
+      },
+      expectedError: 'backlog_parameters.granularity must be "granular"'
     },
     {
       description: 'Malformed compliance standard',
