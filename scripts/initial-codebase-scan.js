@@ -32,19 +32,13 @@ const SPECIALISTS = Object.keys(agentRegistry).filter(
 
 function printUsageAndExit(err) {
   if (err) console.error(`${RED}✗ Error: ${err}${RESET}`);
-  console.log(`Usage: node scripts/initial-codebase-scan.js --target-path <target_path> [--report-path <report_path>]`);
+  console.log(`Usage: node scripts/initial-codebase-scan.js [--report-path <report_path>] [--pillar <pillar>] [--headless]`);
   process.exit(1);
 }
 
 // Simple parameter parsing
 const args = process.argv.slice(2);
-let targetPath = null;
 let reportPath = null;
-
-const targetIdx = args.indexOf('--target-path');
-if (targetIdx !== -1 && args[targetIdx + 1] && !args[targetIdx + 1].startsWith('-')) {
-  targetPath = args[targetIdx + 1];
-}
 
 const reportIdx = args.indexOf('--report-path');
 if (reportIdx !== -1 && args[reportIdx + 1] && !args[reportIdx + 1].startsWith('-')) {
@@ -65,15 +59,7 @@ if (pillarFilter && !ALLOWED_PILLARS.includes(pillarFilter)) {
 
 const isHeadless = args.includes('--headless') || process.env.HEADLESS === 'true' || process.env.ANTIGRAVITY_AGENT !== '1';
 
-if (!targetPath) {
-  printUsageAndExit('Missing required parameter "--target-path".');
-}
-
-const resolvedTarget = path.resolve(targetPath);
-if (!fs.existsSync(resolvedTarget)) {
-  console.error(`${RED}✗ Error: Target directory "${resolvedTarget}" does not exist.${RESET}`);
-  process.exit(1);
-}
+const resolvedTarget = path.resolve(process.cwd());
 
 // Verify read access to the target path
 try {
@@ -99,7 +85,7 @@ try {
   process.exit(1);
 }
 
-const parts = targetPath.split(/[\/\\]/);
+const parts = resolvedTarget.split(/[\/\\]/);
 let repoName = parts[parts.length - 1] || 'project';
 if (repoName.endsWith('.git')) {
   repoName = repoName.slice(0, -4);
@@ -280,12 +266,12 @@ if (isHeadless && activeCount > 6 && !hasPillarArg) {
   console.log(`${YELLOW}⚠ High Sweep Warning: The system identified ${activeCount} relevant specialist agents.${RESET}`);
   console.log(`Running all of them at once will consume significant AI tokens.`);
   console.log(`\nTo run your audits in stages, please run individual pillars:`);
-  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar SECURITY`);
-  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar PERFORMANCE`);
-  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar ARCHITECTURE`);
-  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar QUALITY`);
+  console.log(`  node scripts/initial-codebase-scan.js --pillar SECURITY`);
+  console.log(`  node scripts/initial-codebase-scan.js --pillar PERFORMANCE`);
+  console.log(`  node scripts/initial-codebase-scan.js --pillar ARCHITECTURE`);
+  console.log(`  node scripts/initial-codebase-scan.js --pillar QUALITY`);
   console.log(`\nTo bypass this warning and run all specialists, run explicitly with:`);
-  console.log(`  node scripts/initial-codebase-scan.js --target-path <path> --pillar ALL`);
+  console.log(`  node scripts/initial-codebase-scan.js --pillar ALL`);
   process.exit(2);
 }
 

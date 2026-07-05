@@ -85,35 +85,15 @@ process.on('exit', () => {
 const ROOT = require('./root-resolver');
 const https = require('https');
 
-let targetPath = null;
-const targetIdx = process.argv.indexOf('--target-path');
-if (targetIdx !== -1 && process.argv[targetIdx + 1] && !process.argv[targetIdx + 1].startsWith('-')) {
-  targetPath = process.argv[targetIdx + 1];
-}
-if (!targetPath) {
-  console.error('ERROR: Missing required explicit command-line parameter "--target-path".');
+let targetPath = process.cwd();
+isRemote = false;
+checkoutPath = null;
+keepCheckout = false;
+
+let resolvedTarget = path.resolve(targetPath);
+if (!fs.existsSync(resolvedTarget)) {
+  console.error(`ERROR: Target directory "${resolvedTarget}" does not exist on disk.`);
   process.exit(1);
-}
-
-isRemote = /^(https?:\/\/|git@)/.test(targetPath);
-const checkoutIdx = process.argv.indexOf('--checkout-path');
-if (checkoutIdx !== -1 && process.argv[checkoutIdx + 1] && !process.argv[checkoutIdx + 1].startsWith('-')) {
-  checkoutPath = process.argv[checkoutIdx + 1];
-}
-
-keepCheckout = process.argv.includes('--keep-checkout');
-
-let resolvedTarget = null;
-if (!isRemote) {
-  if (checkoutIdx !== -1 || keepCheckout) {
-    console.error('ERROR: Parameters "--checkout-path" and "--keep-checkout" are only valid when "--target-path" is a remote Git repository URL.');
-    process.exit(1);
-  }
-  resolvedTarget = path.resolve(targetPath);
-  if (!fs.existsSync(resolvedTarget)) {
-    console.error(`ERROR: Target directory "${resolvedTarget}" does not exist on disk.`);
-    process.exit(1);
-  }
 }
 
 // Parse --report-path flag
@@ -264,66 +244,7 @@ async function main() {
     process.stderr._handle.setBlocking(true);
   }
 
-  if (isRemote) {
-    if (!checkoutPath) {
-      const rl = require('readline').createInterface({
-        input: process.stdin,
-        output: process.stdout
-      });
-      checkoutPath = await new Promise((resolve) => {
-        rl.question('Please enter a target checkout directory path for the remote repository: ', (answer) => {
-          rl.close();
-          resolve(answer.trim());
-        });
-      });
-      if (!checkoutPath) {
-        console.error('ERROR: Checkout path is required for remote scans.');
-        process.exit(1);
-      }
-    }
 
-    if (path.basename(checkoutPath).toLowerCase() !== repoName.toLowerCase()) {
-      checkoutPath = path.join(checkoutPath, repoName);
-    }
-    resolvedTarget = path.resolve(checkoutPath);
-
-    console.log(`\n${BLUE}==> Running in Remote Scan Mode for URL: ${targetPath}${RESET}`);
-    console.log(`    - Why? A remote Git URL indicates you are running a report on a repository you are not actively developing on.`);
-    console.log(`    - Non-interactive (headless) mode has been automatically enabled.`);
-    console.log(`    - A temporary shallow clone (--depth=1) will be downloaded to the checkout path.`);
-    if (!keepCheckout) {
-      console.log(`    - Note: This clone directory is temporary and will be deleted upon completion.`);
-    } else {
-      console.log(`    - Note: This clone directory will be preserved on disk since --keep-checkout was specified.`);
-    }
-    console.log('');
-
-    // GitHub size estimation & connectivity warnings
-    console.log(`Checking connection and estimating size for remote repository: ${targetPath}...`);
-    const info = await getRemoteRepoInfo(targetPath);
-    if (info.offline) {
-      console.warn(`\n${RED}WARNING: The GitHub API appears to be offline or unreachable (${info.error}). The subsequent shallow clone operation may fail.${RESET}\n`);
-    } else if (info.error) {
-      console.warn(`\nWARNING: Could not retrieve repository info from GitHub API (${info.error}). Proceeding with clone...`);
-    } else if (info.size !== undefined) {
-      console.log(`Estimated repository size: ${(info.size / 1024).toFixed(2)} MB`);
-      if (info.size > 100000) {
-        console.warn(`\n${RED}WARNING: The remote repository size exceeds 100MB. Shallow clone may require significant bandwidth and disk space.${RESET}\n`);
-      }
-    }
-
-    if (!fs.existsSync(resolvedTarget)) {
-      console.log(`Performing shallow clone to target directory: ${resolvedTarget}...`);
-      try {
-        execSync(`git clone --depth=1 ${targetPath} "${resolvedTarget}"`, { stdio: 'inherit' });
-      } catch (cloneErr) {
-        console.error(`ERROR: Failed to clone remote repository: ${cloneErr.message}`);
-        process.exit(1);
-      }
-    } else {
-      console.log(`Checkout target directory "${resolvedTarget}" already exists. Skipping clone.`);
-    }
-  }
 
   console.log(`\n${BLUE}==>${RESET} ${BOLD}Repo Wizard has started. This analysis conducts deep codebase diagnostics and runs specialist subagents. It may take 5+ minutes depending on the repository size.${RESET}\n`);
 
@@ -766,58 +687,7 @@ function completeOrchestration(manifest) {
 
   process.exit(0);
 }
-function getRemoteRepoInfo(url) {
-  return new Promise((resolve) => {
-    const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
-    if (!match) {
-      resolve({ error: 'Not a GitHub URL' });
-      return;
-    }
-    const owner = match[1];
-    let repo = match[2];
-    if (repo.endsWith('.git')) {
-      repo = repo.slice(0, -4);
-    }
-    
-    const options = {
-      hostname: 'api.github.com',
-      path: `/repos/${owner}/${repo}`,
-      method: 'GET',
-      headers: {
-        'User-Agent': 'repo-wizard-orchestrator'
-      },
-      timeout: 5000
-    };
 
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', (chunk) => data += chunk);
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          try {
-            const json = JSON.parse(data);
-            resolve({ size: json.size });
-          } catch (e) {
-            resolve({ error: 'Failed to parse JSON response' });
-          }
-        } else {
-          resolve({ error: `API responded with status code ${res.statusCode}` });
-        }
-      });
-    });
-
-    req.on('error', (err) => {
-      resolve({ error: err.message, offline: true });
-    });
-
-    req.on('timeout', () => {
-      req.destroy();
-      resolve({ error: 'API request timed out', offline: true });
-    });
-
-    req.end();
-  });
-}
 
 function deleteFolderRecursive(dirPath) {
   if (fs.existsSync(dirPath)) {
