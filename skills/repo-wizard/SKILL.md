@@ -138,7 +138,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 4. **Upgrade Mismatch Hook**: If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
   > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
 5. **Backlog CSV & Toolchain Summary**:
-  - Write JIRA backlog CSV (`<reportRoot>/.repo-wizard/backlog.csv` - generated unconditionally).
+  - Write backlog CSV (`<reportRoot>/.repo-wizard/backlog.csv` - generated unconditionally).
   - Write toolchain doc (`docs/TOOLCHAIN.md`).
 6. **Post-Execution Output Summary**:
   - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
