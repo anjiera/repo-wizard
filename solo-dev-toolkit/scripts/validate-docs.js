@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { walkWorkspaceDir } = require('../../scripts/scan-helpers');
 
 const { RESET, BOLD, GREEN, RED } = require('./cli-helpers');
 
@@ -33,47 +34,6 @@ const approvedSymbols = [
   '\u2713', '\u2717', '\u26A0'
 ];
 
-function scanDirectory(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    const relPath = path.relative(ROOT, fullPath).replace(/\\/g, '/');
-
-    if (entry.isDirectory()) {
-      if (['.git', '.repo-wizard', '.gemini', '.claude', '.agents', 'node_modules', 'temp_e2e_sandbox', 'dist', 'build', 'history'].includes(entry.name)) {
-        continue;
-      }
-      scanDirectory(fullPath);
-    } else if (entry.isFile()) {
-      const ext = path.extname(entry.name);
-      if (ext === '.md' || ext === '.js' || ext === '.sh' || ext === '.ps1' || ext === '.json' || ext === '.toml' || ext === '.csv') {
-        let content;
-        try {
-          content = fs.readFileSync(fullPath, 'utf8');
-        } catch (err) {
-          continue;
-        }
-
-        // 1. Emoji Check
-        if (entry.name !== 'papercuts.csv') { // Skip registry file itself for emoji warning
-          const matches = content.match(emojiRegex);
-          if (matches) {
-            const offenders = matches.filter(m => !approvedSymbols.includes(m));
-            if (offenders.length > 0) {
-              reportError(`File '${relPath}' contains unapproved emojis: ${Array.from(new Set(offenders)).join(', ')}. Emojis are disallowed except for approved status color circles.`);
-            }
-          }
-        }
-
-        // 2. Relative Markdown Links Check
-        if (ext === '.md') {
-          validateMarkdownLinks(relPath, content);
-        }
-      }
-    }
-  }
-}
-
 function validateMarkdownLinks(filePath, content) {
   const linkRegex = /\[([^\]]*?)\]\((.*?)\)/g;
   let match;
@@ -90,7 +50,38 @@ function validateMarkdownLinks(filePath, content) {
 
 function validateNoUnapprovedEmojisAndLinks() {
   console.log('Checking for unapproved emojis and absolute links in codebase...');
-  scanDirectory(ROOT);
+  walkWorkspaceDir(ROOT, {
+    ignoreDirectories: ['.git', '.repo-wizard', '.gemini', '.claude', '.agents', 'node_modules', 'temp_e2e_sandbox', 'dist', 'build', 'history'],
+    onFile: (fileName, fullPath) => {
+      const ext = path.extname(fileName);
+      if (ext === '.md' || ext === '.js' || ext === '.sh' || ext === '.ps1' || ext === '.json' || ext === '.toml' || ext === '.csv') {
+        let content;
+        try {
+          content = fs.readFileSync(fullPath, 'utf8');
+        } catch (err) {
+          return;
+        }
+
+        const relPath = path.relative(ROOT, fullPath).replace(/\\/g, '/');
+
+        // 1. Emoji Check
+        if (fileName !== 'papercuts.csv') { // Skip registry file itself for emoji warning
+          const matches = content.match(emojiRegex);
+          if (matches) {
+            const offenders = matches.filter(m => !approvedSymbols.includes(m));
+            if (offenders.length > 0) {
+              reportError(`File '${relPath}' contains unapproved emojis: ${Array.from(new Set(offenders)).join(', ')}. Emojis are disallowed except for approved status color circles.`);
+            }
+          }
+        }
+
+        // 2. Relative Markdown Links Check
+        if (ext === '.md') {
+          validateMarkdownLinks(relPath, content);
+        }
+      }
+    }
+  });
 }
 
 function validateAgentsMdLength() {
