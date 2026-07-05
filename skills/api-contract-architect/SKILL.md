@@ -19,8 +19,10 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-api-contract-architect.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Design Choices
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before scaffolding schema files or installing linters, align with the developer on API designs:
 1. **Target Protocols:** Identify the active interface paradigms (REST, gRPC/Protobuf, GraphQL).
 2. **Contract Versioning:** Determine the API versioning strategy (e.g. URI prefixes like `/v1`, HTTP headers, package version subfolders for protobufs).
@@ -29,7 +31,6 @@ Before scaffolding schema files or installing linters, align with the developer 
 5. **Tool Preference:** Review candidate validation tools (Spectral, Buf CLI, GraphQL Inspector) matching project capabilities and developer workflows.
 
 ### Phase 2: Codebase API Scan
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the repository to locate active endpoint declarations and contract parameters:
 1. **Route Sweeps:** Scan controllers, route definition files, and HTTP handlers to map current REST path configurations.
 2. **Schema & Model Check:** Search for existing database tables, validation models (e.g. Zod, Pydantic, struct definitions), or model declarations.
@@ -37,7 +38,6 @@ Audit the repository to locate active endpoint declarations and contract paramet
 4. **Linter Config Scan:** Search for existing Spectral, Buf, or GraphQL linter configurations.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-api-contract-architect.md`).
 Draft all specifications, validator files, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating spec files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenAPI YAML templates, Protobuf service schemas, or GraphQL Inspector configurations to the developer, prompting them for review and confirmation.

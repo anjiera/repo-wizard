@@ -26,6 +26,9 @@ A language-neutral engineering audit workflow designed to evaluate the performan
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-database-lifecycle-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Context & Profile Identification
 Read the contract metadata (`task_metadata` from `manifest.json`) or session settings to extract:
 1. **Target Database Stack:** Identify which database engines (PostgreSQL, MongoDB, Redis, MySQL, SQLite, Supabase, Firestore, DynamoDB, Cassandra) are referenced.
@@ -47,7 +50,6 @@ Inspect the codebase files recursively. Look for:
    - Row-Level Security (RLS) rules activation, service role bypasses.
 
 ### Phase 3: Reporting & Backlog Synthesis
-- **Headless Mode Override:** Save findings table as a mini-report under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-database-lifecycle-auditor.md`.
 - Save the proposed scaffolding contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/database-lifecycle-auditor-contract.json`.
 
 For every issue found:

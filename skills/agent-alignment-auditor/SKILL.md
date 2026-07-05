@@ -17,15 +17,16 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-agent-alignment-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Input Analysis
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Accept the parameters contract containing:
 1. **Target Agent Files:** Path to agent configuration files (e.g. `agents/*.md`).
 2. **Quality Profile:** Prompt size limits, required section templates, and consistency rules.
 3. **Tooling & Hooks:** Choice of pre-commit hooks, CI/CD runners, and LLM-as-a-Judge validation runners.
 
 ### Phase 2: Metadata & Persona Audit
-- **Headless Mode Override:** If `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts.
 Evaluate target agent configurations:
 1. **Metadata Consistency:** Check for YAML frontmatter matching (`name` matches filename, `description` exists and is under character limits).
 2. **Structural Completeness:** Verify that the agent uses the delegator pattern, containing the 'Core Execution & Auditing Directive' (or Core Execution & Handoff Directive for the orchestrator) and relative links to its paired 'skills/<agent-name>/SKILL.md' file, alongside standard 'Handoff & Sandbox Constraints'.
@@ -33,7 +34,6 @@ Evaluate target agent configurations:
 4. **Token Footprint:** Audit prompt size. If the file is >150 lines or contains large checklists/dictionaries, recommend moving them to the `references/` directory.
 
 ### Phase 3: Validation & Test Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-agent-alignment-auditor.md`).
 Configure quality gates for the agent files:
 1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`../../evals/<agent-name>.js`) containing concrete test cases and verification rubrics.
 2. **Structural Validators:** Add structural validators (e.g., extending `validate-agents.js`) to check prompt syntax and required headers.

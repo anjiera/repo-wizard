@@ -19,8 +19,10 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-embedded-systems-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Hardware Specification
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before writing code or changing build scripts, align with the developer on hardware and robustness parameters:
 1. **Target Architecture & MCU:** Identify the microcontroller family (e.g. STM32 ARM Cortex-M, ESP32 Xtensa, AVR ATMega, RISC-V) and toolchain.
 2. **Build System:** Identify the build tool (CMake, Makefile, Cargo, platformio).
@@ -29,7 +31,6 @@ Before writing code or changing build scripts, align with the developer on hardw
 5. **Emulation Scope:** Agree on QEMU machines and config parameters to mock target hardware peripherals.
 
 ### Phase 2: Firmware Codebase Scan
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the repository to locate build configurations and linker files:
 1. **Build Manifest Scan:** Search for `CMakeLists.txt`, `Makefile`, `Cargo.toml`, or `platformio.ini` files.
 2. **Memory Layout Audit:** Search for linker scripts (`.ld`, `link.x`) to verify stack and heap limits.
@@ -37,7 +38,6 @@ Audit the repository to locate build configurations and linker files:
 4. **VCS Filters Check:** Ensure clean working trees and respect hooks/configs created by other agents.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-embedded-systems-auditor.md`).
 Draft all configurations, warning overlays, and emulation scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, modifying linker configurations, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing build gates and CI configurations. You must **NOT** overwrite, alter, or remove configurations added by other agents (such as testing setups or AppSec configurations). Always request developer consent.

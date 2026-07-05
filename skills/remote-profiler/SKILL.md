@@ -24,6 +24,9 @@ A specialized codebase profiling workflow designed to scan remote public reposit
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-remote-profiler.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Parameter Routing & TOS Verification
 1. **TOS Verification:** Search for `.tos_agreed` in `.repo-wizard/` or the workspace root. If missing, halt execution and present the Terms of Service & Developer Agreement. Once accepted by the operator, proceed.
 2. **Mode Switch Check:**

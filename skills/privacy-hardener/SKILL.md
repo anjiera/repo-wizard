@@ -26,8 +26,10 @@ A specialized data privacy and regulation compliance workflow designed to audit 
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-privacy-hardener.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Privacy Alignment
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before generating or modifying any files, you **MUST** align with the developer:
 1. **Target Regulations:** Ask which regulations apply (e.g. GDPR, CCPA/CPRA, COPPA, or generic PII protection). If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-auditor.agent`.
 2. **Age Profile:** Explicitly ask if the application targets children under 13 (COPPA triggers).
@@ -35,14 +37,12 @@ Before generating or modifying any files, you **MUST** align with the developer:
 4. **Consent Check:** Inform the developer that you will analyze files and seek permission before making any changes.
 
 ### Phase 2: Codebase Data Auditing
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate existing privacy controls:
 1. **Schema Audits:** Search for database configuration files, migrations, or ORM models. Look for plaintext sensitive fields (e.g., `email`, `phone`, `ssn`, `birth_date`).
 2. **Logger Audits:** Scan for logging outputs that print whole request bodies, raw object variables, or user context properties.
 3. **Account Routes:** Look for account registration or deletion routes.
 
 ### Phase 3: Deliverables Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-privacy-hardener.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **PII Logging Scrubbers:** Recommend and scaffold filters to mask or redact sensitive terms (emails, passwords, API tokens) before logs write to output.
 2. **Route Templates & Placeholders:** Draft stubs and controllers for data deletion (Right to be Forgotten) and data export (Portability) requests.

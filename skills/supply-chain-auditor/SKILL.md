@@ -26,8 +26,10 @@ A specialized supply chain security engineering workflow designed to audit third
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-supply-chain-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Supply Chain Alignment
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before running any analysis or modifications, you **MUST** align with the developer:
 1. **Target Standards & Tools:** Ask which dependency checkers (Snyk, Dependabot, npm audit) and SBOM standards (CycloneDX, SPDX, or none) the developer wishes to configure. Explain that all checks are strictly conditional and run only if selected. If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-auditor.agent`.
 2. **License Compliance Policy:** Establish the license ruleset (e.g., flagging discouraged copyleft licenses, suggesting permissive licenses).
@@ -35,14 +37,12 @@ Before running any analysis or modifications, you **MUST** align with the develo
 4. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.
 
 ### Phase 2: Dependency & License Auditing
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate supply-chain conformance:
 1. **Lockfile Integrity Check:** Verify lockfile checksums and trace resolved package registry URL domains (flagging unauthorized registries).
 2. **Vulnerability Assessment:** Analyze active lockfiles and manifest files for packages with known CVEs.
 3. **License Legality Audit:** Evaluate the licenses of all direct and transitive dependencies against the established license compliance policy, identifying copyleft violations.
 
 ### Phase 3: Supply Chain Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-supply-chain-auditor.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., license-finder, cyclonedx-cli) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., Snyk scan frequency, FOSSA/License Finder ruleset strictness, local pre-commit run speed vs CI validation). Ask the developer to guide the configuration file modifications.

@@ -17,22 +17,22 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-react-performance-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Profile Definition
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, skip interactive alignment and infer target standards from the codebase.
 Before auditing or making edits, align with the developer:
 1. **Performance Targets:** Identify the specific bottlenecks (e.g. INP, CLS, or page load times).
 2. **Framework specifics:** Align on routing setups (Vite SPA, Next.js App router, Remix) and styling methodologies (Tailwind, CSS Modules).
 3. **Browser Targets:** Establish if the target user base utilizes older mobile hardware where main thread yield cycles are critical.
 
 ### Phase 2: Codebase Performance Audit
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the codebase to check current React performance configurations:
 1. **Rendering Analysis:** Search for complex calculations inside render blocks and verify use of caching tools (`useMemo`, `useCallback`).
 2. **Asset Inspection:** Inspect font loading structures and CSS font-face declarations to check for missing overrides.
 3. **Event Listener Check:** Search for `window.addEventListener('unload')` patterns.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** If `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL` is active, do not perform file writes. Instead, write suggested additions directly into the generated markdown report Observations file at `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-react-performance-auditor.md`.
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying configuration files.
 2. **Interactive Code Review:** Display generated React hooks, style adjustments, or page event listeners to the user and prompt them for review and confirmation.

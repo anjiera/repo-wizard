@@ -27,6 +27,9 @@ A language-neutral engineering audit workflow designed to evaluate developer set
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-dev-onboarding-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Context & Profile Identification
 Read the contract metadata (`task_metadata` from `manifest.json`) or session settings to extract:
 1. **Target Developer Profile:** hobbyist/solo, release-focused, or enterprise.
@@ -45,7 +48,6 @@ Inspect the codebase files recursively. Look for:
    - Check for `CONTRIBUTING.md`, `.github/pull_request_template.md`, and issue templates.
 
 ### Phase 3: Reporting & Backlog Synthesis
-- **Headless Mode Override:** Save findings table as a mini-report under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-dev-onboarding-auditor.md`.
 - Save the proposed scaffolding contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/dev-onboarding-auditor-contract.json`.
 
 For every issue found:

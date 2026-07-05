@@ -17,21 +17,21 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tooling-engineer.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Contract Ingestion & State Baseline
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 1. **Contract Loading & Validation:** Read the stored JSON scaffolding contract file at `.repo-wizard/reports/<repoName>/contracts/<agentName>-contract.json` (where `<repoName>` is the folder name of the target repository being scanned).
 2. **Version Checking:** Verify that the contract's `contract_version` is supported and compatible. If there is a schema version mismatch or the format is obsolete, halt and report a clean version mismatch error.
 3. **Developer Consent:** Present the packages and configuration modifications from the contract to the developer and obtain explicit permission to proceed.
 4. **VCS State Baseline:** Immediately before making any modifications to target files, execute a VCS check (e.g. `git status` or `git diff`) to capture the active workspace baseline. This baseline state must be used to guide rollbacks if verification fails.
 
 ### Phase 2: Package Installation & Configuration
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 1. **Installation:** Run package manager commands specified in the scaffolding contract.
 2. **Safe Merging:** Write new configurations or merge into existing configurations as specified in the contract. Always use precise, AST-based edits or line replacements to prevent syntax breakage.
 3. **Nuance Explanation:** Explain the configuration parameters being created or modified, highlighting tradeoffs (e.g. strictness settings).
 
 ### Phase 3: Verification & Documentation Integration
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-tooling-engineer.md`).
 1. **Verification Command:** Run the designated verification command from the contract (e.g. `npm run test`, `cargo check`) to ensure the build compiles cleanly.
 2. **Setup Integration:** Search for and append setup/install instructions to onboarding guides (`README.md`, `setup.sh`, `install.sh`) to support onboarding.
 

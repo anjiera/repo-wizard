@@ -18,8 +18,10 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-notebook-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Policy Setup
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before installing VCS filters or editing environment files, align with the developer on hygiene parameters:
 1. **Target Package Manager:** Identify the preferred virtual environment manager (Poetry, Conda, Pipenv, pip/venv).
 2. **Output Stripping Rule:** Confirm whether to strip all cell outputs on pre-commit (default) or retain them for specific tutorial folders.
@@ -28,7 +30,6 @@ Before installing VCS filters or editing environment files, align with the devel
 5. **PII Safety Warning:** Explain that clean filters only strip local staged files and do not scrub historical commits or replace runtime data validators.
 
 ### Phase 2: Codebase Notebook & Environment Scan
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the repository to locate active notebooks and manifests:
 1. **Notebook Sweeps:** Locate all `.ipynb` files in the repository directory.
 2. **Environment Manifest Scan:** Search for `pyproject.toml`, `environment.yml`, `Pipfile`, or `requirements.txt` files.
@@ -36,7 +37,6 @@ Audit the repository to locate active notebooks and manifests:
 4. **Inter-Agent Checks:** Scan for pre-commit hooks configured by other agents (e.g. `vcs-workflow-engineer` or `compliance-auditor` setups).
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-notebook-auditor.md`).
 Draft all configurations, manifests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating environment manifests, or modifying existing configuration scripts.
 2. **Strict Inter-Agent Boundaries:** Respect existing hook files (like Husky hooks, pre-commit config YAML files, or custom scripts). You must **NOT** overwrite, alter, or remove configurations added by other agents. Always request developer consent and provide options to append filters cleanly without disrupting existing tools.

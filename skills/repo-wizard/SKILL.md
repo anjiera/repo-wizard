@@ -29,6 +29,9 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-repo-wizard.md` under Phase 3 / Phase 4.
+
 ### Legal Terms, Parameter Routing & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
 1. **Parameter Routing Check**: Parse the command parameters and enforce their default values:

@@ -35,8 +35,10 @@ A specialized security engineering and quality assurance workflow designed to au
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-fuzz-engineer.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Scope Mapping
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before generating harness code or installing fuzzer packages, align with the developer:
 1. **Target Module Identification:** Identify the specific functions that accept raw byte buffers or strings and parse them.
 2. **Target Fuzz Engine:** Choose the appropriate runner for the language (e.g., `libFuzzer` for C/C++, `cargo-fuzz` for Rust, `Atheris` for Python, `go-fuzz` for Go).
@@ -44,14 +46,12 @@ Before generating harness code or installing fuzzer packages, align with the dev
 4. **CI Integration Scope:** Determine whether the fuzzer should run only locally (default) or integrate into remote security pipelines (e.g. ClusterFuzz, GitHub Action fuzz loops).
 
 ### Phase 2: Ingest & Parser Codebase Scan
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the repository to map inputs:
 1. **Parser & Ingest File Sweeps:** Search for functions with signatures accepting raw input (e.g., `char*`, `const uint8_t*`, `std::string`, `bytes`, `read()`).
 2. **Dependency Manager Scan:** Check `package.json`, `Cargo.toml`, `requirements.txt` to find compiler toolchains and language versions.
 3. **Compiler Checks:** Verify that `clang`, `gcc`, or `cargo` are available in the local execution path.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-fuzz-engineer.md`).
 Draft all configurations, harness templates, and launch scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing compiler configurations, creating fuzzing directories, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing test structures. Do **NOT** overwrite, alter, or remove configurations added by other testing agents (such as Jest, Vitest, or JUnit configurations).

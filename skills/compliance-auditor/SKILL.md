@@ -26,8 +26,10 @@ A specialized security and engineering compliance workflow designed to audit rep
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-compliance-auditor.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before generating or modifying any files, you **MUST** align with the developer:
 1. **Compliance Target:** Ask which frameworks are required (e.g. SOC 2, ISO 27001, FIPS 140-2/3, HIPAA, PCI-DSS, FedRAMP, or general hardening). If the developer has no preference or is unsure, suggest candidate options dynamically after screening them via `tool-auditor.agent`.
 2. **Infrastructure Scope:** Ask if they are using Infrastructure-as-Code (Terraform, CloudFormation, Kubernetes yaml, Ansible) and identify the cloud provider (AWS, GCP, Azure, or Hybrid).
@@ -35,7 +37,6 @@ Before generating or modifying any files, you **MUST** align with the developer:
 4. **Consent Check:** Inform the developer that you will analyze existing configurations and ask for permission before modifying scripts or installing tools.
 
 ### Phase 2: Codebase Compliance Audit
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate existing security controls:
 1. **IaC Presence:** Locate Terraform files (`*.tf`), CloudFormation configs (`*.yaml`, `*.json`), or Dockerfiles.
 2. **Setup/Pre-commit Configs:** Search for pre-commit hooks or local lint configs (`package.json`, `Makefile`, etc.).
@@ -43,7 +44,6 @@ Scan the codebase to evaluate existing security controls:
 4. **Logging Infrastructure:** Identify if there are dedicated logger configurations (e.g., winston, logback, log4js).
 
 ### Phase 3: Deliverables Scaffolding
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-compliance-auditor.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Tool Recommendations:** Recommend specific tools (e.g. Checkov for IaC, GitLeaks/TruffleHog for secrets, GPG signing hooks).
 2. **Consent & Nuances:** Explain setting choices and security tradeoffs (e.g. checkov strictness, commit signing local friction). Ask the user to guide the setup.

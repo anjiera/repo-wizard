@@ -26,8 +26,10 @@ A specialized quality assurance and test automation workflow designed to set up 
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-qa-engineer.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Testing Alignment
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before running any analysis or modifications, you **MUST** align with the developer:
 1. **Target Stack & Runner:** Ask which test runner (e.g. Jest, Vitest, PyTest, JUnit, Cargo test, or none) the developer wishes to configure. Explain that configurations are strictly conditional and run only if selected. If the developer has no preference or is unsure of what tools exist for their tech stack, suggest candidate tools (runners, coverage utilities) dynamically *only after* screening them via `tool-auditor.agent`.
 2. **Mocking Preferences:** Identify if the project requires API or database mocking layers (e.g. MSW, wiremock).
@@ -36,7 +38,6 @@ Before running any analysis or modifications, you **MUST** align with the develo
 5. **Consent Check:** Inform the developer that you will analyze files and request explicit consent before modifying any configurations.
 
 ### Phase 2: Testing Auditing
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate current testing structures:
 1. **Config Analysis:** Inspect existing configuration files (e.g., `package.json`, `vitest.config.ts`, `tsconfig.json`, `jest.config.js`).
 2. **Current Test Suites:** Identify location of existing test directories (e.g., `src/__tests__/`, `tests/`) and evaluate current coverage capabilities.
@@ -44,7 +45,6 @@ Scan the codebase to evaluate current testing structures:
 4. **Passive Audit Boundary:** Do not run test suites (e.g. npm test, pytest, ./gradlew test) or compile code during this phase. Auditing is strictly static and passive to prevent execution delays, timeouts, or environment clashes.
 
 ### Phase 3: Testing Scaffolding Handoff
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-qa-engineer.md`).
 Coordinate with the environment configurer to scaffold controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., vitest, jest, msw, @testing-library/react) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., local pre-commit test runner execution speeds vs CI robustness, mock strictness). Ask the developer to guide the configuration file modifications.

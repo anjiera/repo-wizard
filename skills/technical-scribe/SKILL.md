@@ -18,8 +18,10 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Scope Definition
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Align with the developer on target settings before scanning or writing any files:
 1. **ADR Path & Structure:** Establish the target directory for ADRs (typically `docs/decisions/`) and format conventions (Nygard-style sequential numbering).
 2. **ADR Helper CLI Language:** Ask the developer for their programming language preference (e.g., Bash shell script, Python, or Node.js) to scaffold a lightweight command-line script for spawning new ADR files.
@@ -27,14 +29,12 @@ Align with the developer on target settings before scanning or writing any files
 4. **Post-Mortem & Retrospective Formats:** Establish template locations (e.g., under `docs/post-mortems/` and `docs/retrospectives/`). Note that Incident Post-Mortems are used to analyze specific failures, whereas Retrospectives look back at sprint cycles and feature releases (integrating standard Agile questions and the *Stop-Start-Continue-Kudos* kudos ritual).
 
 ### Phase 2: Codebase Documentation Audit
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Scan the codebase to evaluate current documentation patterns:
 1. **Directories Check:** Scan for folders like `docs/`, `decisions/`, `references/`, `wiki/` to check for pre-existing documents.
 2. **Configuration Check:** Check package manifests (e.g. `package.json`, `pyproject.toml`) and scripts to see if document generation utilities or testing frameworks are present.
 3. **VCS Check:** Verify the active version control system configuration to know how to integrate hooks or setup scripts.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-technical-scribe.md`).
 Draft all documentation and configuration templates. Adhere strictly to these rules:
 1. **Explicit Consent:** Ask the user for permission before creating directories or writing helper scripts.
 2. **Interactive Code Review:** Display generated script files, diagrams, and templates to the user and prompt them to guide or review changes.

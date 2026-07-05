@@ -18,8 +18,10 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-data-pipeline-architect.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Strategy Setup
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before writing scripts or orchestrations, align with the developer on data strategies:
 1. **Target Orchestrator:** Identify the preferred scheduling or workflow tool (Airflow, Prefect, Dagster, cron).
 2. **Schema Drift Tolerance:** Define action steps when column formats or values drift (e.g. failing the pipeline vs. loading into quarantine tables).
@@ -28,7 +30,6 @@ Before writing scripts or orchestrations, align with the developer on data strat
 5. **Alerting Channels:** Agree on notifications channels (email, Slack, pager alerts) on pipeline task failures.
 
 ### Phase 2: Codebase Data Flow Scan
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the repository to locate database connections and data sync paths:
 1. **Ingest Scripts Scan:** Locate python or node files importing files (CSV, JSON, XML), querying external APIs, or saving bulk data.
 2. **Database Config Check:** Find database connection pool setups (e.g. SQLAlchemy, `pg` pools, raw DB connections).
@@ -36,7 +37,6 @@ Audit the repository to locate database connections and data sync paths:
 4. **Data Tools Audit:** Check manifested dependencies to identify existing data processing or validation packages.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-data-pipeline-architect.md`).
 Draft all specifications, DAG files, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating DAG files, or modifying existing configuration scripts.
 2. **Interactive Code Review:** Display generated Pandera schemas, Airflow DAG templates, or database connection pool engines to the developer, prompting them for review and confirmation.

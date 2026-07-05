@@ -18,8 +18,10 @@ Use this skill when:
 
 ## Core Process
 
+### Headless Local Scan Override
+If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-deployment-engineer.md` under Phase 3 / Phase 4.
+
 ### Phase 1: Interactive Alignment & Parameters Setup
-- **Headless Mode Override:** Refer to Phase 1 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Before editing container scripts or K8s YAML files, align with the developer on architecture targets:
 1. **Target Environment:** Determine whether the deployment runs on local Docker Compose, Kubernetes clusters, or cloud-managed services (ECS, GCP Cloud Run, etc.).
 2. **Replication Strategy:** Define replication factors (number of replicas) and load balancer requirements.
@@ -28,7 +30,6 @@ Before editing container scripts or K8s YAML files, align with the developer on 
 5. **Recovery Validation:** Confirm testing parameters for backup files (e.g. automatic temporary dry-run restore validation).
 
 ### Phase 2: Deployment & Container Sweep
-- **Headless Mode Override:** Refer to Phase 2 of [Headless Mode Override Protocol](../../references/headless-override.md).
 Audit the codebase to assess current infrastructure setups:
 1. **Docker Config Scan:** Locate existing Dockerfiles, `.dockerignore` files, and `docker-compose.yaml` manifests.
 2. **Kubernetes Scan:** Locate active Kubernetes charts or deployment YAML resource files.
@@ -36,7 +37,6 @@ Audit the codebase to assess current infrastructure setups:
 4. **Script & Tool Scan:** Check for existing backup utility scripts, cron definitions, or recovery routines.
 
 ### Phase 3: Interactive Scaffolding Guidance
-- **Headless Mode Override:** Refer to Phase 3 of [Headless Mode Override Protocol](../../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-deployment-engineer.md`).
 Draft all configurations, manifests, and scripts in coordination with `tooling-engineer.agent`, adhering to these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated Compose multi-replica blocks, Kubernetes probe sections, and database backup scripts to the developer, prompting them for review and confirmation.
