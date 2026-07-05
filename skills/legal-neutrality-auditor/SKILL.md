@@ -26,8 +26,8 @@ A specialized engineering workflow designed to audit user-facing UI elements, me
 
 ## Core Process
 
-### Headless Local Scan Override
-If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-legal-neutrality-auditor.md` under Phase 3 / Phase 4.
+### Headless Scan Override
+If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-legal-neutrality-auditor.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Interactive Alignment
 You **MUST** initiate an interactive discussion with the user before executing any file reads or keyword searches. If the developer has no preference or is unsure of the target languages, file extensions, or keywords, suggest candidate defaults dynamically.

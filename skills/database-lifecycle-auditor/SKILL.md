@@ -26,8 +26,8 @@ A language-neutral engineering audit workflow designed to evaluate the performan
 
 ## Core Process
 
-### Headless Local Scan Override
-If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-database-lifecycle-auditor.md` under Phase 3 / Phase 4.
+### Headless Scan Override
+If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-database-lifecycle-auditor.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Context & Profile Identification
 Read the contract metadata (`task_metadata` from `manifest.json`) or session settings to extract:

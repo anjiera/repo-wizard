@@ -27,8 +27,8 @@ A specialized repository automation workflow designed to configure VCS hooks (Gi
 
 ## Core Process
 
-### Headless Local Scan Override
-If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-vcs-workflow-engineer.md` under Phase 3 / Phase 4.
+### Headless Scan Override
+If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-vcs-workflow-engineer.md` under Phase 3 / Phase 4.
 
 ### Phase 1: VCS Alignment
 Before running any analysis or modifications, you **MUST** align with the developer:

@@ -29,14 +29,14 @@ An interactive orchestrator workflow designed to analyze a codebase, guide devel
 
 ## Core Process
 
-### Headless Local Scan Override
-If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-repo-wizard.md` under Phase 3 / Phase 4.
+### Headless Scan Override
+If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-repo-wizard.md` under Phase 3 / Phase 4.
 
 ### Legal Terms, Parameter Routing & Consent Gate
 Before performing codebase analysis, sizing, or session resume operations:
 1. **Parameter Routing Check**: Parse the command parameters and enforce their default values:
    - **Mode Defaults**:
-     - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+     - If `--headless` is passed: Set `MODE=HEADLESS`.
      - Otherwise (even if other parameters like `--redact`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
    - **Parameter Default Values**:
      - `--mock-cli`: Defaults to `false`. Perform real scans unless explicitly set to `true`.
@@ -124,7 +124,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 
 * **Redacted Mode Validation**: If Redacted/Anonymized Mode is active (`isRedact = true` / `--redact true`), you must strictly ensure that when synthesizing report sections, Maturity Model guidance, backlog stories, and conclusion text, you NEVER output the actual repository name, target path, organization name, developer credentials, or project-specific branding. Instead, write neutrally and refer to the project generically (e.g. as 'the target repository', 'the target codebase', 'the workspace', or 'the codebase').
 
-1. **Observations Summary (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` - Headless Modes Only)**:
+1. **Observations Summary (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` - Headless Mode Only)**:
   - Document assumptions about what toolchain clues currently exist in the codebase.
   - Highlight guesses about what kinds of compliance standards may or may not be involved.
   - Detail suggested linter, config tweaks, or pre-commit hooks to improve codebase robustness.
@@ -179,7 +179,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Tool recommendations are dynamically audited by `tool-auditor.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
 - [ ] Scaffolding is delegated via parameters contract with rollback verification checks.
-- [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless modes).
+- [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless mode).
 - [ ] Full Technical Report `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
 - [ ] Constructive `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html` are generated (3 sections, with paragraphs and words aligning with report-constants.js thresholds).
 - [ ] Mismatch hook with updated wording (no "upgrade" command) is appended to all generated reports when a weekend vibe project style handles complex sensitive/compliance operations.
