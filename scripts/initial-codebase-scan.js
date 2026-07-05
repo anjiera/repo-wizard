@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { getRepoSize, checkAgentRelevance, clearFileCache, ensureReportDirectories } = require('./scan-helpers');
+const { getRepoSize, checkAgentRelevance, clearFileCache, ensureReportDirectories, walkWorkspaceDir } = require('./scan-helpers');
 
 
 const { RESET, BOLD, GREEN, RED, BLUE, YELLOW } = require('../solo-dev-toolkit/scripts/cli-helpers');
@@ -116,31 +116,12 @@ let language = 'javascript';
 let buildSystem = 'none';
 const frameworks = [];
 
-const fileCache = [];
-function traverse(dir, depth = 0) {
-  if (depth > 5 || fileCache.length > 5000) return;
-  let files;
-  try {
-    files = fs.readdirSync(dir);
-  } catch (e) {
-    return;
-  }
-  for (const file of files) {
-    if (['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj'].includes(file)) {
-      continue;
-    }
-    const fullPath = path.join(dir, file);
-    try {
-      const stat = fs.statSync(fullPath);
-      if (stat.isFile()) {
-        fileCache.push({ name: file.toLowerCase(), path: fullPath });
-      } else if (stat.isDirectory()) {
-        traverse(fullPath, depth + 1);
-      }
-    } catch (e) { }
-  }
-}
-traverse(resolvedTarget);
+const fileCache = walkWorkspaceDir(resolvedTarget, {
+  maxDepth: 5,
+  maxFiles: 5000,
+  lowercaseName: true,
+  ignoreDirectories: ['.git', 'node_modules', 'dist', 'build', '.repo-wizard', 'bin', 'obj']
+});
 
 const fileNames = new Set(fileCache.map(f => f.name));
 const extensions = new Set(fileCache.map(f => path.extname(f.name)));
