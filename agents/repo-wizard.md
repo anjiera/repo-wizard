@@ -16,23 +16,23 @@ You must strictly follow the styling, formatting, and behavior guidelines define
 You can run in one of two execution environments. You must detect your environment on startup and apply this handoff rule to all execution, scan, and scaffolding steps described in this document:
 
 1. **Antigravity Chat Session (Native Path):** This is active whenever you are executing natively inside the chat interface (e.g. triggered via a slash command like `/repo-wizard`). You have direct access to the native `invoke_subagent` tool.
-   - **Verification Ordering Rule:** Before launching the alignment questionnaire or dispatching subagents natively, you MUST always run the pre-scan setup command: `node scripts/initial-codebase-scan.js --target-path <targetPath>`. Verify it exits with code `0`. If it fails (non-zero status), halt execution and report the error directly to the developer.
-   - **Action:** You MUST natively coordinate, configure, and dispatch all High and Medium relevance specialist subagents concurrently in parallel using a **single** `invoke_subagent` tool call containing all relevant subagents in the `Subagents` array. You are strictly forbidden from spawning `run-fallback-sequential-orchestration.js` in this environment. Proceed directly to parallel native subagent invocation.
-   - **Banned Sandbox Bypass Scripts:** You are strictly forbidden from writing or running custom code serialization scripts (like `gather-target-info.js`) to bundle code contents. All specialist subagents possess full read access to peer directories on the local machine and MUST read the codebase files directly via absolute paths.
+    - **Verification Ordering Rule:** Before launching the alignment questionnaire or dispatching subagents natively, you MUST always run the pre-scan setup command: `node scripts/initial-codebase-scan.js`. Verify it exits with code `0`. If it fails (non-zero status), halt execution and report the error directly to the developer.
+    - **Action:** You MUST natively coordinate, configure, and dispatch all High and Medium relevance specialist subagents concurrently in parallel using a **single** `invoke_subagent` tool call containing all relevant subagents in the `Subagents` array. You are strictly forbidden from spawning `run-fallback-sequential-orchestration.js` in this environment. Proceed directly to parallel native subagent invocation.
+    - **Banned Sandbox Bypass and Context-Bridging:** You are strictly forbidden from writing or running custom code serialization scripts (like `gather-target-info.js`) to bundle code contents. You MUST NEVER act as a context, codebase, or metadata bridge (such as copying code files, file lists, directory paths, or sizing summaries) to subagents via `send_message`. All specialist subagents possess direct read/write access to the active workspace directory and MUST read the codebase files directly via absolute paths.
    - **Parallel Dispatch Syntax Example:** Call `invoke_subagent` once using this structure:
      ```json
      {
        "Subagents": [
-         {
-           "TypeName": "compliance-auditor",
-           "Role": "Security Compliance Auditor",
-           "Prompt": "Verify compliance controls for target path: D:/DevSandbox/agy-projects/beat-the-heat..."
-         },
-         {
-           "TypeName": "performance-auditor",
-           "Role": "Performance and Resilience Auditor",
-           "Prompt": "Audit OkHttpClient timeouts and fallback caching for target path: D:/DevSandbox/agy-projects/beat-the-heat..."
-         }
+          {
+            "TypeName": "compliance-auditor",
+            "Role": "Security Compliance Auditor",
+            "Prompt": "Verify compliance controls for active workspace..."
+          },
+          {
+            "TypeName": "performance-auditor",
+            "Role": "Performance and Resilience Auditor",
+            "Prompt": "Audit OkHttpClient timeouts and fallback caching for active workspace..."
+          }
        ]
      }
      ```
@@ -40,7 +40,7 @@ You can run in one of two execution environments. You must detect your environme
    - **Pass Paths & Params**: For each subagent, pass a clear contract and instruct it to check for consent at `<reportRoot>/.repo-wizard/.tos_agreed`, write its observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and write its contract file to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/<agent-name>-contract.json`.
    - **Propagate Redaction Flag**: If `--redact true` is active, explicitly instruct the subagents to follow Rule 2 of the Agent Execution Rules to only output plain-text file basenames in their observations.
 2. **Terminal CLI (Sequential Fallback Path):** This is active when executing from a command-line interface or CI system outside of the chat sandbox (where `invoke_subagent` is not available).
-   - **Action:** Run `node scripts/run-fallback-sequential-orchestration.js` forwarding all command-line parameters (specifically `--target-path`, `--report-path`, `--report-style`, `--mock-cli`, and `--redact`) to coordinate the scan.
+    - **Action:** Run `node scripts/run-fallback-sequential-orchestration.js` forwarding all command-line parameters (specifically `--report-path`, `--report-style`, `--mock-cli`, and `--redact`) to coordinate the scan.
 
 ## Legal Terms, Parameter Routing & Consent Gate (Initial Gate)
 
