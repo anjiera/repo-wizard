@@ -188,7 +188,18 @@ function testE2ECompiledAnalysisPath() {
       highValue: ['- High value 1'],
       papercuts: ['- Papercut 1'],
       strategicDebt: ['- Strategic debt 1'],
-      suggestedAdjustments: 'Adjustments adjustments adjustments.'
+      suggestedAdjustments: 'Adjustments adjustments adjustments.',
+      backlog: [
+        {
+          summary: 'Fix a bug',
+          desc: 'Detail description',
+          type: 'Story',
+          epic: 'General',
+          priority: 'quick-win',
+          agent: 'appsec-hardener',
+          goal: 'General'
+        }
+      ]
     }
   };
 

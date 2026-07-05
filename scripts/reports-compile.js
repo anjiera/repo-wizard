@@ -82,9 +82,7 @@ try {
   console.log(`  - Executive Summary:  [${repoName}-executive-summary.md](file:///${path.join(reportsDir, repoName + '-executive-summary.md').replace(/\\/g, '/')})`);
   console.log(`  - Full Tech Report:   [${repoName}-full-report.md](file:///${path.join(reportsDir, repoName + '-full-report.md').replace(/\\/g, '/')})`);
   console.log(`  - Observations List:  [${repoName}-observations.md](file:///${path.join(reportsDir, repoName + '-observations.md').replace(/\\/g, '/')})`);
-  if (session.mode === 'backlog') {
-    console.log(`  - Backlog CSV:        [backlog.csv](file:///${path.join(reportsDir, 'backlog.csv').replace(/\\/g, '/')})`);
-  }
+  console.log(`  - Backlog CSV:        [backlog.csv](file:///${path.join(reportsDir, 'backlog.csv').replace(/\\/g, '/')})`);
   if (session.isRedact || session.redact) {
     console.log(`\n${BOLD}Redacted deliverables:${RESET}`);
     console.log(`  - Redacted Exec Summary:  [redacted-executive-summary.md](file:///${path.join(reportsDir, 'redacted-executive-summary.md').replace(/\\/g, '/')})`);

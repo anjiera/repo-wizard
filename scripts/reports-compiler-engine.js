@@ -411,7 +411,7 @@ ${suggestedAdjustmentsText}
 ${DISCLAIMER_TEXT}
 `;
 
-  if (session.mode === 'backlog' && !Array.isArray(compiledAnalysis.backlog)) {
+  if (!Array.isArray(compiledAnalysis.backlog)) {
     missingFields.push('backlog');
   }
 
@@ -442,31 +442,28 @@ ${DISCLAIMER_TEXT}
     const htmlObs = convertMdToHtml(observationsSummary, `Observations Summary - ${repoName}`, reportStyle);
     fs.writeFileSync(obsPath.replace(/\.md$/, '.html'), htmlObs, 'utf8');
 
-    // Generate backlog CSV if mode is backlog
-    if (session.mode === 'backlog') {
-      const csvPath = path.join(reportsDir, 'backlog.csv');
-      let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
+    // Generate backlog CSV unconditionally
+    const csvPath = path.join(reportsDir, 'backlog.csv');
+    let csvContent = 'Summary,Description,Issue Type,Epic Name / Parent,Labels,Recommended By (Sub-Agent),Frameworks/Goals\n';
 
-      const stories = Array.isArray(compiledAnalysis.backlog) ? compiledAnalysis.backlog : [];
+    const stories = Array.isArray(compiledAnalysis.backlog) ? compiledAnalysis.backlog : [];
 
-      const escapeCsv = (str) => {
-        if (!str) return '';
-        let escaped = String(str).replace(/"/g, '""');
-        if (/^[=\+\-@]/.test(escaped.trim()) || /[\t;,]+[=\+\-@]/.test(escaped)) {
-          escaped = "'" + escaped;
-        }
-        return escaped;
-      };
-
-      for (const story of stories) {
-        const descText = story.desc || '';
-        const cleanDesc = descText.includes(DISCLAIMER_TEXT) ? descText : `${descText} ${DISCLAIMER_TEXT}`;
-        csvContent += `"${escapeCsv(story.summary)}","${escapeCsv(cleanDesc)}","${escapeCsv(story.type || 'Story')}","${escapeCsv(story.epic || 'General')}","repo-wizard,${escapeCsv(story.priority || 'quick-win')}","${escapeCsv(story.agent || 'general')}","${escapeCsv(story.goal || 'General')}"\n`;
+    const escapeCsv = (str) => {
+      if (!str) return '';
+      let escaped = String(str).replace(/"/g, '""');
+      if (/^[=\+\-@]/.test(escaped.trim()) || /[\t;,]+[=\+\-@]/.test(escaped)) {
+        escaped = "'" + escaped;
       }
+      return escaped;
+    };
 
-      fs.writeFileSync(csvPath, csvContent, 'utf8');
-
+    for (const story of stories) {
+      const descText = story.desc || '';
+      const cleanDesc = descText.includes(DISCLAIMER_TEXT) ? descText : `${descText} ${DISCLAIMER_TEXT}`;
+      csvContent += `"${escapeCsv(story.summary)}","${escapeCsv(cleanDesc)}","${escapeCsv(story.type || 'Story')}","${escapeCsv(story.epic || 'General')}","repo-wizard,${escapeCsv(story.priority || 'quick-win')}","${escapeCsv(story.agent || 'general')}","${escapeCsv(story.goal || 'General')}"\n`;
     }
+
+    fs.writeFileSync(csvPath, csvContent, 'utf8');
 
     if (session.isRedact || session.redact) {
       const targetWorkspace = session.targetPath || process.cwd();
