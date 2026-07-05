@@ -5,13 +5,7 @@ const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 
-const COLORS = {
-  RESET: '\x1b[0m',
-  BOLD: '\x1b[1m',
-  GREEN: '\x1b[32m',
-  RED: '\x1b[31m',
-  BLUE: '\x1b[34m'
-};
+const COLORS = require('../solo-dev-toolkit/scripts/cli-helpers');
 
 /**
  * Recursively scans directory for files matching the given extension

@@ -13,10 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
+const { RESET, BOLD, GREEN, RED } = require('./cli-helpers');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const AGENTS_MD_FILE = path.join(ROOT, 'AGENTS.md');

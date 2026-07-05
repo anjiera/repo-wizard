@@ -31,11 +31,7 @@ const runningAgents = new Map();
 
 
 // ANSI escape codes for premium console formatting
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
 
 function cleanupChildren() {
   for (const child of activeChildren) {

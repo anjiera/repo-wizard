@@ -13,12 +13,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Colors for terminal formatting
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
-const YELLOW = '\x1b[33m';
+const { RESET, BOLD, GREEN, RED, BLUE, YELLOW } = require('./cli-helpers');
 
 let INCREMENTAL_ADOPTION_THRESHOLD_LOC = 30000;
 try {
