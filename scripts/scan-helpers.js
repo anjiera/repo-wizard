@@ -486,6 +486,97 @@ function ensureReportDirectories(reportRoot, repoName) {
   return { reportsDir, agentsDir, contractsDir };
 }
 
+function walkWorkspaceDir(targetDir, options = {}) {
+  const {
+    maxDepth = Infinity,
+    maxFiles = Infinity,
+    ignoreDirectories = [],
+    ignoreHidden = false,
+    followSymlinks = false,
+    lowercaseName = false,
+    returnAbsolutePathsOnly = false,
+    includeDirectories = false,
+    onFile = () => {},
+    onDirectory = () => true
+  } = options;
+
+  const results = [];
+  const visited = new Set();
+  const ignoreSet = new Set(ignoreDirectories);
+
+  const traverse = (dir, depth = 0) => {
+    if (depth > maxDepth || results.length >= maxFiles) return;
+
+    let absPath;
+    try {
+      if (followSymlinks) {
+        absPath = fs.realpathSync(dir);
+      } else {
+        absPath = path.resolve(dir);
+      }
+    } catch (e) {
+      absPath = path.resolve(dir);
+    }
+
+    if (visited.has(absPath)) return;
+    visited.add(absPath);
+
+    let files;
+    try {
+      files = fs.readdirSync(absPath);
+    } catch (e) {
+      return;
+    }
+
+    for (const file of files) {
+      if (results.length >= maxFiles) return;
+
+      if (ignoreHidden && file.startsWith('.')) {
+        continue;
+      }
+      if (ignoreSet.has(file)) {
+        continue;
+      }
+
+      const fullPath = path.join(absPath, file);
+      try {
+        const stat = followSymlinks ? fs.statSync(fullPath) : fs.lstatSync(fullPath);
+        
+        if (!followSymlinks && stat.isSymbolicLink()) {
+          continue;
+        }
+
+        const isDir = stat.isDirectory();
+        const displayName = lowercaseName ? file.toLowerCase() : file;
+
+        if (isDir) {
+          if (includeDirectories) {
+            if (returnAbsolutePathsOnly) {
+              results.push(fullPath);
+            } else {
+              results.push({ name: displayName, path: fullPath, isDir: true });
+            }
+          }
+          const shouldRecurse = onDirectory(displayName, fullPath, stat);
+          if (shouldRecurse !== false) {
+            traverse(fullPath, depth + 1);
+          }
+        } else if (stat.isFile()) {
+          onFile(displayName, fullPath, stat);
+          if (returnAbsolutePathsOnly) {
+            results.push(fullPath);
+          } else {
+            results.push({ name: displayName, path: fullPath, isDir: false });
+          }
+        }
+      } catch (e) { /* ignore */ }
+    }
+  };
+
+  traverse(targetDir);
+  return results;
+}
+
 module.exports = {
   buildFileCache,
   clearFileCache,
@@ -495,6 +586,7 @@ module.exports = {
   getSafeRepoName,
   archiveSession,
   promoteStateFiles,
-  ensureReportDirectories
+  ensureReportDirectories,
+  walkWorkspaceDir
 };
 
