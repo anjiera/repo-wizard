@@ -1,36 +1,35 @@
 ---
-name: remote-profiler
-description: Guides agents through headless remote and local codebase profiling on repositories, inferring project intent/audience from existing configurations, identifying missing tools, and generating observations, full technical, and executive summaries. Use when scanning a repository in headless mode.
+name: headless-profiler
+description: Guides agents through headless codebase profiling on repositories, inferring project intent/audience from existing configurations, identifying missing tools, and generating observations, full technical, and executive summaries. Use when scanning a repository in headless mode.
 ---
 
 ## Overview
-A specialized codebase profiling workflow designed to scan remote public repositories or local checked-out repositories in headless mode, infer compliance target requirements and engineering design goals from code clues, and compile detailed audits and summaries without blocking for developer interaction.
+A specialized codebase profiling workflow designed to scan local workspaces in headless mode, infer compliance target requirements and engineering design goals from code clues, and compile detailed audits and summaries without blocking for developer interaction.
 
 ---
 
 ## When to Use
 
 ### Triggering Conditions
-* Running a best-guess analysis on a public remote repository URL.
-* Performing a fast, non-blocking check on a local checked-out repository.
-* Setting the execution parameter to `MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`.
-* Invoked when parameter routing detects `/repo-wizard <URL>` or `/repo-wizard --headless`.
+* Performing a fast, non-blocking check on the active workspace.
+* Setting the execution parameter to `MODE=HEADLESS`.
+* Invoked when parameter routing detects `/repo-wizard --headless`.
 
 ### When NOT to Use
 * Running the wizard interactively on the local workspace where a dialogue with the developer is desired (`MODE=INTERACTIVE_LOCAL`).
-* Implementing code configurations directly or running VCS package installations on remote public codebases.
+* Implementing code configurations directly or running VCS package installations on the workspace.
 
 ---
 
 ## Core Process
 
-### Headless Local Scan Override
-If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_REMOTE`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-remote-profiler.md` under Phase 3 / Phase 4.
+### Headless Scan Override
+If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-headless-profiler.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Parameter Routing & TOS Verification
 1. **TOS Verification:** Search for `.tos_agreed` in `.repo-wizard/` or the workspace root. If missing, halt execution and present the Terms of Service & Developer Agreement. Once accepted by the operator, proceed.
 2. **Mode Switch Check:**
-    - If `--headless` is passed: Set `MODE=HEADLESS_LOCAL`.
+    - If `--headless` is passed: Set `MODE=HEADLESS`.
     - Otherwise (even if other parameters like `--redact`, `--report-path`, or `--tos-path` are passed): Default to `MODE=INTERACTIVE_LOCAL`. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
 
 ### Phase 2: Decoupled Relevance Sweeps
@@ -82,7 +81,7 @@ If the active environment is headless (`MODE=HEADLESS_LOCAL` or `MODE=HEADLESS_R
 
 ## Verification
 - [ ] Upgrade / improvement hook is correctly appended to reports with the updated wording (no "upgrade" word in command).
-- [ ] Local headless routing (`MODE=HEADLESS_LOCAL`) is triggered via `headless` or `--headless` options.
+- [ ] Headless routing (`MODE=HEADLESS`) is triggered via `headless` or `--headless` options.
 - [ ] Suffix `<repo-name-here>` is correctly derived and appended to reports and mini-reports.
 - [ ] Decoupled relevance sweeps are run, skipping Low-relevance agents.
 - [ ] Agent mini-reports are saved and can be read to resume execution.
