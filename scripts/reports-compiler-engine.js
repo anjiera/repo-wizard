@@ -32,15 +32,30 @@ function compileRealReports(session) {
 
   const answers = session.answers || {};
   const rawFrameworks = Array.isArray(answers.frameworks) ? answers.frameworks : [];
-  const rawPlatforms = Array.isArray(answers.platforms) ? answers.platforms : [];
-  const rawCompliance = Array.isArray(answers.compliance) ? answers.compliance : [];
+  
+  let rawPlatforms = [];
+  if (Array.isArray(answers.platforms) && answers.platforms.length > 0) {
+    rawPlatforms = answers.platforms;
+  } else if (Array.isArray(answers.targetHardware)) {
+    rawPlatforms = answers.targetHardware;
+  }
+
+  let rawCompliance = [];
+  if (Array.isArray(answers.compliance) && answers.compliance.length > 0) {
+    rawCompliance = answers.compliance;
+  } else {
+    const complianceKeys = ['securityFrameworks', 'privacyFrameworks', 'accessibilityFrameworks', 'safetyFrameworks', 'complianceCategories'];
+    for (const key of complianceKeys) {
+      if (Array.isArray(answers[key])) {
+        rawCompliance.push(...answers[key]);
+      }
+    }
+  }
 
   const sanitizeText = (txt) => {
     if (typeof txt !== 'string') return '';
     return txt.replace(/[^a-zA-Z0-9_\-\.\s+#]/g, '').trim();
   };
-
-
 
   const frameworks = rawFrameworks.map(f => sanitizeText(f)).filter(Boolean);
   const platforms = rawPlatforms.map(p => sanitizeText(p)).filter(Boolean);
@@ -166,12 +181,20 @@ function compileRealReports(session) {
     QUALITY: '4.4'
   };
 
+  const PILLAR_ANCHORS = {
+    SECURITY: 'security--compliance',
+    PERFORMANCE: 'performance--resilience',
+    ARCHITECTURE: 'architecture--design',
+    QUALITY: 'code-quality--testing'
+  };
+
   for (const key of ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY']) {
     const list = groupedObservations[key];
-    if (list && list.length > 0) {
-      const pNum = PILLAR_NUMBERS[key];
-      consolidatedObservations += `\n### ${pNum} Pillar: ${QUALITY_PILLARS[key]}\n\n`;
+    const pNum = PILLAR_NUMBERS[key];
+    const anchor = PILLAR_ANCHORS[key];
+    consolidatedObservations += `\n<a id="${anchor}"></a>\n### ${pNum} Pillar: ${QUALITY_PILLARS[key]}\n\n`;
 
+    if (list && list.length > 0) {
       const formattedReports = list.map((item, idx) => {
         const letter = String.fromCharCode(97 + idx); // a, b, c, d...
         let report = `#### ${pNum}. ${letter}) Specialist Agent: ${item.agentName}\n\n`;
@@ -192,6 +215,8 @@ function compileRealReports(session) {
 
       consolidatedObservations += formattedReports.join('\n---\n');
       consolidatedObservations += '\n';
+    } else {
+      consolidatedObservations += `*The user did not yet analyze the codebase for this pillar.*\n\n`;
     }
   }
 
@@ -296,15 +321,26 @@ ${DISCLAIMER_TEXT}
 
   const answersList = [];
   const addAnswer = (label, value) => {
-    if (value !== undefined && value !== null && value !== '') {
-      const valStr = Array.isArray(value) ? value.join(', ') : String(value);
+    let valStr = '';
+    if (Array.isArray(value)) {
+      const filtered = value.filter(v => v !== undefined && v !== null && String(v).trim() !== '');
+      if (filtered.length > 0) {
+        valStr = filtered.join(', ');
+      }
+    } else if (value !== undefined && value !== null && String(value).trim() !== '') {
+      valStr = String(value);
+    }
+    
+    if (valStr) {
       answersList.push(`- **${label}:** ${valStr}`);
+    } else {
+      answersList.push(`- **${label}:** none`);
     }
   };
 
-  addAnswer('Target Frameworks', answers.frameworks);
-  addAnswer('Target Platforms', answers.platforms);
-  addAnswer('Compliance Standards', answers.compliance);
+  addAnswer('Target Frameworks', frameworks);
+  addAnswer('Target Platforms', platforms);
+  addAnswer('Compliance Standards', compliance);
   addAnswer('Scaffolding Mode', answers.scaffoldingMode || answers.mode);
   addAnswer('Coverage Threshold Target', answers.coverageThreshold ? `${answers.coverageThreshold}%` : null);
   addAnswer('Project Context / Target Audience', answers.context || answers.targetAudience);
