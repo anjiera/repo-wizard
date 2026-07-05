@@ -9,8 +9,22 @@ const SIZING_THRESHOLDS = {
   XL: { min: 800, max: 4000, minParagraphs: 3 }
 };
 
-function getSectionLimits(repoSize) {
-  const size = (repoSize || 'L').toUpperCase();
+const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL'];
+function getSectionLimits(repoSize, activeAgentCount) {
+  let size = (repoSize || 'L').toUpperCase();
+  if (activeAgentCount !== undefined && activeAgentCount !== null) {
+    let scaledSize = 'L';
+    if (activeAgentCount <= 3) {
+      scaledSize = 'S';
+    } else if (activeAgentCount <= 6) {
+      scaledSize = 'M';
+    }
+    const originalIdx = SIZE_ORDER.indexOf(size);
+    const scaledIdx = SIZE_ORDER.indexOf(scaledSize);
+    if (originalIdx !== -1 && scaledIdx !== -1 && scaledIdx < originalIdx) {
+      size = scaledSize;
+    }
+  }
   return SIZING_THRESHOLDS[size] || SIZING_THRESHOLDS.L;
 }
 

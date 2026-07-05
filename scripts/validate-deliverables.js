@@ -122,14 +122,14 @@ function countWords(str) {
 /**
  * Validates a single markdown or HTML file
  */
-function validateFile(filePath, repoSize = 'L') {
+function validateFile(filePath, repoSize = 'L', activeAgentCount = null) {
   const errors = [];
   const content = fs.readFileSync(filePath, 'utf8');
   const filename = path.basename(filePath);
   const isHtml = filePath.endsWith('.html');
   const seenSentences = new Set();
 
-  const { min: wordCountMin, max: wordCountMax, minParagraphs } = getSectionLimits(repoSize);
+  const { min: wordCountMin, max: wordCountMax, minParagraphs } = getSectionLimits(repoSize, activeAgentCount);
 
   // 1. Check Developer Empowerment Disclaimer
   if (!content.includes(DISCLAIMER_TEXT)) {
@@ -464,6 +464,54 @@ function resolveRepoSize(targetDir) {
 }
 
 /**
+ * Helper to count completed/non-skipped agents from manifest.json or files on disk
+ */
+function resolveActiveAgentCount(targetDir) {
+  let dir = targetDir;
+  for (let i = 0; i < 3; i++) {
+    // 1. Try checking manifest.json
+    const manifestPath = path.join(dir, 'manifest.json');
+    if (fs.existsSync(manifestPath)) {
+      try {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        if (manifest && Array.isArray(manifest.contracts)) {
+          const completedCount = manifest.contracts.filter(c => c.status !== 'skipped').length;
+          if (completedCount > 0) return completedCount;
+        }
+      } catch (e) {}
+    }
+    // 2. Try counting observation files in agents directory
+    const agentsDir = path.join(dir, 'agents');
+    if (fs.existsSync(agentsDir)) {
+      try {
+        const files = fs.readdirSync(agentsDir);
+        const obsFiles = files.filter(f => f.includes('observations-') && f.endsWith('.md'));
+        if (obsFiles.length > 0) return obsFiles.length;
+      } catch (e) {}
+    }
+    // 3. Try checking subdirectories inside reports/ if present
+    const reportsDir = path.join(dir, 'reports');
+    if (fs.existsSync(reportsDir)) {
+      try {
+        const subdirs = fs.readdirSync(reportsDir);
+        for (const sub of subdirs) {
+          const subObsDir = path.join(reportsDir, sub, 'agents');
+          if (fs.existsSync(subObsDir)) {
+            const files = fs.readdirSync(subObsDir);
+            const obsFiles = files.filter(f => f.includes('observations-') && f.endsWith('.md'));
+            if (obsFiles.length > 0) return obsFiles.length;
+          }
+        }
+      } catch (e) {}
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return null;
+}
+
+/**
  * Runs validation on all deliverables in a directory
  */
 function runValidation(targetDir) {
@@ -493,7 +541,8 @@ function runValidation(targetDir) {
       } else if (fileName.endsWith('.md') || fileName.endsWith('.html')) {
         if (fileName.includes('report') || fileName.includes('executive-summary') || fileName.includes('observations')) {
           console.log(`  Auditing report: ${fullPath}`);
-          const reportErrors = validateFile(fullPath, repoSize);
+          const activeAgentCount = resolveActiveAgentCount(targetDir);
+          const reportErrors = validateFile(fullPath, repoSize, activeAgentCount);
           if (reportErrors.length === 0) {
             console.log(`    ${GREEN}✓ Passed${RESET}`);
           } else {
