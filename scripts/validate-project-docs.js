@@ -16,15 +16,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { ROOT_DIR, COLORS } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 const YELLOW = '\x1b[33m';
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = ROOT_DIR;
 const REFS_DIR = path.join(ROOT, 'references');
 const REFS_INDEX = path.join(REFS_DIR, 'README.md');
 const AGENTS_DIR = path.join(ROOT, 'agents');

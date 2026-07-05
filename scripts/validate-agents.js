@@ -18,10 +18,11 @@
 const fs   = require('fs');
 const path = require('path');
 
-const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
+const { ROOT_DIR, COLORS } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 
-const AGENTS_DIR = path.resolve(__dirname, '..', 'agents');
-const EVALS_FILE = path.resolve(__dirname, 'run-evals.js');
+const AGENTS_DIR = path.join(ROOT_DIR, 'agents');
+const EVALS_FILE = path.join(ROOT_DIR, 'scripts', 'run-evals.js');
 const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS } = require('./report-constants');
 

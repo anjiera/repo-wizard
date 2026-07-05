@@ -14,13 +14,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { ROOT_DIR, COLORS } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = ROOT_DIR;
 const SPEC_PATH = path.join(ROOT, 'references', 'questionnaire-spec.json');
 const REGISTRY_PATH = path.join(ROOT, 'agents', 'agent-registry.json');
 

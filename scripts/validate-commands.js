@@ -19,14 +19,10 @@
 const fs   = require('fs');
 const path = require('path');
 
-// ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { ROOT_DIR, COLORS } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = ROOT_DIR;
 
 const DIRS = {
   claude:      { dir: path.join(ROOT, '.claude', 'commands'), ext: '.md'   },

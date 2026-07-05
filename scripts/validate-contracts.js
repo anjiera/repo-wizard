@@ -11,12 +11,8 @@
 
 'use strict';
 
-// ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { COLORS } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 // mock-start
 const CONTRACT_TEMPLATE = {
   task_metadata: {

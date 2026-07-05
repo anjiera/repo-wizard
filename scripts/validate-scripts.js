@@ -19,14 +19,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// ANSI escape codes for premium console styling
-const RESET = '\x1b[0m';
-const BOLD = '\x1b[1m';
-const GREEN = '\x1b[32m';
-const RED = '\x1b[31m';
-const BLUE = '\x1b[34m';
+const { ROOT_DIR, COLORS, scanDir } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = ROOT_DIR;
 const SCRIPTS_DIRS = [
   path.join(ROOT, 'scripts'),
   path.join(ROOT, 'solo-dev-toolkit', 'scripts')
@@ -100,30 +96,12 @@ function validateFile(filePath) {
   return errors;
 }
 
-function scanDir(dirPath, filesList = []) {
-  if (!fs.existsSync(dirPath)) return filesList;
-  const items = fs.readdirSync(dirPath);
-
-  for (const item of items) {
-    const fullPath = path.join(dirPath, item);
-    const stat = fs.statSync(fullPath);
-
-    if (stat.isDirectory()) {
-      scanDir(fullPath, filesList);
-    } else if (stat.isFile() && item.endsWith('.js')) {
-      filesList.push(fullPath);
-    }
-  }
-
-  return filesList;
-}
-
 function main() {
   console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Checking scripts for cheating / padding logic...${RESET}`);
 
   const files = [];
   for (const dir of SCRIPTS_DIRS) {
-    scanDir(dir, files);
+    scanDir(dir, '.js', files);
   }
 
   let totalErrors = 0;

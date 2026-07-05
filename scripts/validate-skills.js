@@ -19,9 +19,10 @@
 const fs   = require('fs');
 const path = require('path');
 
-const { RESET, BOLD, GREEN, RED } = require('../solo-dev-toolkit/scripts/cli-helpers');
+const { ROOT_DIR, COLORS } = require('./validation-helpers');
+const { RESET, BOLD, GREEN, RED } = COLORS;
 
-const SKILLS_DIR = path.resolve(__dirname, '..', 'skills');
+const SKILLS_DIR = path.join(ROOT_DIR, 'skills');
 const MAX_DESCRIPTION_LENGTH = 1024;
 
 // Sections every standard SKILL.md must contain.
