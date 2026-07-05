@@ -13,48 +13,16 @@ You must refer to the [VCS Hook & Commit Discipline Reference Checklist](../refe
 
 ---
 
-## Step 1: Alignment & Target Stack
+## Core Execution & Auditing Directive
 
-- **Headless Mode Override:** Refer to Step 1 of [Headless Mode Override Protocol](../references/headless-override.md).
-
-When spawned, you must align with the developer:
-1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer VCS preferences and screen candidates.
-2. **Active VCS System:** Confirm the detected version control system (Git, Mercurial, Perforce). Clearly state that all configurations are strictly conditional and run only if selected.
-3. **Commit Discipline:** Ask if Conventional Commits rules should be enforced, and define scope validation patterns.
-4. **Styling & Formatting Gates:** Identify the formatting tool preferences (e.g. Prettier, rustfmt, gofmt) and confirm where format/lint checks should run (editor, pre-commit hook, CI).
-5. **License Header Settings:** Ask if standard copyright notices must be enforced on new source files, and confirm the owner and license type.
+For the step-by-step auditing checklist, alignment phases, scaffolding rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/vcs-workflow-engineer/SKILL.md). Do not duplicate or deviate from the skill instructions.
 
 ---
 
-## Step 2: Codebase Scan & Auditing
+## Handoff & Sandbox Constraints
 
-- **Headless Mode Override:** Refer to Step 2 of [Headless Mode Override Protocol](../references/headless-override.md).
-
-Scan the codebase to evaluate current configurations:
-1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
-2. **VCS Manifests:** Inspect configuration files appropriate for the active VCS (e.g., `.pre-commit-config.yaml`, `.husky/` for Git, `.hg/hgrc` for Mercurial).
-3. **Style Manifests:** Check for formatter settings (e.g. `.prettierrc`, `.eslintrc`).
-4. **File Header Scan:** Sample source files to check for existing copyright blocks.
-
----
-
-## Step 3: Interactive Scaffolding Guidance
-
-- **Headless Mode Override:** Refer to Step 3 of [Headless Mode Override Protocol](../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-vcs-workflow-engineer.md`).
-
-Coordinate with the `tooling-engineer.agent` to deploy VCS and style controls, adhering to the following rules:
-
-### 3.1 Developer Consent & Interactive Review
-1. **Shared Robustness Protocol:** Follow the **Interactive Consultation & Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Welcomingly answer any questions before prompting for decisions.
-2. **Interactive Option Explanation:** Explain setting choices and tradeoffs (e.g., local pre-commit hook validation speeds vs build server pipelines). Use generic time and performance descriptions (e.g. noting that partial checks are faster than running full test suites) rather than guaranteeing explicit execution durations in seconds, since test sizes vary by repository. Ask the developer to guide the configuration file modifications.
-3. **Post-Installation Review:** Once installed, offer to review any modified configuration files that differ from default settings.
-4. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append installation and execution commands to the project's existing setup scripts (e.g. `setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`), and present these changes to the user for review.
-
-### 3.2 VCS Controls Scope:
-1. **Automated Commit Discipline:** Scaffold Conventional Commit validators (e.g., `commitlint` for Git, or python/node script checkers for Mercurial/Perforce) conditionally based on user choice.
-2. **Pre-Commit/Pre-Submit Hooks:** Configure hooks matching the active VCS (e.g., Husky for Git, `.hg/hgrc` hook definitions for Mercurial, Perforce trigger integration tips) to validate style and formatting before commit/submission.
-3. **License & Copyright Scanner:** Scaffold a script (or configure existing tools like `license-eye` or custom pre-commit hooks) to validate and automatically inject copyright headers at the top of new source files.
-
-### 3.3 Safety & Rollback
-1. **Domain Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support repository hygiene and formatting, using the agent or its recommendations in no way certifies the code or guarantees compliance with any formal legal licensing, IP, or security audit.
-2. **Shared Rollback Protocol:** Adhere strictly to the rollback and validation loop procedures defined in the [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md).
+1. **Active Workspace Scans:** You operate strictly on the active local workspace directory (`process.cwd()`). Do not scan or query directories outside of the active workspace.
+2. **Context-Bridging Banned:** Do not accept serialized codebase contents or metadata bridge summaries from the invoking Lead Agent. You have full read access to the workspace and MUST read and inspect the target files directly using your file-viewing tools to ensure authenticity.
+3. **Mock Mode Check:** If `--mock-cli true` is passed or configured, write mock/simulated observations and exit. Otherwise, perform a genuine codebase scan and write real observations.
+4. **Redacted Mode Compliance:** If `--redact true` is configured, only output plain-text file basenames in observations and logs to support anonymity.
+5. **Decoupled Handoffs:** Do not perform write/modification steps without developer opt-in/consent. Coordinate writing configurations with the `tooling-engineer.agent` or run scaffold scripts safely.
