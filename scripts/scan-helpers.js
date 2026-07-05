@@ -488,14 +488,15 @@ function walkWorkspaceDir(targetDir, options = {}) {
 
     let files;
     try {
-      files = fs.readdirSync(absPath);
+      files = fs.readdirSync(absPath, { withFileTypes: true });
     } catch (e) {
       return;
     }
 
-    for (const file of files) {
+    for (const entry of files) {
       if (results.length >= maxFiles) return;
 
+      const file = entry.name;
       if (ignoreHidden && file.startsWith('.')) {
         continue;
       }
@@ -504,37 +505,50 @@ function walkWorkspaceDir(targetDir, options = {}) {
       }
 
       const fullPath = path.join(absPath, file);
-      try {
-        const stat = followSymlinks ? fs.statSync(fullPath) : fs.lstatSync(fullPath);
-        
-        if (!followSymlinks && stat.isSymbolicLink()) {
-          continue;
+      let isDir = entry.isDirectory();
+      let isFile = entry.isFile();
+      let isSymlink = entry.isSymbolicLink();
+      let stat = null;
+
+      if (followSymlinks) {
+        try {
+          stat = fs.statSync(fullPath);
+          isDir = stat.isDirectory();
+          isFile = stat.isFile();
+          isSymlink = false;
+        } catch (e) {
+          try {
+            stat = fs.lstatSync(fullPath);
+          } catch (err) {
+            continue;
+          }
         }
+      } else if (isSymlink) {
+        continue;
+      }
 
-        const isDir = stat.isDirectory();
-        const displayName = lowercaseName ? file.toLowerCase() : file;
+      const displayName = lowercaseName ? file.toLowerCase() : file;
 
-        if (isDir) {
-          if (includeDirectories) {
-            if (returnAbsolutePathsOnly) {
-              results.push(fullPath);
-            } else {
-              results.push({ name: displayName, path: fullPath, isDir: true });
-            }
-          }
-          const shouldRecurse = onDirectory(displayName, fullPath, stat);
-          if (shouldRecurse !== false) {
-            traverse(fullPath, depth + 1);
-          }
-        } else if (stat.isFile()) {
-          onFile(displayName, fullPath, stat);
+      if (isDir) {
+        if (includeDirectories) {
           if (returnAbsolutePathsOnly) {
             results.push(fullPath);
           } else {
-            results.push({ name: displayName, path: fullPath, isDir: false });
+            results.push({ name: displayName, path: fullPath, isDir: true });
           }
         }
-      } catch (e) { /* ignore */ }
+        const shouldRecurse = onDirectory(displayName, fullPath, stat || entry);
+        if (shouldRecurse !== false) {
+          traverse(fullPath, depth + 1);
+        }
+      } else if (isFile) {
+        onFile(displayName, fullPath, stat || entry);
+        if (returnAbsolutePathsOnly) {
+          results.push(fullPath);
+        } else {
+          results.push({ name: displayName, path: fullPath, isDir: false });
+        }
+      }
     }
   };
 

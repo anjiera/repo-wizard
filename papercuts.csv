@@ -5,4 +5,3 @@ DateFirstSeen,DateLastSeen,File,Line,Scope,Severity,Description,Frequency
 2026-06-24,2026-06-24,scripts/md-to-html.js,109,Nested Lists,FYI,Single-pass list parser does not fully support multi-level nested lists of differing indentations,1
 2026-06-30,2026-06-30,scripts/dashboard-server.js,648,function: compileRealReports,Nit,Type assumptions on frameworks/platforms from session.json can throw TypeError if they are not arrays,1
 2026-06-30,2026-06-30,scripts/dashboard-server.js,161,function: compileRealReports,Nit,Maturity guidance and summaries favor Android over React in hybrid projects,1
-2026-07-02,2026-07-02,scripts/validate-scripts.js,103,function: scanDir,Nit,Recursive file scanner uses fs.statSync to follow directory contents without keeping track of visited real paths leading to potential cycles,1

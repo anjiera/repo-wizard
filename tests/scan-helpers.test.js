@@ -114,6 +114,21 @@ function run() {
     assert(fileCount === 3, `Expected 3 file callback calls, got ${fileCount}`);
     assert(dirCount === 2, `Expected 2 directory callback calls, got ${dirCount}`);
 
+    // 6h: Test callback error propagation
+    let errorThrown = false;
+    try {
+      walkWorkspaceDir(walkTestDir, {
+        onFile: () => {
+          throw new Error('Callback Error');
+        }
+      });
+    } catch (e) {
+      if (e.message === 'Callback Error') {
+        errorThrown = true;
+      }
+    }
+    assert(errorThrown, 'Expected callback error to propagate and not be swallowed');
+
   } finally {
     fs.rmSync(tempTestDir, { recursive: true, force: true });
     clearFileCache();

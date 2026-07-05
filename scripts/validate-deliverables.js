@@ -14,6 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { walkWorkspaceDir } = require('./scan-helpers');
 
 // ANSI escape codes for premium console styling
 const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
@@ -476,21 +477,11 @@ function runValidation(targetDir) {
 
   let totalErrors = 0;
 
-  function scanDir(dir) {
-    if (!fs.existsSync(dir)) return;
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      const fullPath = path.join(dir, file);
-      const stats = fs.statSync(fullPath);
-
-      if (stats.isDirectory()) {
-        if (file !== 'agents' && file !== 'history' && file !== 'node_modules' && file !== '.git') {
-          scanDir(fullPath);
-        }
-        continue;
-      }
-
-      if (file === 'backlog.csv') {
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Auditing deliverables in directory: ${targetDir}${RESET}`);
+  walkWorkspaceDir(targetDir, {
+    ignoreDirectories: ['agents', 'history', 'node_modules', '.git'],
+    onFile: (fileName, fullPath) => {
+      if (fileName === 'backlog.csv') {
         console.log(`  Auditing CSV: ${fullPath}`);
         const csvErrors = validateCSV(fullPath);
         if (csvErrors.length === 0) {
@@ -499,8 +490,8 @@ function runValidation(targetDir) {
           csvErrors.forEach(err => console.log(`    ${RED}✗ Error:${RESET} ${err}`));
           totalErrors += csvErrors.length;
         }
-      } else if (file.endsWith('.md') || file.endsWith('.html')) {
-        if (file.includes('report') || file.includes('executive-summary') || file.includes('observations')) {
+      } else if (fileName.endsWith('.md') || fileName.endsWith('.html')) {
+        if (fileName.includes('report') || fileName.includes('executive-summary') || fileName.includes('observations')) {
           console.log(`  Auditing report: ${fullPath}`);
           const reportErrors = validateFile(fullPath, repoSize);
           if (reportErrors.length === 0) {
@@ -512,10 +503,7 @@ function runValidation(targetDir) {
         }
       }
     }
-  }
-
-  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Auditing deliverables in directory: ${targetDir}${RESET}`);
-  scanDir(targetDir);
+  });
 
   return totalErrors;
 }
