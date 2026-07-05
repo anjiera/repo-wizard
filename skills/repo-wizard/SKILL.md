@@ -66,6 +66,9 @@ Before performing codebase analysis, sizing, or session resume operations:
 ### Resumability & Session State Check
 1. **Interactive Mode**: Check for `<reportRoot>/.repo-wizard/session.json`. Prompt the developer to Resume, Revisit, Report, or Start Fresh. Before overwriting, run the utility script `node scripts/reports-archive.js` to backup all prior configurations and reports (including `session.json`, `manifest.json`, and all compiled markdown/HTML reports under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/`) into `<reportRoot>/.repo-wizard/reports/history/<repo-name-here>/<timestamp>/`, suffixing each archived file with `_YYYYMMDD_HHMMSS` based on the original file's last modified/edited date to preserve accurate age.
 2. **Headless Mode**: Check for cached subagent mini-reports (observations) under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
+3. **On-demand Redaction Check**: In both modes, if the user specifies the `--redact` flag and unredacted reports (e.g. `<repo-name-here>-full-report.md`) are already present on disk alongside observations, bypass all sizing steps, questionnaire prompts, and subagent scan runs. Instead, directly compile the redacted reports using the compilation utility `node scripts/reports-compile.js --redact` (writing to `redacted-executive-summary.md` and `redacted-<repo-name-here>-full-report.md` alongside unredacted files), output the generated report URLs, and exit.
+
+---
 
 ### Core Profiling & Alignment
 1. **Local Interactive Mode**: Present the alignment questionnaire sequentially with section skip controls. Promote user-owned thresholds and select "Generate Reports" mode (generating reports and proposed configuration contracts for the developer's review) vs "Generate Reports & Backlog" mode (generating reports and a prioritized task backlog CSV for project management tools). Avoid naming specific commercial products (e.g. Jira, ClickUp, Trello) and instead refer to them generally as "project management tools".
@@ -108,7 +111,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
   - In backlog mode, append a high-level summary of the generated issues and recommending agents.
 3. **The Executive Summary (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html`)**:
   - Write a constructive, positive high-level overview in Markdown and HTML.
-  - Structure strictly into 3 sections, each under 3 paragraphs and 450 words total: Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
+  - Structure strictly into 3 sections, with the paragraph and word counts of each section aligning with the target limits for the active codebase sizing tier defined in scripts/report-constants.js: Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
 4. **Upgrade Mismatch Hook**: If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
   > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
 5. **Backlog CSV & Toolchain Summary**:
@@ -155,6 +158,6 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Scaffolding is delegated via parameters contract with rollback verification checks.
 - [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless modes).
 - [ ] Full Technical Report `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
-- [ ] Constructive `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html` are generated (3 sections, each under 3 paragraphs and 450 words).
+- [ ] Constructive `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html` are generated (3 sections, with paragraphs and words aligning with report-constants.js thresholds).
 - [ ] Mismatch hook with updated wording (no "upgrade" command) is appended to all generated reports when a weekend vibe project style handles complex sensitive/compliance operations.
 - [ ] All Markdown and HTML reports have the Developer Empowerment Disclaimer blockquote appended.

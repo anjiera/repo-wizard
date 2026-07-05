@@ -149,6 +149,17 @@ Relocates the `.tos_agreed` Terms of Service signature validation file to the sp
   /repo-wizard --tos-path D:\DevSandbox\custom_tos
   ```
 
+#### `--redact`
+Generates redacted copies of the final reports (`redacted-executive-summary.md` and `redacted-<repo-name>-full-report.md` alongside their HTML versions) in the same reports directory. This allows sharing the reports with external parties without exposing sensitive git URLs, repository names, or local file system paths. You can also retroactively compile redacted reports on a completed scan:
+* **CLI / Chat usage**:
+  ```bash
+  /repo-wizard --redact
+  ```
+* **Retroactive Compilation**:
+  ```bash
+  node scripts/reports-compile.js --redact
+  ```
+
 ---
 
 ## 5. Understanding Deliverables
@@ -163,13 +174,16 @@ A high-level summary designed for engineering leads and stakeholders. It follows
 * **Section 1: Codebase Health & Strengths:** Positively frames clean patterns already present in the codebase.
 * **Section 2: Tooling & Compliance Opportunities:** Suggests constructive additions (e.g. CCPA data purging) in a neutral, non-blaming tone.
 * **Section 3: Rollout Roadmap:** Describes how to distribute the recommended tasks across standard sprints.
-* *Total word count is restricted to under 450 words total across all sections.*
+* *Each section's paragraph and word count limits align dynamically with the target limits for the active codebase sizing tier defined in report-constants.js.*
 
 ### 3. Tabular Backlog CSV (`backlog.csv` - "Generate Reports & Backlog" Mode Only)
 A CSV backlog formatted for bulk-importing into task managers (Jira, ClickUp, Azure DevOps). Each row includes the user story, impact area, action items, recommending subagent attribution, and the mandatory **Developer Empowerment Disclaimer**.
 
 ### 4. Developer Toolchain Summary (`docs/TOOLCHAIN.md` - "Generate Reports" Mode Only)
 Saved to your public documentation folder to onboard new developers, containing configuration file paths and official documentation links for the active tools.
+
+### 5. Redacted Reports (`redacted-executive-summary.md` and `redacted-<repo-name>-full-report.md` along with `.html` versions)
+Generated alongside the unredacted reports when `--redact` is active. They contain the identical recommendations, timelines, and backlog items but with sensitive repository names, file system paths, and git clone URLs fully anonymized to generic placeholders.
 
 ---
 

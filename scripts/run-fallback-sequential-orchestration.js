@@ -657,11 +657,10 @@ function completeOrchestration(manifest) {
   
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf8');
 
-  // Redaction pipeline if requested
   const isRedact = process.argv.includes('--redact') || process.env.REDACT === 'true';
   if (isRedact) {
-    console.log('Anonymize Reports flag detected. Redacting target repository metadata inside reports...');
-    redactReportFiles(REPORTS_DIR, repoName, targetPath);
+    session.redact = true;
+    fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf8');
   }
 
   process.exit(0);

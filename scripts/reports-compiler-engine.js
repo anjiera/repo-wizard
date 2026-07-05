@@ -4,10 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const ROOT = require('./root-resolver');
 const { QUALITY_PILLARS } = require('./quality-pillars');
-const { TEAM_COLORS, DISCLAIMER_TEXT, getSectionLimits } = require('./report-constants');
+const { TEAM_COLORS, DISCLAIMER_TEXT } = require('./report-constants');
 const { DEFAULT_CONCLUSION } = require('./report-templates-helper');
 const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
-const { redactReportFiles } = require('./redactor');
+const { redactReportFiles, redactReportText } = require('./redactor');
 
 const REPORTS_ROOT = path.join(ROOT, '.repo-wizard', 'reports');
 const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
@@ -469,7 +469,37 @@ ${DISCLAIMER_TEXT}
     }
 
     if (session.isRedact || session.redact) {
-      redactReportFiles(reportsDir, repoName, session.targetPath);
+      const targetWorkspace = session.targetPath || process.cwd();
+      
+      // 1. Redacted Executive Summary (.md)
+      const redactedExecMd = redactReportText(
+        execSummary.replace(/#specialist-agent-/g, `redacted-${repoName}-full-report.md#specialist-agent-`).replace(/#4/g, `redacted-${repoName}-full-report.md#4`),
+        repoName,
+        targetWorkspace
+      );
+      const redactedExecPath = path.join(reportsDir, 'redacted-executive-summary.md');
+      fs.writeFileSync(redactedExecPath, redactedExecMd, 'utf8');
+      
+      // 2. Redacted Executive Summary (.html)
+      const htmlRedactedExec = convertMdToHtml(
+        redactReportText(
+          execSummary.replace(/#specialist-agent-/g, `redacted-${repoName}-full-report.html#specialist-agent-`).replace(/#4/g, `redacted-${repoName}-full-report.html#4`),
+          repoName,
+          targetWorkspace
+        ),
+        'Executive Summary (Redacted)',
+        reportStyle
+      );
+      fs.writeFileSync(redactedExecPath.replace(/\.md$/, '.html'), htmlRedactedExec, 'utf8');
+
+      // 3. Redacted Full Technical Report (.md)
+      const redactedFullMd = redactReportText(fullReport, repoName, targetWorkspace);
+      const redactedFullPath = path.join(reportsDir, `redacted-${repoName}-full-report.md`);
+      fs.writeFileSync(redactedFullPath, redactedFullMd, 'utf8');
+
+      // 4. Redacted Full Technical Report (.html)
+      const htmlRedactedFull = convertMdToHtml(redactedFullMd, `Full Technical Report (Redacted) - ${repoName}`, reportStyle);
+      fs.writeFileSync(redactedFullPath.replace(/\.md$/, '.html'), htmlRedactedFull, 'utf8');
     }
   } catch (err) {
     console.error('Failed to compile real reports:', err.message);

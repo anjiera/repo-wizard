@@ -19,12 +19,24 @@ console.log(`${BLUE}==>${RESET} ${BOLD}Compiling Repo Wizard reports from specia
 
 let reportStyleOverride = null;
 const styleIdx = process.argv.indexOf('--report-style');
-if (styleIdx !== -1 && process.argv[styleIdx + 1] && !process.argv[styleIdx + 1].startsWith('-')) {
-  reportStyleOverride = process.argv[styleIdx + 1];
-  process.argv.splice(styleIdx, 2);
+if (styleIdx !== -1) {
+  if (process.argv[styleIdx + 1] && !process.argv[styleIdx + 1].startsWith('-')) {
+    reportStyleOverride = process.argv[styleIdx + 1];
+    process.argv.splice(styleIdx, 2);
+  } else {
+    process.argv.splice(styleIdx, 1);
+  }
 }
 
-let sessionPath = process.argv[2];
+let isRedactOverride = false;
+const redactIdx = process.argv.indexOf('--redact');
+if (redactIdx !== -1) {
+  isRedactOverride = true;
+  process.argv.splice(redactIdx, 1);
+}
+
+// Find first non-flag argument in remaining arguments for sessionPath
+let sessionPath = process.argv.slice(2).find(arg => !arg.startsWith('-'));
 
 if (!sessionPath) {
   const sessionPointerPath = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
@@ -55,6 +67,9 @@ try {
   if (reportStyleOverride) {
     session.reportStyle = reportStyleOverride;
   }
+  if (isRedactOverride) {
+    session.redact = true;
+  }
   
   compileRealReports(session);
   console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);
@@ -69,6 +84,11 @@ try {
   console.log(`  - Observations List:  [${repoName}-observations.md](file:///${path.join(reportsDir, repoName + '-observations.md').replace(/\\/g, '/')})`);
   if (session.mode === 'backlog') {
     console.log(`  - Backlog CSV:        [backlog.csv](file:///${path.join(reportsDir, 'backlog.csv').replace(/\\/g, '/')})`);
+  }
+  if (session.isRedact || session.redact) {
+    console.log(`\n${BOLD}Redacted deliverables:${RESET}`);
+    console.log(`  - Redacted Exec Summary:  [redacted-executive-summary.md](file:///${path.join(reportsDir, 'redacted-executive-summary.md').replace(/\\/g, '/')})`);
+    console.log(`  - Redacted Full Report:   [redacted-${repoName}-full-report.md](file:///${path.join(reportsDir, `redacted-${repoName}-full-report.md`).replace(/\\/g, '/')})`);
   }
   console.log('');
 } catch (err) {

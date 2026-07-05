@@ -96,6 +96,8 @@ For local interactive mode (`MODE=INTERACTIVE_LOCAL`):
 
 For headless modes (`MODE=HEADLESS_REMOTE` or `MODE=HEADLESS_LOCAL`), check for cached subagent mini-reports (observations) under `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md` to allow resuming halted scans.
 
+For both interactive and headless modes, if the user requests a redacted report (e.g., via `--redact` or `--redact true`) and you detect that unredacted reports (e.g. `<repo-name-here>-full-report.md`) are already written and observations exist on disk, do NOT re-run any subagent sweeps or codebase sizing analysis. Instead, directly compile the redacted reports using the compilation utility `node scripts/reports-compile.js --redact` (which generates `redacted-executive-summary.md` and `redacted-<repo-name>-full-report.md` alongside their HTML counterparts in the same directory, leaving unredacted reports intact), print their locations, and exit successfully.
+
 ---
 
 ## Core Profiling & Questionnaire

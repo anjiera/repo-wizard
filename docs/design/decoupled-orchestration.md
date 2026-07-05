@@ -63,3 +63,4 @@ Spawning LLM-based agents headlessly requires skipping permission prompts, which
 
 * **[Session Resumability and Manifest Contracts](session-resumability.md)**: Explains the state schemas of `session.json` and `manifest.json`, the resumability recovery flow, and the backup archiving utility.
 * **[Pillar Concurrency Controls and Batching Thresholds](pillar-concurrency-limits.md)**: Explains the concurrency caps and batching limits applied during parallel scans to mitigate LLM request rate issues.
+* **[Report Redaction and Metadata Anonymization Pipeline](report-redaction-pipeline.md)**: Explains the architectural flow and file coexistence of unredacted and redacted deliverables.

@@ -214,11 +214,10 @@ function run() {
     // Test 4: Redaction pipeline works on mock execution
     fs.writeFileSync(manifestPath, JSON.stringify(mockManifest, null, 2), 'utf8');
     const testRepoDir = path.join(ROOT, '.repo-wizard', 'reports', 'test-repo');
-    if (!fs.existsSync(testRepoDir)) fs.mkdirSync(testRepoDir, { recursive: true });
+    if (fs.existsSync(testRepoDir)) fs.rmSync(testRepoDir, { recursive: true, force: true });
+    fs.mkdirSync(testRepoDir, { recursive: true });
     
     const resolvedTestRepo = path.resolve(testRepoDir);
-    const dummyPath = path.join(testRepoDir, 'dummy-report.md');
-    fs.writeFileSync(dummyPath, `Target repo is test-repo located at ${resolvedTestRepo}. Git URL is git@github.com:test-org/test-repo.git`, 'utf8');
 
     const redactRun = (() => {
       try {
@@ -238,11 +237,47 @@ function run() {
     })();
 
     assert(redactRun.code === 0, 'run-fallback-sequential-orchestration.js exits with 0 on successful redact run');
-    const dummyContent = fs.readFileSync(dummyPath, 'utf8');
-    assert(dummyContent.includes('Target repo is target-repository located at target-workspace-path'), 'repo name and path redacted');
-    assert(dummyContent.includes('Git URL is git@github.com:redacted-org/redacted-repo.git'), 'git url redacted');
-    
-    if (fs.existsSync(dummyPath)) fs.unlinkSync(dummyPath);
+
+    // Now run compile script to verify both unredacted and redacted files are created
+    const compilePath = path.join(ROOT, 'scripts', 'reports-compile.js');
+    const targetSessionPath = path.join(testRepoDir, 'session.json');
+    const compileRun = (() => {
+      try {
+        const stdout = execSync(`node "${compilePath}" "${targetSessionPath}"`, {
+          cwd: resolvedTestRepo,
+          stdio: 'pipe'
+        }).toString();
+        return { code: 0, stdout };
+      } catch (err) {
+        return { code: err.status || 1, stdout: err.stdout ? err.stdout.toString() : '', stderr: err.stderr ? err.stderr.toString() : '' };
+      }
+    })();
+
+    assert(compileRun.code === 0, `reports-compile.js exits with 0. stdout: ${compileRun.stdout}, stderr: ${compileRun.stderr}`);
+
+    const execPath = path.join(testRepoDir, 'test-repo-executive-summary.md');
+    const fullPath = path.join(testRepoDir, 'test-repo-full-report.md');
+    const redactedExecPath = path.join(testRepoDir, 'redacted-executive-summary.md');
+    const redactedFullPath = path.join(testRepoDir, 'redacted-test-repo-full-report.md');
+
+    assert(fs.existsSync(execPath), 'unredacted executive summary exists');
+    assert(fs.existsSync(fullPath), 'unredacted full report exists');
+    assert(fs.existsSync(redactedExecPath), 'redacted executive summary exists');
+    assert(fs.existsSync(redactedFullPath), 'redacted full report exists');
+
+    // HTML versions
+    assert(fs.existsSync(execPath.replace(/\.md$/, '.html')), 'unredacted executive summary html exists');
+    assert(fs.existsSync(redactedExecPath.replace(/\.md$/, '.html')), 'redacted executive summary html exists');
+
+    const unredactedContent = fs.readFileSync(execPath, 'utf8');
+    const redactedContent = fs.readFileSync(redactedExecPath, 'utf8');
+
+    // Unredacted report should contain real details
+    assert(unredactedContent.includes('test-repo'), 'unredacted report preserves the repo name');
+
+    // Redacted report should be anonymized
+    assert(redactedContent.includes('target-repository'), 'redacted report anonymizes repo name');
+    assert(!redactedContent.includes('test-org/test-repo.git'), 'redacted report does not contain real git url');
 
   } finally {
     // Restore original manifest
