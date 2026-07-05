@@ -7,7 +7,10 @@
     "mockCapability": "Mock Accessibility Auditing",
     "mockTool": "mock-axe-core",
     "command": "/rw-accessibility-auditor",
-    "reference": "accessibility-checklist.md"
+    "reference": "accessibility-checklist.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "agent-alignment-auditor": {
     "title": "AI Agent Alignment Specialist",
@@ -17,7 +20,10 @@
     "mockCapability": "Mock Agent Alignment Auditing",
     "mockTool": "mock-llm-guard",
     "command": "/rw-agent-alignment-auditor",
-    "reference": null
+    "reference": null,
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "ai-robustness-hardener": {
     "title": "AI/ML Robustness Hardener",
@@ -27,7 +33,10 @@
     "mockCapability": "Mock AI Input/Output Guardrails",
     "mockTool": "mock-llm-guard",
     "command": "/rw-ai-robustness-hardener",
-    "reference": "ai-robustness-checklist.md"
+    "reference": "ai-robustness-checklist.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "api-contract-architect": {
     "title": "API Contract Architect",
@@ -37,7 +46,10 @@
     "mockCapability": "Mock API Linting & Schema Checking",
     "mockTool": "mock-spectral",
     "command": "/rw-api-contract-architect",
-    "reference": "api-contract-standards.md"
+    "reference": "api-contract-standards.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "appsec-hardener": {
     "title": "Application Security Specialist",
@@ -47,7 +59,10 @@
     "mockCapability": "Mock Application Hardening",
     "mockTool": "mock-helmet",
     "command": "/rw-appsec-hardener",
-    "reference": "appsec-hardening-guide.md"
+    "reference": "appsec-hardening-guide.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "compliance-auditor": {
     "title": "Compliance Auditor Specialist",
@@ -57,7 +72,10 @@
     "mockCapability": "Mock Compliance Hardening",
     "mockTool": "mock-checkov",
     "command": "/rw-compliance-auditor",
-    "reference": "security-hardening-checklist.md"
+    "reference": "security-hardening-checklist.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "data-pipeline-architect": {
     "title": "Data Pipeline Architect",
@@ -67,7 +85,10 @@
     "mockCapability": "Mock Data Integrity Checks",
     "mockTool": "mock-pandera",
     "command": "/rw-data-pipeline-architect",
-    "reference": "data-pipeline-standards.md"
+    "reference": "data-pipeline-standards.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "database-lifecycle-auditor": {
     "title": "Database Lifecycle Auditor",
@@ -77,7 +98,10 @@
     "mockCapability": "Mock Database Lifecycle Auditing",
     "mockTool": "mock-atlas",
     "command": "/rw-database-lifecycle-auditor",
-    "reference": "database-lifecycle"
+    "reference": "database-lifecycle",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "deployment-engineer": {
     "title": "Deployment Engineer",
@@ -87,7 +111,10 @@
     "mockCapability": "Mock Container Orchestration & Backup",
     "mockTool": "mock-docker-compose",
     "command": "/rw-deployment-engineer",
-    "reference": "deployment-patterns.md"
+    "reference": "deployment-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "dev-onboarding-auditor": {
     "title": "Developer Onboarding Auditor",
@@ -97,7 +124,10 @@
     "mockCapability": "Mock Developer Onboarding Auditing",
     "mockTool": "mock-dotenv-linter",
     "command": "/rw-dev-onboarding-auditor",
-    "reference": null
+    "reference": null,
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "embedded-systems-auditor": {
     "title": "Embedded Systems Auditor",
@@ -107,7 +137,10 @@
     "mockCapability": "Mock Embedded Warning Linters",
     "mockTool": "mock-cppcheck",
     "command": "/rw-embedded-systems-auditor",
-    "reference": "embedded-standards.md"
+    "reference": "embedded-standards.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "fuzz-engineer": {
     "title": "Fuzz Engineer",
@@ -117,7 +150,10 @@
     "mockCapability": "Mock Fuzz Testing Harnesses",
     "mockTool": "mock-cargo-fuzz",
     "command": "/rw-fuzz-engineer",
-    "reference": "fuzzing-patterns.md"
+    "reference": "fuzzing-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "legal-neutrality-auditor": {
     "title": "Legal Neutrality Auditor",
@@ -127,7 +163,10 @@
     "mockCapability": "Mock Legal Neutrality Auditing",
     "mockTool": null,
     "command": "/rw-legal-neutrality-auditor",
-    "reference": "legal-phrasing-dictionary.md"
+    "reference": "legal-phrasing-dictionary.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "maintainability-auditor": {
     "title": "Maintainability Auditor",
@@ -137,7 +176,10 @@
     "mockCapability": "Mock Maintainability Auditing",
     "mockTool": "mock-eslint-plugin-complexity",
     "command": "/rw-maintainability-auditor",
-    "reference": null
+    "reference": null,
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "notebook-auditor": {
     "title": "Notebook Auditor",
@@ -147,7 +189,10 @@
     "mockCapability": "Mock Jupyter Notebook Cleaners",
     "mockTool": "mock-nbstripout",
     "command": "/rw-notebook-auditor",
-    "reference": "notebook-standards.md"
+    "reference": "notebook-standards.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "observability-engineer": {
     "title": "Observability Engineer",
@@ -157,7 +202,10 @@
     "mockCapability": "Mock Observability Engineering",
     "mockTool": "mock-opentelemetry",
     "command": "/rw-observability-engineer",
-    "reference": "observability-patterns.md"
+    "reference": "observability-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "performance-auditor": {
     "title": "Performance Auditor",
@@ -167,7 +215,10 @@
     "mockCapability": "Mock Performance Auditing",
     "mockTool": "mock-autocannon",
     "command": "/rw-performance-auditor",
-    "reference": "performance-patterns/performance-patterns.md"
+    "reference": "performance-patterns/performance-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "privacy-hardener": {
     "title": "Data Privacy Specialist",
@@ -177,7 +228,10 @@
     "mockCapability": "Mock PII Logging Audits",
     "mockTool": "mock-gdpr-sanitizer",
     "command": "/rw-privacy-hardener",
-    "reference": "data-privacy-checklist.md"
+    "reference": "data-privacy-checklist.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "qa-engineer": {
     "title": "Testing QA Specialist",
@@ -187,7 +241,10 @@
     "mockCapability": "Mock Unit Testing",
     "mockTool": "mock-vitest",
     "command": "/rw-qa-engineer",
-    "reference": "testing-patterns.md"
+    "reference": "testing-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "react-performance-auditor": {
     "title": "React Performance Auditor",
@@ -197,7 +254,10 @@
     "mockCapability": "Mock React Performance Auditing",
     "mockTool": "mock-react-scan",
     "command": "/rw-react-performance-auditor",
-    "reference": "performance-patterns/performance-patterns-react.md"
+    "reference": "performance-patterns/performance-patterns-react.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "repo-wizard": {
     "title": "Lead Onboarding Orchestrator",
@@ -207,7 +267,10 @@
     "mockCapability": null,
     "mockTool": null,
     "command": "/repo-wizard",
-    "reference": null
+    "reference": null,
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "resilience-architect": {
     "title": "Fault Tolerance Specialist",
@@ -217,7 +280,10 @@
     "mockCapability": "Mock Retry & Circuit Breaker Setup",
     "mockTool": "mock-opossum",
     "command": "/rw-resilience-architect",
-    "reference": "resilience-patterns.md"
+    "reference": "resilience-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "state-hardener": {
     "title": "State Hardener",
@@ -227,7 +293,10 @@
     "mockCapability": "Mock State Sanitization Auditing",
     "mockTool": "mock-eslint-plugin-react-hooks",
     "command": "/rw-state-hardener",
-    "reference": "state-sanitization-rules.md"
+    "reference": "state-sanitization-rules.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "state-integrity-auditor": {
     "title": "State Integrity Auditor",
@@ -237,7 +306,10 @@
     "mockCapability": "Mock Formal Model Verification",
     "mockTool": "mock-kani",
     "command": "/rw-state-integrity-auditor",
-    "reference": "formal-methods-patterns.md"
+    "reference": "formal-methods-patterns.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "supply-chain-auditor": {
     "title": "Dependency Compliance Specialist",
@@ -247,7 +319,10 @@
     "mockCapability": "Mock Dependency Licensing",
     "mockTool": "mock-fossa",
     "command": "/rw-supply-chain-auditor",
-    "reference": "supply-chain-audit-checklist.md"
+    "reference": "supply-chain-audit-checklist.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "technical-scribe": {
     "title": "Technical Documentation",
@@ -257,7 +332,10 @@
     "mockCapability": "Mock ADR & Architecture Diagrams",
     "mockTool": "mock-mermaid-cli",
     "command": "/rw-technical-scribe",
-    "reference": "documentation-standards.md"
+    "reference": "documentation-standards.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "tool-auditor": {
     "title": "Tool Auditor Specialist",
@@ -267,7 +345,10 @@
     "mockCapability": null,
     "mockTool": null,
     "command": null,
-    "reference": null
+    "reference": null,
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "tooling-engineer": {
     "title": "Tooling Engineer Specialist",
@@ -277,7 +358,10 @@
     "mockCapability": null,
     "mockTool": null,
     "command": null,
-    "reference": null
+    "reference": null,
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "toolchain-architect": {
     "title": "Toolchain Architect",
@@ -287,7 +371,10 @@
     "mockCapability": "Mock Cross-Compilation Toolchains",
     "mockTool": "mock-riscv-gcc",
     "command": "/rw-toolchain-architect",
-    "reference": "toolchain-standards.md"
+    "reference": "toolchain-standards.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   },
   "vcs-workflow-engineer": {
     "title": "VCS Integration Specialist",
@@ -297,6 +384,9 @@
     "mockCapability": "Mock Git Hook Automation",
     "mockTool": "mock-husky",
     "command": "/rw-vcs-workflow-engineer",
-    "reference": "vcs-discipline-rules.md"
+    "reference": "vcs-discipline-rules.md",
+    "permissions": {
+      "enable_write_tools": true
+    }
   }
 }
