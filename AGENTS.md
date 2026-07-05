@@ -52,7 +52,7 @@ Before running full sweeps, the Lead Agent dispatches a relevance check to each 
 For details on the architecture, see the specifications in the [repo-wizard-planning/](repo-wizard-planning/) folder.
 
 ### Unified Codebase Setup & Scan Phase
-Before running the sequential orchestrator or launching the alignment questionnaire, the Lead Agent must always execute the pre-scan setup: `node scripts/initial-codebase-scan.js --target-path <targetPath>`. You must verify the command exited with `0` (success) before proceeding. You must never run the orchestrator script on a missing manifest or setup failure.
+Before running the sequential orchestrator or launching the alignment questionnaire, the Lead Agent must always execute the pre-scan setup: `node scripts/initial-codebase-scan.js --target-path <targetPath>`. You must verify the command exited with `0` (success) before proceeding. If the command returns a non-zero exit code (e.g., code `1` or code `2`), you MUST halt execution immediately, output the warning or error message (directly to the user if in chat, or to stdout/stderr logs if running in headless/CI mode), and do NOT invoke any subagents or run the orchestrator script. Even in headless mode where no user is present to respond, execution must still be strictly halted. Never attempt to guess or bypass warning outputs on a non-zero exit code.
 
 ## Workflow: Mandatory Verification & Review Gate for Programming Tasks
 
