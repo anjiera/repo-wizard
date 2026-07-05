@@ -224,7 +224,7 @@ function validateDuplication() {
         .replace(/^\d+\.\s+/, '')                 // remove ordered list prefix at start
         .replace(/`/g, '')                        // remove backticks
         .toLowerCase()
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, "") // strip punctuation
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'\[\]]/g, "") // strip punctuation
         .replace(/\s+/g, ' ')                     // collapse whitespaces
         .trim();
 
