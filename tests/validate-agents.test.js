@@ -29,7 +29,7 @@ description: Temporary agent to trigger validation failures
   fs.writeFileSync(tempAgentPath, badAgentContent);
 
   try {
-    const unhealthyRun = runScript(scriptPath);
+    const unhealthyRun = runScript(scriptPath, ['--skip-registry']);
     assert(unhealthyRun.code === 1, 'validate-agents.js exits with 1 when an agent has no eval suite');
     assert(unhealthyRun.stdout.includes('temp-missing-eval-agent.md — No evaluation test suite defined'),
       'validate-agents.js prints correct missing eval error message');
@@ -40,9 +40,9 @@ description: Temporary agent to trigger validation failures
   }
 
   // Test 3: Run with a malformed agent header (missing Step 1)
-  const malformedAgentPath = path.join(ROOT, 'agents', 'temp-malformed-agent.md');
+  const malformedAgentPath = path.join(ROOT, 'agents', 'temp-malformed.md');
   const malformedContent = `---
-name: temp-malformed-agent
+name: temp-malformed
 description: Malformed agent missing Step 1
 ---
 ## Step 2: Codebase Scan & Auditing
@@ -65,7 +65,7 @@ module.exports = {
   fs.writeFileSync(tempEvalPath, tempEvalContent);
 
   try {
-    const unhealthyRun = runScript(scriptPath);
+    const unhealthyRun = runScript(scriptPath, ['--skip-registry']);
     assert(unhealthyRun.code === 1, 'validate-agents.js exits with 1 when an agent lacks required headers');
     assert(unhealthyRun.stdout.includes("Missing exact header: '## Step 1: Alignment & Target Stack'"),
       'validate-agents.js prints correct missing header error message');
@@ -95,13 +95,46 @@ module.exports = {
   fs.writeFileSync(tempDelegatorEvalPath, tempDelegatorEvalContent);
 
   try {
-    const unhealthyRun = runScript(scriptPath);
+    const unhealthyRun = runScript(scriptPath, ['--skip-registry']);
     assert(unhealthyRun.code === 1, 'validate-agents.js exits with 1 when a delegator agent lacks handoff constraints');
     assert(unhealthyRun.stdout.includes("Missing exact header: '## Handoff & Sandbox Constraints' or '## Execution Environment & Handoff Rule'"),
       'validate-agents.js prints correct missing constraints header error message');
   } finally {
     if (fs.existsSync(malformedDelegatorAgentPath)) fs.unlinkSync(malformedDelegatorAgentPath);
     if (fs.existsSync(tempDelegatorEvalPath)) fs.unlinkSync(tempDelegatorEvalPath);
+  }
+
+  // Test 5: Run with a delegator agent missing the shared constraints file reference
+  const missingRefAgentPath = path.join(ROOT, 'agents', 'temp-missing-ref-delegator.md');
+  const missingRefContent = `---
+name: temp-missing-ref-delegator
+description: Delegator agent missing shared constraints reference
+---
+## Core Execution & Auditing Directive
+[paired Skill Workflow](../skills/temp-missing-ref-delegator/SKILL.md)
+
+## Handoff & Sandbox Constraints
+Some non-conforming local text without referencing the shared constraints file.
+`;
+  const tempMissingRefEvalPath = path.join(ROOT, 'evals', 'temp-missing-ref-delegator.js');
+  const tempMissingRefEvalContent = `
+module.exports = {
+  agent: 'temp-missing-ref-delegator',
+  personaFile: '${missingRefAgentPath.replace(/\\/g, '\\\\')}',
+  testCases: [{ name: 'test', input: 'hi', rubrics: ['pass'] }]
+};
+`;
+  fs.writeFileSync(missingRefAgentPath, missingRefContent);
+  fs.writeFileSync(tempMissingRefEvalPath, tempMissingRefEvalContent);
+
+  try {
+    const unhealthyRun = runScript(scriptPath, ['--skip-registry']);
+    assert(unhealthyRun.code === 1, 'validate-agents.js exits with 1 when a delegator agent lacks handoff-sandbox-constraints.md reference');
+    assert(unhealthyRun.stdout.includes("Missing relative reference to '../references/handoff-sandbox-constraints.md' under handoff constraints."),
+      'validate-agents.js prints correct missing reference error message');
+  } finally {
+    if (fs.existsSync(missingRefAgentPath)) fs.unlinkSync(missingRefAgentPath);
+    if (fs.existsSync(tempMissingRefEvalPath)) fs.unlinkSync(tempMissingRefEvalPath);
   }
 }
 

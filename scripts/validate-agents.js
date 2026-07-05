@@ -26,6 +26,10 @@ const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS } = require('./report-constants');
 
 function main() {
+  // Bypasses agent-registry.json mapping checks. Used primarily in unit tests
+  // to avoid validation warnings/errors when checking temporary on-the-fly mock agent files.
+  const skipRegistry = process.argv.includes('--skip-registry');
+
   if (!fs.existsSync(AGENTS_DIR)) {
     console.error(`ERROR: agents directory not found at ${AGENTS_DIR}`);
     process.exit(1);
@@ -79,30 +83,32 @@ function main() {
 
     // Quality Pillar & Team Color mapping validation
     const agentKey = file.replace(/\.md$/, '');
-    const registryFile = path.resolve(__dirname, '..', 'agents', 'agent-registry.json');
-    if (!fs.existsSync(registryFile)) {
-      errors.push('Missing agent-registry.json file.');
-    } else {
-      let registry;
-      try {
-        registry = JSON.parse(fs.readFileSync(registryFile, 'utf8'));
-      } catch (err) {
-        errors.push(`Failed to parse agent-registry.json: ${err.message}`);
-      }
+    if (!skipRegistry) {
+      const registryFile = path.resolve(__dirname, '..', 'agents', 'agent-registry.json');
+      if (!fs.existsSync(registryFile)) {
+        errors.push('Missing agent-registry.json file.');
+      } else {
+        let registry;
+        try {
+          registry = JSON.parse(fs.readFileSync(registryFile, 'utf8'));
+        } catch (err) {
+          errors.push(`Failed to parse agent-registry.json: ${err.message}`);
+        }
 
-      if (registry) {
-        const mapping = registry[agentKey];
-        if (!mapping) {
-          errors.push(`Missing entry in agent-registry.json for agent key "${agentKey}".`);
-        } else {
-          if (!mapping.pillar || !QUALITY_PILLARS[mapping.pillar]) {
-            errors.push(`Invalid or missing Quality Pillar key: "${mapping.pillar || 'none'}"`);
-          }
-          if (!mapping.color || !TEAM_COLORS[mapping.color]) {
-            errors.push(`Invalid or missing Cybersecurity Team Color key: "${mapping.color || 'none'}"`);
-          }
-          if (!mapping.description) {
-            errors.push(`Invalid or missing description inside registry for key "${agentKey}"`);
+        if (registry) {
+          const mapping = registry[agentKey];
+          if (!mapping) {
+            errors.push(`Missing entry in agent-registry.json for agent key "${agentKey}".`);
+          } else {
+            if (!mapping.pillar || !QUALITY_PILLARS[mapping.pillar]) {
+              errors.push(`Invalid or missing Quality Pillar key: "${mapping.pillar || 'none'}"`);
+            }
+            if (!mapping.color || !TEAM_COLORS[mapping.color]) {
+              errors.push(`Invalid or missing Cybersecurity Team Color key: "${mapping.color || 'none'}"`);
+            }
+            if (!mapping.description) {
+              errors.push(`Invalid or missing description inside registry for key "${agentKey}"`);
+            }
           }
         }
       }
@@ -180,6 +186,11 @@ function main() {
         // Validate delegator pattern structure
         if (!content.includes('## Handoff & Sandbox Constraints') && !content.includes('## Execution Environment & Handoff Rule')) {
           errors.push("Missing exact header: '## Handoff & Sandbox Constraints' or '## Execution Environment & Handoff Rule'");
+        }
+        if (agentKey !== 'repo-wizard') {
+          if (!content.includes('../references/handoff-sandbox-constraints.md')) {
+            errors.push("Missing relative reference to '../references/handoff-sandbox-constraints.md' under handoff constraints.");
+          }
         }
         const skillLink = `../skills/${agentKey}/SKILL.md`;
         if (!content.includes(skillLink)) {
@@ -259,6 +270,11 @@ function main() {
       // 2. Schema and Prefix Assertions
       for (const [key, value] of Object.entries(registry)) {
         let entryErrors = 0;
+        if (typeof value !== 'object' || value === null) {
+          console.log(`  ${RED}✗${RESET}  "${key}": Registry entry value is not a valid object`);
+          totalErrors++;
+          continue;
+        }
         
         if (typeof value.title !== 'string' || value.title.trim().length === 0) {
           console.log(`  ${RED}✗${RESET}  "${key}": Missing or empty "title"`);

@@ -36,6 +36,7 @@ Focuses on compliance profiles, accessibility standards, legal liability checks,
 * **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
 * **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
 * **Headless Mode Override Protocol:** [headless-override.md](headless-override.md)
+* **Handoff & Sandbox Constraints:** [handoff-sandbox-constraints.md](handoff-sandbox-constraints.md)
 
 ### 🟡 Yellow Team (System Builders & Deployment Lifecycle)
 Focuses on build automation, container configurations, hardware limits, data workflows, and service resilience.
@@ -158,6 +159,8 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Canonical Headless Mode Override steps bypassing questionnaire/alignment and scanning consent prompts.
 51. **[agent-rules.md](agent-rules.md)**
     - Common rules and formatting guidelines for specialist agents (Emoji Restrictions, Passive Data Boundaries, etc.).
+52. **[handoff-sandbox-constraints.md](handoff-sandbox-constraints.md)**
+    - Unified safety rules, mock constraints, redacted mode compliance, and tool execution boundaries for specialist agents.
 
 ---
 
