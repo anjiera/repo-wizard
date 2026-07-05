@@ -26,8 +26,8 @@ For established codebases, `repo-wizard` acts as an audit and gap-analysis assis
 
 ## 2. Execution Modes
 
-### Mode 1: Interactive Local Mode (`MODE=INTERACTIVE_LOCAL`)
-Recommended for local developer onboarding and interactive configuration.
+### Mode 1: Interactive Mode (`MODE=INTERACTIVE_LOCAL`)
+Recommended for developer onboarding and interactive configuration.
 * **Command:** `/repo-wizard` (or `agy run repo-wizard` depending on agent env).
 * **Process:**
   1. **TOS Gate:** Prompts you to accept the Terms of Service.
@@ -35,8 +35,8 @@ Recommended for local developer onboarding and interactive configuration.
   3. **Screening Ledgers:** Screens candidate tools via `tool-auditor` and prompts you to select preferred tools.
   4. **Scaffolding/Backlog Handoff:** Installs tools and generates reports.
 
-### Mode 2: Headless Local Mode (`MODE=HEADLESS_LOCAL`)
-A non-blocking scan of the active local repository, ideal for scripts or background sweeps.
+### Mode 2: Headless Mode (`MODE=HEADLESS_LOCAL`)
+A non-blocking scan of the active repository, ideal for scripts or background sweeps.
 * **Command:** `/repo-wizard --headless`
 * **CLI Execution (via `agy` CLI):**
   If running the command via the `agy` CLI's print mode (`-p` / `--print`), it may exceed the default 5-minute CLI timeout. To prevent this, increase the timeout or run interactively (`-i` / `--prompt-interactive`) to see live progress:
@@ -116,7 +116,7 @@ To prevent unintentional massive token consumption during headless scans:
 
 ## 5. How to Interact with the Onboarding Questionnaire
 
-When running in **Interactive Local Mode**, `repo-wizard` prints the alignment questionnaire and asks you to reply with adjustments or say "Proceed". Depending on how you invoke the agent, your interaction flow will differ:
+When running in **Interactive Mode**, `repo-wizard` prints the alignment questionnaire and asks you to reply with adjustments or say "Proceed". Depending on how you invoke the agent, your interaction flow will differ:
 
 ### Option A: Via the Editor's IDE Chat Sidebar (Recommended)
 If you run `/repo-wizard` inside the editor's Antigravity chat panel/sidebar GUI:

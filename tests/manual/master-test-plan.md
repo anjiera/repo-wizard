@@ -106,7 +106,7 @@ graph TD
     # Bash
     rm -f .repo-wizard/.tos_agreed
     ```
-  - Trigger a local scan in your terminal using the Antigravity CLI:
+  - Trigger a scan in your terminal using the Antigravity CLI:
     ```bash
     agy --dangerously-skip-permissions -p "/repo-wizard"
     ```
@@ -128,7 +128,7 @@ graph TD
   - *Expected Outcome*:
     - Script generates the initial manifest files in `.repo-wizard/` and exits with code `0`.
 
-- [ ] **3.4 Headless Local Scan via Orchestrator (Active Workspace Scans)**
+- [ ] **3.4 Headless Scan via Orchestrator (Active Workspace Scans)**
   - Run the CLI orchestrator in a standard interactive terminal (TTY):
     ```bash
     node scripts/run-fallback-sequential-orchestration.js

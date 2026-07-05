@@ -16,8 +16,7 @@ A design pattern where multiple specialized AI agents communicate and coordinate
 A structured JSON definition specifying the exact parameters and types that the orchestrator must pass to a specialist agent. This prevents "prompt rot" and ensures deterministic communication between LLM-driven components.
 
 ### Headless Scanning
-A non-interactive execution mode where the agent sweeps the repository without prompting the user for input at each step.
-* **Headless Local Mode:** Performs a non-blocking scan of the active local repository, outputting report summaries.
+A non-interactive execution mode where the agent sweeps the repository without prompting the user for input at each step, outputting report summaries.
 
 ### Lead Orchestrator
 The primary agent (mapped to `/repo-wizard`) that manages the user interaction lifecycle, sizing checks, recommendation engines, and hands off execution tasks to specialists.
