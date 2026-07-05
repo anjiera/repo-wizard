@@ -171,13 +171,8 @@ function main() {
         }
       }
 
-      // Structural validations for execution agents (excluding helpers/orchestrators unless they use delegator pattern)
-      const EXEMPT_AGENTS = [
-        'repo-wizard.md',
-        'legal-neutrality-auditor.md',
-        'tool-auditor.md',
-        'tooling-engineer.md'
-      ];
+      // Structural validations for execution agents
+      const EXEMPT_AGENTS = [];
 
       const usesDelegatorPattern = content.includes('## Core Execution & Auditing Directive') || content.includes('## Core Execution & Handoff Directive');
 

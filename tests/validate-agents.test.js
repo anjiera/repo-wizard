@@ -73,6 +73,36 @@ module.exports = {
     if (fs.existsSync(malformedAgentPath)) fs.unlinkSync(malformedAgentPath);
     if (fs.existsSync(tempEvalPath)) fs.unlinkSync(tempEvalPath);
   }
+
+  // Test 4: Run with a malformed delegator agent (missing handoff constraints)
+  const malformedDelegatorAgentPath = path.join(ROOT, 'agents', 'temp-malformed-delegator.md');
+  const malformedDelegatorContent = `---
+name: temp-malformed-delegator
+description: Malformed delegator agent missing constraints
+---
+## Core Execution & Auditing Directive
+[paired Skill Workflow](../skills/temp-malformed-delegator/SKILL.md)
+`;
+  const tempDelegatorEvalPath = path.join(ROOT, 'evals', 'temp-malformed-delegator.js');
+  const tempDelegatorEvalContent = `
+module.exports = {
+  agent: 'temp-malformed-delegator',
+  personaFile: '${malformedDelegatorAgentPath.replace(/\\/g, '\\\\')}',
+  testCases: [{ name: 'test', input: 'hi', rubrics: ['pass'] }]
+};
+`;
+  fs.writeFileSync(malformedDelegatorAgentPath, malformedDelegatorContent);
+  fs.writeFileSync(tempDelegatorEvalPath, tempDelegatorEvalContent);
+
+  try {
+    const unhealthyRun = runScript(scriptPath);
+    assert(unhealthyRun.code === 1, 'validate-agents.js exits with 1 when a delegator agent lacks handoff constraints');
+    assert(unhealthyRun.stdout.includes("Missing exact header: '## Handoff & Sandbox Constraints' or '## Execution Environment & Handoff Rule'"),
+      'validate-agents.js prints correct missing constraints header error message');
+  } finally {
+    if (fs.existsSync(malformedDelegatorAgentPath)) fs.unlinkSync(malformedDelegatorAgentPath);
+    if (fs.existsSync(tempDelegatorEvalPath)) fs.unlinkSync(tempDelegatorEvalPath);
+  }
 }
 
 module.exports = { run };

@@ -28,8 +28,8 @@ Accept the parameters contract containing:
 - **Headless Mode Override:** If `MODE=HEADLESS_LOCAL` is active, skip interactive consent prompts.
 Evaluate target agent configurations:
 1. **Metadata Consistency:** Check for YAML frontmatter matching (`name` matches filename, `description` exists and is under character limits).
-2. **Structural Completeness:** Verify the existence of the three standard steps: Alignment & Target Stack, Codebase Scan & Auditing, and Interactive Scaffolding Guidance.
-3. **Composition Integrity:** Verify the persona contains a Composition block at the bottom defining invoke conditions and limits (e.g., preventing routing/nested orchestration anti-patterns).
+2. **Structural Completeness:** Verify that the agent uses the delegator pattern, containing the 'Core Execution & Auditing Directive' (or Core Execution & Handoff Directive for the orchestrator) and relative links to its paired 'skills/<agent-name>/SKILL.md' file, alongside standard 'Handoff & Sandbox Constraints'.
+3. **Composition Integrity:** Verify the persona contains a Composition block or constraints defining invoke conditions and limits.
 4. **Token Footprint:** Audit prompt size. If the file is >150 lines or contains large checklists/dictionaries, recommend moving them to the `references/` directory.
 
 ### Phase 3: Validation & Test Scaffolding
@@ -52,9 +52,9 @@ Configure quality gates for the agent files:
 
 ## Verification
 Confirm that:
-- [ ] YAML frontmatter matches filename and directory limits.
-- [ ] All three required steps (Alignment, Scan, Scaffolding) are present.
-- [ ] Composition block is defined at the bottom.
+- [ ] Frontmatter matches filename and directory limits.
+- [ ] Core delegator directive and handoff/sandbox constraints are defined, with correct relative links to its paired skill file.
+- [ ] Composition or constraints block is defined.
 - [ ] Large checklists are separated into `references/`.
 - [ ] Rubric evaluation suite is created and registered.
 - [ ] Validation scripts and pre-commit checks run and exit with 0.
