@@ -11,13 +11,6 @@ For C and C++ codebases, formatting is enforced using `clang-format` configured 
 ### 1.1 Google Style `.clang-format` Template
 Save this file at the workspace root to automate C/C++ formatting:
 
-## 1. C/C++ Google Style Enforcement (`.clang-format`)
-
-For C and C++ codebases, formatting is enforced using `clang-format` configured to match the Google C++ Style Guide.
-
-### 1.1 Google Style `.clang-format` Template
-Save this file at the workspace root to automate C/C++ formatting:
-
 ```yaml
 ---
 Language: Cpp

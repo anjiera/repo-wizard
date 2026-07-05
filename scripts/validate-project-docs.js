@@ -7,6 +7,7 @@
  * 2. Agent Matrix Coverage: Every agent in agents/ must be listed in docs/AGENT_MATRIX.md.
  * 3. Skill Matrix Coverage: Every skill directory in skills/ must be listed in docs/AGENT_MATRIX.md.
  * 4. Main Navigation Coverage: Every guide in docs/ (excluding generated HTML files) must be referenced in the root README.md.
+ * 5. Markdown Duplication: Detects intra-file and inter-file text repetitions.
  *
  * Exit codes: 0 = all clear, 1 = validation errors
  */
@@ -16,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { ROOT_DIR, COLORS } = require('./validation-helpers');
+const { ROOT_DIR, COLORS, scanDir } = require('./validation-helpers');
 const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 const YELLOW = '\x1b[33m';
 
@@ -144,6 +145,123 @@ function validateReadmeNavigation() {
   }
 }
 
+// Whitelisted paragraphs/lines to ignore
+const COMMON_WHITELIST = [
+  // No Advice Provided Disclaimer
+  "no advice provided the reference standards checklists and documentation catalogs in this directory are educational and informational resources they do not constitute legal financial compliance regulatory or safety advice developers must perform their own review of recommendations configurations and licenses to ensure compatibility with their organizational standards and local laws",
+  // Developer Empowerment Disclaimer
+  "developer empowerment disclaimer repo wizard provides automated observations analysis and educational suggestions regarding your codebase and toolchain the user retains final engineering accountability and sole responsibility for tool choices configuration testing compliance adoption and long-term maintenance this report does not constitute legal advice compliance certification or formal audit results",
+  // Agent prompt rules and delegator boilerplates
+  "you must strictly follow the styling formatting and behavior guidelines defined in agent execution rules",
+  "for the stepbystep auditing checklist alignment phases scaffolding rules verification tasks and standard guidelines you must load and follow the paired skill workflow do not duplicate or deviate from the skill instructions",
+  "you must load and strictly adhere to the unified safety rules mock constraints redacted mode compliance and tool execution boundaries defined in handoff sandbox constraints do not duplicate or deviate from those constraints"
+];
+
+function validateDuplication() {
+  console.log('Checking documentation for duplicate paragraphs/sections...');
+
+  const scanDirs = [
+    path.join(ROOT, 'skills'),
+    path.join(ROOT, 'agents'),
+    path.join(ROOT, 'references'),
+    path.join(ROOT, 'docs')
+  ];
+
+  const files = [];
+  for (const dir of scanDirs) {
+    scanDir(dir, '.md', files);
+  }
+
+  // Track occurrences: normalized_text -> { count: number, files: Set<string>, rawText: string }
+  const globalParagraphs = new Map();
+
+  for (const file of files) {
+    if (!fs.existsSync(file)) continue;
+    const content = fs.readFileSync(file, 'utf8');
+
+    // Split content by blank lines (collapsing multiple newlines)
+    const paragraphs = content.split(/\r?\n\s*\r?\n/);
+    const localParagraphs = new Set();
+
+    for (let p of paragraphs) {
+      p = p.trim();
+      if (!p) continue;
+
+      // 1. Remove code blocks
+      const noCodeBlocks = p.replace(/```[\s\S]*?```/g, '').trim();
+      if (!noCodeBlocks) continue;
+
+      // 2. Remove blockquotes and alerts
+      const noBlockquotes = noCodeBlocks.replace(/^>\s*(?:\[![A-Z]+\])?/gim, '').trim();
+      if (!noBlockquotes) continue;
+
+      const lines = noBlockquotes.split(/\r?\n/);
+      const filteredLines = [];
+
+      for (let line of lines) {
+        line = line.trim();
+        if (!line) continue;
+
+        // Skip headers (starting with #)
+        if (line.startsWith('#')) continue;
+        // Skip table formatting lines (starting with |)
+        if (line.startsWith('|')) continue;
+        // Skip horizontal rules
+        if (/^[-*_]{3,}$/.test(line)) continue;
+
+        filteredLines.push(line);
+      }
+
+      if (filteredLines.length === 0) continue;
+
+      const cleanedParagraph = filteredLines.join(' ').trim();
+
+      // Normalize string: strip markdown links, bold markers, bullet symbols, convert to lowercase, collapse whitespace, strip punctuation
+      const normalized = cleanedParagraph
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // replace [text](url) with text
+        .replace(/\*\*|__|\*|_/g, '')             // remove bold/italic formatting
+        .replace(/^[-*+]\s+/, '')                 // remove single bullet markers at start
+        .replace(/^\d+\.\s+/, '')                 // remove ordered list prefix at start
+        .replace(/`/g, '')                        // remove backticks
+        .toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, "") // strip punctuation
+        .replace(/\s+/g, ' ')                     // collapse whitespaces
+        .trim();
+
+      // Ignore short sentences/paragraphs
+      if (normalized.length < 60 || normalized.split(' ').length < 10) continue;
+
+      // Ignore whitelisted common disclaimers
+      if (COMMON_WHITELIST.some(w => normalized.includes(w))) continue;
+
+      // Check intra-file duplication
+      const relativePath = path.relative(ROOT, file);
+      if (localParagraphs.has(normalized)) {
+        reportError(`Intra-file duplication: The paragraph starting with "${cleanedParagraph.substring(0, 60)}..." is repeated within ${relativePath}.`);
+      } else {
+        localParagraphs.add(normalized);
+      }
+
+      // Track globally for inter-file duplication
+      if (!globalParagraphs.has(normalized)) {
+        globalParagraphs.set(normalized, {
+          files: new Set(),
+          rawText: cleanedParagraph
+        });
+      }
+      globalParagraphs.get(normalized).files.add(relativePath);
+    }
+  }
+
+  // Check inter-file duplication: if a paragraph appears in more than 2 files (i.e. >= 3 files), report it
+  for (const [normalized, data] of globalParagraphs.entries()) {
+    if (data.files.size >= 3) {
+      const fileList = Array.from(data.files).join(', ');
+      reportError(`Inter-file duplication: Identical text is duplicated across ${data.files.size} files (${fileList}):\n       "${data.rawText.substring(0, 100)}..."\n       Please extract this block into a shared reference file under references/.`);
+    }
+  }
+}
+
 const { execSync } = require('child_process');
 
 function runGenericValidateDocs() {
@@ -159,6 +277,7 @@ function main() {
   validateAgentMatrix();
   validateSkillMatrix();
   validateReadmeNavigation();
+  validateDuplication();
   runGenericValidateDocs();
 
   if (totalErrors > 0) {

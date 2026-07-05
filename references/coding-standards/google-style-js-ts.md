@@ -9,11 +9,6 @@ This document defines standard formatting and style guidelines for JavaScript an
 For JavaScript and TypeScript, style guidelines are based on the Google JavaScript Style Guide, utilizing 2-space indentation, strict JSDoc comments, and line length rules.
 
 ### 1.1 ESLint Configuration Template (`.eslintrc.json`)
-## 2. JavaScript / TypeScript Google Style (`eslint-config-google`)
-
-For JavaScript and TypeScript, style guidelines are based on the Google JavaScript Style Guide, utilizing 2-space indentation, strict JSDoc comments, and line length rules.
-
-### 2.1 ESLint Configuration Template (`.eslintrc.json`)
 ```json
 {
   "extends": ["eslint:recommended", "google"],
