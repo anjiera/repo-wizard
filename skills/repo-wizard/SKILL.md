@@ -94,7 +94,7 @@ To let developers focus their efforts and manage token limits, scans can be stag
 ### Core Profiling & Alignment
 1. **Local Interactive Mode**: Present the alignment questionnaire sequentially.
     - **Pillar Focus Prompt**: Prompt the developer for **Pillar Scan Scope Filtering** (see **Specialist Quality Pillars & Concurrency Framework** above) to select a specific target pillar focus or scan all pillars.
-    - **Questionnaire & Exclusions**: Sequentially present questions with section skip controls. Apply dynamic filtering based on the selected pillar focus. Promote user-owned thresholds and select "Generate Reports" mode vs "Generate Reports & Backlog" mode.
+    - **Questionnaire & Exclusions**: Sequentially present questions with section skip controls. Apply dynamic filtering based on the selected pillar focus. Promote user-owned thresholds (note that the tool always compiles both reports and the backlog CSV at user-story-level precision).
     - **Review & Confirmation Gate**: Immediately after the user answers the final question, DO NOT proceed to execution. Present a formatted summary of the user's answers and list ONLY the selected sub-agents (do NOT list any skipped or irrelevant sub-agents) along with a 1-sentence description of what each sub-agent does. Prompt the user to review/update their answers or proceed. Only dispatch parameters contracts to specialists and call `run-fallback-sequential-orchestration.js` (or invoke natively in chat) in Optimization & Handoff after the user explicitly confirms they want to proceed.
 2. **Headless Mode**: Bypass the questionnaire and live alignment:
    - **Decoupled Relevance Sweep**: Query each subagent with a fast, non-blocking check. Subagents return `relevance: 'High' | 'Medium' | 'Low'` and a `rationale`. Skip full analysis for subagents returning `Low`, and immediately update their status in the manifest to `completed` so they are not treated as pending.
@@ -131,15 +131,15 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 2. **The Full Technical Report (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html`)**:
   - Profile the codebase (LOC, file counts, structure).
   - Log capability mappings, evaluator screening outputs, and the selection ledger (using default recommendations in headless mode).
-  - In backlog mode, append a high-level summary of the generated issues and recommending agents.
+  - Append a high-level summary of the generated issues and recommending agents.
 3. **The Executive Summary (`<reportRoot>/.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html`)**:
   - Write a constructive, positive high-level overview in Markdown and HTML.
   - Structure strictly into 3 sections, with the paragraph and word counts of each section aligning with the target limits for the active codebase sizing tier defined in scripts/report-constants.js: Section 1 (Codebase Health & Strengths), Section 2 (Tooling & Compliance Opportunities), and Section 3 (Rollout Roadmap).
 4. **Upgrade Mismatch Hook**: If a weekend vibe project handles complex compliance/payment/sensitive operations, append the mismatch hook to the bottom of all reports:
   > *"To improve this repository in the direction of [Production Tool / Enterprise System] standard, copy this codebase locally and run /repo-wizard to begin an interactive step-by-step implementation plan."*
 5. **Backlog CSV & Toolchain Summary**:
-  - Write JIRA backlog CSV (`<reportRoot>/.repo-wizard/backlog.csv` - Backlog Mode only).
-  - Write toolchain doc (`docs/TOOLCHAIN.md` - "Generate Reports" Mode only).
+  - Write JIRA backlog CSV (`<reportRoot>/.repo-wizard/backlog.csv` - generated unconditionally).
+  - Write toolchain doc (`docs/TOOLCHAIN.md`).
 6. **Post-Execution Output Summary**:
   - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
   - List each generated file with clickable absolute file URLs (using the file scheme with forward slashes, e.g. formatting the absolute path to the report as a file URL: [Executive Summary]\(file:///path/to/repo-wizard-executive-summary.md\) using an escaped parenthesis).

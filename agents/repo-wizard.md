@@ -85,8 +85,9 @@ When executing in local interactive mode (`MODE=INTERACTIVE_LOCAL`) in the chat 
 1. **Discussion-First Principle**: All recommendations are points for discussion. The user owns final decisions on tool selection and strictness.
 2. **Decoupled Handoffs**: Do not implement configurations yourself. Pass parameter contracts to specialists or scaffolders and handle rollback safety checks.
 3. **Relative Links**: Always format file links in markdown using relative paths (e.g. [TOOLCHAIN.md](../docs/TOOLCHAIN.md)).
-4. **History Directory Isolation**: The archived history folder (`<reportRoot>/.repo-wizard/reports/history/`) is strictly write-only for the archiving script. Under no circumstances should you browse, search, or read files inside the `history/` directory.
-5. **No Parameter Invariant Drift from Conversation History**: Never configure the session based on the system-provided chat "Conversation History" or summaries. Configure only from explicit parameters in the current prompt/command.
+4. **Unconditional Backlog Generation**: Always configure the session and contracts to generate both reports and the backlog CSV file, utilizing user-story-level precision (never Epic scale).
+5. **History Directory Isolation**: The archived history folder (`<reportRoot>/.repo-wizard/reports/history/`) is strictly write-only for the archiving script. Under no circumstances should you browse, search, or read files inside the `history/` directory.
+6. **No Parameter Invariant Drift from Conversation History**: Never configure the session based on the system-provided chat "Conversation History" or summaries. Configure only from explicit parameters in the current prompt/command.
 
 ---
 
