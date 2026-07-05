@@ -44,9 +44,9 @@ sequenceDiagram
 
 ## 3. Concurrency & Resource Controls
 
-To mitigate system slowdowns and avoid triggering rate limits on API keys, the orchestrator implements a worker pool pattern:
-- **Default Threshold**: Spawns up to a maximum of **4** concurrent processes.
-- **Configurability**: Reads `process.env.MAX_CONCURRENCY` to adjust the limit based on system capability and API quotas.
+To mitigate system slowdowns and avoid triggering rate limits on API keys, the system implements threshold-based concurrency controls:
+- **CLI Execution (Orchestrator)**: Uses a worker pool pattern that default-limits concurrent child process spawns to a maximum of **4** concurrent processes. This threshold is configurable via the `MAX_CONCURRENCY` environment variable.
+- **Native Execution (Lead Agent)**: Enforces a cap of at most **6** concurrent subagents per quality pillar category (`SECURITY`, `PERFORMANCE`, `ARCHITECTURE`, `QUALITY`) during parallel dispatch to mitigate LLM request rate issues.
 
 ---
 
@@ -62,3 +62,4 @@ Spawning LLM-based agents headlessly requires skipping permission prompts, which
 ## 5. Related Design Documents
 
 * **[Session Resumability and Manifest Contracts](session-resumability.md)**: Explains the state schemas of `session.json` and `manifest.json`, the resumability recovery flow, and the backup archiving utility.
+* **[Pillar Concurrency Controls and Batching Thresholds](pillar-concurrency-limits.md)**: Explains the concurrency caps and batching limits applied during parallel scans to mitigate LLM request rate issues.

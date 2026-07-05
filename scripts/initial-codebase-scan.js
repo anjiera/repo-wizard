@@ -263,12 +263,21 @@ for (const spec of SPECIALISTS) {
 const activeCount = manifestContracts.filter(c => c.status !== 'skipped').length;
 const hasPillarArg = args.includes('--pillar');
 if (isHeadless && activeCount > 6 && !hasPillarArg) {
+  const securityCount = manifestContracts.filter(c => c.status !== 'skipped' && agentRegistry[c.agent_name].pillar === 'SECURITY').length;
+  const performanceCount = manifestContracts.filter(c => c.status !== 'skipped' && agentRegistry[c.agent_name].pillar === 'PERFORMANCE').length;
+  const architectureCount = manifestContracts.filter(c => c.status !== 'skipped' && agentRegistry[c.agent_name].pillar === 'ARCHITECTURE').length;
+  const qualityCount = manifestContracts.filter(c => c.status !== 'skipped' && agentRegistry[c.agent_name].pillar === 'QUALITY').length;
+
   console.log(`${YELLOW}⚠ High Sweep Warning: The system identified ${activeCount} relevant specialist agents.${RESET}`);
   console.log(`Running all of them at once will consume significant AI tokens.`);
   console.log(`\nTo run your audits in stages, please run individual pillars:`);
+  console.log(`\n  Security (${securityCount} agent${securityCount === 1 ? '' : 's'}):`);
   console.log(`  node scripts/initial-codebase-scan.js --pillar SECURITY`);
+  console.log(`\n  Performance (${performanceCount} agent${performanceCount === 1 ? '' : 's'}):`);
   console.log(`  node scripts/initial-codebase-scan.js --pillar PERFORMANCE`);
+  console.log(`\n  Architecture (${architectureCount} agent${architectureCount === 1 ? '' : 's'}):`);
   console.log(`  node scripts/initial-codebase-scan.js --pillar ARCHITECTURE`);
+  console.log(`\n  Quality (${qualityCount} agent${qualityCount === 1 ? '' : 's'}):`);
   console.log(`  node scripts/initial-codebase-scan.js --pillar QUALITY`);
   console.log(`\nTo bypass this warning and run all specialists, run explicitly with:`);
   console.log(`  node scripts/initial-codebase-scan.js --pillar ALL`);
