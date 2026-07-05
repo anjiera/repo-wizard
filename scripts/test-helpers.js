@@ -24,6 +24,7 @@ const validateScripts = require('../tests/validate-scripts.test');
 const validateContracts = require('../tests/validate-contracts.test');
 const registerPlugin = require('../tests/register-plugin.test');
 const runEvals = require('../tests/run-evals.test');
+const redactor = require('../tests/redactor.test');
 
 function runAll() {
   try {
@@ -40,6 +41,7 @@ function runAll() {
     validateContracts.run();
     registerPlugin.run();
     runEvals.run();
+    redactor.run();
 
     console.log(`\nAll helper validator tests complete: ${stats.testsPassed} / ${stats.testsRun} assertions passed.`);
     process.exit(0);
