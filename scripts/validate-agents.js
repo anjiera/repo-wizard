@@ -171,7 +171,7 @@ function main() {
         }
       }
 
-      // Structural validations for execution agents (excluding helpers/orchestrators)
+      // Structural validations for execution agents (excluding helpers/orchestrators unless they use delegator pattern)
       const EXEMPT_AGENTS = [
         'repo-wizard.md',
         'legal-neutrality-auditor.md',
@@ -179,7 +179,19 @@ function main() {
         'tooling-engineer.md'
       ];
 
-      if (!EXEMPT_AGENTS.includes(file)) {
+      const usesDelegatorPattern = content.includes('## Core Execution & Auditing Directive') || content.includes('## Core Execution & Handoff Directive');
+
+      if (usesDelegatorPattern) {
+        // Validate delegator pattern structure
+        if (!content.includes('## Handoff & Sandbox Constraints') && !content.includes('## Execution Environment & Handoff Rule')) {
+          errors.push("Missing exact header: '## Handoff & Sandbox Constraints' or '## Execution Environment & Handoff Rule'");
+        }
+        const skillLink = `../skills/${agentKey}/SKILL.md`;
+        if (!content.includes(skillLink)) {
+          errors.push(`Missing link reference to paired skill file: '${skillLink}'`);
+        }
+      } else if (!EXEMPT_AGENTS.includes(file)) {
+        // Legacy checks
         if (!content.includes('## Step 1: Alignment & Target Stack')) {
           errors.push("Missing exact header: '## Step 1: Alignment & Target Stack'");
         }

@@ -13,49 +13,16 @@ You must refer to the [Data Privacy & Regulation Compliance Checklist](../refere
 
 ---
 
-## Step 1: Alignment & Target Stack
+## Core Execution & Auditing Directive
 
-- **Headless Mode Override:** Refer to Step 1 of [Headless Mode Override Protocol](../references/headless-override.md).
-
-When spawned, you must align with the developer:
-1. **TOS Check & Opt-In:** Follow the **Legal Terms & Consent Gate (TOS Check)** and the **Opt-In & Tool Screening Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md) to gather developer privacy preferences and screen candidates.
-2. **Target Regulations:** Identify which regulations apply (GDPR, CCPA/CPRA, COPPA, or general hardening). If the developer has no preference or is unsure of what tools exist for their stack, suggest candidate tools dynamically *only after* screening them.
-3. **Age Thresholds:** Confirm if the application targets or collects data from children under 13 (triggering COPPA rules).
-4. **Data Infrastructure:** Identify database engines (SQL, NoSQL), logging libraries (e.g. winston, logback), and web framework routes.
+For the step-by-step auditing checklist, alignment phases, scaffolding rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/privacy-hardener/SKILL.md). Do not duplicate or deviate from the skill instructions.
 
 ---
 
-## Step 2: Codebase Scan & Auditing
+## Handoff & Sandbox Constraints
 
-- **Headless Mode Override:** Refer to Step 2 of [Headless Mode Override Protocol](../references/headless-override.md).
-
-Scan the codebase to evaluate data privacy practices:
-1. **Bypass Check:** Follow the **Codebase Scan Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Ask the developer for permission before running any scanning operations. If bypassed, skip the codebase scan and proceed directly to Step 3.
-2. **Plaintext PII Storage:** Scan ORM models, database migrations, or schemas for plaintext fields (e.g., `email`, `phone`, `ssn`, `birth_date`).
-3. **Logger Outputs:** Scan for log calls that print raw object variables, user context properties, or entire request bodies.
-4. **Account Routes:** Look for existing user registration, profile, or account deletion routes.
-
----
-
-## Step 3: Interactive Scaffolding Guidance
-
-- **Headless Mode Override:** Refer to Step 3 of [Headless Mode Override Protocol](../references/headless-override.md) (writing observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-privacy-hardener.md`).
-
-Coordinate with the `tooling-engineer.agent` to deploy privacy controls, adhering to the following rules:
-
-### 3.1 Developer Consent & Interactive Review
-1. **Shared Robustness Protocol:** Follow the **Interactive Consultation & Consent Protocol** in [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md). Welcomingly answer any questions before prompting for decisions.
-2. **Interactive Option Explanation:** Explain setting choices and tradeoffs (e.g. hashing vs masking for PII scrubbing, cascading deletion vs soft anonymization). Ask the developer to guide the configuration file modifications.
-3. **Post-Installation Review:** Once installed, offer to review any modified configuration files that differ from default settings.
-4. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append installation and setup commands to the project's existing setup scripts (e.g. `setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`), and present these changes to the user for review.
-5. **Administrative & UX Limitations:** Clearly explain that administrative or user-experience controls (like cookie banners, privacy policy link visibility, or age-gate forms) cannot be programmatically verified from the codebase itself, and recommend that they manually test these.
-
-### 3.2 Privacy Controls Scope:
-1. **PII Logging Scrubbers:** Scaffold middleware or helper functions that strip or mask sensitive data (emails, passwords, API tokens, IP addresses) before it hits log outputs.
-2. **Route Templates & Placeholders:** Draft stubs and controllers for data deletion ("Right to be Forgotten" cascading deletes) and data export ("Right to Portability" JSON/CSV builders).
-3. **Column-Level Encryption:** Provide configuration guides or code suggestions to encrypt sensitive database columns at rest.
-4. **COPPA Exclusions:** If COPPA is triggered, verify that device/advertising identifiers are not collected from children under 13, and outline parent verification instructions.
-
-### 3.3 Safety & Rollback
-1. **Domain Disclaimer:** You must include a clear legal disclaimer stating that while these configurations support privacy compliance readiness, using the agent or its recommendations in no way certifies the code or proves that it will pass any regulatory certification or audit, which requires a formal independent audit.
-2. **Shared Rollback Protocol:** Adhere strictly to the rollback and validation loop procedures defined in the [Scaffolding Robustness & Rollback Protocol](../references/scaffolding-robustness-protocol.md).
+1. **Active Workspace Scans:** You operate strictly on the active local workspace directory (`process.cwd()`). Do not scan or query directories outside of the active workspace.
+2. **Context-Bridging Banned:** Do not accept serialized codebase contents or metadata bridge summaries from the invoking Lead Agent. You have full read access to the workspace and MUST read and inspect the target files directly using your file-viewing tools to ensure authenticity.
+3. **Mock Mode Check:** If `--mock-cli true` is passed or configured, write mock/simulated observations and exit. Otherwise, perform a genuine codebase scan and write real observations.
+4. **Redacted Mode Compliance:** If `--redact true` is configured, only output plain-text file basenames in observations and logs to support anonymity.
+5. **Decoupled Handoffs:** Do not perform write/modification steps without developer opt-in/consent. Coordinate writing configurations with the `tooling-engineer.agent` or run scaffold scripts safely.
