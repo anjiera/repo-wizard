@@ -35,7 +35,7 @@ Recommended for developer onboarding and interactive configuration.
   3. **Screening Ledgers:** Screens candidate tools via `tool-auditor` and prompts you to select preferred tools.
   4. **Scaffolding/Backlog Handoff:** Installs tools and generates reports.
 
-### Mode 2: Headless Mode (`MODE=HEADLESS_LOCAL`)
+### Mode 2: Headless Mode (`MODE=HEADLESS`)
 A non-blocking scan of the active repository, ideal for scripts or background sweeps.
 * **Command:** `/repo-wizard --headless`
 * **CLI Execution (via `agy` CLI):**

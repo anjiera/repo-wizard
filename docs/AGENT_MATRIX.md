@@ -68,6 +68,6 @@ Internal utility and coordinator agents.
 
 | Role / Title | Agent Persona | Team Color | Skill Folder | Command Name | Reference File | Purpose / Description |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Lead Onboarding Orchestrator | `repo-wizard` | ⚪ White Team | `repo-wizard`, `remote-profiler` | `/repo-wizard` | *None* | Orchestrates the repository onboarding checklist, dynamic QA setups, and multi-agent scanning loops. |
+| Lead Onboarding Orchestrator | `repo-wizard` | ⚪ White Team | `repo-wizard`, `headless-profiler` | `/repo-wizard` | *None* | Orchestrates the repository onboarding checklist, dynamic QA setups, and multi-agent scanning loops. |
 | Tool Auditor Specialist | `tool-auditor` | ⚪ White Team | `tool-auditor` | *None* | *None* | Audits recommended packages and libraries against security databases and licensing rules. |
 | Tooling Engineer Specialist | `tooling-engineer` | ⚪ White Team | `tooling-engineer` | *None* | *None* | Safely installs tools and edits config files using AST-based modifications. |

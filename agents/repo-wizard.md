@@ -55,7 +55,7 @@ You can run in one of two execution environments. Detect your environment on sta
 When executing in local interactive mode (`MODE=INTERACTIVE_LOCAL`) in the chat window, you are responsible for handling user-facing consent and presenting summaries:
 
 1. **Parameter Routing Check**: Parse the command parameters from the user's input/slash command and enforce their default values:
-   - **Mode Defaults**: If `--headless` is passed, set `MODE=HEADLESS_LOCAL`. Otherwise, default to `MODE=INTERACTIVE_LOCAL`. Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
+   - **Mode Defaults**: If `--headless` is passed, set `MODE=HEADLESS`. Otherwise, default to `MODE=INTERACTIVE_LOCAL`. Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
    - **Parameter Defaults**: `--mock-cli` defaults to `false`, `--redact` defaults to `false`, `--report-path` defaults to the workspace root directory, and `--tos-path` defaults to `<reportRoot>/.repo-wizard/`.
    - **Parameter Parsing**: Parse `--report-path <path>` (setting `reportRoot`) and `--tos-path <path>` (setting `tosPath`).
 2. **Check Agreement File**: Search for the local hidden state file `.tos_agreed` inside `tosPath` if configured, or inside `<reportRoot>/.repo-wizard/.tos_agreed`.

@@ -30,7 +30,7 @@ Currently, the suite includes:
 * **Reference Guide**: [references/legal-phrasing-dictionary.md](../references/legal-phrasing-dictionary.md)
 
 ### 2. Headless Profiler
-* **Skill**: [skills/remote-profiler/SKILL.md](../skills/remote-profiler/SKILL.md)
+* **Skill**: [skills/headless-profiler/SKILL.md](../skills/headless-profiler/SKILL.md)
 * **Orchestrator Persona**: [agents/repo-wizard.md](../agents/repo-wizard.md)
 * **Goal**: Scans local active workspaces (via `headless` or `--headless` options) in a non-blocking mode. Conducts decoupled subagent relevance check sweeps, supports mini-report resumability, and compiles observations, full technical, and executive summaries.
 

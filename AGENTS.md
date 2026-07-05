@@ -43,7 +43,7 @@ Map user queries to skills according to this matrix:
 
 This plugin supports both interactive configuration and headless scanning modes:
 * **Interactive Mode (`MODE=INTERACTIVE_LOCAL`):** Prompts the user through alignment questions, screens tools, and scaffolds configurations.
-* **Headless Mode (`MODE=HEADLESS_LOCAL`):** Non-blocking best-guess scan of the active repository.
+* **Headless Mode (`MODE=HEADLESS`):** Non-blocking best-guess scan of the active repository.
 
 ### Decoupled Subagent Relevance Sweep
 Before running full sweeps, the Lead Agent dispatches a relevance check to each specialist. Specialists must evaluate the codebase metadata/clues and return a JSON verdict containing `relevance` (`High` | `Medium` | `Low`) and a brief `rationale`. Full sweeps are skipped for `Low` relevance subagents.
