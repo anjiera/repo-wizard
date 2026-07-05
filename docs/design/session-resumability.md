@@ -40,13 +40,13 @@ Located at `.repo-wizard/session.json`, this file serves as the source of truth 
 Key fields in `session.json`:
 * `status`: Indicates whether the session is `incomplete` or `completed`.
 * `currentStep`: Tracks the active phase or question index.
-* `answers`: A key-value map storing developer choices across the configuration categories (e.g., `context`, `compliance`, `stack`, `friction`).
+* `answers`: A key-value map storing developer choices across the configuration categories (e.g., `context`, `compliance`, `stack`, `strictness`).
 
 *Example session.json structure:*
 ```json
 {
   "status": "completed",
-  "currentStep": "friction",
+  "currentStep": "strictness",
   "answers": {
     "targetAudience": "production-service",
     "complianceTargets": ["soc2", "gdpr"],

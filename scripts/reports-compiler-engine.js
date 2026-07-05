@@ -308,7 +308,7 @@ ${DISCLAIMER_TEXT}
   addAnswer('Scaffolding Mode', answers.scaffoldingMode || answers.mode);
   addAnswer('Coverage Threshold Target', answers.coverageThreshold ? `${answers.coverageThreshold}%` : null);
   addAnswer('Project Context / Target Audience', answers.context || answers.targetAudience);
-  addAnswer('Tooling Strictness', answers.friction || answers.frictionTolerance || answers.strictness);
+  addAnswer('Tooling Strictness', answers.strictness || answers.friction || answers.frictionTolerance);
 
   if (answersList.length > 0) {
     profileSection += answersList.join('\n') + '\n';

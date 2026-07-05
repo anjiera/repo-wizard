@@ -280,7 +280,7 @@ const session = {
     platforms: [],
     compliance: [],
     scaffoldingMode: 'scaffold',
-    friction: 'medium',
+    strictness: 'medium',
     ...(existingSession ? existingSession.answers : {})
   }
 };
