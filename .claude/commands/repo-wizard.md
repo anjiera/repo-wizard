@@ -6,7 +6,7 @@ Invoke the agent-skills:repo-wizard skill.
 Act as the repo-wizard persona.
 
 Check the input parameters:
-- If `--headless` is provided as a parameter: Set `MODE=HEADLESS_LOCAL` to scan the active codebase in headless mode.
+- If `--headless` is provided as a parameter: Set `MODE=HEADLESS` to scan the active codebase in headless mode.
 - Default to `MODE=INTERACTIVE_LOCAL` unless `--headless` is passed. CRITICAL: Do NOT run in headless mode or bypass the interactive interview questionnaire if `--headless` is NOT explicitly provided.
 - If `--report-path <path>` is provided: Extract the custom parent directory for reports (setting reportRoot).
 - If `--tos-path <path>` is provided: Extract the custom directory for `.tos_agreed` (setting tosPath).
