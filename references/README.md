@@ -1,6 +1,6 @@
 # Repo Wizard References Catalog
 
-This directory contains high-density checklist, standard, and pattern files used by specialist agents to audit repositories and scaffold configurations.
+This directory contains high-density checklist, standard, and pattern files used by specialist agents to audit repositories and tool configurations.
 
 ---
 
@@ -35,7 +35,7 @@ Focuses on compliance profiles, accessibility standards, legal liability checks,
 * **Legally Dubious Wordlist Schema:** [legally-dubious-words-schema.json](legally-dubious-words-schema.json)
 * **Legally Dubious Wordlist:** [legally-dubious-words.json](legally-dubious-words.json)
 * **Regulatory Compliance Frameworks:** [security-hardening-checklist.md](security-hardening-checklist.md)
-* **Scaffolding Robustness Protocol:** [scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)
+* **Tooling Robustness Protocol:** [tooling-robustness-protocol.md](tooling-robustness-protocol.md)
 * **Terms of Service & Developer Consent:** [terms-of-service.md](terms-of-service.md)
 * **Plugin Metadata Schema:** [plugin-schema.json](plugin-schema.json)
 * **Interactive Questionnaire Schema:** [questionnaire-spec.json](questionnaire-spec.json)
@@ -140,7 +140,7 @@ Below is a complete index of all 45 reference files with descriptions of their t
     - Ruby GC parameters, frozen string literal optimizations, lazy enumerators, and ActiveRecord preloading.
 39. **[performance-patterns-rust.md](performance-patterns/performance-patterns-rust.md)**
     - Async spawn_blocking, zero-copy borrowing Serde lifetimes, and Cargo release configurations.
-40. **[scaffolding-robustness-protocol.md](scaffolding-robustness-protocol.md)**
+40. **[tooling-robustness-protocol.md](tooling-robustness-protocol.md)**
     - Safe package installation commands, rollback configurations, AST merge routines, and prompt injection defense.
 41. **[security-hardening-checklist.md](security-hardening-checklist.md)**
     - Compliance mapping profiles (SOC 2, ISO 27001, HIPAA controls, FIPS algorithms).

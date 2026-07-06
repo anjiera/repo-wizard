@@ -54,7 +54,7 @@ To safeguard the step-based execution structure of each agent, each markdown per
   * `### 3.3` (Mitigation & Rollback)
 
 ### B. Standardized References
-Agents must explicitly mention the [scaffolding-robustness-protocol.md](../references/scaffolding-robustness-protocol.md) file inside their `Step 3.3` instructions to align on rollback behaviors.
+Agents must explicitly mention the [tooling-robustness-protocol.md](../references/tooling-robustness-protocol.md) file inside their `Step 3.3` instructions to align on rollback behaviors.
 
 ### C. Rubric Parity
 Every agent persona file must have a corresponding dynamic test file under `evals/` matching the agent file name.

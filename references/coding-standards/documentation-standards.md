@@ -106,7 +106,7 @@ cat <<EOF > "$FILE_NAME"
 Chosen option: [ Choice ], because [ reason ].
 EOF
 
-echo "Scaffolded ADR at: $FILE_NAME"
+echo "Configured ADR at: $FILE_NAME"
 ```
 
 ### 2.2 Python Script (`scripts/new_adr.py`)
@@ -165,7 +165,7 @@ Chosen option: [ Choice ], because [ reason ].
     with open(filename, 'w') as f:
         f.write(template)
         
-    print(f"Scaffolded ADR at: {filename}")
+    print(f"Configured ADR at: {filename}")
 
 if __name__ == '__main__':
     main()
@@ -220,7 +220,7 @@ Chosen option: [ Choice ], because [ reason ].
 `;
 
 fs.writeFileSync(filePath, template, 'utf8');
-console.log(`Scaffolded ADR at: ${filePath}`);
+console.log(`Configured ADR at: ${filePath}`);
 ```
 
 ---
@@ -350,7 +350,7 @@ Concrete improvements to apply in the next cycle:
 
 | Continuous Improvement Task | Owner | Target Cycle / Date | Ticket / PR Link |
 | :--- | :--- | :--- | :--- |
-| [e.g., Scaffold default Github PR description template] | [Name] | Next Sprint | [#567](path/to/pr) |
+| [e.g., Tool default Github PR description template] | [Name] | Next Sprint | [#567](path/to/pr) |
 ```
 
 ---

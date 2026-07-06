@@ -14,7 +14,7 @@ DO-178C (Software Considerations in Airborne Systems and Equipment Certification
 
 ### 1.1 Traceability & Design Rules
 - [ ] **Bidirectional Traceability:** Every line of source code must trace to a High-Level Requirement (HLR) or Low-Level Requirement (LLR), and vice versa. Flag any "dead code" (code with no tracing requirement) or undocumented features.
-- [ ] **Data & Control Coupling:** Scaffolding must compile and run analysis tools (e.g. static analyzers or dynamic call graph generators) to verify control and data flow invariants.
+- [ ] **Data & Control Coupling:** Tooling must compile and run analysis tools (e.g. static analyzers or dynamic call graph generators) to verify control and data flow invariants.
 - [ ] **Source-to-Object Traceability:** For DAL A, compile-time optimization must be verified or disabled (`-O0` or strict compiler qualification) to ensure compiler-inserted code can be traced directly to source statements.
 
 ### 1.2 Structural Coverage Checklist

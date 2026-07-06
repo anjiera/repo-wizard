@@ -26,8 +26,8 @@ module.exports = {
       input: 'Audit the repository setup files. The project contains a README.md and src/ index files, but no CONTRIBUTING.md, pull request templates, or issue templates exist in the workspace.',
       rubrics: [
         'The response identifies the absence of contributor templates/guidelines (e.g. CONTRIBUTING.md).',
-        'The response recommends scaffolding a basic CONTRIBUTING.md file and PR/issue templates.',
-        'The response refers to the Scaffolding Robustness or Rollback Protocol guidelines.'
+        'The response recommends tooling a basic CONTRIBUTING.md file and PR/issue templates.',
+        'The response refers to the Tooling Robustness or Rollback Protocol guidelines.'
       ]
     }
   ]

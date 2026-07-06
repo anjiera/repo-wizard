@@ -42,7 +42,7 @@ function generateMockCompiledAnalysis(targetPath) {
   ];
 
   const papercuts = [
-    `- **ADR Templates:** [Scaffolding ADR template folder](#specialist-agent-technical-scribe).`,
+    `- **ADR Templates:** [Tooling ADR template folder](#specialist-agent-technical-scribe).`,
     `- **Visual Diagrams:** [Generate Mermaid architecture flows](#specialist-agent-technical-scribe).`
   ];
 

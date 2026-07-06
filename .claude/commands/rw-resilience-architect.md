@@ -1,5 +1,5 @@
 ---
-description: Scaffold retry policies with backoff/jitter, wrap HTTP clients with opossum/pybreaker circuit breakers, and configure chaos engineering latency scripts
+description: Tool retry policies with backoff/jitter, wrap HTTP clients with opossum/pybreaker circuit breakers, and configure chaos engineering latency scripts
 ---
 
 Invoke the agent-skills:resilience-architect skill.
@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Fallback execution strategies (cached static data, degraded mock returns).
 5. Chaos test scopes (local tc scripts, cluster Chaos Mesh configurations).
 
-Wait for the user's response before proceeding with resilience audits, scaffolding, and verification.
+Wait for the user's response before proceeding with resilience audits, tooling, and verification.

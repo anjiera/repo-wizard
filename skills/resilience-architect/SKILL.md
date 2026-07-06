@@ -1,18 +1,18 @@
 ---
 name: resilience-architect
-description: Guides agents through auditing codebase fault-tolerance setups, scaffolding retry policies with backoff/jitter, wrapping network calls with circuit breakers, establishing fallback behaviors, and deploying chaos engineering script templates. Use when configuring retries, circuit breakers, fallbacks, or chaos engineering.
+description: Guides agents through auditing codebase fault-tolerance setups, tooling retry policies with backoff/jitter, wrapping network calls with circuit breakers, establishing fallback behaviors, and deploying chaos engineering script templates. Use when configuring retries, circuit breakers, fallbacks, or chaos engineering.
 ---
 
 # Code Resilience & Fault-Tolerance (`resilience-architect`)
 
 ## Overview
-A specialized reliability engineering workflow designed to audit application dependencies and HTTP clients for network vulnerabilities, scaffold retry policies with exponential backoff and jitter, wrap network handlers with fail-fast circuit breakers, create fallback response templates, and configure automated local or cluster-level chaos engineering test scripts.
+A specialized reliability engineering workflow designed to audit application dependencies and HTTP clients for network vulnerabilities, tool retry policies with exponential backoff and jitter, wrap network handlers with fail-fast circuit breakers, create fallback response templates, and configure automated local or cluster-level chaos engineering test scripts.
 
 ## When to Use
 Use this skill when:
 - Designing fault-tolerance wrappers for unreliable third-party APIs.
 - Setting up request retry parameters (limiting numbers, adding backoff jitter) to protect against thundering herd failures.
-- Scaffolding circuit breakers (timeouts, error thresholds, reset cool-downs) to prevent thread/resource pools from locking up.
+- Tooling circuit breakers (timeouts, error thresholds, reset cool-downs) to prevent thread/resource pools from locking up.
 - Creating backup data access routes (caching fallbacks) on service failures.
 - Designing chaos engineering tests (network delay injections, pod shutdowns).
 - Invoking the slash command: `/rw-resilience-architect`.
@@ -23,7 +23,7 @@ Use this skill when:
 If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-resilience-architect.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Interactive Alignment & Policy Setup
-Before scanning or scaffolding, align with the developer on target configurations:
+Before scanning or tooling, align with the developer on target configurations:
 1. **Critical APIs:** Identify which third-party or internal API integrations need protection (e.g., payment gateways, database endpoints).
 2. **Retry Policies:** Define retry caps (e.g. maximum of 3 retries), backoff multipliers, and jitter choices.
 3. **Circuit Breaker Thresholds:** Define the error rate percentage limits that trip the breaker (e.g. 50% failures), timeouts, and reset cooldown delays.
@@ -37,7 +37,7 @@ Audit the codebase to check current configurations:
 3. **Database Client Scan:** Inspect database connection pools to verify timeouts and pool capacity configurations.
 4. **Package Scan:** Check manifest files for reliability or chaos dependencies.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, middlewares, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated retry policies, circuit breaker code blocks, and chaos injection files to the developer and prompt them for review and confirmation.
@@ -47,14 +47,14 @@ Draft all configurations, middlewares, and scripts in coordination with `tooling
 ### Phase 4: Verification & Validation
 1. **Syntax Check & Compilation:** Verify that the codebase compiles and executes cleanly after wrapping network clients.
 2. **Dry-Run Chaos Test:** Run a single-iteration dry-run of the chaos script (injecting then immediately removing latency) to verify syntax and executable permissions on the shell script.
-3. **Safe Rollback:** If validation tests break after scaffolding, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+3. **Safe Rollback:** If validation tests break after tooling, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ## Common Rationalizations
 - *"We can just retry requests infinitely until the server responds."* - Infinite retries without backoff or jitter will create a "thundering herd" effect that keeps the downstream server crashed indefinitely. Always set limits (caps and jitter).
 - *"Circuit breakers are only needed on high-traffic microservices."* - Even in small apps, blocking threads or connection sockets on dead dependencies will lock up the local event loop. Circuit breakers protect client responsiveness.
 
 ## Red Flags
-- Scaffolding a circuit breaker wrapper without specifying custom timeouts or fallback functions.
+- Tooling a circuit breaker wrapper without specifying custom timeouts or fallback functions.
 - Leaving local chaos injection rules (`tc qdisc`) running permanently on the host interface without providing cleanup commands on script exit.
 - Retrying client-side HTTP errors (like 400 Bad Request, 401 Unauthorized, or 404 Not Found)—only network or server-side (5xx) failures should be retried.
 

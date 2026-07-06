@@ -1,12 +1,12 @@
 ---
 name: deployment-engineer
-description: Guides agents through auditing container configuration files, scaffolding high-availability Docker Compose replicas, configuring Kubernetes liveness/readiness/startup probes, and writing automated database backup and restore verification scripts. Use when configuring HA containers, Kubernetes probes, or database backups.
+description: Guides agents through auditing container configuration files, tooling high-availability Docker Compose replicas, configuring Kubernetes liveness/readiness/startup probes, and writing automated database backup and restore verification scripts. Use when configuring HA containers, Kubernetes probes, or database backups.
 ---
 
 # Code Deployment & Availability (`deployment-engineer`)
 
 ## Overview
-A specialized DevOps and infrastructure automation workflow designed to audit deployment configurations, scaffold high-availability multi-replica service topologies, define resilient Kubernetes readiness, liveness, and startup probes, and deploy automated database backup/restore self-verification scripts.
+A specialized DevOps and infrastructure automation workflow designed to audit deployment configurations, tool high-availability multi-replica service topologies, define resilient Kubernetes readiness, liveness, and startup probes, and deploy automated database backup/restore self-verification scripts.
 
 ## When to Use
 Use this skill when:
@@ -36,7 +36,7 @@ Audit the codebase to assess current infrastructure setups:
 3. **Database Client Scan:** Audit database connection strings and dependencies to identify database engines requiring backup configurations.
 4. **Script & Tool Scan:** Check for existing backup utility scripts, cron definitions, or recovery routines.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, manifests, and scripts in coordination with `tooling-engineer.agent`, adhering to these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated Compose multi-replica blocks, Kubernetes probe sections, and database backup scripts to the developer, prompting them for review and confirmation.
@@ -46,7 +46,7 @@ Draft all configurations, manifests, and scripts in coordination with `tooling-e
 ### Phase 4: Verification & Validation
 1. **Syntax Check & Linting:** Verify that all modified Docker Compose files or Kubernetes YAML manifests pass syntax validation checks (e.g. `docker-compose config` or dry-run yaml checks).
 2. **Dry-Run Backup Check:** Execute a dry-run check of the database backup script on a local mock target to verify it exits with 0 and passes restore verification rules.
-3. **Safe Rollback:** If validation tests break after scaffolding, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+3. **Safe Rollback:** If validation tests break after tooling, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ## Common Rationalizations
 - *"We don't need a startup probe if we set the liveness probe delay high."* - Setting a high initial delay on liveness probes slows down crash detection times. Startup probes are cleaner because they decouple startup tolerance from normal operations.

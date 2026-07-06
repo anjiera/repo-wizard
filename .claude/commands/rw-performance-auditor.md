@@ -1,5 +1,5 @@
 ---
-description: Scaffold local micro-benchmarking suites, concurrent HTTP load testing runners, and establish performance budget gates in CI/CD
+description: Tool local micro-benchmarking suites, concurrent HTTP load testing runners, and establish performance budget gates in CI/CD
 ---
 
 Invoke the agent-skills:performance-auditor skill.
@@ -11,4 +11,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 3. Load testing SLA thresholds (throughput, average latency bounds).
 4. CI performance budget requirements (failing builds on latency regressions).
 
-Wait for the user's response before proceeding with performance audits, scaffolding, and verification.
+Wait for the user's response before proceeding with performance audits, tooling, and verification.

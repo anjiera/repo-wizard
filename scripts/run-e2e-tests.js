@@ -389,7 +389,7 @@ function runGit(args, cwd) {
 }
 
 function testVCSScaffoldingRollback() {
-  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing VCS scaffolding rollback safety...${RESET}`);
+  console.log(`\n${BOLD}${BLUE}==>${RESET} ${BOLD}Testing VCS tooling rollback safety...${RESET}`);
   
   // 1. Initialize git in the sandbox to test VCS commands
   try {

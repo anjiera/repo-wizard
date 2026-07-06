@@ -21,7 +21,7 @@ module.exports = {
       input: 'Set up automated model bias and fairness checks in my python CI pipeline.',
       rubrics: [
         'The response discusses metrics like Disparate Impact ratio, demographic parity, or equalized odds.',
-        'The response suggests scaffolding checks using Fairlearn or custom validation scripts.',
+        'The response suggests tooling checks using Fairlearn or custom validation scripts.',
         'The response includes a rollback and recovery section explaining how to restore clean status on VCS if the verification test breaks.',
         'The response mentions appending setup steps to setup scripts or README files, presenting the changes to the user for review.'
       ]

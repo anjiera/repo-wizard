@@ -1,6 +1,6 @@
 ---
 name: agent-alignment-auditor
-description: Guides agents through auditing agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and scaffolding rubric-based evaluations and validation checks. Use when reviewing agent code quality or setting up testing suites for agents.
+description: Guides agents through auditing agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and tooling rubric-based evaluations and validation checks. Use when reviewing agent code quality or setting up testing suites for agents.
 ---
 
 # Agent Alignment Auditor (`agent-alignment-auditor`)
@@ -33,9 +33,9 @@ Evaluate target agent configurations:
 3. **Composition Integrity:** Verify the persona contains a Composition block or constraints defining invoke conditions and limits.
 4. **Token Footprint:** Audit prompt size. If the file is >150 lines or contains large checklists/dictionaries, recommend moving them to the `references/` directory.
 
-### Phase 3: Validation & Test Scaffolding
+### Phase 3: Validation & Test Tooling
 Configure quality gates for the agent files:
-1. **LLM-as-a-Judge Rubric Suite:** Scaffold a rubric evaluation suite (`../../evals/<agent-name>.js`) containing concrete test cases and verification rubrics.
+1. **LLM-as-a-Judge Rubric Suite:** Tool a rubric evaluation suite (`../../evals/<agent-name>.js`) containing concrete test cases and verification rubrics.
 2. **Structural Validators:** Add structural validators (e.g., extending `validate-agents.js`) to check prompt syntax and required headers.
 3. **CI/CD Hook Integration:** Configure hooks to run validation and evaluations on pre-commit or CI pipelines, integrating VCS rollback mechanisms.
 

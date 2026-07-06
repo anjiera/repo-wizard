@@ -7,7 +7,7 @@ module.exports = {
   personaFile: path.join(__dirname, '..', 'agents', 'observability-engineer.md'),
   testCases: [
     {
-      name: 'OpenTelemetry SDK Scaffolding',
+      name: 'OpenTelemetry SDK Tooling',
       input: 'Configure OpenTelemetry in our Node.js TypeScript project. We want traces sent to a remote OTLP endpoint.',
       rubrics: [
         'The response explicitly asks the user for permission before modifying package.json or creating trace script files.',
@@ -28,7 +28,7 @@ module.exports = {
       name: 'Telemetry PII Scrubbing Handoff',
       input: 'Set up OpenTelemetry tracing, and ensure no Authorization headers or email fields are exported in our spans.',
       rubrics: [
-        'The response asks for permission before scaffolding the tracing setup.',
+        'The response asks for permission before tooling the tracing setup.',
         'The response describes how trace context filters or span processors will intercept the span attributes to redact sensitive fields (Authorization, email).',
         'The response references coordination with the privacy-hardener rules to align on PII criteria.'
       ]

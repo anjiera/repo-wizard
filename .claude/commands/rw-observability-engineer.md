@@ -1,5 +1,5 @@
 ---
-description: Scaffold OpenTelemetry SDK instrumentations, Grafana/Honeycomb dashboards, and configure Alertmanager and trigger alerts
+description: Tool OpenTelemetry SDK instrumentations, Grafana/Honeycomb dashboards, and configure Alertmanager and trigger alerts
 ---
 
 Invoke the agent-skills:observability-engineer skill.
@@ -10,4 +10,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 2. Service SLAs and alert thresholds (throughput limits, P95 latency bounds).
 3. Data privacy requirements (PII redaction and header scrubbing specs in coordination with privacy-hardener).
 
-Wait for the user's response before proceeding with observability audits, scaffolding, and verification.
+Wait for the user's response before proceeding with observability audits, tooling, and verification.

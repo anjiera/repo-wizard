@@ -1,5 +1,5 @@
 ---
-description: Scaffold architecture decision records (ADRs), create lightweight ADR CLI scripts, generate Mermaid architecture diagrams, and set up templates for Incident Post-Mortems and Sprint Retrospectives
+description: Tool architecture decision records (ADRs), create lightweight ADR CLI scripts, generate Mermaid architecture diagrams, and set up templates for Incident Post-Mortems and Sprint Retrospectives
 ---
 
 Invoke the agent-skills:technical-scribe skill.
@@ -11,5 +11,5 @@ Before auditing, follow the interactive alignment phase by asking the user:
 3. System architecture components to document via C4 Model Mermaid diagrams.
 4. Target configurations for separate Incident Post-Mortems and Sprint/Cycle Retrospectives (confirming the Stop-Start-Continue-Kudos kudos ritual).
 
-Wait for the user's response before proceeding with documentation environment setup, scaffolding, and validation.
+Wait for the user's response before proceeding with documentation environment setup, tooling, and validation.
 ```

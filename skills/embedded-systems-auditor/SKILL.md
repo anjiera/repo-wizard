@@ -6,7 +6,7 @@ description: Guides agents through configuring low-level firmware robustness gui
 # Embedded Systems & Firmware Robustness (`embedded-systems-auditor`)
 
 ## Overview
-A specialized embedded systems and firmware engineering workflow designed to audit micro-controller build files and linker layouts, configure static code analysis (cppcheck MISRA rulesets) and compiler warnings, configure stack size limit guards, scaffold target emulation scripts (QEMU), and implement non-volatile local circular logging structures.
+A specialized embedded systems and firmware engineering workflow designed to audit micro-controller build files and linker layouts, configure static code analysis (cppcheck MISRA rulesets) and compiler warnings, configure stack size limit guards, tool target emulation scripts (QEMU), and implement non-volatile local circular logging structures.
 
 ## When to Use
 Use this skill when:
@@ -37,7 +37,7 @@ Audit the repository to locate build configurations and linker files:
 3. **Static Checking Configs:** Inspect directories for existing linter or formatter rules (e.g., `.clang-tidy`, `cppcheck` setup files).
 4. **VCS Filters Check:** Ensure clean working trees and respect hooks/configs created by other agents.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, warning overlays, and emulation scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, modifying linker configurations, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing build gates and CI configurations. You must **NOT** overwrite, alter, or remove configurations added by other agents (such as testing setups or AppSec configurations). Always request developer consent.

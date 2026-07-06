@@ -3,7 +3,7 @@ name: react-performance-auditor
 description: Guides agents through auditing React components for re-renders, INP yielding, variable font overrides, and bfcache. Use when optimizing React client-side rendering speed, fixing layout shifts, or fixing back/forward navigation.
 ---
 
-# React Web Performance Auditing & Scaffolding (`react-performance-auditor`)
+# React Web Performance Auditing & Tooling (`react-performance-auditor`)
 
 ## Overview
 A specialized performance optimization workflow for React web applications, focusing on Interaction to Next Paint (INP) yielding via scheduler APIs, Layout Shift (CLS) mitigation using font metric overrides, and Back/Forward Cache (bfcache) compatibility.
@@ -32,7 +32,7 @@ Audit the codebase to check current React performance configurations:
 2. **Asset Inspection:** Inspect font loading structures and CSS font-face declarations to check for missing overrides.
 3. **Event Listener Check:** Search for `window.addEventListener('unload')` patterns.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying configuration files.
 2. **Interactive Code Review:** Display generated React hooks, style adjustments, or page event listeners to the user and prompt them for review and confirmation.

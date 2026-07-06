@@ -53,5 +53,5 @@ For JavaScript and TypeScript, style guidelines are based on the Google JavaScri
 
 When onboarding JS/TS repositories, agents should:
 1. Verify if a formatting tool configuration exists.
-2. If the developer requests Google Style enforcement, scaffold the corresponding `.eslintrc.json` configuration file at the workspace root.
+2. If the developer requests Google Style enforcement, tool the corresponding `.eslintrc.json` configuration file at the workspace root.
 3. Configure pre-commit hooks (Husky or lint-staged) to run formatters automatically before commits.

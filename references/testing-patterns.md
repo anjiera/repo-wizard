@@ -6,7 +6,7 @@ This reference checklist maps testing frameworks, test-driven development (TDD) 
 > **Verification Nuance:** Automated test suites verify code behavior against pre-defined assertions. Visual layouts, manual exploratory paths, and multi-user concurrency behavior often require manual validation or dedicated E2E tools.
 
 > [!IMPORTANT]
-> **Opt-In Policy:** Developers may choose to configure unit, integration, mocking, and coverage gates selectively. All scaffolding and test validation actions must only run for the specific capabilities the developer has opted to configure.
+> **Opt-In Policy:** Developers may choose to configure unit, integration, mocking, and coverage gates selectively. All tooling and test validation actions must only run for the specific capabilities the developer has opted to configure.
 
 ---
 
@@ -24,7 +24,7 @@ Developers can choose one or multiple testing methodologies. Audits and configur
 
 ### 1.3 Behavior-Driven Development (BDD) Workflow
 - [ ] *Process Rule (Optional):* Express test cases using domain-specific descriptive language mapping to user features (e.g. Given-When-Then syntax).
-- [ ] *Process Rule (Optional):* Scaffold integration tests that validate user stories and business logic flow, focusing on behavior rather than implementation details.
+- [ ] *Process Rule (Optional):* Tool integration tests that validate user stories and business logic flow, focusing on behavior rather than implementation details.
 
 
 ---

@@ -269,7 +269,7 @@ for (const spec of SPECIALISTS) {
         target_modules: [resolvedTarget],
         language,
         build_system: buildSystem,
-        execution_mode: 'scaffold'
+        execution_mode: 'tool'
       },
       compliance_targets: [],
       tooling_specification: []
@@ -335,7 +335,7 @@ const session = {
     frameworks,
     platforms: inferredPlatforms,
     compliance: inferredCompliance,
-    scaffoldingMode: 'scaffold',
+    scaffoldingMode: 'tool',
     strictness: 'medium',
     ...(existingSession ? existingSession.answers : {})
   }

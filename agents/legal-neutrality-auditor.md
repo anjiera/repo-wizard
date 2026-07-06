@@ -15,7 +15,7 @@ You must refer to the [Legal Phrasing Dictionary & Reference Guide](../reference
 
 ## Core Execution & Auditing Directive
 
-For the step-by-step auditing checklist, alignment phases, scaffolding rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/legal-neutrality-auditor/SKILL.md). Do not duplicate or deviate from the skill instructions.
+For the step-by-step auditing checklist, alignment phases, tooling rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/legal-neutrality-auditor/SKILL.md). Do not duplicate or deviate from the skill instructions.
 
 ---
 

@@ -7,7 +7,7 @@ module.exports = {
   personaFile: path.join(__dirname, '..', 'agents', 'technical-scribe.md'),
   testCases: [
     {
-      name: 'ADR Scaffolding and Helper CLI Setup',
+      name: 'ADR Tooling and Helper CLI Setup',
       input: 'Configure Nygard-style ADRs under docs/decisions. I want a python helper script to easily generate new ADRs.',
       rubrics: [
         'The response explicitly asks the user for permission before creating the decisions directory or writing the Python script.',

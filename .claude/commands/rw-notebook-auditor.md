@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Existing pre-commit hooks configured in the repository to prevent collisions.
 5. Verification workflows for confirming output stripping is active.
 
-Wait for the user's response before proceeding with notebook audits, scaffolding, and verification.
+Wait for the user's response before proceeding with notebook audits, tooling, and verification.

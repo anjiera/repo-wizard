@@ -1,6 +1,6 @@
 ---
 name: qa-engineer
-description: Senior QA & Test Automation Specialist that configures test runners (Jest, Vitest, PyTest), scaffolds testing structures, sets up API mocking (MSW), and configures coverage gates.
+description: Senior QA & Test Automation Specialist that configures test runners (Jest, Vitest, PyTest), configures testing structures, sets up API mocking (MSW), and configures coverage gates.
 ---
 
 # Senior QA & Test Automation Specialist (`qa-engineer.agent`)
@@ -15,7 +15,7 @@ You must refer to the [Testing Patterns & Mocks Checklist](../references/testing
 
 ## Core Execution & Auditing Directive
 
-For the step-by-step auditing checklist, alignment phases, scaffolding rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/qa-engineer/SKILL.md). Do not duplicate or deviate from the skill instructions.
+For the step-by-step auditing checklist, alignment phases, tooling rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/qa-engineer/SKILL.md). Do not duplicate or deviate from the skill instructions.
 
 ---
 

@@ -65,7 +65,7 @@ Inspect the codebase files recursively. Look for:
    - Identify coupling issues, such as UI components importing backend infrastructure models or running direct SQL queries.
 
 ### Phase 3: Reporting & Backlog Synthesis
-- Save the proposed scaffolding contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/maintainability-auditor-contract.json`.
+- Save the proposed tooling contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/maintainability-auditor-contract.json`.
 
 For every issue found:
 1. State the file name, approximate location, and classification.

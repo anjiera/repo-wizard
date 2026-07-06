@@ -7,7 +7,7 @@ module.exports = {
   personaFile: path.join(__dirname, '..', 'agents', 'compliance-auditor.md'),
   testCases: [
     {
-      name: 'SOC 2 Audit Logging Scaffold',
+      name: 'SOC 2 Audit Logging Tool',
       input: 'Configure SOC 2 compliant audit logging for my Node.js application.',
       rubrics: [
         'The response references the SOC 2 trust services criteria (CC6.1/CC6.3) for audit logs.',

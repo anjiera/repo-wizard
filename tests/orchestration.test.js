@@ -33,7 +33,7 @@ function run() {
               target_modules: ["/src"],
               language: "javascript",
               build_system: "npm",
-              execution_mode: "scaffold"
+              execution_mode: "tool"
             }
           }
         }
@@ -83,7 +83,7 @@ function run() {
               target_modules: ["/src"],
               language: "javascript",
               build_system: "npm",
-              execution_mode: "scaffold"
+              execution_mode: "tool"
             }
           }
         },
@@ -95,7 +95,7 @@ function run() {
               target_modules: ["/src"],
               language: "javascript",
               build_system: "npm",
-              execution_mode: "scaffold"
+              execution_mode: "tool"
             }
           }
         }
@@ -160,7 +160,7 @@ function run() {
               // language is missing
               target_modules: ["/src"],
               build_system: "npm",
-              execution_mode: "scaffold"
+              execution_mode: "tool"
             }
           }
         }
@@ -315,7 +315,7 @@ function run() {
               target_modules: ["/src"],
               language: "javascript",
               build_system: "npm",
-              execution_mode: "scaffold"
+              execution_mode: "tool"
             }
           }
         }

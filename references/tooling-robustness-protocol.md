@@ -1,4 +1,4 @@
-# Scaffolding Robustness & Rollback Protocol
+# Tooling Robustness & Rollback Protocol
 
 This document defines the mandatory, shared interactive engagement, tool screening, scanning consent, and rollback procedures for all execution agents in the Repo Wizard suite. All agents must follow this protocol to guarantee developer support, prevent accidental data loss, and maintain a high-quality developer experience.
 
@@ -6,7 +6,7 @@ This document defines the mandatory, shared interactive engagement, tool screeni
 
 ## 1. Legal Terms & Consent Gate (TOS Check)
 
-Before performing any target stack alignment, codebase scanning, profiling, or configuration scaffolding:
+Before performing any target stack alignment, codebase scanning, profiling, or configuration tooling:
 1. **Check Agreement File**: Search for a local hidden state file `.tos_agreed` inside the `.repo-wizard/` directory (i.e. `.repo-wizard/.tos_agreed`), or `.tos_agreed` at the workspace root.
 2. **Halt and Prompt if Missing**: If this file is missing, halt execution immediately. Present the exact **Terms of Service & Developer Agreement** (disclaimer) to the developer and prompt them to accept (y/N).
 3. **Save Agreement**: If accepted, write a JSON file to `.repo-wizard/.tos_agreed` containing:
@@ -57,7 +57,7 @@ Never perform modifying operations on a repository without developer permission:
 
 To ensure a reliable path for recovery, verify the environment before and after modifications:
 1. **Stable State Verification:** Before executing any package manager installation or file write, check that the version control repository is in a clean state (i.e. no uncommitted changes). If there are uncommitted changes, notify the developer and recommend committing or stashing before proceeding.
-2. **Verification Execution:** Immediately after scaffolding, configuring, or modifying files, run the project's build, compile, or test verification command (e.g., `npm run build`, `npm test`, `cargo check`, or `make`). Verify that the command exits successfully (exit code 0).
+2. **Verification Execution:** Immediately after tooling, configuring, or modifying files, run the project's build, compile, or test verification command (e.g., `npm run build`, `npm test`, `cargo check`, or `make`). Verify that the command exits successfully (exit code 0).
 
 ---
 
@@ -101,7 +101,7 @@ To protect against legal liability:
 ## 9. Backlog Generation Mode Protocol
 
 If the incoming parameter contract specifies `execution_mode: "backlog"`:
-1. **Bypass Scaffolding & VCS Actions:** Do NOT run any package installation commands, do NOT create or edit configuration files in the active workspace, and do NOT invoke the `tooling-engineer.agent`.
+1. **Bypass Tooling & VCS Actions:** Do NOT run any package installation commands, do NOT create or edit configuration files in the active workspace, and do NOT invoke the `tooling-engineer.agent`.
 2. **Collect Recommendations:** Utilize your domain checklists to identify relevant setup tasks, refactoring jobs, security improvements, or compliance policies.
 3. **Format Task Outputs:** Return a structured JSON object containing a list of tasks. Each task must follow this schema:
    * `title`: A short, descriptive title (e.g., `[WCAG 2.2] Configure axe-core CLI check in CI`).

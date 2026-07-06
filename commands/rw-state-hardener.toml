@@ -9,5 +9,5 @@ Before auditing, follow the interactive alignment phase by asking the user:
 2. Store choices or custom hook layouts in use.
 3. Middleware or fetching libraries chosen for remote communications.
 
-Wait for the user's response before proceeding with performance audits, scaffolding, and verification.
+Wait for the user's response before proceeding with performance audits, tooling, and verification.
 """

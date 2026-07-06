@@ -1,6 +1,6 @@
 # Agent Execution Rules
 
-This file defines the core styling, formatting, and behavior rules that all specialist agents, subagents, and orchestrators must strictly adhere to when executing commands, scans, audits, or scaffolding configurations on any target repository.
+This file defines the core styling, formatting, and behavior rules that all specialist agents, subagents, and orchestrators must strictly adhere to when executing commands, scans, audits, or tooling configurations on any target repository.
 
 ## Formatting & Output Rules
 

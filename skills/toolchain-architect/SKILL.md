@@ -1,12 +1,12 @@
 ---
 name: toolchain-architect
-description: Guides agents through auditing build system target constraints, scaffolding CMake cross-compilation toolchain files, configuring Rust target configs, setting up sysroot locations, and verifying cross-compiler flags. Use when configuring cross-compilers, managing target triples, setting up Emscripten, or overriding linker parameters.
+description: Guides agents through auditing build system target constraints, tooling CMake cross-compilation toolchain files, configuring Rust target configs, setting up sysroot locations, and verifying cross-compiler flags. Use when configuring cross-compilers, managing target triples, setting up Emscripten, or overriding linker parameters.
 ---
 
 # Cross-Compilation & Build Toolchains (`toolchain-architect`)
 
 ## Overview
-A specialized build engineering and systems infrastructure workflow designed to audit source repositories for cross-compilation toolchain parameters, scaffold CMake cross-compiler files (e.g. `.cmake` toolchain configurations), configure Cargo target configurations, and setup multi-architecture target compilation paths (ARM Cortex, RISC-V, WebAssembly).
+A specialized build engineering and systems infrastructure workflow designed to audit source repositories for cross-compilation toolchain parameters, tool CMake cross-compiler files (e.g. `.cmake` toolchain configurations), configure Cargo target configurations, and setup multi-architecture target compilation paths (ARM Cortex, RISC-V, WebAssembly).
 
 ## When to Use
 Use this skill when:
@@ -35,7 +35,7 @@ Scan the host platform:
 2. **Linker Mappings Audit:** Inspect the workspace for compiler configuration overrides, environment scripts, or target configurations.
 3. **AST Build Tool Check:** Scan the workspace structure (CMakeLists.txt, Cargo.toml) to understand active target rules.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, CMake toolchain configs, and setup wrappers in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending compiler settings, creating toolchain folders, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing build configurations. Do **NOT** overwrite, alter, or remove configurations added by other build or test agents (such as testing setups, coverage rules, or appsec hardeners).

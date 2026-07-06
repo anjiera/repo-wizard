@@ -2,7 +2,7 @@
 
 Repo Wizard is a production-grade collection of governance, legal safety, regulatory compliance, testing, and documentation skills for AI coding agents (Antigravity, Claude Code, etc.). 
 
-It packages instructions, checklists, and persona configurations that can be loaded into agents to automate complex repository auditing and scaffolding.
+It packages instructions, checklists, and persona configurations that can be loaded into agents to automate complex repository auditing and tooling.
 
 ---
 
@@ -20,13 +20,13 @@ To help you get started quickly, please refer to the following guides:
 * **[passive-data-boundaries.md](docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
 * **[prompt-evaluations.md](docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
 * **[zero-dependency-scripting.md](solo-dev-toolkit/docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
-* **[scaffolding-and-rollback-safety.md](docs/design/scaffolding-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
+* **[tooling-and-rollback-safety.md](docs/design/tooling-and-rollback-safety.md)** — Core setup presets and Git rollback safety mechanism design.
 * **[meta-agent-alignment.md](docs/design/meta-agent-alignment.md)** — Meta-agent prompt auditing linter rules and self-linting pilot design.
 * **[legal-consent-gate.md](docs/design/legal-consent-gate.md)** — Design of the Step 0 terms agreement checkpoint and liability disclaimers.
 * **[decoupled-orchestration.md](docs/design/decoupled-orchestration.md)** — Architectural design and lifecycle of the contract-based decoupled agent orchestration system.
 * **[session-resumability.md](docs/design/session-resumability.md)** — Design and state structures of the session recovery system and subagent manifest contracts.
 * **[papercut-tracking.md](solo-dev-toolkit/docs/design/papercut-tracking.md)** — Design of the subagent papercut logging and frequency tracking system.
-* **[phase-splitting-scaffolding.md](docs/design/phase-splitting-scaffolding.md)** — Architectural design of the phase-splitting execution boundary and versioned JSON scaffolding contracts.
+* **[phase-splitting-tooling.md](docs/design/phase-splitting-tooling.md)** — Architectural design of the phase-splitting execution boundary and versioned JSON tooling contracts.
 * **[zero-dependency-json-validation.md](docs/design/zero-dependency-json-validation.md)** — Design of the zero-dependency schema-based validation for plugin and agent configurations.
 * **[markdown-duplication-validator.md](docs/design/markdown-duplication-validator.md)** — Design and processing pipeline of the DRY compliance checker for documentation and prompts.
 * **[quality-pillars-framework.md](docs/design/quality-pillars-framework.md)** — Structural design of quality pillars grouping specialist agent personas.
@@ -51,7 +51,7 @@ graph TD
     Specialists -->|Relevance Low| Skip[Bypassed]
     Audit -->|4. Tool recommendations| Evaluator[tool-auditor]
     Evaluator -->|5. Tooling approval| Scaffolder[tooling-engineer]
-    Scaffolder -->|6. Scaffold Configs| Files[(Workspace Files)]
+    Scaffolder -->|6. Tool Configs| Files[(Workspace Files)]
     Orchestrator -->|7. Compile Reports| MD_HTML[Technical & Executive Reports]
 ```
 
@@ -60,11 +60,11 @@ graph TD
 ## Features & Commands
 
 ### 1. Repo Wizard (`/repo-wizard`)
-* **Purpose:** Runs an interactive onboarding interview with developers, dynamically recommends tailored QA, testing, security, accessibility, and compliance tools based on budget/stack constraints, and guides specialist subagents to scaffold them safely.
+* **Purpose:** Runs an interactive onboarding interview with developers, dynamically recommends tailored QA, testing, security, accessibility, and compliance tools based on budget/stack constraints, and guides specialist subagents to tool them safely.
 * **Orchestrator Specification:** Located in the [repo-wizard-planning/](repo-wizard-planning) directory.
 
 ### 2. Agent Alignment Auditor (`/rw-agent-alignment-auditor`)
-* **Purpose:** Audits agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and scaffolds rubric-based evaluation suites and validation checks.
+* **Purpose:** Audits agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and configures rubric-based evaluation suites and validation checks.
 * **Specialist Agent:** `agents/agent-alignment-auditor.md`
 * **Skill:** `skills/agent-alignment-auditor/SKILL.md`
 
@@ -86,7 +86,7 @@ To keep the repository modular, the files are separated into the **Product Plugi
 
 ### 1. Product Plugin (The Runtime)
 These folders contain the code, configurations, and skills packaged and shipped as the `repo-wizard` tool:
-*   `skills/` — The core audit and scaffolding workflows (copied into user codebases).
+*   `skills/` — The core audit and tooling workflows (copied into user codebases).
 *   `agents/` — Reusable agent persona instructions (used during scans).
 *   `commands/`, `.claude/`, `.gemini/` — CLI slash command configurations for different client environments.
 

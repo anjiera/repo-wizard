@@ -1,12 +1,12 @@
 ---
 name: data-pipeline-architect
-description: Guides agents through auditing data workflows, scaffolding Pandera/Great Expectations validation rules, writing Airflow/Prefect DAG retry scripts, and configuring database connection pools (SQLAlchemy/pg-pool). Use when configuring data pipelines, database pools, or data validation packages.
+description: Guides agents through auditing data workflows, tooling Pandera/Great Expectations validation rules, writing Airflow/Prefect DAG retry scripts, and configuring database connection pools (SQLAlchemy/pg-pool). Use when configuring data pipelines, database pools, or data validation packages.
 ---
 
 # Data Pipeline & Quality Governance (`data-pipeline-architect`)
 
 ## Overview
-A specialized data engineering and validation workflow designed to audit database connection properties and data scripts, scaffold strict schemas (Pandera, Great Expectations), configure scheduled workflow DAGs with fail-soft retry limits (Airflow, Prefect, Dagster), and optimize database connection pool parameters.
+A specialized data engineering and validation workflow designed to audit database connection properties and data scripts, tool strict schemas (Pandera, Great Expectations), configure scheduled workflow DAGs with fail-soft retry limits (Airflow, Prefect, Dagster), and optimize database connection pool parameters.
 
 ## When to Use
 Use this skill when:
@@ -36,7 +36,7 @@ Audit the repository to locate database connections and data sync paths:
 3. **Workflow Config Check:** Search for existing DAG files, cron jobs, or scheduling configurations.
 4. **Data Tools Audit:** Check manifested dependencies to identify existing data processing or validation packages.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all specifications, DAG files, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating DAG files, or modifying existing configuration scripts.
 2. **Interactive Code Review:** Display generated Pandera schemas, Airflow DAG templates, or database connection pool engines to the developer, prompting them for review and confirmation.
@@ -44,16 +44,16 @@ Draft all specifications, DAG files, and scripts in coordination with `tooling-e
 4. **README & Setup Integration:** Once verified, add pipeline run instructions or scheduled trigger setups to the project's onboarding files (`README.md` or setup guides) for developer review.
 
 ### Phase 4: Verification & Validation
-1. **Pipeline Syntax Validation:** Verify that all scaffolded DAG scripts or schemas pass syntax validation checks (e.g. `airflow dags list` syntax checks or python compilation).
+1. **Pipeline Syntax Validation:** Verify that all configured DAG scripts or schemas pass syntax validation checks (e.g. `airflow dags list` syntax checks or python compilation).
 2. **Dry-Run Validation Check:** Execute a dry-run check of the Pandera validation logic with mock corrupted inputs to confirm it raises expected schema validation errors.
-3. **Safe Rollback:** If validation tests break after scaffolding, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+3. **Safe Rollback:** If validation tests break after tooling, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ## Common Rationalizations
 - *"We can just clean the data manually if a pipeline fails."* - Manual data scrubbing is slow, error-prone, and doesn't scale. Code-defined validations ensure data quality is checked continuously.
 - *"We don't need connection pools if our script runs quickly."* - Under high-load, scripts opening/closing connections repeatedly will exhaust database socket allocations. Connection pooling recycles sockets safely.
 
 ## Red Flags
-- Scaffolding a scheduled database backup or ingestion DAG that does not specify retry limits or exponential delay parameters.
+- Tooling a scheduled database backup or ingestion DAG that does not specify retry limits or exponential delay parameters.
 - Writing raw ingestion scripts that load file data directly into SQL query builders without validating parameters, introducing SQL injection risks.
 - Defining connection pools that set maximum connection limits higher than the target database server's active capacity threshold.
 

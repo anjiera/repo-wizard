@@ -11,4 +11,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 3. Target code coverage threshold limits (percentage goals).
 4. Execution pipeline (local pre-commit hook vs CI pipeline).
 
-Wait for the user's response before proceeding with testing environment audits, scaffolding, and verification.
+Wait for the user's response before proceeding with testing environment audits, tooling, and verification.

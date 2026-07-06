@@ -80,7 +80,7 @@ To maintain structural clarity, the system establishes a strict boundary between
 2.  **Scan-Time Project Backlog (`backlog.csv`):**
     *   *System Domain:* Product (The `repo-wizard` tool execution).
     *   *Target Audience:* End-users scanning target directories.
-    *   *Content:* High-level governance recommendations, regulatory compliance findings, and automated configuration scaffolding proposals grouped by Priority (`High`, `Medium`, `Low`).
+    *   *Content:* High-level governance recommendations, regulatory compliance findings, and automated configuration tooling proposals grouped by Priority (`High`, `Medium`, `Low`).
     *   *Storage Location:* Stored inside the output directory of the scanned project at `.repo-wizard/backlog.csv`.
 
 ## Future Product Roadmap: `rw-papercut-exporter`

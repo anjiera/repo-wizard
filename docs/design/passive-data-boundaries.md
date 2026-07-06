@@ -49,7 +49,7 @@ Rather than allowing agents to execute free-form text editing commands or direct
 2. **Isolate Executers**: The `tooling-engineer` script performs edits programmatically using abstract syntax tree (AST) matching or exact replacement arrays. The agent never writes or runs direct bash/powershell command strings generated from scanned code.
 
 ### C. The Step 3.3 Mitigation Gate
-No change is ever committed without triggering the **Mitigation Gate** (Step 3.3). If a tool-scaffolding run fails compilation or breaks local unit tests, the system runs an automated git rollback, restoring the workspace to a known-clean state.
+No change is ever committed without triggering the **Mitigation Gate** (Step 3.3). If a tool-tooling run fails compilation or breaks local unit tests, the system runs an automated git rollback, restoring the workspace to a known-clean state.
 
 ---
 

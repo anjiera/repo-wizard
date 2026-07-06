@@ -64,7 +64,7 @@ HIPAA (Health Insurance Portability and Accountability Act) requires safeguards 
 ### 4.1 Access Control & PHI Encryption (45 CFR § 164.312(a), (iv))
 - [ ] **Encryption in Transit:** Enforce HTTPS/TLS 1.3 for all endpoints serving PHI. Disable insecure cipher suites.
 - [ ] **Encryption at Rest:** Enable AES-256 encryption on all databases, backups, and storage buckets storing medical records.
-- [ ] **Automatic Logoff:** Scaffold session timeouts and automatic UI logoffs for inactive users (e.g., 15-minute limits).
+- [ ] **Automatic Logoff:** Tool session timeouts and automatic UI logoffs for inactive users (e.g., 15-minute limits).
 - [ ] **Unique User Identification:** Verify that every system user has a unique username/ID; forbid shared credentials or admin accounts.
 
 ### 4.2 Transmission & Audit Controls (45 CFR § 164.312(c), (d))
@@ -101,6 +101,6 @@ FedRAMP (Federal Risk and Authorization Management Program) builds on NIST SP 80
 - [ ] **Automated Dependency Updates:** Configure package registries and alert tools to track and auto-patch software vulnerabilities within strict timelines (e.g., 30 days for high risk).
 
 ### 6.2 Monitoring, Auditing & Crypto (NIST SP 800-53 AU-2, IA-2, SC-13)
-- [ ] **Continuous Logging:** Scaffolding must direct all event logs to a central Security Information and Event Management (SIEM) service.
+- [ ] **Continuous Logging:** Tooling must direct all event logs to a central Security Information and Event Management (SIEM) service.
 - [ ] **FIPS 140 Cryptographic Modules:** Enforce compile/runtime configurations requiring all cryptographic operations (transit, rest, hashing) to execute inside FIPS-validated modules.
 - [ ] **Multi-Factor Authentication (MFA):** Enforce code-level checks validating MFA token parameters on all administrative dashboard routes and API integrations.

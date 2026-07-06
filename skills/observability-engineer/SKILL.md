@@ -1,12 +1,12 @@
 ---
 name: observability-engineer
-description: Guides agents through auditing codebase observability setups, scaffolding OpenTelemetry SDK integrations, creating dashboard configurations (Honeycomb, Grafana), and writing alerting rules (Prometheus, Honeycomb triggers). Use when configuring logging, metrics, tracing, alerts, or telemetry systems.
+description: Guides agents through auditing codebase observability setups, tooling OpenTelemetry SDK integrations, creating dashboard configurations (Honeycomb, Grafana), and writing alerting rules (Prometheus, Honeycomb triggers). Use when configuring logging, metrics, tracing, alerts, or telemetry systems.
 ---
 
-# Telemetry & Observability Auditing and Scaffolding (`observability-engineer`)
+# Telemetry & Observability Auditing and Tooling (`observability-engineer`)
 
 ## Overview
-A specialized engineering telemetry workflow designed to audit application visibility, configure OpenTelemetry (OTel) SDK frameworks for distributed tracing, metrics, and logs, scaffold dashboard configurations (Honeycomb boards, Grafana JSON), and establish alert notifications (Prometheus rules, Honeycomb triggers).
+A specialized engineering telemetry workflow designed to audit application visibility, configure OpenTelemetry (OTel) SDK frameworks for distributed tracing, metrics, and logs, tool dashboard configurations (Honeycomb boards, Grafana JSON), and establish alert notifications (Prometheus rules, Honeycomb triggers).
 
 ## When to Use
 Use this skill when:
@@ -23,7 +23,7 @@ Use this skill when:
 If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-observability-engineer.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Interactive Alignment & Profile Definition
-Before scanning or scaffolding, align with the developer on target configurations:
+Before scanning or tooling, align with the developer on target configurations:
 1. **Telemetry Targets:** Clarify the data categories to collect: distributed traces (spans and request paths), metrics (latency histograms, request rates), or structured logs.
 2. **Backend Services:** Align on target backends: SaaS solutions (Honeycomb, Datadog, New Relic) or self-hosted systems (Prometheus, Jaeger, Grafana Tempo).
 3. **Alert Thresholds:** Establish standard service SLAs: P95 latency limit (e.g. 500ms), error rate limits (e.g. 5xx rate > 2%), and notification endpoints (Slack webhook, PagerDuty integration).
@@ -35,7 +35,7 @@ Scan the codebase to evaluate current observability configurations:
 2. **Setup Code Audit:** Look for telemetry initialization modules, environment files (`.env`), or telemetry configs.
 3. **Framework Scan:** Identify routing libraries (e.g., Express, FastAPI, Actix-web, Gin) to know which auto-instrumentation plugins are needed.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all SDK configurations, dashboard JSONs, and alerting rules in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenTelemetry setup files, dashboard layouts, and alert rules to the user and prompt them for review and confirmation.
@@ -54,7 +54,7 @@ Draft all SDK configurations, dashboard JSONs, and alerting rules in coordinatio
 - *"We can ship all request payloads and headers, it makes debugging easier."* - Shipping payloads is a major security risk that leaks PII, access tokens, and passwords to third-party logs. Telemetry must redact headers and payloads by default.
 
 ## Red Flags
-- Scaffolding external SaaS exporter configurations (like Honeycomb or Datadog) without verifying the `budget_tier` or stack context.
+- Tooling external SaaS exporter configurations (like Honeycomb or Datadog) without verifying the `budget_tier` or stack context.
 - Exporting raw HTTP headers (like `Authorization` or `Cookie`) in trace contexts without scrubbing.
 - Leaving telemetry SDKs enabled in local development mode without configuration options to redirect outputs to local consoles instead of remote servers.
 

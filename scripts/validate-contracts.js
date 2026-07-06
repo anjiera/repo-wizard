@@ -21,7 +21,7 @@ const CONTRACT_TEMPLATE = {
     build_system: 'npm-vite',
     budget_tier: 'free',
     execution_environments: ['pre-commit', 'CI'],
-    execution_mode: 'scaffold'
+    execution_mode: 'tool'
   },
   compliance_targets: [],
   tooling_specification: []
@@ -54,8 +54,8 @@ function validateContract(contract) {
     if (typeof meta.build_system !== 'string' || !meta.build_system) {
       errors.push('task_metadata.build_system must be a non-empty string.');
     }
-    if (typeof meta.execution_mode !== 'string' || !['scaffold', 'backlog'].includes(meta.execution_mode)) {
-      errors.push('task_metadata.execution_mode must be either "scaffold" or "backlog".');
+    if (typeof meta.execution_mode !== 'string' || !['tool', 'backlog'].includes(meta.execution_mode)) {
+      errors.push('task_metadata.execution_mode must be either "tool" or "backlog".');
     }
     if (meta.budget_tier && !['free', 'premium'].includes(meta.budget_tier)) {
       errors.push('task_metadata.budget_tier must be either "free" or "premium".');
@@ -156,7 +156,7 @@ function runSelfTest() {
       build_system: 'npm-vite',
       budget_tier: 'free',
       execution_environments: ['pre-commit', 'CI'],
-      execution_mode: 'scaffold',
+      execution_mode: 'tool',
       backlog_parameters: {
         granularity: 'granular',
         framework: 'Scrum'
@@ -248,7 +248,7 @@ function runSelfTest() {
           target_modules: ['/'],
           language: 'python',
           build_system: 'pip',
-          execution_mode: 'scaffold'
+          execution_mode: 'tool'
         },
         compliance_targets: [
           { standard: '', focus_areas: [] } // Standard empty
@@ -262,10 +262,10 @@ function runSelfTest() {
   // Test Valid
   const validErrors = validateContract(validContract);
   if (validErrors.length > 0) {
-    console.error(`  ${RED}✗${RESET} ${BOLD}Fail:${RESET} Valid scaffold contract was rejected:`, validErrors);
+    console.error(`  ${RED}✗${RESET} ${BOLD}Fail:${RESET} Valid tool contract was rejected:`, validErrors);
     failures++;
   } else {
-    console.log(`  ${GREEN}✓${RESET} ${BOLD}Pass:${RESET} Valid scaffold contract accepted`);
+    console.log(`  ${GREEN}✓${RESET} ${BOLD}Pass:${RESET} Valid tool contract accepted`);
   }
 
   const validBacklogErrors = validateContract(validBacklogContract);

@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents (Antigravity, Claude Code, Curso
 
 ## Repository Overview
 
-This repository contains packaged engineering skills and personas focused on repository governance, legal safety, regulatory compliance, testing scaffolding, and documentation automation.
+This repository contains packaged engineering skills and personas focused on repository governance, legal safety, regulatory compliance, testing tooling, and documentation automation.
 
 ## Skill-Driven Execution Model
 
@@ -42,7 +42,7 @@ Map user queries to skills according to this matrix:
 ## Orchestration & Scanning Modes
 
 This plugin supports both interactive configuration and headless scanning modes:
-* **Interactive Mode (`MODE=INTERACTIVE_LOCAL`):** Prompts the user through alignment questions, screens tools, and scaffolds configurations.
+* **Interactive Mode (`MODE=INTERACTIVE_LOCAL`):** Prompts the user through alignment questions, screens tools, and configures configurations.
 * **Headless Mode (`MODE=HEADLESS`):** Non-blocking best-guess scan of the active repository.
 
 ### Decoupled Subagent Relevance Sweep

@@ -6,7 +6,7 @@ This document defines the functional requirements, architectural designs, data c
 
 ## ️ 1. Lead Orchestrator (`repo-wizard.agent` / `/repo-wizard`)
 
-The lead orchestrator acts as the customer-facing concierge and manager of the repository analysis and scaffolding lifecycle. It determines project scope, guides the developer through interactive alignment, audits candidate tools, and coordinates specialists.
+The lead orchestrator acts as the customer-facing concierge and manager of the repository analysis and tooling lifecycle. It determines project scope, guides the developer through interactive alignment, audits candidate tools, and coordinates specialists.
 
 ### 1.0 Legal Terms & Consent Gate (TOS Check)
 Before executing any codebase analysis, sizing, target stack alignment, or session state checking:
@@ -24,7 +24,7 @@ Before asking the questionnaire, the agent runs a token-efficient directory anal
 
 ### 1.2 Interactive Alignment Questionnaire
 The wizard guides the developer through a structured interactive questionnaire (detailed in [brainstorming_notes.md](brainstorming_notes.md)), covering:
-1. *Context & Goals:* Refactoring vs Greenfield, Team Profile, Commercial Release target, Tooling Budget (Free vs Premium/Paid), Rollout Mode (Immediate Scaffolding vs. Backlog Generation). If Backlog Generation is selected, the wizard asks clarifying questions regarding task granularity (granular stories vs. high-level epics), planning frameworks (Scrum/Kanban/Checklist), and custom project labels.
+1. *Context & Goals:* Refactoring vs Greenfield, Team Profile, Commercial Release target, Tooling Budget (Free vs Premium/Paid), Rollout Mode (Immediate Tooling vs. Backlog Generation). If Backlog Generation is selected, the wizard asks clarifying questions regarding task granularity (granular stories vs. high-level epics), planning frameworks (Scrum/Kanban/Checklist), and custom project labels.
 2. *Technical Stack & Runtime:* Target platforms (IoT, Desktop, Web, Mobile), runtime hardware constraints, and build configurations.
 3. *Friction & Gates:* Testing preferences, coverage thresholds, git workflow restrictions, and execution environments (local, pre-commit, remote CI, background crons).
 4. *Compliance Triggers:* Interactive questions that flag regulatory needs (HIPAA, SOC 2, ISO 27001, GDPR, DO-178C, ISO 26262, EU AI Act, GLI, etc.).
@@ -43,7 +43,7 @@ The wizard guides the developer through a structured interactive questionnaire (
 ### 1.4 Session Persistence & State Management
 To prevent developer questionnaire fatigue, the setup session must be fully resumable, editable, and version-tracked on disk.
 * **Storage Location:** Session state is saved in the workspace root at `.repo-wizard/session.json`. (The `.repo-wizard/` directory must be automatically appended to the project's `.gitignore` or `.agentignore` on first analysis).
-* **Completed Sessions:** If the wizard discovers a completed session (i.e., all tools are selected and scaffolding is done), the system must still allow the developer to run reports, revisit answers, or start fresh.
+* **Completed Sessions:** If the wizard discovers a completed session (i.e., all tools are selected and tooling is done), the system must still allow the developer to run reports, revisit answers, or start fresh.
 * **Resumability & Maintenance Logic:**
  1. *Discovery:* On startup, `/repo-wizard` checks if `.repo-wizard/session.json` exists.
  2. *User Prompts (Incomplete Session):* If an incomplete session is found, the agent displays: *"We found an active wizard session. Would you like to: [Resume, Revisit previous answers, Report selected choices, Start fresh]"*.
@@ -89,19 +89,19 @@ A standard Agile-compliant CSV file designed for bulk-importing into JIRA, Click
   * `Recommended By (Sub-Agent)`: The specific recommending agent name (e.g., `repo-wizard privacy-hardener`).
   * `Frameworks/Goals`: The framework or compliance standard addressed (e.g., `GDPR`).
 
-#### 1.5.4 Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Scaffolding Mode Only)
+#### 1.5.4 Developer Toolchain Summary (`docs/TOOLCHAIN.md` - Tooling Mode Only)
 A public-facing, well-formatted Markdown summary saved to the repository for the engineering team. It lists only the installed toolchain components without internal audit logs.
 * **Structure:**
  * **Tool Name & Purpose:** The human-readable name of the tool and what it is responsible for in the repo (e.g. *Axe-core CLI - Automated Accessibility Checks*).
  * **Configuration Files:** Clickable links to the configuration files created/modified in the repo (e.g. [axe.config.json](../axe.config.json)).
  * **Audit Reference Links:** Clickable links to the tool's official documentation website or public repository (allowing the team to self-audit licenses, updates, or parameters).
 
-### 1.6 Execution Order (Interview First, Scaffolding Second)
+### 1.6 Execution Order (Interview First, Tooling Second)
 To optimize recommendations and prevent unnecessary tool duplication, the wizard must execute in a strict two-stage sequence.
 1. **Stage 1: Complete Interview:** The entire questionnaire and candidate evaluation must run to completion *before* any installation or workspace modifications are proposed.
 2. **Stage 2: Cross-Capability Optimization:** Once the interview is complete, the orchestrator audits the selected tool suite to identify if any single tool can cover multiple capabilities (e.g., configuring *ESLint* to handle general code formatting, accessibility checks, and internationalization checks simultaneously). This prevents duplicate tool clutter.
 3. **Stage 3: Handoff Execution:** 
-   * **If Scaffolding Mode:** The orchestrator compiles the final optimized list of tools and dispatches them sequentially to the specialists for configuration and verification.
+   * **If Tooling Mode:** The orchestrator compiles the final optimized list of tools and dispatches them sequentially to the specialists for configuration and verification.
    * **If Backlog Mode:** The orchestrator dispatches parameter contracts to specialists to gather structured JSON issue lists. It aggregates these lists, appends disclaimers to each description, exports the `.repo-wizard/backlog.csv`, and generates the MD and HTML full reports and executive summaries. Workspace configuration modifications and package installations are bypassed.
 
 ---
@@ -159,12 +159,12 @@ The `tooling-engineer` is the environment executer. It acts purely on parameter 
 Specialists review codebase files, generate config templates, write initial verification test skeletons, and customize CI/CD pipelines.
 
 ### 4.1 `compliance-auditor.agent` (Security Hardening & Certifications)
-* **Objective:** Scaffold configurations for technical security certifications (FIPS, FedRAMP, SOC 2, ISO 27001, Cyber Essentials, MAS TRM, BSI).
-* **Deliverables:** Scaffold IaC static analysis files (checkov, tfsec), generate FIPS boringSSL/OpenSSL bindings checks, configure signed commit pre-commit hooks, and create compliant AWS/GCP audit logging configuration drafts.
+* **Objective:** Tool configurations for technical security certifications (FIPS, FedRAMP, SOC 2, ISO 27001, Cyber Essentials, MAS TRM, BSI).
+* **Deliverables:** Tool IaC static analysis files (checkov, tfsec), generate FIPS boringSSL/OpenSSL bindings checks, configure signed commit pre-commit hooks, and create compliant AWS/GCP audit logging configuration drafts.
 
 ### 4.2 `privacy-hardener.agent` (Data Privacy & Consent)
 * **Objective:** Implement data flow checks, GDPR/CCPA/LGPD/COPPA compliance hooks.
-* **Deliverables:** Scaffold automated database schema audits (detecting unencrypted PII fields), generate utility functions for data anonymization/scrubbing in logging frameworks, and write route middleware skeletons for data portability and deletion ("Right to be Forgotten") requests.
+* **Deliverables:** Tool automated database schema audits (detecting unencrypted PII fields), generate utility functions for data anonymization/scrubbing in logging frameworks, and write route middleware skeletons for data portability and deletion ("Right to be Forgotten") requests.
 
 ### 4.3 `accessibility-auditor.agent` (A11y Standards & Reporting)
 * **Objective:** Enforce WCAG 2.1/2.2 AA and EN 301 549 standards.
@@ -174,9 +174,9 @@ Specialists review codebase files, generate config templates, write initial veri
 * **Objective:** Audit active dependency vulnerability risk and license legality.
 * **Deliverables:** Configure automated Software Bill of Materials (SBOM) generation (CycloneDX, SPDX) on release builds, integrate dependency vulnerability checkers (Snyk, Dependabot), and set up pre-commit/CI license auditing (FOSSA, License Finder) configured to block viral copyleft licenses.
 
-### 4.5 `qa-engineer.agent` (Unit, E2E & Mock Scaffolding)
-* **Objective:** Scaffold test runners, mocks, and coverage collection gates.
-* **Deliverables:** Scaffold testing suite folders, configure testing runners (Jest, Vitest, PyTest, JUnit, Cargo test), set up API mocking layers (MSW, MockWebServer), and set up local code coverage gates (e.g. vitest coverage limits) matching the developer's requested coverage threshold.
+### 4.5 `qa-engineer.agent` (Unit, E2E & Mock Tooling)
+* **Objective:** Tool test runners, mocks, and coverage collection gates.
+* **Deliverables:** Tool testing suite folders, configure testing runners (Jest, Vitest, PyTest, JUnit, Cargo test), set up API mocking layers (MSW, MockWebServer), and set up local code coverage gates (e.g. vitest coverage limits) matching the developer's requested coverage threshold.
 
 ### 4.6 `vcs-workflow-engineer.agent` (VCS Discipline & Local Automation)
 * **Objective:** Automate formatting, styling, linting, and commit discipline.
@@ -184,30 +184,30 @@ Specialists review codebase files, generate config templates, write initial veri
 
 ### 4.7 `technical-scribe.agent` (Docs, ADRs & Architecture Diagrams)
 * **Objective:** Automate architectural decision tracking, documentation pipelines, and codebase diagrams.
-* **Deliverables:** Scaffold Nygard-style ADR folders (`docs/decisions/`), write lightweight ADR creation CLI scripts, generate baseline architecture C4 Model diagrams using Mermaid, and write bug-fix retrospective templates (Root Cause, Prevention, Action Items) with PR checklist prompts.
+* **Deliverables:** Tool Nygard-style ADR folders (`docs/decisions/`), write lightweight ADR creation CLI scripts, generate baseline architecture C4 Model diagrams using Mermaid, and write bug-fix retrospective templates (Root Cause, Prevention, Action Items) with PR checklist prompts.
 
 ### 4.8 `appsec-hardener.agent` (Application Security Hardening)
-* **Objective:** Scaffold application-level security defenses and local static analysis.
+* **Objective:** Tool application-level security defenses and local static analysis.
 * **Deliverables:** Configure secure HTTP header middlewares (Helmet/custom configs), establish strict CORS origin constraints, set up rate-limiting middleware triggers on authentication endpoints, write parameters sanitization helper templates, and deploy local Semgrep configuration rules.
 
 ### 4.9 `resilience-architect.agent` (Code Resilience & Fault-Tolerance)
-* **Objective:** Scaffold retry policies with exponential backoff/jitter, circuit breaker wrappers, fallback handlers, and local loopback latency/loss injection chaos scripts.
-* **Deliverables:** Scaffold Node.js (p-retry/opossum), Python (tenacity/pybreaker), Rust (tokio-retry), and Go retry/breaker integrations, and write local network delay/loss injection shell scripts.
+* **Objective:** Tool retry policies with exponential backoff/jitter, circuit breaker wrappers, fallback handlers, and local loopback latency/loss injection chaos scripts.
+* **Deliverables:** Tool Node.js (p-retry/opossum), Python (tenacity/pybreaker), Rust (tokio-retry), and Go retry/breaker integrations, and write local network delay/loss injection shell scripts.
 
 ### 4.10 `deployment-engineer.agent` (Availability & Deployment Automation)
 * **Objective:** Configure multi-replica container topologies, Kubernetes startup/liveness/readiness health probes, and automated database backups with validation restores.
-* **Deliverables:** Scaffold docker-compose replicas behind load-balancer proxies, write Kubernetes deployment probe YAML sections, and draft shell scripts for Postgres/MySQL compressed dumps with temporary recovery verification.
+* **Deliverables:** Tool docker-compose replicas behind load-balancer proxies, write Kubernetes deployment probe YAML sections, and draft shell scripts for Postgres/MySQL compressed dumps with temporary recovery verification.
 
 ### 4.11 `api-contract-architect.agent` (Interoperability & Contract Stability)
-* **Objective:** Scaffold OpenAPI/Swagger, gRPC/Protobuf, and GraphQL SDL schemas, and configure build-time contract linters and breaking-change checkers.
-* **Deliverables:** Scaffold REST schemas (openapi.yaml), gRPC protobuf interfaces (service.proto), and GraphQL SDL (schema.graphql) definition templates, and configure automated lint validation rules (Spectral, Buf, GraphQL Inspector).
+* **Objective:** Tool OpenAPI/Swagger, gRPC/Protobuf, and GraphQL SDL schemas, and configure build-time contract linters and breaking-change checkers.
+* **Deliverables:** Tool REST schemas (openapi.yaml), gRPC protobuf interfaces (service.proto), and GraphQL SDL (schema.graphql) definition templates, and configure automated lint validation rules (Spectral, Buf, GraphQL Inspector).
 
 ### 4.12 `data-pipeline-architect.agent` (Data Quality & Pipeline Orchestration)
 * **Objective:** Configure database connection pooling parameters, data schema validation validations, and workflow orchestrator pipeline DAG scripts.
-* **Deliverables:** Scaffold Pandera DataFrameSchema templates, write dbt testing parameters, configure Apache Airflow/Prefect task retries, and set up SQLAlchemy/pg connection pool sizes and timeouts.
+* **Deliverables:** Tool Pandera DataFrameSchema templates, write dbt testing parameters, configure Apache Airflow/Prefect task retries, and set up SQLAlchemy/pg connection pool sizes and timeouts.
 
 ### 4.13 `notebook-auditor.agent` (Jupyter Notebook Git Hygiene & Environments)
-* **Objective:** Configure Git attributes clean filters to strip notebook output metadata, setup nbqa notebook linters, and scaffold virtual environments with boundary checks preserving other agents configurations.
+* **Objective:** Configure Git attributes clean filters to strip notebook output metadata, setup nbqa notebook linters, and tool virtual environments with boundary checks preserving other agents configurations.
 * **Deliverables:** Configure `.gitattributes` and `nbstripout` filters, write Poetry (`pyproject.toml`) and Conda (`environment.yml`) configs, set up `nbqa` with Ruff styling parameters, and integrate pre-commit hook validation gates.
 
 ### 4.14 `embedded-systems-auditor.agent` (Embedded Systems & Firmware Robustness)
@@ -216,19 +216,19 @@ Specialists review codebase files, generate config templates, write initial veri
 
 ### 4.15 `fuzz-engineer.agent` (Fuzz Testing & Vulnerability Discovery)
 * **Objective:** Configure coverage-guided fuzz testing loops, input parser verification harnesses, and memory/undefined behavior compilation sanitizers.
-* **Deliverables:** Scaffold C/C++ `libFuzzer` harnesses, Rust `cargo-fuzz` targets, Python `Atheris` scripts, and compile-time sanitizer configurations.
+* **Deliverables:** Tool C/C++ `libFuzzer` harnesses, Rust `cargo-fuzz` targets, Python `Atheris` scripts, and compile-time sanitizer configurations.
 
 ### 4.16 `toolchain-architect.agent` (Cross-Compilation & Build Toolchains)
 * **Objective:** Configure cross-compilation compiler parameters, multi-architecture target configurations (ARM, RISC-V, WASM), sysroots, and linker scripting overlays.
-* **Deliverables:** Scaffold CMake target toolchain profiles (`riscv.cmake`), Cargo targets config configurations, and WebAssembly compiler setups.
+* **Deliverables:** Tool CMake target toolchain profiles (`riscv.cmake`), Cargo targets config configurations, and WebAssembly compiler setups.
 
 ### 4.17 `state-integrity-auditor.agent` (Formal Verification & Mathematical Modeling)
 * **Objective:** Configure mathematical verification proof checks, TLA+ state specs, Rust Kani proof harnesses, and SMT solver invariants validation.
-* **Deliverables:** Scaffold TLA+ specification files, Rust Kani SMT verification blocks (`#[cfg(kani)]`), and abstract interpretation rules.
+* **Deliverables:** Tool TLA+ specification files, Rust Kani SMT verification blocks (`#[cfg(kani)]`), and abstract interpretation rules.
 
 ### 4.18 Cybersecurity Color Wheel Responsibility Matrix
 To clarify repository security governance, our subagents are mapped directly to standard cybersecurity defense and compliance domains:
-* **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during scaffolding.
+* **Green Team (Software Security / Building Defenses):** Enforces code security and secure configs during tooling.
 * *Assigned Agents:* `appsec-hardener.agent` (CORS, headers, rate limits), `supply-chain-auditor.agent` (third-party package audits, lockfile checks), `vcs-workflow-engineer.agent` (licensing validations), `api-contract-architect.agent` (schema syntax rules and lint checks), and `notebook-auditor.agent` (notebook filters and quality gates).
 * **Blue Team (Defense & System Visibility):** Configures runtime logging, access control trails, performance alert triggers, and system fault tolerance.
 * *Assigned Agents:* `observability-engineer.agent` (Alertmanager triggers, OTel tracing), `privacy-hardener.agent` (PII telemetry scrubbing), `resilience-architect.agent` (retries, circuit breakers, chaos tests), and `fuzz-engineer.agent` (fuzzing harnesses, sanitizers).
@@ -252,7 +252,7 @@ To delegate tasks without hardcoding tool behavior into specialist prompts, the 
     "build_system": "npm-vite",
     "budget_tier": "free | premium",
     "execution_environments": ["pre-commit", "CI"],
-    "execution_mode": "scaffold | backlog",
+    "execution_mode": "tool | backlog",
     "backlog_parameters": {
       "granularity": "granular | epic",
       "framework": "Scrum | Kanban",
@@ -312,7 +312,7 @@ When a specialist or scaffolder alters files and triggers a verification build t
 1. **State Isolation:** Subagents must verify the working tree is clean using the command appropriate for the active VCS (e.g. `git status` for Git, `hg status` for Mercurial, or `p4 status` for Perforce) before starting.
 2. **Build Safety Check:** If the verify script returns a non-zero exit code (compile error, TypeScript validation fail, or broken tests), notify the developer of the exact error and attempt to debug/resolve the failure first.
 3. **Developer Consent & Rollback:** If debugging attempts fail, explain what was tried and ask the developer for explicit permission/consent before performing a VCS-specific rollback (such as `git checkout -- .` & `git clean -fd` for Git, `hg revert --all` & `hg purge` for Mercurial, or `p4 revert` for Perforce). Give the developer the opportunity to investigate and resolve it manually if preferred.
-4. **Rollback Safety:** If a subagent's scaffolding breaks the build or fails unit tests and rollback is approved/executed, the lead orchestrator reports the exact failure and verifies the workspace is cleanly restored.
+4. **Rollback Safety:** If a subagent's tooling breaks the build or fails unit tests and rollback is approved/executed, the lead orchestrator reports the exact failure and verifies the workspace is cleanly restored.
 
 ---
 
@@ -334,7 +334,7 @@ To avoid colliding with standard client commands (such as `/test`, `/review`, or
  * **`/rw-git-workflow`:** Pre-commit hooks, commit validation, and copyright headers setup.
  * **`/rw-scribe`:** Nygard ADR, Mermaid C4 diagram, and post-mortem template setup.
  * **`/rw-performance-auditor`:** The performance benchmarking and load test runner configuration.
-* **Commands Configuration:** Scaffold command integration configs for all supported AI client platforms:
+* **Commands Configuration:** Tool command integration configs for all supported AI client platforms:
  * Antigravity CLI commands under `commands/rw-*.toml` and `commands/repo-wizard.toml`.
  * Claude Code commands under `.claude/commands/rw-*.md` and `.claude/commands/repo-wizard.md`.
  * Gemini CLI commands under `.gemini/commands/rw-*.toml` and `.gemini/commands/repo-wizard.toml`.

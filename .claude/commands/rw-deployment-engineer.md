@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Database engines needing backups and retention policy constraints.
 5. Storage locations and dry-run restoration validation preferences.
 
-Wait for the user's response before proceeding with deployment audits, scaffolding, and verification.
+Wait for the user's response before proceeding with deployment audits, tooling, and verification.

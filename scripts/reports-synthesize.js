@@ -163,7 +163,7 @@ try {
 
   extractedRecommendations.forEach((rec, idx) => {
     const isHighCost = rec.recommendation.toLowerCase().includes('decompose') || rec.recommendation.toLowerCase().includes('architecture') || rec.recommendation.toLowerCase().includes('fuzz');
-    const isMediumCost = rec.recommendation.toLowerCase().includes('runner') || rec.recommendation.toLowerCase().includes('scaffold') || rec.recommendation.toLowerCase().includes('threshold');
+    const isMediumCost = rec.recommendation.toLowerCase().includes('runner') || rec.recommendation.toLowerCase().includes('tool') || rec.recommendation.toLowerCase().includes('threshold');
 
     const formattedRec = `- **${rec.file}:** [${rec.recommendation}](#specialist-agent-${rec.agent})`;
 
@@ -193,7 +193,7 @@ try {
     quickWins.push("- **Codebase Lint Rules:** [Establish project linting guidelines](#specialist-agent-general) for all modules.");
   }
   if (highValue.length === 0) {
-    highValue.push("- **Testing Scaffolding:** [Integrate automated test runner configuration](#specialist-agent-general) for validation.");
+    highValue.push("- **Testing Tooling:** [Integrate automated test runner configuration](#specialist-agent-general) for validation.");
   }
 
   // Group findings into narrative paragraphs
@@ -241,13 +241,13 @@ Passive static analysis of the workspace indicates that core operations avoid co
 
 ${healthParagraphs.join('\n\n')}`;
 
-  const sec2Text = `*This section identifies key opportunities for integrating automated quality gates and testing scaffolding.*
+  const sec2Text = `*This section identifies key opportunities for integrating automated quality gates and testing tooling.*
 
-Overview: Although the codebase maintains an excellent lightweight foundation, several opportunities exist to transition towards automated quality control gates and robust testing scaffolding. Currently, the project relies on ad-hoc or manual validations that require developer intervention.
+Overview: Although the codebase maintains an excellent lightweight foundation, several opportunities exist to transition towards automated quality control gates and robust testing tooling. Currently, the project relies on ad-hoc or manual validations that require developer intervention.
 
 Transitioning to standard execution frameworks will help consolidate quality patterns and simplify verification for contributors. Additionally, the lack of automated coverage analysis makes it difficult to measure test depth, highlighting the need for a configured coverage threshold gate. Implementing a unified runner will make it easier to add new features with the confidence that existing functions are verified. These validation rules should be integrated directly into the local tooling ecosystem.
 
-Another significant area of opportunity is the isolation of network boundaries. Some modules execute HTTP requests during runtime or evaluation tasks, which can introduce latency, instability, and API costs in test environments. Scaffolding a centralized mock service worker layer will help capture and verify these endpoints, ensuring that tests remain fast, deterministic, and free from external dependencies. Furthermore, integrating pre-commit hooks to automate syntax, linting, and unit test execution will help identify potential code defects early, preventing them from reaching the main branch.
+Another significant area of opportunity is the isolation of network boundaries. Some modules execute HTTP requests during runtime or evaluation tasks, which can introduce latency, instability, and API costs in test environments. Tooling a centralized mock service worker layer will help capture and verify these endpoints, ensuring that tests remain fast, deterministic, and free from external dependencies. Furthermore, integrating pre-commit hooks to automate syntax, linting, and unit test execution will help identify potential code defects early, preventing them from reaching the main branch.
 
 ${opportunityParagraphs.join('\n\n')}`;
 
@@ -257,7 +257,7 @@ Overview: To minimize developer friction and ensure a smooth adoption of these t
 
 Specifically, configuring local git pre-commit hooks to validate code formatting and run fast unit tests on modified files will immediately prevent syntax regressions. This setup ensures that developers receive rapid feedback during the coding loop without stalling their workspace. Implementing these hooks takes minimal time but builds immediate discipline around code formatting and basic lint rules.
 
-The second phase should address high-value, medium-effort scaffolding. This includes introducing a standardized test runner configuration and establishing a baseline code coverage target of eighty percent. The test runner configuration will unify test patterns across the repository, while the coverage gate will ensure that new features are accompanied by corresponding test cases. To support this, the third phase should introduce mock service worker boundaries to intercept external network calls, ensuring that unit and integration tests remain isolated and deterministic. This phased structure helps maintain engineering momentum while incrementally raising code quality.`;
+The second phase should address high-value, medium-effort tooling. This includes introducing a standardized test runner configuration and establishing a baseline code coverage target of eighty percent. The test runner configuration will unify test patterns across the repository, while the coverage gate will ensure that new features are accompanied by corresponding test cases. To support this, the third phase should introduce mock service worker boundaries to intercept external network calls, ensuring that unit and integration tests remain isolated and deterministic. This phased structure helps maintain engineering momentum while incrementally raising code quality.`;
 
   // mock-start
   const compiledAnalysis = {

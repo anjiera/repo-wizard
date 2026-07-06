@@ -7,7 +7,7 @@ module.exports = {
   personaFile: path.join(__dirname, '..', 'agents', 'privacy-hardener.md'),
   testCases: [
     {
-      name: 'PII Log Scrubbing Scaffold',
+      name: 'PII Log Scrubbing Tool',
       input: 'Configure log scrubbing in my Winston logger to protect sensitive user PII.',
       rubrics: [
         'The response explains options and nuances for log scrubbing (e.g. masking vs hashing).',

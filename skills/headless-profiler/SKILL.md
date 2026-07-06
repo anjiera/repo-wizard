@@ -39,7 +39,7 @@ If the active environment is headless (`MODE=HEADLESS`), bypass all interactive 
 
 
 ### Phase 3: Headless Subagent Audit
-1. **Non-blocking Run:** Relevant subagents run in headless mode (following Section 10 of the protocol), skipping interactive inputs and scaffolding/modifications.
+1. **Non-blocking Run:** Relevant subagents run in headless mode (following Section 10 of the protocol), skipping interactive inputs and tooling/modifications.
 2. **Observations Output:** Each subagent saves its observations report to `.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`.
 3. **Caching & Resumability:** If an agent's mini-report already exists from a previous run, reuse it to support resuming halted scans.
 4. **Execution & Synchronization Rules**:

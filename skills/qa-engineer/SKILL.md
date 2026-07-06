@@ -13,7 +13,7 @@ A specialized quality assurance and test automation workflow designed to set up 
 ## When to Use
 
 ### Triggering Conditions
-* Scaffolding directories and settings for testing suites.
+* Tooling directories and settings for testing suites.
 * Configuring unit, integration, or End-to-End (E2E) test runners.
 * Integrating API or database mocking layers (MSW, MockWebServer).
 * Configuring code coverage threshold gates (Istanbul, V8, vitest coverage) locally or in CI pipelines.
@@ -44,8 +44,8 @@ Scan the codebase to evaluate current testing structures:
 3. **Mocking Boundaries:** Identify if API queries or network requests are executed directly in tests without mock protection.
 4. **Passive Audit Boundary:** Do not run test suites (e.g. npm test, pytest, ./gradlew test) or compile code during this phase. Auditing is strictly static and passive to prevent execution delays, timeouts, or environment clashes.
 
-### Phase 3: Testing Scaffolding Handoff
-Coordinate with the environment configurer to scaffold controls:
+### Phase 3: Testing Tooling Handoff
+Coordinate with the environment configurer to tool controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., vitest, jest, msw, @testing-library/react) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., local pre-commit test runner execution speeds vs CI robustness, mock strictness). Ask the developer to guide the configuration file modifications.
 3. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append execution and setup commands to the project's existing setup scripts (e.g. `setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`), and present these changes to the user for review.

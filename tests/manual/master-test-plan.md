@@ -66,7 +66,7 @@ graph TD
 ## Level 2: Dry-Run Integration & Sandbox Testing (Mocks)
 
 **Goal**: Verify that subagent parallel spawning, contract schemas, git rollbacks, and sandboxes work in mock mode without invoking external APIs.
-*For detailed step-by-step procedures, see [features/scaffolding-rollback.md](features/scaffolding-rollback.md) and [features/prompt-injection.md](features/prompt-injection.md).*
+*For detailed step-by-step procedures, see [features/tooling-rollback.md](features/tooling-rollback.md) and [features/prompt-injection.md](features/prompt-injection.md).*
 
 - [ ] **2.1 Contract Schema Validation & Mocking Harness**
   - Run the contract validation and mock sweep harness:
@@ -76,7 +76,7 @@ graph TD
     ```
   - *Expected Outcome*:
     - `validate-contracts.js`: Outputs `All contract validator self-tests passed.`
-    - `run-mock-harness.js`: Simulates 18 specialist contracts in both scaffold and backlog mode.
+    - `run-mock-harness.js`: Simulates 18 specialist contracts in both tool and backlog mode.
     - Verify that mock report files are generated at `.repo-wizard/agents/observations-*-temp_mock_repo.md`.
 
 - [ ] **2.2 E2E Sandbox Test Runner**

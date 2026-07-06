@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Custom linker script requirements and stack configurations.
 5. Target sysroot headers directory dependencies.
 
-Wait for the user's response before proceeding with build audits, codebase scans, scaffolding, and verification.
+Wait for the user's response before proceeding with build audits, codebase scans, tooling, and verification.

@@ -11,4 +11,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 3. Styling & formatting preferences (linters, formatters, and hook levels).
 4. License & copyright header validation specifications (owner, license type).
 
-Wait for the user's response before proceeding with codebase audits, scaffolding, and verification.
+Wait for the user's response before proceeding with codebase audits, tooling, and verification.

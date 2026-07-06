@@ -3,7 +3,7 @@ name: state-hardener
 description: Guides agents through auditing codebase hooks and states for stale closures, memory leaks, and async fetch race conditions. Use when configuring React states, checking event listeners, or auditing async hooks.
 ---
 
-# State Sanitization Auditing & Scaffolding (`state-hardener`)
+# State Sanitization Auditing & Tooling (`state-hardener`)
 
 ## Overview
 A specialized state optimization workflow designed to audit frontend components for stale closures, asynchronous race conditions, and event listener memory leaks.
@@ -21,7 +21,7 @@ Use this skill when:
 If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-state-hardener.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Interactive Alignment & Profile Definition
-Before auditing or scaffolding, align with the developer:
+Before auditing or tooling, align with the developer:
 1. **Target Stack:** Identify the state library in use (e.g., React useState, Zustand, Redux).
 2. **Concurrency Requirements:** Establish the severity of race conditions (e.g. high-frequency input search vs. simple navigation fetching).
 3. **Linter Integrations:** Verify if they want automated custom linter rules (like `react-hooks/exhaustive-deps`) set up.
@@ -32,7 +32,7 @@ Audit the codebase to check current state configurations:
 2. **Fetch Sweeps:** Scan async fetch pathways for missing active cancellation indicators or AbortController bindings.
 3. **Cleanup Audits:** Trace event listeners and intervals to ensure they have matching cleanup teardowns.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying configuration files.
 2. **Interactive Code Review:** Display generated hooks, cleanup templates, or linter rules to the user and prompt them for review and confirmation.

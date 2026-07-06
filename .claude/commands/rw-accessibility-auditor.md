@@ -10,4 +10,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 2. Frontend component framework (React, Vue, static HTML, etc.) and styling setup.
 3. Desired execution gates (pre-commit checks, remote CI builds, or manual runs).
 
-Wait for the user's response before proceeding with codebase accessibility audit, scaffolding suggestions, and security validation.
+Wait for the user's response before proceeding with codebase accessibility audit, tooling suggestions, and security validation.

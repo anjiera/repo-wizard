@@ -1,18 +1,18 @@
 ---
 name: performance-auditor
-description: Guides agents through auditing codebase performance setups, scaffolding local micro-benchmarks, writing automated HTTP load/stress tests, and configuring CI performance budget gates. Use when setting up benchmarking, optimizing speed/latency, configuring load testing, or adding performance gates.
+description: Guides agents through auditing codebase performance setups, tooling local micro-benchmarks, writing automated HTTP load/stress tests, and configuring CI performance budget gates. Use when setting up benchmarking, optimizing speed/latency, configuring load testing, or adding performance gates.
 ---
 
-# Performance Auditing & Scaffolding (`performance-auditor`)
+# Performance Auditing & Tooling (`performance-auditor`)
 
 ## Overview
-A specialized performance engineering workflow designed to audit software speed and latency bottlenecks, scaffold local micro-benchmarking suites (e.g. Tinybench, pytest-benchmark, Criterion), configure concurrent load and stress tests (e.g. k6, autocannon, Locust), and establish performance budget gates within CI/CD pipelines.
+A specialized performance engineering workflow designed to audit software speed and latency bottlenecks, tool local micro-benchmarking suites (e.g. Tinybench, pytest-benchmark, Criterion), configure concurrent load and stress tests (e.g. k6, autocannon, Locust), and establish performance budget gates within CI/CD pipelines.
 
 ## When to Use
 Use this skill when:
 - Establishing performance targets or latency baselines for a codebase.
 - Configuring micro-benchmarks to optimize hot paths or algorithmic execution times.
-- Scaffolding load-testing profiles to verify application reliability, concurrency, and throughput under stress.
+- Tooling load-testing profiles to verify application reliability, concurrency, and throughput under stress.
 - Setting up pre-commit or CI/CD budget verification gates to block performance regressions.
 - Invoking the slash command: `/rw-performance-auditor`.
 
@@ -22,7 +22,7 @@ Use this skill when:
 If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-performance-auditor.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Interactive Alignment & Profile Definition
-Before scanning or scaffolding, align with the developer on target configurations:
+Before scanning or tooling, align with the developer on target configurations:
 1. **Performance Focus:** Confirm the focus areas: micro-benchmarks (isolated logic speed) vs. load testing (system concurrency and API throughput).
 2. **Benchmark Frameworks:** Align on preferred local benchmarking tools based on the stack (e.g. pytest-benchmark for Python, Tinybench for Node.js, Criterion.rs for Rust).
 3. **Load Testing Targets:** Identify endpoints to load test (e.g. `/api/v1/health`), target concurrent users, target duration, and target SLAs (e.g., 95% of requests under 200ms).
@@ -34,7 +34,7 @@ Scan the codebase to evaluate current performance configurations:
 2. **Config Audit:** Look for configuration files related to speed or benchmarks (e.g. `.k6.js`, `locustfile.py`, `pytest.ini`).
 3. **Module Profile:** Identify the key entry points, server routers, and database setups to locate critical code pathways.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, tests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before suggesting the automatic installation of packages, editing setup scripts, or modifying CI/CD configurations.
 2. **Interactive Code Review:** Display generated load-test scripts, benchmark configurations, and budget specifications to the user and prompt them for review and confirmation.
@@ -51,7 +51,7 @@ Draft all configurations, tests, and scripts in coordination with `tooling-engin
 - *"Benchmarking on a local machine in CI is too volatile, let's skip automated gates."* - While CPU speeds vary across execution runtimes, having a baseline metric check detects massive algorithmic regression (e.g. changing an O(N) lookup to O(N^2)). Set generous thresholds to prevent flakiness while still catching regressions.
 
 ## Red Flags
-- Scaffolding a load testing tool or benchmark suite without prompting the developer for stack and framework preferences.
+- Tooling a load testing tool or benchmark suite without prompting the developer for stack and framework preferences.
 - Committing large, uncompressed synthetic binary payloads or mock database dumps used for benchmarks directly to the repository (these should be dynamically generated or mocked).
 - Hardcoding local API URLs (like `http://localhost:3000`) inside load-test scripts without allowing env variable overrides.
 

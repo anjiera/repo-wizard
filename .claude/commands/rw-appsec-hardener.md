@@ -1,5 +1,5 @@
 ---
-description: Scaffold secure HTTP header middlewares, CORS origin constraints, set up rate limit throttling, and configure local Semgrep SAST linter checks
+description: Tool secure HTTP header middlewares, CORS origin constraints, set up rate limit throttling, and configure local Semgrep SAST linter checks
 ---
 
 Invoke the agent-skills:appsec-hardener skill.
@@ -11,4 +11,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 3. Rate-limiting constraints on normal routes vs sensitive authentication routes.
 4. Local SAST validation scanning configurations (Semgrep rule requirements).
 
-Wait for the user's response before proceeding with AppSec audits, scaffolding, and verification.
+Wait for the user's response before proceeding with AppSec audits, tooling, and verification.

@@ -1,6 +1,6 @@
 ---
 name: accessibility-auditor
-description: Guides agents through auditing codebase files and configurations for compliance with digital accessibility standards (WCAG 2.1/2.2 AA, EN 301 549). Scaffolds automated a11y testing configurations (ESLint, axe-core CLI scripts) conditionally based on user choice. Use when setting up accessibility tools, auditing UI accessibility, or adding tests.
+description: Guides agents through auditing codebase files and configurations for compliance with digital accessibility standards (WCAG 2.1/2.2 AA, EN 301 549). Configures automated a11y testing configurations (ESLint, axe-core CLI scripts) conditionally based on user choice. Use when setting up accessibility tools, auditing UI accessibility, or adding tests.
 ---
 
 # Accessibility Auditor (`accessibility-auditor`)
@@ -42,8 +42,8 @@ Scan the codebase to evaluate accessibility conformance for the selected standar
 2. **Alt Tags & Bindings:** Locate missing alt tags on images or missing labels on form input elements.
 3. **Aria Role Verification:** Check if custom interactive components use WAI-ARIA role structures.
 
-### Phase 3: Accessibility Scaffolding Handoff
-Coordinate with the environment configurer to scaffold controls:
+### Phase 3: Accessibility Tooling Handoff
+Coordinate with the environment configurer to tool controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., eslint-plugin-jsx-a11y, axe-core CLI) to the scaffolder.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (ruleset strictness levels, pre-commit local execution speed vs CI robustness). Ask the developer to guide the configuration file modifications.
 3. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append installation and setup commands to the project's existing setup scripts (e.g. `setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`), and present these changes to the user for review.

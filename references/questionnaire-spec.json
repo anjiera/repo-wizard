@@ -344,7 +344,7 @@
         },
         {
           "id": "scaffoldTests",
-          "phrasing": "Which testing frameworks do you want to scaffold or expand?",
+          "phrasing": "Which testing frameworks do you want to tool or expand?",
           "type": "multi-select",
           "options": [
             { "value": "none", "label": "None (Skip test framework configuration)" },
@@ -426,7 +426,7 @@
     {
       "id": "adoption",
       "title": "Adoption Strategy",
-      "subtitle": "Codebase Size & Token-Efficient Scaffolding",
+      "subtitle": "Codebase Size & Token-Efficient Tooling",
       "questions": [
         {
           "id": "legacyCodeStrategy",

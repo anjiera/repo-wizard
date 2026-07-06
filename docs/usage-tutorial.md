@@ -1,6 +1,6 @@
 # Repo Wizard Usage Tutorial
 
-This tutorial guides you through analyzing, auditing, and scaffolding tooling in your repositories using `repo-wizard`. 
+This tutorial guides you through analyzing, auditing, and tooling tooling in your repositories using `repo-wizard`. 
 
 Whether you are starting a new project (Greenfield) or auditing an existing codebase (Brownfield), this guide explains how the orchestrator and specialized subagents analyze your stack and deliver recommendations.
 
@@ -11,7 +11,7 @@ Whether you are starting a new project (Greenfield) or auditing an existing code
 ### Greenfield Repositories (New Projects)
 When initialized in a clean or newly created workspace, `repo-wizard` acts as a repository bootstrapper:
 1. It gathers your target tech stack, budget, and compliance needs via the questionnaire.
-2. It screens tools and scaffolds configuration files (e.g., `.eslintrc.json`, `axe.config.json`, Git pre-commit hooks) from scratch.
+2. It screens tools and configures configuration files (e.g., `.eslintrc.json`, `axe.config.json`, Git pre-commit hooks) from scratch.
 3. It creates a developer summary guide in `docs/TOOLCHAIN.md` detailing the newly installed tools.
 
 ### Brownfield Repositories (Existing or Legacy Projects)
@@ -33,7 +33,7 @@ Recommended for developer onboarding and interactive configuration.
   1. **TOS Gate:** Prompts you to accept the Terms of Service.
   2. **Opt-In Categories:** At the start of each section (Testing, Compliance, etc.), it asks if you want to configure tools or skip that category entirely.
   3. **Screening Ledgers:** Screens candidate tools via `tool-auditor` and prompts you to select preferred tools.
-  4. **Scaffolding/Backlog Handoff:** Installs tools and generates reports.
+  4. **Tooling/Backlog Handoff:** Installs tools and generates reports.
 
 ### Mode 2: Headless Mode (`MODE=HEADLESS`)
 A non-blocking scan of the active repository, ideal for scripts or background sweeps.

@@ -17,7 +17,7 @@ module.exports = {
     },
     {
       name: 'Poetry / Conda Environment Configuration',
-      input: 'Scaffold a Poetry pyproject.toml file for a machine learning codebase including pandas, torch, and dev dependencies for nbqa.',
+      input: 'Tool a Poetry pyproject.toml file for a machine learning codebase including pandas, torch, and dev dependencies for nbqa.',
       rubrics: [
         'The response asks for permission before writing the configuration files.',
         'The response proposes a valid pyproject.toml with source priorities and pinned dependency categories.',

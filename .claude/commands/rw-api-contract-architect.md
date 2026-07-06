@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Parameter and field naming casings (camelCase, snake_case).
 5. Validation utilities (Spectral, Buf CLI, GraphQL Inspector) to set up.
 
-Wait for the user's response before proceeding with API contract audits, scaffolding, and verification.
+Wait for the user's response before proceeding with API contract audits, tooling, and verification.

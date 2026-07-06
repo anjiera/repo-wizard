@@ -35,7 +35,7 @@ const { DISCLAIMER_TEXT, MOCK_CAPABILITY_MAP, MOCK_TOOL_MAP } = require('./repor
 /**
  * Creates a mock contract for a given specialist subagent
  */
-function createMockContract(specialist, mode = 'scaffold') {
+function createMockContract(specialist, mode = 'tool') {
   const contract = {
     task_metadata: {
       target_modules: ['/src'],
@@ -92,7 +92,7 @@ ${DISCLAIMER_TEXT}
   fs.writeFileSync(path.join(agentsDir, fileName), content);
 }
 
-function runMockOrchestration(targetRepoDir, executionMode = 'scaffold') {
+function runMockOrchestration(targetRepoDir, executionMode = 'tool') {
   const repoName = path.basename(targetRepoDir);
   const wizardDir = path.join(targetRepoDir, '.repo-wizard');
   const agentsDir = path.join(wizardDir, 'agents');
@@ -149,7 +149,7 @@ function main() {
     if (!fs.existsSync(tempRepo)) {
       fs.mkdirSync(tempRepo, { recursive: true });
     }
-    const scaffoldSuccess = runMockOrchestration(tempRepo, 'scaffold');
+    const scaffoldSuccess = runMockOrchestration(tempRepo, 'tool');
     const backlogSuccess = runMockOrchestration(tempRepo, 'backlog');
     success = scaffoldSuccess && backlogSuccess;
   } catch (err) {

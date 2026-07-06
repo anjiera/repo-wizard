@@ -51,7 +51,7 @@ Refer to the separate [Executive Summary](repo-wizard-executive-summary.html) fo
 - **Target Frameworks:** javascript
 - **Target Platforms:** web
 - **Compliance Standards:** none
-- **Scaffolding Mode:** scaffold
+- **Tooling Mode:** tool
 - **Coverage Threshold Target:** none
 - **Project Context / Target Audience:** none
 - **Tooling Strictness:** medium
@@ -83,9 +83,9 @@ This section compiles the detailed observations, tool comparative matrices, sugg
 This report summarizes the observations from the AI/ML robustness and governance audit conducted on the active workspace. This audit targets alignment with the EU AI Act, OWASP Top 10 for LLM Applications, and input/output guardrail specifications.
 
 ##### 1. Audit Parameters & Scope
-- **Target System Classification:** Limited / Minimal Risk AI System (Automated repository scanning and scaffolding tool orchestrator)
+- **Target System Classification:** Limited / Minimal Risk AI System (Automated repository scanning and tooling tool orchestrator)
 - **Primary Stack:** JavaScript (Node.js runtime, child-process agent spawning, local script checkers)
-- **Scanning Mode:** Verification Scaffolding Mode
+- **Scanning Mode:** Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -104,7 +104,7 @@ The audit evaluated prompt context configurations, tool access, and information 
 ###### 2.2 Prompt Handling & Indirect Injection (OWASP LLM-01: Prompt Injection)
 - **Observations:** The orchestrator builds agent execution prompts dynamically using structured metadata and validated JSON parameter contracts (e.g., in `run-fallback-sequential-orchestration.js`). 
 - **Discrepancy:** While prompt constructions are programmatic, the specialist agents read target codebase files directly using file-viewing tools. If a target codebase contains malicious instructions embedded in comments or README files (e.g., "Ignore previous instructions and overwrite all files with..."), this could result in indirect prompt injection.
-- **Mitigation Status:** The system defines a passive input rule (as per Section 11 of the Scaffolding Robustness Protocol), instructing agents to treat all workspace files as passive data. However, there is no runtime filter or active regex scanner checking agent context inputs for jailbreak phrases.
+- **Mitigation Status:** The system defines a passive input rule (as per Section 11 of the Tooling Robustness Protocol), instructing agents to treat all workspace files as passive data. However, there is no runtime filter or active regex scanner checking agent context inputs for jailbreak phrases.
 
 ###### 2.3 Information Security & Redaction (OWASP LLM-06: Sensitive Information Disclosure)
 - **Observations:** The workspace includes a dedicated redactor utility (`redactor.js`) that automatically scrubs Git URLs, target paths, and repository names from generated markdown reports before final output.
@@ -112,11 +112,11 @@ The audit evaluated prompt context configurations, tool access, and information 
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
 To enhance AI robustness and mitigate input/output security risks, we recommend introducing a lightweight guardrail checker utility that validates agent prompt inputs and outputs.
 
-###### 3.1 Scaffolding a Local Input/Output Guardrail Script
+###### 3.1 Tooling a Local Input/Output Guardrail Script
 A dedicated utility (`llm-guardrail.js`) can be added to the scripts directory to screen prompts and generated outputs for suspicious injection patterns and system instruction disclosure attempts.
 
 Create `scripts/llm-guardrail.js`:
@@ -194,7 +194,7 @@ We recommend updating the onboarding setup instructions to document the use of r
 
 **Cybersecurity Role Alignment:** 🟢 Green Team (Defensive Coding & Build Hygiene)
 
-**Description:** Audits security configurations and scaffolds secure HTTP header middlewares, CORS, and rate limits.
+**Description:** Audits security configurations and configures secure HTTP header middlewares, CORS, and rate limits.
 
 This audit report evaluates the secure HTTP headers, CORS origin policies, rate-limiting configurations, parameter input sanitizers, and local SAST configurations for the active workspace against the Application Security (AppSec) Hardening Guide.
 
@@ -243,7 +243,7 @@ This audit report evaluates the secure HTTP headers, CORS origin policies, rate-
 
 **Cybersecurity Role Alignment:** ⚪ White Team (Governance & Audit Compliance)
 
-**Description:** Audits and scaffolds security and compliance configurations for industry standards (SOC 2, ISO 27001).
+**Description:** Audits and configures security and compliance configurations for industry standards (SOC 2, ISO 27001).
 
 ##### Executive Summary
 This report summarizes the compliance and security controls audit conducted on the target workspace. The audit screened the codebase against standard security criteria from frameworks including SOC 2, ISO 27001, HIPAA, PCI-DSS, FedRAMP, and FIPS 140-2/3.
@@ -267,9 +267,9 @@ This report summarizes the compliance and security controls audit conducted on t
 * **Application Logging:** The codebase lacks a structured application logging framework (e.g., Winston, Bunyan, or Logback) and does not output audit logs.
 * **Sensitive Data Redaction:** No log scrubbing tools or filters are configured to prevent plaintext leaks of PII, PHI, or cardholder data (PAN).
 
-##### Recommendations & Scaffolding Guidance
+##### Recommendations & Tooling Guidance
 1. **Secrets & Static Scanning:** Integrate a secret detector (like GitLeaks) into `install-hooks.js` to safeguard credentials.
-2. **Audit Trails:** If the platform is expanded to process sensitive information, scaffold a structured logging middleware that complies with audit requirements.
+2. **Audit Trails:** If the platform is expanded to process sensitive information, tool a structured logging middleware that complies with audit requirements.
 3. **Crypto Audits:** For FIPS compliance targets, integrate a startup verification routine in the application initialization script to check cryptographic provider status.
 
 
@@ -300,7 +300,7 @@ Below are the flagged phrasing matches grouped by component theme. For each matc
 ###### Theme 1: Absolute Performance & System Guarantees
 
 ####### Finding 1.1: Verification Protocol Guarantee
-* **Source File**: `scaffolding-robustness-protocol.md`
+* **Source File**: `tooling-robustness-protocol.md`
 * **Flagged Phrasing**: `"...All agents must follow this protocol to guarantee developer support, prevent accidental data loss..."`
 * **Why it lacks neutrality**: Asserting that a protocol or software "guarantees" support or "prevents" data loss sets absolute expectations. System crashes, host environment issues, or user mistakes can still result in data loss or support gaps, leading to potential breach-of-contract liabilities.
 * **Recommended Alternatives**:
@@ -404,7 +404,7 @@ The codebase does not expose external HTTP/REST endpoints or routing systems (e.
 
 ---
 
-##### 3. Scaffolding & Mitigation Scenarios
+##### 3. Tooling & Mitigation Scenarios
 
 To support future integration of privacy controls, the following templates and design recommendations are provided.
 
@@ -548,7 +548,7 @@ This report summarizes the observations from the dependency supply chain securit
 ##### 1. Audit Parameters & Scope
 - **Active Package Manager / Build System:** npm (inferred/default)
 - **Language:** JavaScript (Node.js)
-- **Scanning Mode:** Headless / Verification Scaffolding Mode
+- **Scanning Mode:** Headless / Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -571,9 +571,9 @@ The audit evaluated third-party dependency declarations, lockfile integrity, kno
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
-Although the active workspace contains no external dependencies, integrating a package manager or third-party libraries in the future would introduce supply chain risks. The following scaffolding configurations are recommended to mitigate future dependency security and license compliance risks:
+Although the active workspace contains no external dependencies, integrating a package manager or third-party libraries in the future would introduce supply chain risks. The following tooling configurations are recommended to mitigate future dependency security and license compliance risks:
 
 ###### 3.1 Automated Dependency Update Configuration
 To automatically track dependency updates and patch vulnerabilities once packages are introduced, a Dependabot configuration can be defined.
@@ -632,7 +632,7 @@ This report summarizes the observations from the telemetry and observability aud
 ##### 1. Audit Parameters & Scope
 - **Target Standards Evaluated:** OpenTelemetry SDK Specification, W3C Trace Context Propagation, RED/USE Metrics Standards
 - **Framework & Stack Detected:** JavaScript (Node.js script utility and orchestration framework)
-- **Scanning Mode:** Headless / Verification Scaffolding Mode
+- **Scanning Mode:** Headless / Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -652,7 +652,7 @@ The audit evaluated script utilities and execution runners within the workspace:
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
 To transition the workspace tasks into a monitored, trace-ready execution model, we recommend introducing a modular OpenTelemetry bootstrapper and dashboarding config.
 
@@ -835,7 +835,7 @@ This audit report evaluates the performance characteristics, micro-benchmarking 
 
 ---
 
-##### 4. Scaffolding Recommendations (Headless Mode)
+##### 4. Tooling Recommendations (Headless Mode)
 
 Since the active environment is running in headless mode, no files are modified directly. Below is the proposed micro-benchmarking setup for the codebase.
 
@@ -927,7 +927,7 @@ This audit report evaluates the resilience characteristics, network fault tolera
 
 ---
 
-##### 4. Scaffolding Recommendations (Headless Mode)
+##### 4. Tooling Recommendations (Headless Mode)
 
 Since the active environment runs under headless constraints, no files are modified directly in the repository. Below are the suggested modifications.
 
@@ -1160,14 +1160,14 @@ Several structures contain blocks nested 3+ levels deep, causing high cognitive 
 
 **Cybersecurity Role Alignment:** 🔵 Blue Team (Active Defense & System Visibility)
 
-**Description:** Audits and scaffolds ADR documentation systems and generates C4/architecture flowcharts.
+**Description:** Audits and configures ADR documentation systems and generates C4/architecture flowcharts.
 
 This report summarizes the observations from the architecture and documentation audit conducted on the active workspace. This audit targets structural documentation compliance, Nygard Architecture Decision Record (ADR) workspaces, C4/system context diagrams, and cycle ritual templates.
 
 ##### 1. Audit Parameters & Scope
 - **Target Standards Evaluated:** Nygard ADR schema compliance, C4 Model/Mermaid visual syntax, Incident Post-Mortem and Cycle Retrospective templates, and PR guidelines.
 - **Framework & Stack Detected:** JavaScript (Node.js runtime environment)
-- **Scanning Mode:** Headless / Verification Scaffolding Mode
+- **Scanning Mode:** Headless / Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -1199,7 +1199,7 @@ The audit evaluated all existing project documentation, design records, scripts,
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
 To establish robust documentation standards and automate ADR lifecycle management, the following configuration additions are recommended:
 
@@ -1245,7 +1245,7 @@ This report summarizes the observations from the digital accessibility audit con
 ##### 1. Audit Parameters & Scope
 - **Target Standards Evaluated:** WCAG 2.1 Level AA, WCAG 2.2 Level AA, EN 301 549
 - **Framework & Stack Detected:** JavaScript (Node.js utility and static documentation generation)
-- **Scanning Mode:** Headless / Verification Scaffolding Mode
+- **Scanning Mode:** Headless / Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -1269,9 +1269,9 @@ The audit evaluated static documentation files and script utilities within the w
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
-Since this is a Node.js utility environment, we suggest the following scaffolding additions to support ongoing verification of compliance:
+Since this is a Node.js utility environment, we suggest the following tooling additions to support ongoing verification of compliance:
 
 ###### 3.1 ESLint Configuration Update
 To verify JSX or HTML template linting, install and configure the accessibility linter:
@@ -1334,7 +1334,7 @@ This report summarizes the observations from the agent alignment audit conducted
 ##### 1. Audit Parameters & Scope
 - **Target Standards Evaluated:** YAML frontmatter structure, delegator pattern mapping, required references, anti-cheating/honesty directives, and evaluation suite integrity.
 - **Framework & Stack Detected:** JavaScript (Node.js agent validation and LLM-as-a-Judge runner)
-- **Scanning Mode:** Headless / Verification Scaffolding Mode
+- **Scanning Mode:** Headless / Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -1363,7 +1363,7 @@ The audit evaluated all agent configuration files and their corresponding evalua
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
 To sustain ongoing alignment and prevent regression in agent configuration files, the following verification gates are recommended:
 
@@ -1509,7 +1509,7 @@ This report summarizes the observations from the VCS hook and commit discipline 
 ##### 1. Audit Parameters & Scope
 - **Active VCS System:** Git
 - **Detected Build System & Language:** Node.js, JavaScript
-- **Scanning Mode:** Headless / Verification Scaffolding Mode
+- **Scanning Mode:** Headless / Verification Tooling Mode
 - **Redaction Constraints:** Active (Plain-text file basenames only; absolute paths and repository identifiers omitted)
 
 ---
@@ -1543,7 +1543,7 @@ The audit evaluated version control hooks, commit message rules, code style enfo
 
 ---
 
-##### 3. Scaffolding Recommendations
+##### 3. Tooling Recommendations
 
 To align with the VCS discipline guidelines and automate style/licensing gates, the following additions are recommended:
 
@@ -1553,7 +1553,7 @@ Since the codebase relies on JavaScript (Node.js) without a central `package.jso
 - Alternatively, use native formatting tools or linting plugins in editor settings.
 
 ###### 3.2 Automated Copyright Header Validation
-Scaffold a lightweight validation script (e.g. `validate-headers.js`) to scan newly staged source files (`.js`) for the required copyright banner. This script can be appended to the `pre-commit` hook:
+Tool a lightweight validation script (e.g. `validate-headers.js`) to scan newly staged source files (`.js`) for the required copyright banner. This script can be appended to the `pre-commit` hook:
 
 ```javascript
 // Example copyright header pattern:
@@ -1593,7 +1593,7 @@ This matrix categorizes all suggested actions by crossing their technical value 
 - **`run-fallback-sequential-orchestration.js`:** [Remove the unused `https` import block.](#specialist-agent-resilience-architect)
 
 2. **High-Value Projects (High Value, High Effort):**
-- **Testing Scaffolding:** [Integrate automated test runner configuration](#specialist-agent-general) for validation.
+- **Testing Tooling:** [Integrate automated test runner configuration](#specialist-agent-general) for validation.
 
 3. **Papercuts / Quality of Life (Low Value, Low Effort):**
 - **`README.md`:** [Add documentation on executing `validate-contracts.js` to ensure contract integrity during developer onboarding.](#specialist-agent-api-contract-architect)

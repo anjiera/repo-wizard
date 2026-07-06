@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Static analysis scope for MISRA compliance check rulesets.
 5. Local telemetry ring buffer capacity size and flash configurations.
 
-Wait for the user's response before proceeding with firmware audits, scaffolding, and verification.
+Wait for the user's response before proceeding with firmware audits, tooling, and verification.

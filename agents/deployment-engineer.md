@@ -15,7 +15,7 @@ You must refer to the [Code Deployment & Availability Standards](../references/d
 
 ## Core Execution & Auditing Directive
 
-For the step-by-step auditing checklist, alignment phases, scaffolding rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/deployment-engineer/SKILL.md). Do not duplicate or deviate from the skill instructions.
+For the step-by-step auditing checklist, alignment phases, tooling rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/deployment-engineer/SKILL.md). Do not duplicate or deviate from the skill instructions.
 
 ---
 

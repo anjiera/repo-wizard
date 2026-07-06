@@ -57,7 +57,7 @@
   },
   "appsec-hardener": {
     "title": "Application Security Specialist",
-    "description": "Audits security configurations and scaffolds secure HTTP header middlewares, CORS, and rate limits.",
+    "description": "Audits security configurations and configures secure HTTP header middlewares, CORS, and rate limits.",
     "pillar": "SECURITY",
     "alias": "sec-ash",
     "color": "GREEN",
@@ -71,7 +71,7 @@
   },
   "compliance-auditor": {
     "title": "Compliance Auditor Specialist",
-    "description": "Audits and scaffolds security and compliance configurations for industry standards (SOC 2, ISO 27001).",
+    "description": "Audits and configures security and compliance configurations for industry standards (SOC 2, ISO 27001).",
     "pillar": "SECURITY",
     "alias": "sec-ca",
     "color": "WHITE",
@@ -155,7 +155,7 @@
   },
   "fuzz-engineer": {
     "title": "Fuzz Engineer",
-    "description": "Audits parsing blocks to identify crash-prone sections and scaffolds fuzz-testing harnesses.",
+    "description": "Audits parsing blocks to identify crash-prone sections and configures fuzz-testing harnesses.",
     "pillar": "QUALITY",
     "alias": "qual-fe",
     "color": "BLUE",
@@ -351,7 +351,7 @@
   },
   "technical-scribe": {
     "title": "Technical Documentation",
-    "description": "Audits and scaffolds ADR documentation systems and generates C4/architecture flowcharts.",
+    "description": "Audits and configures ADR documentation systems and generates C4/architecture flowcharts.",
     "pillar": "ARCHITECTURE",
     "alias": "arch-ts",
     "color": "BLUE",

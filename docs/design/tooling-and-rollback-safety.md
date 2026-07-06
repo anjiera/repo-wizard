@@ -1,10 +1,10 @@
-# Design Document: Tool Scaffolding & VCS Rollback Mitigations
+# Design Document: Tool Tooling & VCS Rollback Mitigations
 
-This document describes the design patterns and mitigation mechanisms implemented in the **Repo Wizard Scaffolding Engine** (`tooling-engineer.agent` and associated scripts).
+This document describes the design patterns and mitigation mechanisms implemented in the **Repo Wizard Tooling Engine** (`tooling-engineer.agent` and associated scripts).
 
 ---
 
-## 1. Decoupled Scaffolding Pattern
+## 1. Decoupled Tooling Pattern
 
 Traditional coding agents often attempt to download packages, edit configurations, and write code in a single prompt block. This leads to brittle results when commands fail or syntax is incorrect.
 
@@ -27,7 +27,7 @@ To facilitate compilation of boilerplate code, the scaffolder utilizes verified 
 
 ## 3. Rollback Mitigation Protocol (VCS Integration)
 
-Because writing configuration files can break local environments, the scaffolder runs a **VCS Rollback loop** on every scaffolding cycle:
+Because writing configuration files can break local environments, the scaffolder runs a **VCS Rollback loop** on every tooling cycle:
 
 ```
         +-------------------------------------------+

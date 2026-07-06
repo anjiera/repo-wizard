@@ -41,13 +41,13 @@ Commit messages must follow the format:
 
 Automate checks locally before code is committed or shared.
 
-### 2.1 Git Hook Scaffolding (Husky & lint-staged)
+### 2.1 Git Hook Tooling (Husky & lint-staged)
 - [ ] Configure `husky` to manage local Git hooks.
 - [ ] Set up a `pre-commit` hook to run `lint-staged` on modified files.
 - [ ] Set up a `commit-msg` hook to run `commitlint` validating Conventional Commits.
 - [ ] Configure `lint-staged` to run formatters (e.g., Prettier, gofmt, rustfmt) and linters (e.g. ESLint, Clippy) on staged files.
 
-### 2.2 Mercurial Hook Scaffolding (hgrc)
+### 2.2 Mercurial Hook Tooling (hgrc)
 - [ ] Configure pre-commit hooks in `.hg/hgrc` under the `[hooks]` section:
   ```ini
   [hooks]

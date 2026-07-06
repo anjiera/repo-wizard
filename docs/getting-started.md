@@ -42,31 +42,31 @@ To protect your repository across all compliance and security vectors, our speci
 
 ### Green Team (Defensive Coding & Building)
 Focuses on writing secure code, configuring correct dependency frameworks, and setting up static linters to prevent vulnerabilities from being compiled.
-* **API Hardening (`/rw-appsec-hardener`):** Scaffolds CORS origin policies, Helmet secure header middlewares, and rate-limiting rules.
+* **API Hardening (`/rw-appsec-hardener`):** Configures CORS origin policies, Helmet secure header middlewares, and rate-limiting rules.
 * **Supply Chain Auditor (`/rw-supply-chain`):** Audits active dependency vulnerabilities and blocks viral copyleft package licenses.
-* **VCS Automation (`/rw-vcs-workflow-engineer`):** Scaffolds commit lint validation hooks and copyright header scanners.
-* **API Contract Validation (`/rw-api-contract-architect`):** Scaffolds OpenAPI specs, gRPC Protobuf definitions, GraphQL schemas, and linter checks.
-* **Notebook Git Hygiene (`/rw-notebook-auditor`):** Scaffolds Jupyter Notebook git filters, nbqa linters, and python virtual environments.
+* **VCS Automation (`/rw-vcs-workflow-engineer`):** Configures commit lint validation hooks and copyright header scanners.
+* **API Contract Validation (`/rw-api-contract-architect`):** Configures OpenAPI specs, gRPC Protobuf definitions, GraphQL schemas, and linter checks.
+* **Notebook Git Hygiene (`/rw-notebook-auditor`):** Configures Jupyter Notebook git filters, nbqa linters, and python virtual environments.
 
 ### Blue Team (Active Defense & System Visibility)
 Focuses on auditing system events, configuring tracing telemetry, and tuning alerts to catch failures instantly.
-* **Observability Engineer (`/rw-observability-engineer`):** Scaffolds OpenTelemetry instrumentation SDKs, Grafana dashboards, and Alertmanager metrics.
+* **Observability Engineer (`/rw-observability-engineer`):** Configures OpenTelemetry instrumentation SDKs, Grafana dashboards, and Alertmanager metrics.
 * **Privacy Hardener (`/rw-privacy`):** Sanitizes exported logs and trace contexts to scrub PII data.
-* **Fuzz Engineer (`/rw-fuzz-engineer`):** Scaffolds coverage-guided fuzz targets (libFuzzer, cargo-fuzz, Atheris) and sanitizers to find crash defects on untrusted parser entry points.
+* **Fuzz Engineer (`/rw-fuzz-engineer`):** Configures coverage-guided fuzz targets (libFuzzer, cargo-fuzz, Atheris) and sanitizers to find crash defects on untrusted parser entry points.
 
 ### White Team (Governance & Audit Compliance)
 Focuses on establishing code quality rules, mapping regulatory controls, and verifying repository hygiene.
 * **Repo Wizard (`/repo-wizard`):** The interactive orchestrator that scopes your project, screens tools, and coordinates handoffs.
 * **Compliance Auditor (`/rw-compliance`):** Verifies technical compliance configurations (SOC 2, ISO 27001, FIPS lists).
 * **Accessibility Auditor (`/rw-accessibility`):** Configures accessibility linters (ESLint JSX-a11y) and headless axe-core scanners.
-* **State Integrity Auditor (`/rw-state-integrity-auditor`):** Scaffolds mathematical proof verifications (TLA+ specs, Rust Kani harnesses) to prove execution invariants.
+* **State Integrity Auditor (`/rw-state-integrity-auditor`):** Configures mathematical proof verifications (TLA+ specs, Rust Kani harnesses) to prove execution invariants.
 
 ### Yellow Team (System Builders & Deployment)
 Focuses on configuring build automation, deployment replication, container scaling, and recovery systems.
-* **Deployment Engineer (`/rw-deployment-engineer`):** Scaffolds Docker Compose replicas, Kubernetes health probes, and database backups.
-* **Data Pipeline Architect (`/rw-data-pipeline-architect`):** Scaffolds database connection pooling, schema validations, and workflow orchestrators.
-* **Embedded Systems Auditor (`/rw-embedded-systems-auditor`):** Scaffolds static analysis rulesets (MISRA via cppcheck), compiler warning/stack limits, QEMU target testing, and local circular ring buffer loggers.
-* **Toolchain Architect (`/rw-toolchain-architect`):** Scaffolds cross-compilation configurations (CMake files, cargo targets, link scripts) and sysroots.
+* **Deployment Engineer (`/rw-deployment-engineer`):** Configures Docker Compose replicas, Kubernetes health probes, and database backups.
+* **Data Pipeline Architect (`/rw-data-pipeline-architect`):** Configures database connection pooling, schema validations, and workflow orchestrators.
+* **Embedded Systems Auditor (`/rw-embedded-systems-auditor`):** Configures static analysis rulesets (MISRA via cppcheck), compiler warning/stack limits, QEMU target testing, and local circular ring buffer loggers.
+* **Toolchain Architect (`/rw-toolchain-architect`):** Configures cross-compilation configurations (CMake files, cargo targets, link scripts) and sysroots.
 
 ---
 

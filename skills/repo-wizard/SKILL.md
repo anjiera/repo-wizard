@@ -1,12 +1,12 @@
 ---
 name: repo-wizard
-description: Orchestrates the repository onboarding checklist and QA setup. Use when a developer wants to audit their repository and scaffold tailored testing suites, compliance engines, git hooks, documentation tools, and linting configurations.
+description: Orchestrates the repository onboarding checklist and QA setup. Use when a developer wants to audit their repository and tool tailored testing suites, compliance engines, git hooks, documentation tools, and linting configurations.
 ---
 
 # Repo Wizard
 
 ## Overview
-An interactive orchestrator workflow designed to analyze a codebase, guide developers through a structured compliance and tooling alignment questionnaire, dynamically screen tools, optimize/deduplicate recommendations, and coordinate specialist subagents to scaffold configurations.
+An interactive orchestrator workflow designed to analyze a codebase, guide developers through a structured compliance and tooling alignment questionnaire, dynamically screen tools, optimize/deduplicate recommendations, and coordinate specialist subagents to tool configurations.
 
 ---
 
@@ -63,7 +63,7 @@ Before performing codebase analysis, sizing, or session resume operations:
    - **High Agent Count Warning Gate (Exit Code 2)**: If the pre-scan command exits with code `2` (the High Agent Count Warning), you MUST halt execution immediately. If in interactive mode, display the warning and list of pillars to the user and prompt them to select a specific quality pillar (`SECURITY`, `PERFORMANCE`, `ARCHITECTURE`, `QUALITY`) or rerun with `--pillar ALL` to proceed. If in headless mode, write the warning and quality pillar instructions to stdout/stderr logs and halt. Do NOT invoke any specialist subagents or run the orchestrator script if code `2` is returned.
    - **Other Non-Zero Exit Codes**: If the pre-scan command returns any other non-zero exit code, you MUST immediately halt execution, write the exit code and stderr logs to stdout/stderr, and do not proceed. Even in headless mode where no user is present to respond to prompts, execution must still be strictly halted. Never guess or bypass warning outputs on a non-zero exit code.
 3. **Metrics & Sizing Evaluation**: Read the generated `session.json` to extract `totalLOC`, `totalFiles`, and check if `exceedsAdoptionThreshold: true`.
-4. **Incremental Adoption Gate**: If `exceedsAdoptionThreshold` is `true`, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and scaffolding configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
+4. **Incremental Adoption Gate**: If `exceedsAdoptionThreshold` is `true`, prompt the user (in interactive mode). Frame the warning professionally, stating that running a full sweep of all specialists and tooling configurations simultaneously can lead to exceeding requests-per-minute (RPM) rate limits, provider execution constraints, and other complications.
 5. **Gitignore Verification**: Automatically append the `.repo-wizard/` directory to the repository's `.gitignore` or `.agentignore` files.
 
 ### Resumability & Session State Check
@@ -162,7 +162,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 ---
 
 ## Red Flags
-* Scaffolding tool files or running installation commands mid-interview before completing all questions.
+* Tooling tool files or running installation commands mid-interview before completing all questions.
 * Overwriting `.gitignore` without adding `.repo-wizard/` to the ignore list on startup.
 * Proposing unsupported/outdated tools without running them through the evaluator.
 * Leaving the codebase in a broken compilation state after a verification build fail.
@@ -178,7 +178,7 @@ Generate the deliverables upon scan completion, ensuring all Markdown/HTML repor
 - [ ] Opt-in/Skip questions are asked at the beginning of each category.
 - [ ] Tool recommendations are dynamically audited by `tool-auditor.agent`.
 - [ ] Final configurations are optimized for overlapping capabilities (deduplicated).
-- [ ] Scaffolding is delegated via parameters contract with rollback verification checks.
+- [ ] Tooling is delegated via parameters contract with rollback verification checks.
 - [ ] Headless observations `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-observations.md` & `.html` are generated (in headless mode).
 - [ ] Full Technical Report `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-full-report.md` & `.html` are generated with relative links and default tool recommendation rationale (in headless mode).
 - [ ] Constructive `.repo-wizard/reports/<repo-name-here>/<repo-name-here>-executive-summary.md` & `.html` are generated (3 sections, with paragraphs and words aligning with report-constants.js thresholds).

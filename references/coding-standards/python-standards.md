@@ -92,5 +92,5 @@ repos:
 When onboarding a Python repository:
 1.  Check for existing configuration files (`setup.cfg`, `tox.ini`, `pyproject.toml`).
 2.  Suggest transitioning from legacy tools (`flake8`, `black`) to `Ruff` for speed and consolidated config.
-3.  Scaffold the `pyproject.toml` file with the configuration rules above.
+3.  Tool the `pyproject.toml` file with the configuration rules above.
 4.  Configure the local pre-commit hook to run `ruff check --fix` and `ruff format`.

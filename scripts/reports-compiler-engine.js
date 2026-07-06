@@ -332,7 +332,7 @@ ${DISCLAIMER_TEXT}
   addAnswer('Target Frameworks', frameworks);
   addAnswer('Target Platforms', platforms);
   addAnswer('Compliance Standards', compliance);
-  addAnswer('Scaffolding Mode', answers.scaffoldingMode || answers.mode);
+  addAnswer('Tooling Mode', answers.scaffoldingMode || answers.mode);
   addAnswer('Coverage Threshold Target', answers.coverageThreshold ? `${answers.coverageThreshold}%` : null);
   addAnswer('Project Context / Target Audience', answers.context || answers.targetAudience);
   addAnswer('Tooling Strictness', answers.strictness);

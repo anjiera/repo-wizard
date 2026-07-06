@@ -15,7 +15,7 @@ You must refer to the [Dependency Security & License Audit Checklist](../referen
 
 ## Core Execution & Auditing Directive
 
-For the step-by-step auditing checklist, alignment phases, scaffolding rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/supply-chain-auditor/SKILL.md). Do not duplicate or deviate from the skill instructions.
+For the step-by-step auditing checklist, alignment phases, tooling rules, verification tasks, and standard guidelines, you MUST load and follow the [paired Skill Workflow](../skills/supply-chain-auditor/SKILL.md). Do not duplicate or deviate from the skill instructions.
 
 ---
 

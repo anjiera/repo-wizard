@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Input bounds and assumptions limits to prevent SMT solver hangs.
 5. Setup constraints (local run scripts vs CI validation checkers).
 
-Wait for the user's response before proceeding with verification audits, codebase scans, scaffolding, and verification.
+Wait for the user's response before proceeding with verification audits, codebase scans, tooling, and verification.

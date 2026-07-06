@@ -1,6 +1,6 @@
 ---
 name: supply-chain-auditor
-description: Guides agents through auditing codebase dependencies for vulnerabilities and copyleft licenses, and scaffolding SBOM generators (CycloneDX, SPDX), lockfile integrity checks, and dependency checkers (Snyk, Dependabot) conditionally. Use when auditing dependencies, setting up SBOMs, or configuring license checks.
+description: Guides agents through auditing codebase dependencies for vulnerabilities and copyleft licenses, and tooling SBOM generators (CycloneDX, SPDX), lockfile integrity checks, and dependency checkers (Snyk, Dependabot) conditionally. Use when auditing dependencies, setting up SBOMs, or configuring license checks.
 ---
 
 # Supply Chain Auditor (`supply-chain-auditor`)
@@ -42,8 +42,8 @@ Scan the codebase to evaluate supply-chain conformance:
 2. **Vulnerability Assessment:** Analyze active lockfiles and manifest files for packages with known CVEs.
 3. **License Legality Audit:** Evaluate the licenses of all direct and transitive dependencies against the established license compliance policy, identifying copyleft violations.
 
-### Phase 3: Supply Chain Scaffolding
-Coordinate with the environment configurer to scaffold controls:
+### Phase 3: Supply Chain Tooling
+Coordinate with the environment configurer to tool controls:
 1. **Scaffolders Dispatch:** Dispatch package installations (e.g., license-finder, cyclonedx-cli) to the scaffolder only after receiving developer permission.
 2. **Interactive Nuances:** Explain configuration options and tradeoff decisions (e.g., Snyk scan frequency, FOSSA/License Finder ruleset strictness, local pre-commit run speed vs CI validation). Ask the developer to guide the configuration file modifications.
 3. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append installation and setup commands to the project's existing setup scripts (e.g. `setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`), and present these changes to the user for review.

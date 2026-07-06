@@ -6,7 +6,7 @@ description: Guides agents through auditing codebase setup instructions, environ
 # Developer Onboarding Auditor
 
 ## Overview
-A language-neutral engineering audit workflow designed to evaluate developer setup documentation, environment configuration alignment, bootstrap scripts, and contributor guidelines. It generates structured onboarding observation reports and scaffolds tools like `dotenv-linter` or template files.
+A language-neutral engineering audit workflow designed to evaluate developer setup documentation, environment configuration alignment, bootstrap scripts, and contributor guidelines. It generates structured onboarding observation reports and configures tools like `dotenv-linter` or template files.
 
 ---
 
@@ -48,12 +48,12 @@ Inspect the codebase files recursively. Look for:
    - Check for `CONTRIBUTING.md`, `.github/pull_request_template.md`, and issue templates.
 
 ### Phase 3: Reporting & Backlog Synthesis
-- Save the proposed scaffolding contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/dev-onboarding-auditor-contract.json`.
+- Save the proposed tooling contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/dev-onboarding-auditor-contract.json`.
 
 For every issue found:
 1. State the file name, location, and issue type (e.g., environment keys misalignment, missing contributor guidelines).
 2. Detail the missing configuration or discrepancies.
-3. Suggest a specific mitigation pattern (e.g. *Add missing keys to .env.example*, *Scaffold a standard contributing guide*).
+3. Suggest a specific mitigation pattern (e.g. *Add missing keys to .env.example*, *Tool a standard contributing guide*).
 
 ---
 
@@ -68,7 +68,7 @@ For every issue found:
 
 ## Red Flags
 * Generating system context diagrams or ADR files (these belong to `technical-scribe`).
-* Scaffolding environment configurations that contain raw passwords or API keys.
+* Tooling environment configurations that contain raw passwords or API keys.
 
 ---
 

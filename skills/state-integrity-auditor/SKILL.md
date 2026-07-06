@@ -1,12 +1,12 @@
 ---
 name: state-integrity-auditor
-description: Guides agents through auditing codebase state machines, scaffolding mathematical specifications (TLA+), writing Rust Kani proof verification harnesses, and verifying model invariants. Use when specifying protocols, proving absence of out-of-bounds index errors, model-checking concurrency locks, or proving mathematical correctness.
+description: Guides agents through auditing codebase state machines, tooling mathematical specifications (TLA+), writing Rust Kani proof verification harnesses, and verifying model invariants. Use when specifying protocols, proving absence of out-of-bounds index errors, model-checking concurrency locks, or proving mathematical correctness.
 ---
 
 # Formal Verification & Specifications (`state-integrity-auditor`)
 
 ## Overview
-A specialized mathematical verification and audit assurance workflow designed to audit source repositories for high-risk logic, scaffold formal specification files (such as TLA+ state machine models), configure SMT solver proof harnesses (such as Rust Kani proofs), and prove correctness invariants.
+A specialized mathematical verification and audit assurance workflow designed to audit source repositories for high-risk logic, tool formal specification files (such as TLA+ state machine models), configure SMT solver proof harnesses (such as Rust Kani proofs), and prove correctness invariants.
 
 ## When to Use
 Use this skill when:
@@ -34,7 +34,7 @@ Scan the repository to target verification:
 2. **Toolchain verification:** Check for verification compilers (like `cargo-kani`, `tlc` runners) in the system path.
 3. **State Variable Audit:** Scan module entry points to map out variable ranges.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all specifications, proof harnesses, and SMT solver configurations in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending model checks, creating formal files, or editing active build configurations.
 2. **Strict Inter-Agent Boundaries:** Respect existing test and build configurations. Do **NOT** overwrite, alter, or remove configurations added by other agents.
@@ -52,7 +52,7 @@ Draft all specifications, proof harnesses, and SMT solver configurations in coor
 - *"We already run unit tests and fuzzing."* - Tests and fuzzing search for bugs by executing code on concrete inputs. Formal verification inspects all possible states symbolically, proving the complete absence of bugs within the defined assumptions.
 
 ## Red Flags
-- Scaffolding a formal proof that does not specify input constraints (`assume` statements), causing the SMT solver to hang or run out of memory (state-space explosion).
+- Tooling a formal proof that does not specify input constraints (`assume` statements), causing the SMT solver to hang or run out of memory (state-space explosion).
 - Writing TLA+ specification modules that do not define initial states (`Init`) or state transitions (`Next`).
 - Proposing formal verification on generic CRUD operations or dynamic frontend templates.
 

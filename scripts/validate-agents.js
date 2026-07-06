@@ -205,8 +205,8 @@ function main() {
         if (!content.includes('## Step 2: Codebase Scan & Auditing')) {
           errors.push("Missing exact header: '## Step 2: Codebase Scan & Auditing'");
         }
-        if (!content.includes('## Step 3: Interactive Scaffolding Guidance')) {
-          errors.push("Missing exact header: '## Step 3: Interactive Scaffolding Guidance'");
+        if (!content.includes('## Step 3: Interactive Tooling Guidance')) {
+          errors.push("Missing exact header: '## Step 3: Interactive Tooling Guidance'");
         }
         if (!content.includes('### 3.1 Developer Consent & Interactive Review')) {
           errors.push("Missing exact subheading: '### 3.1 Developer Consent & Interactive Review'");
@@ -220,8 +220,8 @@ function main() {
         if (!content.includes('### 3.3 Safety & Rollback')) {
           errors.push("Missing exact subheading: '### 3.3 Safety & Rollback'");
         }
-        if (!content.includes('scaffolding-robustness-protocol.md')) {
-          errors.push("Missing link reference to '../references/scaffolding-robustness-protocol.md'");
+        if (!content.includes('tooling-robustness-protocol.md')) {
+          errors.push("Missing link reference to '../references/tooling-robustness-protocol.md'");
         }
       }
     } catch (err) {

@@ -1,12 +1,12 @@
 ---
 name: api-contract-architect
-description: Guides agents through auditing API boundaries, scaffolding OpenAPI/Swagger yaml files, writing gRPC Protobuf schemas, designing GraphQL SDL structures, and integrating Spectral, Buf, or GraphQL Inspector linters. Use when configuring API schemas, Protobufs, GraphQL, or api validation tooling.
+description: Guides agents through auditing API boundaries, tooling OpenAPI/Swagger yaml files, writing gRPC Protobuf schemas, designing GraphQL SDL structures, and integrating Spectral, Buf, or GraphQL Inspector linters. Use when configuring API schemas, Protobufs, GraphQL, or api validation tooling.
 ---
 
 # API Contract & Schema Governance (`api-contract-architect`)
 
 ## Overview
-A specialized API design and governance workflow designed to audit application route handlers and controllers, scaffold strict schemas (OpenAPI/Swagger, gRPC/Protobuf, GraphQL SDL), configure schema validators and backwards-compatibility checkers (Spectral, Buf, GraphQL Inspector), and write integration/contract tests.
+A specialized API design and governance workflow designed to audit application route handlers and controllers, tool strict schemas (OpenAPI/Swagger, gRPC/Protobuf, GraphQL SDL), configure schema validators and backwards-compatibility checkers (Spectral, Buf, GraphQL Inspector), and write integration/contract tests.
 
 ## When to Use
 Use this skill when:
@@ -23,7 +23,7 @@ Use this skill when:
 If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-api-contract-architect.md` under Phase 3 / Phase 4.
 
 ### Phase 1: Interactive Alignment & Design Choices
-Before scaffolding schema files or installing linters, align with the developer on API designs:
+Before tooling schema files or installing linters, align with the developer on API designs:
 1. **Target Protocols:** Identify the active interface paradigms (REST, gRPC/Protobuf, GraphQL).
 2. **Contract Versioning:** Determine the API versioning strategy (e.g. URI prefixes like `/v1`, HTTP headers, package version subfolders for protobufs).
 3. **Validation Enforcements:** Agree on strict lint rules and backward-compatibility rules (e.g., blocking builds on breaking changes).
@@ -37,7 +37,7 @@ Audit the repository to locate active endpoint declarations and contract paramet
 3. **Proto & SDL Scan:** Look for existing `.proto` or `.graphql` files currently in the workspace.
 4. **Linter Config Scan:** Search for existing Spectral, Buf, or GraphQL linter configurations.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all specifications, validator files, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating spec files, or modifying configuration scripts.
 2. **Interactive Code Review:** Display generated OpenAPI YAML templates, Protobuf service schemas, or GraphQL Inspector configurations to the developer, prompting them for review and confirmation.
@@ -45,18 +45,18 @@ Draft all specifications, validator files, and scripts in coordination with `too
 4. **README & Setup Integration:** Once verified, add spec generation and schema linting commands (e.g. `buf lint` or `spectral lint`) to the project's onboarding files (`README.md` or setup guides) for developer review.
 
 ### Phase 4: Verification & Validation
-1. **Syntax Linting Check:** Run the validation tools on the newly scaffolded specs to confirm that no schema-definition errors are present.
+1. **Syntax Linting Check:** Run the validation tools on the newly configured specs to confirm that no schema-definition errors are present.
 2. **Build Verification:** Run the codebase compilation command to verify that any generated type bindings or compilation steps execute with 0 failures.
-3. **Safe Rollback:** If validation tests break after scaffolding, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+3. **Safe Rollback:** If validation tests break after tooling, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ## Common Rationalizations
 - *"We don't need automated schema checks if we have good communication."* - Manual reviews miss subtle schema deviations. Automated linter checks (like Spectral or Buf) guarantee that API guidelines are respected in every pull request.
 - *"We can update the API contract directly in production and patch clients later."* - Deploying breaking API changes without deprecation cycles crashes client applications. Strict breaking-change checkers prevent accidental runtime failures.
 
 ## Red Flags
-- Scaffolding a REST API specification where path parameters (e.g. user ID lookup) are completely missing parameter types, validation rules, or format rules (like UUID).
+- Tooling a REST API specification where path parameters (e.g. user ID lookup) are completely missing parameter types, validation rules, or format rules (like UUID).
 - Creating Protobuf definitions that reuse active field index tags (e.g., changing field types on tag 1 instead of deprecating or allocating a new tag index).
-- Scaffolding schema files that use absolute folder paths or references, causing validation failures in foreign CI workspaces.
+- Tooling schema files that use absolute folder paths or references, causing validation failures in foreign CI workspaces.
 
 ## Verification
 To verify the API contract setup:

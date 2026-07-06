@@ -1,9 +1,9 @@
 ---
 name: ai-robustness-hardener
-description: Guides agents through auditing AI/ML components and LLM integrations, configuring secure input/output guardrails, mitigating OWASP LLM vulnerabilities, and scaffolding model bias and fairness auditing metrics. Use when auditing AI components, setting up prompt injection filters, or validating model bias.
+description: Guides agents through auditing AI/ML components and LLM integrations, configuring secure input/output guardrails, mitigating OWASP LLM vulnerabilities, and tooling model bias and fairness auditing metrics. Use when auditing AI components, setting up prompt injection filters, or validating model bias.
 ---
 
-# AI Robustness & ML Governance Auditing and Scaffolding (`ai-robustness-hardener`)
+# AI Robustness & ML Governance Auditing and Tooling (`ai-robustness-hardener`)
 
 ## Overview
 A specialized engineering workflow designed to audit artificial intelligence, machine learning, and Large Language Model (LLM) component integrations, configure secure input/output filtering guardrails, mitigate OWASP LLM Top 10 vulnerabilities, and establish model bias/fairness regression testing suites.
@@ -12,7 +12,7 @@ A specialized engineering workflow designed to audit artificial intelligence, ma
 Use this skill when:
 - Auditing applications that integrate Large Language Models (LLMs) or machine learning pipelines.
 - Designing prompt sanitization and injection detection rules.
-- Scaffolding middleware filters for PII redaction or toxicity scanning in model inputs/outputs.
+- Tooling middleware filters for PII redaction or toxicity scanning in model inputs/outputs.
 - Establishing model agency constraints and human-in-the-loop validation steps.
 - Configuring model fairness checks and bias auditing metrics (e.g., Disparate Impact ratio) in CI/CD.
 - Invoking the slash command: `/rw-ai-robustness-hardener`.
@@ -34,7 +34,7 @@ Scan the codebase to evaluate AI/ML components:
 2. **Tool/Plugin Access:** Scan for LLM tools or plugins that have file write, shell execution, or network capabilities.
 3. **Dependencies:** Scan package manifests (`package.json`, `Cargo.toml`, `pyproject.toml`) for AI SDKs or validation frameworks.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating script files, or modifying configuration scripts.
 2. **Explain Options & Tradeoffs:** Present guardrail options (e.g., regex/semantic PII scrubbing, structured JSON parser formats) and explain their performance and latency trade-offs.

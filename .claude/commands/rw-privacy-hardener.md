@@ -1,5 +1,5 @@
 ---
-description: Audit repository for PII data handling and scaffold configurations for logging filters, column encryption, and data rights templates
+description: Audit repository for PII data handling and tool configurations for logging filters, column encryption, and data rights templates
 ---
 
 Invoke the agent-skills:privacy-hardener skill.
@@ -10,4 +10,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 2. If the application collects data from children under 13 years of age.
 3. Database types, storage configurations, and active logging libraries.
 
-Wait for the user's response before proceeding with codebase data audit, scaffolding suggestions, and security validation.
+Wait for the user's response before proceeding with codebase data audit, tooling suggestions, and security validation.

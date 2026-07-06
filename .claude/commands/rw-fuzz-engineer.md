@@ -12,4 +12,4 @@ Before auditing, follow the interactive alignment phase by asking the user:
 4. Expected exceptions or runtime errors to discard.
 5. Integration targets (local execution vs remote CI platforms).
 
-Wait for the user's response before proceeding with suitability checks, codebase scans, scaffolding, and verification.
+Wait for the user's response before proceeding with suitability checks, codebase scans, tooling, and verification.

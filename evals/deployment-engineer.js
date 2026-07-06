@@ -7,7 +7,7 @@ module.exports = {
   personaFile: path.join(__dirname, '..', 'agents', 'deployment-engineer.md'),
   testCases: [
     {
-      name: 'Docker Compose High-Availability Scaffolding',
+      name: 'Docker Compose High-Availability Tooling',
       input: 'Configure a multi-replica web-app service (3 replicas) behind an Nginx load balancer in our docker-compose.yaml file.',
       rubrics: [
         'The response explicitly asks the user for permission before creating or modifying docker-compose or configuration files.',
@@ -26,7 +26,7 @@ module.exports = {
     },
     {
       name: 'Automated Database Backups',
-      input: 'Scaffold a PostgreSQL database backup shell script that compresses files, runs a dry-run restore to check backup validity, and rotates files after 7 days.',
+      input: 'Tool a PostgreSQL database backup shell script that compresses files, runs a dry-run restore to check backup validity, and rotates files after 7 days.',
       rubrics: [
         'The response asks for permission before creating the backup shell script file.',
         'The response proposes commands for dump compression (gzip), integrity verification, and temporary DB restore/drop.',

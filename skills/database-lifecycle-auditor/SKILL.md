@@ -50,7 +50,7 @@ Inspect the codebase files recursively. Look for:
    - Row-Level Security (RLS) rules activation, service role bypasses.
 
 ### Phase 3: Reporting & Backlog Synthesis
-- Save the proposed scaffolding contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/database-lifecycle-auditor-contract.json`.
+- Save the proposed tooling contract to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/database-lifecycle-auditor-contract.json`.
 
 For every issue found:
 1. State the file name, location, and database engine type.

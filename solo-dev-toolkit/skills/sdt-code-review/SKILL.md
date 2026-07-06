@@ -105,7 +105,7 @@ To avoid developer and agent confusion, a strict boundary is enforced between th
     *   *Purpose:* A lightweight developer tool used *during the building* of this project. It tracks minor nits, code formatting discrepancies, and inline typos identified during manual or automated code reviews.
     *   *Location:* Root of the repository (`papercuts.csv`).
 2.  **Scan-Time Project Backlog (`.repo-wizard/backlog.csv`):**
-    *   *Purpose:* A user-facing deliverable generated *by* the `repo-wizard` tool when it runs a security or compliance scan on a target repository. It contains high-level governance, auditing, and security scaffolding task recommendations mapped by priorities (High, Medium, Low).
+    *   *Purpose:* A user-facing deliverable generated *by* the `repo-wizard` tool when it runs a security or compliance scan on a target repository. It contains high-level governance, auditing, and security tooling task recommendations mapped by priorities (High, Medium, Low).
     *   *Location:* Inside the configuration/output folder of the scanned target project (`.repo-wizard/backlog.csv`).
 
 ### Future Product Roadmap: `rw-papercut-exporter`

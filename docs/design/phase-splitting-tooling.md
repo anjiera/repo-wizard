@@ -1,4 +1,4 @@
-# Technical Design: Phase-Splitting and Persisted Scaffolding Contracts
+# Technical Design: Phase-Splitting and Persisted Tooling Contracts
 
 This document specifies the architecture and design goals behind dividing the repository scanning process into passive analysis and active onboarding phases, using versioned JSON contracts to communicate recommendations.
 
@@ -18,7 +18,7 @@ To align with modern Digital Governance and Platform Security practices, we esta
 
 ---
 
-## 2. Persisted Scaffolding Contracts
+## 2. Persisted Tooling Contracts
 
 To decouple the two phases and allow developers to scan codebases now and perform installations later without re-running expensive LLM calls, specialists write their recommendations to a structured, machine-readable JSON contract file on disk.
 
@@ -53,7 +53,7 @@ Every contract must follow the `"1.0.0"` format schema:
 
 ## 3. Contract Versioning Strategy
 
-To mitigate conflicts when upgrading the `repo-wizard` tool, all session manifests and scaffolding contracts carry a `contract_version` field. 
+To mitigate conflicts when upgrading the `repo-wizard` tool, all session manifests and tooling contracts carry a `contract_version` field. 
 
 If the `tooling-engineer` detects a version mismatch between the saved JSON contract and its active execution schema, it will halt execution, notify the developer of the format incompatibility, and request a fresh scan to update the contracts.
 

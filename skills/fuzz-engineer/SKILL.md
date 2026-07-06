@@ -1,6 +1,6 @@
 ---
 name: fuzz-engineer
-description: Guides agents through auditing codebases to identify crash-prone parsing blocks, scaffolding fuzz-testing harnesses (libFuzzer, cargo-fuzz, Atheris), configuring address/undefined behavior sanitizers, and integrating continuous fuzzing in CI. Use when setting up fuzz tests, searching for memory leaks, testing parsers, or investigating boundary vulnerability discovery.
+description: Guides agents through auditing codebases to identify crash-prone parsing blocks, tooling fuzz-testing harnesses (libFuzzer, cargo-fuzz, Atheris), configuring address/undefined behavior sanitizers, and integrating continuous fuzzing in CI. Use when setting up fuzz tests, searching for memory leaks, testing parsers, or investigating boundary vulnerability discovery.
 ---
 
 # Fuzz Testing & Vulnerability Discovery (`fuzz-engineer`)
@@ -51,7 +51,7 @@ Scan the repository to map inputs:
 2. **Dependency Manager Scan:** Check `package.json`, `Cargo.toml`, `requirements.txt` to find compiler toolchains and language versions.
 3. **Compiler Checks:** Verify that `clang`, `gcc`, or `cargo` are available in the local execution path.
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, harness templates, and launch scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing compiler configurations, creating fuzzing directories, or editing active build files.
 2. **Strict Inter-Agent Boundaries:** Respect existing test structures. Do **NOT** overwrite, alter, or remove configurations added by other testing agents (such as Jest, Vitest, or JUnit configurations).

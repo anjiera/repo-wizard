@@ -21,7 +21,7 @@ A specialized repository automation workflow designed to configure VCS hooks (Gi
 
 ### When NOT to Use
 * Configuring security framework compliance (use `compliance-auditor` instead).
-* Scaffolding unit/E2E test suites or mocking network boundaries (use `qa-engineer` instead).
+* Tooling unit/E2E test suites or mocking network boundaries (use `qa-engineer` instead).
 
 ---
 
@@ -44,8 +44,8 @@ Scan the codebase to evaluate current configuration setups:
 2. **Style Manifests:** Check for formatter settings (e.g., `package.json`, `.prettierrc`, `.eslintrc`, `.rustfmt.toml`).
 3. **File Header Scan:** Sample files to check if copyright blocks or standard headers are already present.
 
-### Phase 3: VCS Hook Scaffolding
-Coordinate with the environment configurer to scaffold controls:
+### Phase 3: VCS Hook Tooling
+Coordinate with the environment configurer to tool controls:
 1. **Scaffolders Dispatch:** Dispatch package installations and config edits (e.g., husky, lint-staged, commitlint, or hgrc hook setups) only after receiving explicit developer permission.
 2. **Interactive Options & Nuances:** Explain configuration options and tradeoff decisions (e.g. local pre-commit hook validation speeds vs build server pipelines). Use generic time and performance descriptions (e.g. noting that partial checks are faster than running full test suites) rather than guaranteeing explicit execution durations in seconds, since test sizes vary by repository. Ask the developer to guide the configuration file modifications.
 3. **Setup Scripts & Docs Integration:** Upon successful setup and validation, automatically append installation and run commands to existing setup scripts (`setup.sh`, `setup.ps1`) or onboarding documentation (`README.md`) for developer review.

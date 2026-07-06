@@ -12,7 +12,7 @@ function run() {
       target_modules: ['/src'],
       language: 'javascript',
       build_system: 'npm',
-      execution_mode: 'scaffold'
+      execution_mode: 'tool'
     },
     compliance_targets: [],
     tooling_specification: []

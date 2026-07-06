@@ -153,7 +153,7 @@ const COMMON_WHITELIST = [
   "developer empowerment disclaimer repo wizard provides automated observations analysis and educational suggestions regarding your codebase and toolchain the user retains final engineering accountability and sole responsibility for tool choices configuration testing compliance adoption and long-term maintenance this report does not constitute legal advice compliance certification or formal audit results",
   // Agent prompt rules and delegator boilerplates
   "you must strictly follow the styling formatting and behavior guidelines defined in agent execution rules",
-  "for the stepbystep auditing checklist alignment phases scaffolding rules verification tasks and standard guidelines you must load and follow the paired skill workflow do not duplicate or deviate from the skill instructions",
+  "for the stepbystep auditing checklist alignment phases tooling rules verification tasks and standard guidelines you must load and follow the paired skill workflow do not duplicate or deviate from the skill instructions",
   "you must load and strictly adhere to the unified safety rules mock constraints redacted mode compliance and tool execution boundaries defined in handoff sandbox constraints do not duplicate or deviate from those constraints"
 ];
 

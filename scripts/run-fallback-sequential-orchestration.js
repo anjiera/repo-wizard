@@ -348,7 +348,7 @@ async function main() {
       // Simulate a small process output
       fs.writeFileSync(obsPath, `# Observations for ${agentName}\n\nThis is a simulated observation report.\n\nDisclaimer: Recommended tools are selected for stack compatibility and ecosystem popularity. The developer retains final responsibility for reviewing security, licenses, and executing code changes.\n`, 'utf8');
       
-      // Simulate writing a mock scaffolding contract
+      // Simulate writing a mock tooling contract
       const contractPath = path.join(CONTRACTS_DIR, `${agentName}-contract.json`);
       const mockContract = {
         contract_version: '1.0.0',

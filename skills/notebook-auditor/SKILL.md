@@ -6,7 +6,7 @@ description: Guides agents through auditing data science repositories, configuri
 # Jupyter Notebook VCS Hygiene & Environments (`notebook-auditor`)
 
 ## Overview
-A specialized data science DevOps workflow designed to audit notebook configurations and environments, scaffold VCS clean filters (such as `nbstripout` and `.gitattributes` or `.hg/hgrc` settings) to prevent output cell bloat and PII leaks, configure notebook linters (`nbqa`), and set up pinned, reproducible virtual environments (Conda, Poetry, Pipenv).
+A specialized data science DevOps workflow designed to audit notebook configurations and environments, tool VCS clean filters (such as `nbstripout` and `.gitattributes` or `.hg/hgrc` settings) to prevent output cell bloat and PII leaks, configure notebook linters (`nbqa`), and set up pinned, reproducible virtual environments (Conda, Poetry, Pipenv).
 
 ## When to Use
 Use this skill when:
@@ -36,7 +36,7 @@ Audit the repository to locate active notebooks and manifests:
 3. **VCS Filters Check:** Inspect `.gitattributes`, `.git/config`, `.hg/hgrc`, or Perforce client specs to identify existing hooks or clean filters.
 4. **Inter-Agent Checks:** Scan for pre-commit hooks configured by other agents (e.g. `vcs-workflow-engineer` or `compliance-auditor` setups).
 
-### Phase 3: Interactive Scaffolding Guidance
+### Phase 3: Interactive Tooling Guidance
 Draft all configurations, manifests, and scripts in coordination with `tooling-engineer.agent`, following these rules:
 1. **Explicit Permission:** You must *always* ask the user for permission before recommending or executing package installations, creating environment manifests, or modifying existing configuration scripts.
 2. **Strict Inter-Agent Boundaries:** Respect existing hook files (like Husky hooks, pre-commit config YAML files, or custom scripts). You must **NOT** overwrite, alter, or remove configurations added by other agents. Always request developer consent and provide options to append filters cleanly without disrupting existing tools.
@@ -46,8 +46,8 @@ Draft all configurations, manifests, and scripts in coordination with `tooling-e
 
 ### Phase 4: Verification & Validation
 1. **Filter Dry-Run Verification:** Verify that the clean filter works by running a dry-run test (e.g. checking that `nbstripout -t` successfully identifies output cells in a mock notebook).
-2. **Environment File Compilation:** Verify that the scaffolded environment YAML or toml file parses cleanly under the target manager.
-3. **Safe Rollback:** If validation tests break after scaffolding, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
+2. **Environment File Compilation:** Verify that the configured environment YAML or toml file parses cleanly under the target manager.
+3. **Safe Rollback:** If validation tests break after tooling, notify the developer of the exact errors. Attempt to debug/resolve the failure, explaining what was tried. Request the developer's explicit consent before instructing the scaffolder to execute a rollback (e.g. `git checkout -- .` and `git clean -fd` for Git, or `hg revert` for Mercurial). Give the developer the opportunity to resolve it manually first.
 
 ## Common Rationalizations
 - *"Outputs are useful to see in GitHub pull request diffs."* - Jupyter JSON output diffs are extremely long and unreadable, obscuring code changes. Stripping outputs makes code reviews cleaner and prevents data leaks.

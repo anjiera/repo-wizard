@@ -1,12 +1,12 @@
 ---
 name: privacy-hardener
-description: Guides agents through auditing data storage schemas and configurations for regulatory compliance (GDPR, CCPA/CPRA, COPPA). Scaffolds database column encryption rules, PII logging filters, and data export/deletion routing templates. Use when reviewing privacy compliance or setting up data handling.
+description: Guides agents through auditing data storage schemas and configurations for regulatory compliance (GDPR, CCPA/CPRA, COPPA). Configures database column encryption rules, PII logging filters, and data export/deletion routing templates. Use when reviewing privacy compliance or setting up data handling.
 ---
 
 # Privacy Hardener (`privacy-hardener`)
 
 ## Overview
-A specialized data privacy and regulation compliance workflow designed to audit source repositories for unencrypted PII storage, configure logging filters to scrub sensitive credentials and identifiers, and scaffold templates for data portability and user deletion requests.
+A specialized data privacy and regulation compliance workflow designed to audit source repositories for unencrypted PII storage, configure logging filters to scrub sensitive credentials and identifiers, and tool templates for data portability and user deletion requests.
 
 ---
 
@@ -16,7 +16,7 @@ A specialized data privacy and regulation compliance workflow designed to audit 
 * Establishing data handling controls for compliance certifications (GDPR, CCPA/CPRA, COPPA).
 * Auditing database schemas, ORM files (e.g. Prisma schemas, Hibernate configurations, mongoose schemas) for plaintext PII fields.
 * Implementing logging filters to prevent leaks of passwords, raw IPs, session cookies, or email addresses.
-* Scaffolding API routes and controllers for user deletion ("Right to be Forgotten") and data export (JSON/CSV packaging).
+* Tooling API routes and controllers for user deletion ("Right to be Forgotten") and data export (JSON/CSV packaging).
 
 ### When NOT to Use
 * Drafting physical privacy policies or legal terms of service text (these are administrative documents owned by legal counsel).
@@ -42,9 +42,9 @@ Scan the codebase to evaluate existing privacy controls:
 2. **Logger Audits:** Scan for logging outputs that print whole request bodies, raw object variables, or user context properties.
 3. **Account Routes:** Look for account registration or deletion routes.
 
-### Phase 3: Deliverables Scaffolding
-Coordinate with the environment configurer to scaffold controls:
-1. **PII Logging Scrubbers:** Recommend and scaffold filters to mask or redact sensitive terms (emails, passwords, API tokens) before logs write to output.
+### Phase 3: Deliverables Tooling
+Coordinate with the environment configurer to tool controls:
+1. **PII Logging Scrubbers:** Recommend and tool filters to mask or redact sensitive terms (emails, passwords, API tokens) before logs write to output.
 2. **Route Templates & Placeholders:** Draft stubs and controllers for data deletion (Right to be Forgotten) and data export (Portability) requests.
 3. **Database Encryption guidance:** Draft suggestions for configuring column-level encryption for identified PII fields.
 4. **Interactive Tradeoffs:** Explain options (e.g. masking vs hashing, cascade deletion vs soft anonymization) and ask the user to guide the setup.
@@ -58,7 +58,7 @@ Coordinate with the environment configurer to scaffold controls:
 | :--- | :--- |
 | "A soft delete is enough for GDPR." | GDPR requires permanent erasure or full anonymization. Retaining PII in a row marked `deleted = true` is non-compliant. |
 | "Since logs are internal, we can log email addresses." | Internal log storage is still subject to audit and potential leakage. PII must be scrubbed before hitting log files. |
-| "I should build the age-gate interface directly." | Age-gates require UI design and UX validation. The agent can scaffold route checks, but the frontend UX must be configured and tested manually. |
+| "I should build the age-gate interface directly." | Age-gates require UI design and UX validation. The agent can tool route checks, but the frontend UX must be configured and tested manually. |
 
 ---
 
@@ -75,6 +75,6 @@ After completing the process, confirm:
 - [ ] Targeted jurisdictions (GDPR, CCPA, COPPA) were explicitly aligned.
 - [ ] Plaintext database PII columns and ORM files were audited.
 - [ ] Logging filters/scrubbers are configured to redact credentials, IPs, and emails.
-- [ ] If GDPR/CCPA is selected, data deletion (cascade/anonymize) and data export (JSON/CSV) route templates and stubs are scaffolded.
+- [ ] If GDPR/CCPA is selected, data deletion (cascade/anonymize) and data export (JSON/CSV) route templates and stubs are configured.
 - [ ] If COPPA is selected, codebase is checked to verify children device/geolocation data is not gathered, and manual parental consent steps are documented.
 - [ ] Manual checks (cookie banners, ToS visibility, age gates) are flagged for the developer to inspect.

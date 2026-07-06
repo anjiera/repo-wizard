@@ -20,11 +20,11 @@ description: Temporary agent to trigger validation failures
 ---
 ## Step 1: Alignment & Target Stack
 ## Step 2: Codebase Scan & Auditing
-## Step 3: Interactive Scaffolding Guidance
+## Step 3: Interactive Tooling Guidance
 ### 3.1 Developer Consent & Interactive Review
 ### 3.2 Controls Scope
 ### 3.3 Safety & Rollback
-[scaffolding-robustness-protocol.md](../references/scaffolding-robustness-protocol.md)
+[tooling-robustness-protocol.md](../references/tooling-robustness-protocol.md)
 `;
   fs.writeFileSync(tempAgentPath, badAgentContent);
 
@@ -46,11 +46,11 @@ name: temp-malformed
 description: Malformed agent missing Step 1
 ---
 ## Step 2: Codebase Scan & Auditing
-## Step 3: Interactive Scaffolding Guidance
+## Step 3: Interactive Tooling Guidance
 ### 3.1 Developer Consent & Interactive Review
 ### 3.2 Controls Scope
 ### 3.3 Safety & Rollback
-[scaffolding-robustness-protocol.md](../references/scaffolding-robustness-protocol.md)
+[tooling-robustness-protocol.md](../references/tooling-robustness-protocol.md)
 `;
   // We need to temporarily add a dummy eval case for it to avoid missing-eval error first
   const tempEvalPath = path.join(ROOT, 'evals', 'temp-malformed.js');
