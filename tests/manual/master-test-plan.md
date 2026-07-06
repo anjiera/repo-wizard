@@ -126,17 +126,31 @@ graph TD
   - *Expected Outcome*:
     - Script generates the initial manifest files in `.repo-wizard/` and exits with code `0`.
 
-- [ ] **3.4 Headless Scan via Orchestrator (Active Workspace Scans)**
-  - Run the CLI orchestrator in a standard interactive terminal (TTY):
+- [ ] **3.4 Local CLI Headless Scan via ADK Orchestrator (Active Workspace Scans)**
+  - Run the complete CLI orchestrator in headless mode (no TTY progress bars):
     ```bash
-    node scripts/run-fallback-sequential-orchestration.js
+    node scripts/repo-wizard.js run --headless
     ```
-    - *Expected*: Renders a live, colorized progress logging interface with ANSI escape codes.
-  - Run it redirecting output to a file (Non-TTY):
+    - *Expected*: Writes clean, line-by-line milestones without control characters. 
+  - Test running a single pillar (e.g. `SECURITY`):
     ```bash
-    node scripts/run-fallback-sequential-orchestration.js > scan-output.log
+    node scripts/repo-wizard.js run --pillar SECURITY
     ```
-    - *Expected*: Writes clean, line-by-line milestones without control characters. Open `scan-output.log` and verify it contains clean logs.
+    - *Expected*: Only runs agents belonging to the SECURITY pillar.
+  - Test re-running a single agent after a report finishes:
+    ```bash
+    node scripts/repo-wizard.js run --agent api-contract-architect
+    ```
+    - *Expected*: Will resume the session and only execute the `api-contract-architect` agent.
+
+- [ ] **3.5 Redaction and Output Verification**
+  - Synthesize and compile the final report with the redact flag:
+    ```bash
+    node scripts/repo-wizard.js synthesize --redact
+    node scripts/repo-wizard.js compile
+    ```
+  - *Expected Outcome*:
+    - Open the compiled markdown report. Verify that any dummy API keys or Git URLs are redacted with `[REDACTED_API_KEY]` or similar placeholders.
 
 
 ---
@@ -146,9 +160,9 @@ graph TD
 **Goal**: Verify that specialists and individual commands can be triggered directly in your IDE chat or native agent workspace.
 *For detailed step-by-step procedures, see [features/agent-alignment.md](features/agent-alignment.md).*
 
-- [ ] **5.1 Individual Slash Commands**
+- [ ] **4.1 Individual Slash Commands**
   - Trigger the legal neutrality specialist command in your agent chat environment:
-    ```bash
+    ```text
     /rw-legal-neutrality-auditor
     ```
   - *Expected Outcome*:
@@ -156,7 +170,7 @@ graph TD
     - Prompts you with scoping questions.
     - Performs the check and returns batches of suggestions.
 
-- [ ] **5.2 Native Parallel Orchestration**
+- [ ] **4.2 Native Parallel Orchestration**
   - Trigger `/repo-wizard` in the interactive Antigravity IDE chat sidebar.
   - *Expected Outcome*:
     - The Lead Agent uses the native `invoke_subagent` tool call to coordinate relevance checks and sweeps concurrently.
