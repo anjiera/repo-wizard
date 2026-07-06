@@ -345,7 +345,7 @@ const session = {
 fs.writeFileSync(path.join(REPORTS_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');
 fs.writeFileSync(path.join(REPORTS_DIR, 'session.json'), JSON.stringify(session, null, 2), 'utf8');
 
-// Copy manifest and session to root so run-fallback-sequential-orchestration.js can consume & promote it
+// Copy manifest and session to root so run-adk-orchestrator.js can consume & promote it
 const rootWizardDir = path.join(resolvedReport, '.repo-wizard');
 fs.mkdirSync(rootWizardDir, { recursive: true });
 fs.writeFileSync(path.join(rootWizardDir, 'manifest.json'), JSON.stringify(manifest, null, 2), 'utf8');

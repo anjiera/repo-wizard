@@ -191,7 +191,7 @@ Prepares the target repository and validates paths before executing sweeps.
   node scripts/initial-codebase-scan.js --pillar SECURITY
   ```
 
-### CLI Agent Orchestrator Runner (`scripts/run-fallback-sequential-orchestration.js`)
+### CLI Agent Orchestrator Runner (`scripts/run-adk-orchestrator.js`)
 The core sequential scanning orchestrator engine that manages subagent execution pools.
 * **Behavior:**
   - Dynamically detects codebase sizing and runs relevance sweeps.
@@ -203,7 +203,7 @@ The core sequential scanning orchestrator engine that manages subagent execution
   - `--mock-cli <true|false>` (Optional): Runs mock simulation. (Defaults to false).
 * **Usage:**
   ```bash
-  node scripts/run-fallback-sequential-orchestration.js --pillar SECURITY
+  node scripts/repo-wizard.js run --pillar SECURITY
   ```
 
 ---
