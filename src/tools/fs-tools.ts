@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { defineTool } from '@google/adk';
+import { FunctionTool } from '@google/adk';
 import { z } from 'zod';
 
 /**
@@ -15,13 +15,13 @@ function ensureSafePath(targetPath: string, workspaceRoot: string): string {
   return resolvedPath;
 }
 
-export const readFileTool = defineTool({
+export const readFileTool = new FunctionTool({
   name: 'read_file',
   description: 'Reads the contents of a file from the local workspace.',
-  inputSchema: z.object({
+  parameters: z.object({
     filePath: z.string().describe('The path to the file, relative to the workspace root.'),
   }),
-  async execute({ filePath }) {
+  execute: async ({ filePath }) => {
     const workspaceRoot = process.cwd();
     const safePath = ensureSafePath(filePath, workspaceRoot);
     
@@ -34,14 +34,14 @@ export const readFileTool = defineTool({
   }
 });
 
-export const writeFileTool = defineTool({
+export const writeFileTool = new FunctionTool({
   name: 'write_file',
   description: 'Writes content to a file in the local workspace. Creates directories if they do not exist.',
-  inputSchema: z.object({
+  parameters: z.object({
     filePath: z.string().describe('The path to the file, relative to the workspace root.'),
     content: z.string().describe('The content to write to the file.'),
   }),
-  async execute({ filePath, content }) {
+  execute: async ({ filePath, content }) => {
     const workspaceRoot = process.cwd();
     const safePath = ensureSafePath(filePath, workspaceRoot);
     
@@ -55,13 +55,13 @@ export const writeFileTool = defineTool({
   }
 });
 
-export const listDirectoryTool = defineTool({
+export const listDirectoryTool = new FunctionTool({
   name: 'list_directory',
   description: 'Lists the files and folders in a given directory.',
-  inputSchema: z.object({
+  parameters: z.object({
     dirPath: z.string().describe('The directory path to list, relative to the workspace root. Use "." for the root.'),
   }),
-  async execute({ dirPath }) {
+  execute: async ({ dirPath }) => {
     const workspaceRoot = process.cwd();
     const safePath = ensureSafePath(dirPath, workspaceRoot);
     

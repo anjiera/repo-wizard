@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Agent } from '@google/adk';
+import { LlmAgent } from '@google/adk';
 import { readFileTool, writeFileTool, listDirectoryTool } from '../tools/fs-tools.js';
 
 // Base registry type helper
@@ -36,15 +36,16 @@ function loadInstructions(agentKey: string): string {
 /**
  * Helper to build an ADK Agent using the registry metadata and markdown prompt files
  */
-function createAdkAgent(key: string): Agent {
+function createAdkAgent(key: string): LlmAgent {
   const meta = registry[key];
   if (!meta) {
     throw new Error(`Agent key ${key} not found in registry`);
   }
-  return new Agent({
-    name: key,
+  return new LlmAgent({
+    name: key.replace(/-/g, '_'),
     description: meta.description,
-    systemInstruction: loadInstructions(key),
+    model: meta.adkSpec?.model || 'gemini-1.5-flash',
+    instruction: loadInstructions(key),
     tools: [readFileTool, writeFileTool, listDirectoryTool]
   });
 }

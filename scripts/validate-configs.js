@@ -86,8 +86,9 @@ function validate() {
           }
 
           // Additional properties check
+          const allowedFields = [...requiredFields, 'adkSpec'];
           for (const k of Object.keys(spec)) {
-            if (!requiredFields.includes(k)) {
+            if (!allowedFields.includes(k)) {
               errors.push(`agent-registry.json: agent "${agentKey}" has unexpected property "${k}".`);
             }
           }

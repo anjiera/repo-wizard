@@ -16,6 +16,7 @@ const validateCommands = require('../tests/validate-commands.test');
 const validateSkills = require('../tests/validate-skills.test');
 const validateDocs = require('../tests/validate-docs.test');
 const orchestration = require('../tests/orchestration.test');
+const adkRunner = require('../tests/adk-runner.test');
 const validateDeliverables = require('../tests/validate-deliverables.test');
 const reportStyling = require('../tests/report-styling.test');
 const scanHelpers = require('../tests/scan-helpers.test');
@@ -33,6 +34,7 @@ function runAll() {
     validateSkills.run();
     validateDocs.run();
     orchestration.run();
+    adkRunner.run();
     validateDeliverables.run();
     reportStyling.run();
     scanHelpers.run();
