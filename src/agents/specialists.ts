@@ -67,3 +67,29 @@ export const securityAgents = {
   privacyHardener,
   supplyChainAuditor
 };
+
+// ==========================================
+// QUALITY PILLAR AGENTS (Commit 6b)
+// ==========================================
+export const accessibilityAuditor = createAdkAgent('accessibility-auditor');
+export const agentAlignmentAuditor = createAdkAgent('agent-alignment-auditor');
+export const devOnboardingAuditor = createAdkAgent('dev-onboarding-auditor');
+export const embeddedSystemsAuditor = createAdkAgent('embedded-systems-auditor');
+export const fuzzEngineer = createAdkAgent('fuzz-engineer');
+export const notebookAuditor = createAdkAgent('notebook-auditor');
+export const qaEngineer = createAdkAgent('qa-engineer');
+export const stateHardener = createAdkAgent('state-hardener');
+export const vcsWorkflowEngineer = createAdkAgent('vcs-workflow-engineer');
+
+export const qualityAgents = {
+  accessibilityAuditor,
+  agentAlignmentAuditor,
+  devOnboardingAuditor,
+  embeddedSystemsAuditor,
+  fuzzEngineer,
+  notebookAuditor,
+  qaEngineer,
+  stateHardener,
+  vcsWorkflowEngineer
+};
+
