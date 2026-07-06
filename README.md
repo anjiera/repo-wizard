@@ -17,6 +17,7 @@ To help you get started quickly, please refer to the following guides:
 * **[usage-tutorial.md](docs/usage-tutorial.md)** — Scenario guides for Greenfield vs. Brownfield repos, and interactive vs. headless execution.
 * **[references/README.md](references/README.md)** — Alphabetized and domain-mapped catalog of the 23 checklist and pattern standards.
 * **[hybrid-orchestration.md](docs/design/hybrid-orchestration.md)** — Architectural design of the manifest-driven hybrid runner and TTY execution model.
+* **[adk-orchestration.md](docs/design/adk-orchestration.md)** — Integration design of the Google ADK InMemoryRunner to manage LlmAgent lifecycle and pipeline execution.
 * **[passive-data-boundaries.md](docs/design/passive-data-boundaries.md)** — Security architecture detailing prompt injection mitigations and isolated data parsing.
 * **[prompt-evaluations.md](docs/design/prompt-evaluations.md)** — Deep-dive on MLOps testing, rubric parity requirements, and the LLM-as-a-judge runner.
 * **[zero-dependency-scripting.md](solo-dev-toolkit/docs/design/zero-dependency-scripting.md)** — Engineering rationale for zero-npm dependency Node.js utility design.
