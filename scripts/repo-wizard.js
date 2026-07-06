@@ -10,6 +10,7 @@ const args = process.argv.slice(2);
 const COMMANDS = {
   scan: './initial-codebase-scan.js',
   prepare: './prepare-native-execution.js',
+  synthesize: './reports-synthesize.js',
   run: './run-fallback-sequential-orchestration.js',
   compile: './reports-compile.js'
 };
@@ -28,7 +29,11 @@ if (!mappedScript) {
 // Ensure no other subcommand is passed as positional argument
 for (let i = 1; i < args.length; i++) {
   const arg = args[i];
-  if (!arg.startsWith('-') && COMMANDS[arg]) {
+  if (arg.startsWith('-')) {
+    if (arg === '--report-path' || arg === '--report-style' || arg === '--tos-path' || arg === '--agent' || arg === '--pillar') {
+      i++;
+    }
+  } else if (COMMANDS[arg]) {
     printUsageAndExit(`Conflicting subcommand "${arg}" detected. You can only execute one subcommand at a time.`);
   }
 }
@@ -41,11 +46,13 @@ function printUsageAndExit(err) {
   console.log('\nAvailable Subcommands:');
   console.log('  scan       Perform codebase sizing, stacking analysis, and pre-scan setup.');
   console.log('  prepare    Archive previous files, promote configurations, and unpack contracts and prompt data.');
+  console.log('  synthesize Synthesize subagent observations into compiledAnalysis session payload.');
   console.log('  run        Run fallback sequential subagents scan loop.');
   console.log('  compile    Compile technical reports, executive summaries, and backlog CSV deliverables.');
   console.log('\nExamples:');
   console.log('  node scripts/repo-wizard.js scan --report-path . --pillar QUALITY');
   console.log('  node scripts/repo-wizard.js prepare --report-path .');
+  console.log('  node scripts/repo-wizard.js synthesize --redact');
   console.log('  node scripts/repo-wizard.js compile --report-path .');
   process.exit(1);
 }
@@ -54,6 +61,11 @@ function printUsageAndExit(err) {
 const scriptPath = path.resolve(__dirname, mappedScript);
 const childArgs = args.slice(1);
 const child = fork(scriptPath, childArgs);
+
+child.on('error', (err) => {
+  console.error(`${RED}✗ Error: Failed to execute subcommand child process:${RESET}`, err.stack);
+  process.exit(1);
+});
 
 child.on('exit', (code) => {
   process.exit(code === null ? 1 : code);
