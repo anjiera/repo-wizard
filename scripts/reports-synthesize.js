@@ -125,7 +125,10 @@ try {
       }
 
       // Check for recommendations table boundary
-      if (line.includes('|') && line.toLowerCase().includes('target file') && line.toLowerCase().includes('proposed')) {
+      const lowerLine = line.toLowerCase();
+      if (line.includes('|') &&
+          (lowerLine.includes('file') || lowerLine.includes('location') || lowerLine.includes('target')) &&
+          (lowerLine.includes('proposed') || lowerLine.includes('suggested') || lowerLine.includes('mitigation') || lowerLine.includes('recommendation') || lowerLine.includes('refactoring') || lowerLine.includes('action'))) {
         inRecommendationsTable = true;
         // Skip separator line
         i++;
@@ -136,7 +139,7 @@ try {
       if (inRecommendationsTable) {
         if (line.startsWith('|') && line.endsWith('|')) {
           const cells = line.split('|').map(c => c.trim()).filter(Boolean);
-          if (cells.length >= 3 && !cells[0].startsWith('---') && !cells[0].toLowerCase().includes('target file')) {
+          if (cells.length >= 3 && !cells[0].startsWith('---') && !cells[0].toLowerCase().includes('file') && !cells[0].toLowerCase().includes('location') && !cells[0].toLowerCase().includes('target')) {
             extractedRecommendations.push({
               agent: agentName,
               file: redactText(cells[0]),
