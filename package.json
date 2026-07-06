@@ -1,0 +1,27 @@
+{
+  "name": "repo-wizard",
+  "version": "0.1.0",
+  "description": "Orchestrates repository governance, linting, security, and quality tooling configurations.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "node scripts/setup.js"
+  },
+  "keywords": [
+    "antigravity",
+    "adk",
+    "agents",
+    "governance",
+    "linting"
+  ],
+  "author": "Angela Thomas",
+  "license": "MIT",
+  "dependencies": {
+    "@google/adk": "^0.1.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}
