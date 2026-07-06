@@ -78,7 +78,7 @@ function validate() {
           }
 
           // Check required fields
-          const requiredFields = ['title', 'description', 'pillar', 'color', 'mockCapability', 'mockTool', 'command', 'reference'];
+          const requiredFields = ['title', 'description', 'pillar', 'color', 'mockCapability', 'mockTool', 'command', 'reference', 'permissions'];
           for (const field of requiredFields) {
             if (!(field in spec)) {
               errors.push(`agent-registry.json: agent "${agentKey}" is missing required property "${field}".`);
@@ -120,6 +120,9 @@ function validate() {
           }
           if ('reference' in spec && spec.reference !== null && typeof spec.reference !== 'string') {
             errors.push(`agent-registry.json: agent "${agentKey}" reference must be a string or null.`);
+          }
+          if ('permissions' in spec && (typeof spec.permissions !== 'object' || spec.permissions === null || Array.isArray(spec.permissions))) {
+            errors.push(`agent-registry.json: agent "${agentKey}" permissions must be a JSON object.`);
           }
         }
       }

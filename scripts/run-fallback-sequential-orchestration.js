@@ -136,10 +136,7 @@ if (!fs.existsSync(path.join(reportRoot, '.repo-wizard'))) {
   fs.mkdirSync(path.join(reportRoot, '.repo-wizard'), { recursive: true });
 }
 
-// Archive prior session and report files before beginning orchestration
-if (!isMock) {
-  archiveSession(reportRoot, { repoName, pillar: pillarFilter });
-}
+// Note: archiveSession was already executed at the start of initial-codebase-scan.js
 
 const { reportsDir: REPORTS_DIR, agentsDir: OBSERVATIONS_DIR, contractsDir: CONTRACTS_DIR } = ensureReportDirectories(reportRoot, repoName);
 const manifestPath = path.join(REPORTS_DIR, 'manifest.json');

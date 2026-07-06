@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { getRepoSize, checkAgentRelevance, clearFileCache, ensureReportDirectories, walkWorkspaceDir } = require('./scan-helpers');
+const { getRepoSize, checkAgentRelevance, clearFileCache, ensureReportDirectories, walkWorkspaceDir, archiveSession } = require('./scan-helpers');
 
 
 const { RESET, BOLD, GREEN, RED, BLUE, YELLOW } = require('../solo-dev-toolkit/scripts/cli-helpers');
@@ -89,6 +89,9 @@ repoName = repoName.replace(/[^a-zA-Z0-9_\-\.]/g, '');
 if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase() === 'reports' || repoName.toLowerCase() === 'history') {
   repoName = 'project';
 }
+
+// Archive prior session and report files before starting scan/writing new configurations
+archiveSession(resolvedReport, { repoName, pillar: pillarFilter });
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Starting initial codebase scan for: ${repoName}...${RESET}`);
 
