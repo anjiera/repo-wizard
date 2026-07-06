@@ -35,3 +35,22 @@ The `prepare` command invokes `scripts/prepare-native-execution.js`, which conso
 2. State file promotion: Copies the updated `manifest.json` and `session.json` configuration states from the root to the target reports subdirectory.
 3. Contract unpacking: Resolves `manifest.json` contracts and writes active, non-skipped entries to individual `contracts/<agent-name>-contract.json` files.
 4. Prompt data serialization: Reads the registry and maps active subagent system prompts to `resolved_agents_data.json` using relative pathing based on the active installation directory.
+
+## Single-Agent Audits via Registry Aliases
+
+To support rapid verification feedback loops, the `scan` command supports a dedicated `--agent <name|alias>` parameter.
+
+### Registry Namespacing
+To mitigate collision risk across 30+ specialists, each agent is assigned a unique abbreviated alias in `agents/agent-registry.json` using the prefix format:
+$$\langle\text{pillar-prefix}\rangle-\langle\text{acronym}\rangle$$
+
+Examples of resolved mappings include:
+- `qa-engineer` (QUALITY) -> `qual-qae`
+- `api-contract-architect` (ARCHITECTURE) -> `arch-aca`
+- `compliance-auditor` (SECURITY) -> `sec-ca`
+
+### State Propagation
+When `--agent` is executed:
+1. The scanner maps the argument against the registry key or its alias.
+2. If verified, the scanner targets only the matched specialist by setting its manifest contract status to `pending` (or `pending_agent_fallback`), while overriding all other specialists' statuses to `skipped`.
+3. Downstream preparation and orchestrator scripts process only the active agent, conserving token limits and execution time.

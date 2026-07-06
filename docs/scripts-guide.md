@@ -19,7 +19,7 @@ $$\text{Scan} \longrightarrow \text{Interview} \longrightarrow \text{Prepare} \l
 ### Commands:
 - **`scan`**: Unified pre-scan setup.
   ```bash
-  node scripts/repo-wizard.js scan [--report-path <path>] [--pillar <pillar>] [--headless]
+  node scripts/repo-wizard.js scan [--report-path <path>] [--pillar <pillar>] [--agent <name|alias>] [--headless]
   ```
 - **`prepare`**: Promotes configuration states and unpacks subagent prompt and contract files.
   ```bash

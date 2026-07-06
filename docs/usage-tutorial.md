@@ -98,11 +98,23 @@ node scripts/repo-wizard.js scan --pillar SECURITY
 node scripts/repo-wizard.js run
 
 # 2. Run performance audits incrementally on top of security results
+```bash
 node scripts/repo-wizard.js scan --pillar PERFORMANCE
 node scripts/repo-wizard.js run
 ```
 
-### 4.2 State Merging & Incremental Archiving
+### 4.2 Targeted Single-Agent Sweep (`--agent`)
+For rapid feedback on a specific domain, you can execute a scan targeted at a single specialist agent by passing the `--agent <name|alias>` parameter. The orchestrator will mark only the matching agent as pending, automatically skipping all others:
+* **By Agent Key:** `--agent qa-engineer`
+* **By Agent Alias:** `--agent qual-qae` (using the prefix format `<pillar>-<acronym>` to make CLI typing faster)
+
+**Example Target Command:**
+```bash
+node scripts/repo-wizard.js scan --agent qual-qae
+node scripts/repo-wizard.js run
+```
+
+### 4.3 State Merging & Incremental Archiving
 Staged sweeps leverage two safety features to prevent data loss:
 1.  **Incremental State Merging**: Subsequent setup scans automatically read the existing manifest and preserve the `completed` status of other pillars. For example, running the `PERFORMANCE` setup scan will keep prior `SECURITY` audit results marked as `completed` rather than overwriting them.
 2.  **Incremental Archiving**: The cleanup engine automatically target-prunes only observation and contract files in the `agents/` and `contracts/` folders belonging to the active `--pillar` stage. Other pillars' observations are left untouched, enabling the compiler to compile a single comprehensive document when all stages are complete.
