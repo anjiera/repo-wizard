@@ -54,7 +54,7 @@ function compileRealReports(session) {
 
   const sanitizeText = (txt) => {
     if (typeof txt !== 'string') return '';
-    return txt.replace(/[^a-zA-Z0-9_\-\.\s+#]/g, '').trim();
+    return txt.replace(/[^a-zA-Z0-9_\-\.\s+#]/g, '').trim().toLowerCase();
   };
 
   const frameworks = rawFrameworks.map(f => sanitizeText(f)).filter(Boolean);
@@ -195,7 +195,9 @@ function compileRealReports(session) {
     const list = groupedObservations[key];
     const pNum = PILLAR_NUMBERS[key];
     const anchor = PILLAR_ANCHORS[key];
-    consolidatedObservations += `\n<a id="${anchor}"></a>\n### ${pNum} Pillar: ${QUALITY_PILLARS[key]}\n\n`;
+    const isPillarEmpty = !list || list.length === 0;
+    const suffix = isPillarEmpty ? ' (N/A)' : '';
+    consolidatedObservations += `\n<a id="${anchor}"></a>\n### ${pNum} Pillar: ${QUALITY_PILLARS[key]}${suffix}\n\n`;
 
     if (list && list.length > 0) {
       const formattedReports = list.map((item, idx) => {
@@ -207,10 +209,9 @@ function compileRealReports(session) {
         report += `**Description:** ${item.desc}\n\n`;
 
         let cleanContent = item.content.replace(/^#\s+.*$/m, '').trim();
-        cleanContent = cleanContent
-          .replace(/^##\s+/gm, '#### ')
-          .replace(/^###\s+/gm, '##### ')
-          .replace(/^####\s+/gm, '###### ');
+        cleanContent = cleanContent.replace(/^(#{2,4})\s+/gm, (match, hashes) => {
+          return hashes + '## ';
+        });
 
         report += cleanContent + '\n\n';
         return report;
@@ -355,7 +356,10 @@ ${DISCLAIMER_TEXT}
     profileSection += '_No interview choices were recorded._\n';
   }
 
-
+  const tocSecuritySuffix = (!groupedObservations.SECURITY || groupedObservations.SECURITY.length === 0) ? ' (N/A)' : '';
+  const tocPerformanceSuffix = (!groupedObservations.PERFORMANCE || groupedObservations.PERFORMANCE.length === 0) ? ' (N/A)' : '';
+  const tocArchitectureSuffix = (!groupedObservations.ARCHITECTURE || groupedObservations.ARCHITECTURE.length === 0) ? ' (N/A)' : '';
+  const tocQualitySuffix = (!groupedObservations.QUALITY || groupedObservations.QUALITY.length === 0) ? ' (N/A)' : '';
 
   const fullReport = `# Repo Wizard Full Technical Report - ${repoName}
 Run Date: ${currentDate}
@@ -373,10 +377,10 @@ This report provides LLM-driven direction, like a compass. It does not provide f
 ${interviewTocLink}
 - [3. Maturity Model Guidance](#3-maturity-model-guidance)
 - [4. Detailed Quality Pillars Analysis](#4-detailed-quality-pillars-analysis)
-  - [Security & Compliance](#security--compliance)
-  - [Performance & Resilience](#performance--resilience)
-  - [Architecture & Design](#architecture--design)
-  - [Code Quality & Testing](#code-quality--testing)
+  - [Security & Compliance${tocSecuritySuffix}](#security--compliance)
+  - [Performance & Resilience${tocPerformanceSuffix}](#performance--resilience)
+  - [Architecture & Design${tocArchitectureSuffix}](#architecture--design)
+  - [Code Quality & Testing${tocQualitySuffix}](#code-quality--testing)
 - [5. Effort vs. Value Rollout Matrix](#5-effort-vs-value-rollout-matrix)
 - [6. Conclusions](#6-conclusions)
 
@@ -397,9 +401,10 @@ Refer to the separate [Executive Summary](${repoName}-executive-summary.html) fo
 
 - **--report-path :** ${session.reportPath ? `\`${session.reportPath}\`` : 'workspace root (default)'}
 - **--tos-path :** ${session.tosPath ? `\`${session.tosPath}\`` : 'report path (default)'}
-- **--headless :** ${session.answersInferred === true ? 'true' : 'false (default)'}
+- **--headless :** ${session.headless === true ? 'true' : 'false (default)'}
 - **--redact :** ${session.redact === true ? 'true' : 'false (default)'}
 - **--mock-cli :** ${session.mockCli === true ? 'true' : 'false (default)'}
+- **--agent :** ${session.agent ? `\`${session.agent}\`` : 'none (default)'}
 
 ${profileSection}
 

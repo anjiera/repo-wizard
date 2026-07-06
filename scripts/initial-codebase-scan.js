@@ -171,7 +171,7 @@ if (fileNames.has('cargo.toml') || extensions.has('.rs')) {
 } else if (extensions.has('.cs')) {
   language = 'c#';
   buildSystem = 'dotnet';
-  if (fileNames.has('csproj') || fileNames.has('sln')) {
+  if (extensions.has('.csproj') || extensions.has('.sln')) {
     buildSystem = 'msbuild';
   }
 } else if (extensions.has('.bas') || extensions.has('.prg') || extensions.has('.basic')) {
@@ -324,6 +324,8 @@ const session = {
   reportStyle: 'whitepaper',
   exceedsAdoptionThreshold,
   nativeChatEnvironment: isNativeChat,
+  headless: isHeadless,
+  agent: agentFilter,
   answers: {
     frameworks,
     platforms: inferredPlatforms,

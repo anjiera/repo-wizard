@@ -35,6 +35,24 @@ if (redactIdx !== -1) {
   process.argv.splice(redactIdx, 1);
 }
 
+let agentOverride = null;
+const agentIdx = process.argv.indexOf('--agent');
+if (agentIdx !== -1) {
+  if (process.argv[agentIdx + 1] && !process.argv[agentIdx + 1].startsWith('-')) {
+    agentOverride = process.argv[agentIdx + 1];
+    process.argv.splice(agentIdx, 2);
+  } else {
+    process.argv.splice(agentIdx, 1);
+  }
+}
+
+let headlessOverride = false;
+const headlessIdx = process.argv.indexOf('--headless');
+if (headlessIdx !== -1) {
+  headlessOverride = true;
+  process.argv.splice(headlessIdx, 1);
+}
+
 // Find first non-flag argument in remaining arguments for sessionPath
 let sessionPath = process.argv.slice(2).find(arg => !arg.startsWith('-'));
 
@@ -57,8 +75,10 @@ if (!sessionPath) {
   }
 }
 
-if (!sessionPath) {
-  console.error(`${RED}✗ Error:${RESET} No active session found. Please run the onboarding wizard first.`);
+// Validate path to prevent path traversal or writing to arbitrary directories
+const resolvedSessionPath = path.resolve(sessionPath);
+if (!resolvedSessionPath.startsWith(ROOT) || path.extname(resolvedSessionPath) !== '.json') {
+  console.error(`${RED}✗ Error:${RESET} Invalid session file path. Path must reside within the workspace and have a .json extension.`);
   process.exit(1);
 }
 
@@ -70,6 +90,18 @@ try {
   if (isRedactOverride) {
     session.redact = true;
   }
+  if (headlessOverride || process.env.HEADLESS === 'true') {
+    session.headless = true;
+  } else {
+    // If not explicitly headless, ensure it updates/clears or reflects the correct state.
+    // In on-demand compilations we can set it to false if --headless is not passed
+    session.headless = false;
+  }
+  if (agentOverride) {
+    session.agent = agentOverride;
+  }
+  
+  fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf8');
   
   compileRealReports(session);
   console.log(`${GREEN}✓ Reports compiled successfully!${RESET}\n`);
