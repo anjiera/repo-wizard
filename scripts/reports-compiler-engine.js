@@ -405,6 +405,7 @@ Refer to the separate [Executive Summary](${repoName}-executive-summary.html) fo
 - **--redact :** ${session.redact === true ? 'true' : 'false (default)'}
 - **--mock-cli :** ${session.mockCli === true ? 'true' : 'false (default)'}
 - **--agent :** ${session.agent ? `\`${session.agent}\`` : 'none (default)'}
+- **--pillar :** ${session.pillar ? `\`${session.pillar}\`` : 'ALL (default)'}
 
 ${profileSection}
 

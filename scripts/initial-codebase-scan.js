@@ -326,6 +326,7 @@ const session = {
   nativeChatEnvironment: isNativeChat,
   headless: isHeadless,
   agent: agentFilter,
+  pillar: pillarFilters.length > 0 ? pillarFilters.join(', ') : 'ALL',
   answers: {
     frameworks,
     platforms: inferredPlatforms,

@@ -53,6 +53,17 @@ if (headlessIdx !== -1) {
   process.argv.splice(headlessIdx, 1);
 }
 
+let pillarOverride = null;
+const pillarIdx = process.argv.indexOf('--pillar');
+if (pillarIdx !== -1) {
+  if (process.argv[pillarIdx + 1] && !process.argv[pillarIdx + 1].startsWith('-')) {
+    pillarOverride = process.argv[pillarIdx + 1];
+    process.argv.splice(pillarIdx, 2);
+  } else {
+    process.argv.splice(pillarIdx, 1);
+  }
+}
+
 // Find first non-flag argument in remaining arguments for sessionPath
 let sessionPath = process.argv.slice(2).find(arg => !arg.startsWith('-'));
 
@@ -99,6 +110,9 @@ try {
   }
   if (agentOverride) {
     session.agent = agentOverride;
+  }
+  if (pillarOverride) {
+    session.pillar = pillarOverride;
   }
   
   fs.writeFileSync(sessionPath, JSON.stringify(session, null, 2), 'utf8');
