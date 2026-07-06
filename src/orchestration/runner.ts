@@ -77,9 +77,22 @@ export async function runPipeline(manifestPath: string) {
 
     console.log(`[INFO] Spawning ${agentName} via ADK InMemoryRunner...`);
     
+    let rootWizardDir = resolvedManifestPath;
+    while (rootWizardDir && path.basename(rootWizardDir) !== '.repo-wizard' && rootWizardDir !== path.dirname(rootWizardDir)) {
+      rootWizardDir = path.dirname(rootWizardDir);
+    }
+    if (path.basename(rootWizardDir) !== '.repo-wizard') {
+      rootWizardDir = path.join(process.cwd(), '.repo-wizard');
+    }
+
+    const repoName = manifest.repo_name || 
+      (path.basename(path.dirname(resolvedManifestPath)) !== '.repo-wizard' ? path.basename(path.dirname(resolvedManifestPath)) : 'repo-wizard');
+    
+    const obsDir = path.join(rootWizardDir, 'reports', repoName, 'agents');
+    const obsPath = path.join(obsDir, `${repoName}-observations-${agentName}.md`);
+
     try {
       if (process.env.ADK_MOCK_RUN === 'true') {
-        const obsPath = path.resolve(process.cwd(), '.repo-wizard/reports/repo-wizard/agents', `repo-wizard-observations-${agentName}.md`);
         fs.mkdirSync(path.dirname(obsPath), { recursive: true });
         fs.writeFileSync(obsPath, `# Mock Observations for ${agentName}\n\nAll good.\n`, 'utf8');
         entry.status = 'completed';
@@ -131,7 +144,6 @@ export async function runPipeline(manifestPath: string) {
         .replace(new RegExp(process.env.GEMINI_API_KEY || 'MISSING_KEY', 'g'), '[REDACTED_API_KEY]')
         .replace(/sk-[a-zA-Z0-9]{48}/g, '[REDACTED_SECRET_TOKEN]');
       
-      const obsPath = path.resolve(process.cwd(), '.repo-wizard/reports/repo-wizard/agents', `repo-wizard-observations-${agentName}.md`);
       fs.mkdirSync(path.dirname(obsPath), { recursive: true });
       fs.writeFileSync(obsPath, redactedOutput || `# Observations for ${agentName}\n\nEmpty output from ADK.\n`, 'utf8');
       

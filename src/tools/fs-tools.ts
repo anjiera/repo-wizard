@@ -9,7 +9,8 @@ import { z } from 'zod';
  */
 function ensureSafePath(targetPath: string, workspaceRoot: string): string {
   const resolvedPath = path.resolve(workspaceRoot, targetPath);
-  if (!resolvedPath.startsWith(path.resolve(workspaceRoot))) {
+  const relative = path.relative(path.resolve(workspaceRoot), resolvedPath);
+  if (relative.startsWith('..') || path.isAbsolute(relative)) {
     throw new Error(`Security Error: Path traversal detected. Access to ${targetPath} is forbidden.`);
   }
   return resolvedPath;

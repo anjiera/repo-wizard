@@ -40,14 +40,14 @@ export interface AgentParameterContract {
   }>;
 }
 
-const registryPath = path.resolve(process.cwd(), 'agents/agent-registry.json');
+const registryPath = path.resolve(__dirname, '../../agents/agent-registry.json');
 const registry: Record<string, RegistryEntry> = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 
 /**
  * Loads instructions from corresponding markdown file.
  */
 function loadInstructions(agentKey: string): string {
-  const filePath = path.resolve(process.cwd(), 'agents', `${agentKey}.md`);
+  const filePath = path.resolve(__dirname, '../../agents', `${agentKey}.md`);
   try {
     return fs.readFileSync(filePath, 'utf8');
   } catch (err) {
