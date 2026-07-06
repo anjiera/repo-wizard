@@ -18,15 +18,14 @@ const { archiveSession, getSafeRepoName } = require('./scan-helpers');
 // Support executing directly from command line
 if (require.main === module) {
   const args = process.argv.slice(2);
-  const targetDir = process.cwd();
 
   const reportPathIdx = args.indexOf('--report-path');
-  let reportRoot = ROOT;
+  let reportRoot = process.cwd();
   if (reportPathIdx !== -1 && args[reportPathIdx + 1] && !args[reportPathIdx + 1].startsWith('-')) {
     reportRoot = path.resolve(args[reportPathIdx + 1]);
   }
 
-  archiveSession(reportRoot, { repoName: getSafeRepoName(targetDir), pruneContracts: true });
+  archiveSession(reportRoot, { repoName: getSafeRepoName(reportRoot), pruneContracts: true });
 }
 
 module.exports = { archiveSession };
