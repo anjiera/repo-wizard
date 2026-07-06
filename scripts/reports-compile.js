@@ -28,6 +28,17 @@ if (styleIdx !== -1) {
   }
 }
 
+let reportPathOverride = null;
+const reportPathIdx = process.argv.indexOf('--report-path');
+if (reportPathIdx !== -1) {
+  if (process.argv[reportPathIdx + 1] && !process.argv[reportPathIdx + 1].startsWith('-')) {
+    reportPathOverride = process.argv[reportPathIdx + 1];
+    process.argv.splice(reportPathIdx, 2);
+  } else {
+    process.argv.splice(reportPathIdx, 1);
+  }
+}
+
 let isRedactOverride = false;
 const redactIdx = process.argv.indexOf('--redact');
 if (redactIdx !== -1) {
@@ -68,7 +79,8 @@ if (pillarIdx !== -1) {
 let sessionPath = process.argv.slice(2).find(arg => !arg.startsWith('-'));
 
 if (!sessionPath) {
-  const sessionPointerPath = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
+  const baseDir = reportPathOverride ? path.resolve(reportPathOverride) : ROOT;
+  const sessionPointerPath = path.join(baseDir, '.repo-wizard', 'last_session_path.json');
   if (fs.existsSync(sessionPointerPath)) {
     try {
       const pointer = JSON.parse(fs.readFileSync(sessionPointerPath, 'utf8'));
@@ -80,7 +92,8 @@ if (!sessionPath) {
 }
 
 if (!sessionPath) {
-  const defaultPath = path.join(ROOT, '.repo-wizard', 'session.json');
+  const baseDir = reportPathOverride ? path.resolve(reportPathOverride) : ROOT;
+  const defaultPath = path.join(baseDir, '.repo-wizard', 'session.json');
   if (fs.existsSync(defaultPath)) {
     sessionPath = defaultPath;
   }
@@ -97,6 +110,9 @@ try {
   const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
   if (reportStyleOverride) {
     session.reportStyle = reportStyleOverride;
+  }
+  if (reportPathOverride) {
+    session.reportPath = reportPathOverride;
   }
   if (isRedactOverride) {
     session.redact = true;
