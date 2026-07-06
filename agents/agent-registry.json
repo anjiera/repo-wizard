@@ -11,6 +11,15 @@
     "reference": "accessibility-checklist.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "agent-alignment-auditor": {
@@ -25,6 +34,15 @@
     "reference": null,
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "ai-robustness-hardener": {
@@ -39,6 +57,15 @@
     "reference": "ai-robustness-checklist.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "api-contract-architect": {
@@ -53,6 +80,15 @@
     "reference": "api-contract-standards.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "appsec-hardener": {
@@ -67,6 +103,15 @@
     "reference": "appsec-hardening-guide.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "compliance-auditor": {
@@ -81,6 +126,15 @@
     "reference": "security-hardening-checklist.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "data-pipeline-architect": {
@@ -95,6 +149,15 @@
     "reference": "data-pipeline-standards.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "database-lifecycle-auditor": {
@@ -109,6 +172,15 @@
     "reference": "database-lifecycle",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "deployment-engineer": {
@@ -123,6 +195,15 @@
     "reference": "deployment-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "dev-onboarding-auditor": {
@@ -137,6 +218,15 @@
     "reference": null,
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "embedded-systems-auditor": {
@@ -151,6 +241,15 @@
     "reference": "embedded-standards.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "fuzz-engineer": {
@@ -165,6 +264,15 @@
     "reference": "fuzzing-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "legal-neutrality-auditor": {
@@ -179,6 +287,15 @@
     "reference": "legal-phrasing-dictionary.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "maintainability-auditor": {
@@ -193,6 +310,15 @@
     "reference": null,
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "notebook-auditor": {
@@ -207,6 +333,15 @@
     "reference": "notebook-standards.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "observability-engineer": {
@@ -221,6 +356,15 @@
     "reference": "observability-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "performance-auditor": {
@@ -235,6 +379,15 @@
     "reference": "performance-patterns/performance-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "privacy-hardener": {
@@ -249,6 +402,15 @@
     "reference": "data-privacy-checklist.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "qa-engineer": {
@@ -263,6 +425,15 @@
     "reference": "testing-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "react-performance-auditor": {
@@ -277,6 +448,15 @@
     "reference": "performance-patterns/performance-patterns-react.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "repo-wizard": {
@@ -291,6 +471,15 @@
     "reference": null,
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-pro",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "resilience-architect": {
@@ -305,6 +494,15 @@
     "reference": "resilience-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "state-hardener": {
@@ -319,6 +517,15 @@
     "reference": "state-sanitization-rules.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "state-integrity-auditor": {
@@ -333,6 +540,15 @@
     "reference": "formal-methods-patterns.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "supply-chain-auditor": {
@@ -347,6 +563,15 @@
     "reference": "supply-chain-audit-checklist.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "technical-scribe": {
@@ -361,6 +586,15 @@
     "reference": "documentation-standards.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "tool-auditor": {
@@ -375,6 +609,15 @@
     "reference": null,
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "tooling-engineer": {
@@ -389,6 +632,15 @@
     "reference": null,
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "toolchain-architect": {
@@ -403,6 +655,15 @@
     "reference": "toolchain-standards.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   },
   "vcs-workflow-engineer": {
@@ -417,6 +678,15 @@
     "reference": "vcs-discipline-rules.md",
     "permissions": {
       "enable_write_tools": true
+    },
+    "adkSpec": {
+      "model": "gemini-3.5-flash",
+      "tools": [
+        "read_file",
+        "write_file",
+        "list_directory"
+      ],
+      "temperature": 0.2
     }
   }
 }
