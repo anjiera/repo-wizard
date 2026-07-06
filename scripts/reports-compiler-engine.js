@@ -106,9 +106,6 @@ function compileRealReports(session) {
       for (const file of files) {
         if (file.startsWith(`${repoName}-observations-`) && file.endsWith('.md')) {
           const agentName = file.replace(`${repoName}-observations-`, '').replace(/\.md$/, '');
-          if (skippedAgents.has(agentName)) {
-            continue;
-          }
           const content = fs.readFileSync(path.join(obsDir, file), 'utf8');
           executedAgents.push(agentName);
 
