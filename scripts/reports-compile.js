@@ -101,7 +101,8 @@ if (!sessionPath) {
 
 // Validate path to prevent path traversal or writing to arbitrary directories
 const resolvedSessionPath = path.resolve(sessionPath);
-if (!resolvedSessionPath.startsWith(ROOT) || path.extname(resolvedSessionPath) !== '.json') {
+const relative = path.relative(path.resolve(ROOT), resolvedSessionPath);
+if (relative.startsWith('..') || path.isAbsolute(relative) || path.extname(resolvedSessionPath) !== '.json') {
   console.error(`${RED}✗ Error:${RESET} Invalid session file path. Path must reside within the workspace and have a .json extension.`);
   process.exit(1);
 }
