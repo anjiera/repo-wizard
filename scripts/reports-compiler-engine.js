@@ -10,7 +10,7 @@ const { convertMdToHtml } = require('../solo-dev-toolkit/scripts/md-to-html');
 const { redactReportFiles, redactReportText } = require('./redactor');
 
 const REPORTS_ROOT = path.join(ROOT, '.repo-wizard', 'reports');
-const MAPPINGS_FILE = path.join(ROOT, 'agents', 'agent-quality-pillar-mappings.json');
+const REGISTRY_FILE = path.join(ROOT, 'agents', 'agent-registry.json');
 
 function getSafeRepoName(targetPath) {
   if (!targetPath || typeof targetPath !== 'string') return 'project';
@@ -63,24 +63,13 @@ function compileRealReports(session) {
 
 
 
-  // Load mappings
-  let mappings = {};
-  if (fs.existsSync(MAPPINGS_FILE)) {
+  // Load mappings and descriptions from agent-registry.json
+  let agentRegistry = {};
+  if (fs.existsSync(REGISTRY_FILE)) {
     try {
-      mappings = JSON.parse(fs.readFileSync(MAPPINGS_FILE, 'utf8'));
+      agentRegistry = JSON.parse(fs.readFileSync(REGISTRY_FILE, 'utf8'));
     } catch (err) {
-      console.error('Failed to parse agent-quality-pillar-mappings.json:', err.message);
-    }
-  }
-
-  // Load descriptions from JSON configuration file
-  const DESCRIPTIONS_FILE = path.join(ROOT, 'agents', 'agent-descriptions.json');
-  let agentDescriptions = {};
-  if (fs.existsSync(DESCRIPTIONS_FILE)) {
-    try {
-      agentDescriptions = JSON.parse(fs.readFileSync(DESCRIPTIONS_FILE, 'utf8'));
-    } catch (err) {
-      console.error('Failed to parse agent-descriptions.json:', err.message);
+      console.error('Failed to parse agent-registry.json:', err.message);
     }
   }
 
@@ -123,13 +112,14 @@ function compileRealReports(session) {
           const content = fs.readFileSync(path.join(obsDir, file), 'utf8');
           executedAgents.push(agentName);
 
-          const mapping = mappings[agentName] || { pillar: 'QUALITY', color: 'WHITE' };
-          const pillar = mapping.pillar || 'QUALITY';
-          const desc = agentDescriptions[agentName] || 'Specialized quality governance auditor.';
+          const registryEntry = agentRegistry[agentName] || {};
+          const pillar = registryEntry.pillar || 'QUALITY';
+          const color = registryEntry.color || 'WHITE';
+          const desc = registryEntry.description || 'Specialized quality governance auditor.';
 
           const agentData = {
             agentName,
-            color: mapping.color,
+            color,
             desc,
             content
           };
@@ -210,7 +200,7 @@ function compileRealReports(session) {
 
         let cleanContent = item.content.replace(/^#\s+.*$/m, '').trim();
         cleanContent = cleanContent.replace(/^(#{2,4})\s+/gm, (match, hashes) => {
-          return hashes + '## ';
+          return hashes + '### ';
         });
 
         report += cleanContent + '\n\n';
