@@ -85,16 +85,22 @@ if (reportPathIdx !== -1 && process.argv[reportPathIdx + 1] && !process.argv[rep
 }
 const reportRoot = reportPath ? path.resolve(reportPath) : ROOT;
 
-// Parse --pillar flag
-let pillarFilter = null;
-const pillarIdx = process.argv.indexOf('--pillar');
-if (pillarIdx !== -1 && process.argv[pillarIdx + 1] && !process.argv[pillarIdx + 1].startsWith('-')) {
-  pillarFilter = process.argv[pillarIdx + 1].toUpperCase();
+// Parse --pillar flag (supports repeated option)
+const pillarFilters = [];
+let nextIdx = process.argv.indexOf('--pillar');
+while (nextIdx !== -1) {
+  if (process.argv[nextIdx + 1] && !process.argv[nextIdx + 1].startsWith('-')) {
+    pillarFilters.push(process.argv[nextIdx + 1].toUpperCase());
+  }
+  nextIdx = process.argv.indexOf('--pillar', nextIdx + 1);
 }
+
 const ALLOWED_PILLARS = ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY', 'ALL'];
-if (pillarFilter && !ALLOWED_PILLARS.includes(pillarFilter)) {
-  console.error(`ERROR: Invalid pillar option '${pillarFilter}'. Allowed options are: ${ALLOWED_PILLARS.join(', ')}.`);
-  process.exit(1);
+for (const p of pillarFilters) {
+  if (!ALLOWED_PILLARS.includes(p)) {
+    console.error(`ERROR: Invalid pillar option '${p}'. Allowed options are: ${ALLOWED_PILLARS.join(', ')}.`);
+    process.exit(1);
+  }
 }
 
 // Parse --report-style flag
@@ -387,10 +393,10 @@ async function main() {
       const agentRegistry = require('../agents/agent-registry.json');
       const agentInfo = agentRegistry[agentName];
       const specPillar = agentInfo ? agentInfo.pillar : null;
-      const isPillarMatch = !pillarFilter || pillarFilter === 'ALL' || specPillar === pillarFilter;
+      const isPillarMatch = pillarFilters.length === 0 || pillarFilters.includes('ALL') || pillarFilters.includes(specPillar);
 
       if (relevance === 'Low' || !isPillarMatch) {
-        const skipRationale = !isPillarMatch ? `Pillar mismatch (target: ${pillarFilter})` : `Low relevance: ${rationale}`;
+        const skipRationale = !isPillarMatch ? `Pillar mismatch (target: ${pillarFilters.join(', ')})` : `Low relevance: ${rationale}`;
         entry.status = 'skipped';
         completed++;
         

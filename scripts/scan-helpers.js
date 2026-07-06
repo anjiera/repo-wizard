@@ -331,8 +331,15 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
   const rootManifest = path.join(wizardDir, 'manifest.json');
   const reportsManifest = path.join(reportsDir, 'manifest.json');
 
-  const pillarFilter = opt.pillar ? opt.pillar.toUpperCase() : null;
-  const isIncremental = pillarFilter && pillarFilter !== 'ALL';
+  let pillarFilters = [];
+  if (opt.pillar) {
+    if (Array.isArray(opt.pillar)) {
+      pillarFilters = opt.pillar.map(p => p.toUpperCase());
+    } else {
+      pillarFilters = [opt.pillar.toUpperCase()];
+    }
+  }
+  const isIncremental = pillarFilters.length > 0 && !pillarFilters.includes('ALL');
 
   if (answersInferred) {
     archiveFile(reportsSession);
@@ -393,7 +400,7 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
         if (agentName) {
           const agentInfo = agentRegistry[agentName];
           const specPillar = agentInfo ? agentInfo.pillar : null;
-          if (specPillar === pillarFilter) {
+          if (pillarFilters.includes(specPillar)) {
             archiveFile(itemPath);
           }
         }

@@ -40,16 +40,21 @@ if (reportIdx !== -1 && args[reportIdx + 1] && !args[reportIdx + 1].startsWith('
   reportPath = args[reportIdx + 1];
 }
 
-let pillarFilter = null;
-const pillarIdx = args.indexOf('--pillar');
-if (pillarIdx !== -1 && args[pillarIdx + 1] && !args[pillarIdx + 1].startsWith('-')) {
-  pillarFilter = args[pillarIdx + 1].toUpperCase();
+const pillarFilters = [];
+let nextIdx = args.indexOf('--pillar');
+while (nextIdx !== -1) {
+  if (args[nextIdx + 1] && !args[nextIdx + 1].startsWith('-')) {
+    pillarFilters.push(args[nextIdx + 1].toUpperCase());
+  }
+  nextIdx = args.indexOf('--pillar', nextIdx + 1);
 }
 
 const ALLOWED_PILLARS = ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY', 'ALL'];
-if (pillarFilter && !ALLOWED_PILLARS.includes(pillarFilter)) {
-  console.error(`${RED}✗ Error: Invalid pillar option '${pillarFilter}'. Allowed options are: ${ALLOWED_PILLARS.join(', ')}.${RESET}`);
-  process.exit(1);
+for (const p of pillarFilters) {
+  if (!ALLOWED_PILLARS.includes(p)) {
+    console.error(`${RED}✗ Error: Invalid pillar option '${p}'. Allowed options are: ${ALLOWED_PILLARS.join(', ')}.${RESET}`);
+    process.exit(1);
+  }
 }
 
 const isHeadless = args.includes('--headless') || process.env.HEADLESS === 'true' || process.env.ANTIGRAVITY_AGENT !== '1';
@@ -91,7 +96,7 @@ if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase()
 }
 
 // Archive prior session and report files before starting scan/writing new configurations
-archiveSession(resolvedReport, { repoName, pillar: pillarFilter });
+archiveSession(resolvedReport, { repoName, pillar: pillarFilters });
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Starting initial codebase scan for: ${repoName}...${RESET}`);
 
@@ -210,7 +215,7 @@ const manifestContracts = [];
 for (const spec of SPECIALISTS) {
   const { relevance, rationale } = checkAgentRelevance(spec, resolvedTarget);
   const specPillar = agentRegistry[spec].pillar;
-  const isPillarMatch = !pillarFilter || pillarFilter === 'ALL' || specPillar === pillarFilter;
+  const isPillarMatch = pillarFilters.length === 0 || pillarFilters.includes('ALL') || pillarFilters.includes(specPillar);
 
   let status = 'pending';
   if (relevance === 'Low' || !isPillarMatch) {
@@ -220,7 +225,8 @@ for (const spec of SPECIALISTS) {
   }
 
   // Preserve existing completed status for non-target pillars during incremental runs
-  if (pillarFilter && pillarFilter !== 'ALL' && specPillar !== pillarFilter && existingManifest) {
+  const hasPillarFilter = pillarFilters.length > 0 && !pillarFilters.includes('ALL');
+  if (hasPillarFilter && !pillarFilters.includes(specPillar) && existingManifest) {
     const existingContract = existingManifest.contracts.find(c => c.agent_name === spec);
     if (existingContract && existingContract.status === 'completed') {
       status = 'completed';
