@@ -215,6 +215,16 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
   const rootSession = path.join(wizardDir, 'session.json');
   const reportsSession = path.join(reportsDir, 'session.json');
 
+  let pillarFilters = [];
+  if (opt.pillar) {
+    if (Array.isArray(opt.pillar)) {
+      pillarFilters = opt.pillar.map(p => p.toUpperCase());
+    } else {
+      pillarFilters = [opt.pillar.toUpperCase()];
+    }
+  }
+  const isIncremental = (pillarFilters.length > 0 && !pillarFilters.includes('ALL')) || !!opt.agent;
+
   const formatTimestamp = (date) => {
     const pad = (n) => String(n).padStart(2, '0');
     return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}_` +
@@ -246,7 +256,7 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
 
   const archivedFiles = [];
 
-  const archiveFile = (srcPath) => {
+  const archiveFile = (srcPath, forceUnlink = false) => {
     if (fs.existsSync(srcPath)) {
       const ext = path.extname(srcPath);
       const base = path.basename(srcPath, ext);
@@ -271,7 +281,10 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
       
       try {
         fs.copyFileSync(srcPath, destPath);
-        fs.unlinkSync(srcPath);
+        const isConfig = base === 'session' || base === 'manifest';
+        if (!isConfig || (!isIncremental || forceUnlink)) {
+          fs.unlinkSync(srcPath);
+        }
         archivedFiles.push({
           original: path.relative(wsPath, srcPath),
           archived: path.relative(wsPath, destPath)
@@ -331,15 +344,6 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
   const rootManifest = path.join(wizardDir, 'manifest.json');
   const reportsManifest = path.join(reportsDir, 'manifest.json');
 
-  let pillarFilters = [];
-  if (opt.pillar) {
-    if (Array.isArray(opt.pillar)) {
-      pillarFilters = opt.pillar.map(p => p.toUpperCase());
-    } else {
-      pillarFilters = [opt.pillar.toUpperCase()];
-    }
-  }
-  const isIncremental = pillarFilters.length > 0 && !pillarFilters.includes('ALL');
 
   if (answersInferred) {
     archiveFile(reportsSession);
@@ -387,16 +391,20 @@ function archiveSession(reportRoot = process.cwd(), options = {}) {
       const itemPath = path.join(dirPath, item);
       if (fs.statSync(itemPath).isDirectory()) continue;
 
-      if (isIncremental) {
-        let agentName = null;
-        if (isContract) {
-          const match = item.match(new RegExp(`-contract-(.+)\\.json$`));
-          if (match) agentName = match[1];
-        } else {
-          const match = item.match(new RegExp(`-observations-(.+)\\.md$`));
-          if (match) agentName = match[1];
-        }
+      let agentName = null;
+      if (isContract) {
+        const match = item.match(new RegExp(`-contract-(.+)\\.json$`));
+        if (match) agentName = match[1];
+      } else {
+        const match = item.match(new RegExp(`-observations-(.+)\\.md$`));
+        if (match) agentName = match[1];
+      }
 
+      if (opt.agent) {
+        if (agentName === opt.agent) {
+          archiveFile(itemPath);
+        }
+      } else if (isIncremental) {
         if (agentName) {
           const agentInfo = agentRegistry[agentName];
           const specPillar = agentInfo ? agentInfo.pillar : null;

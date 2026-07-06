@@ -114,7 +114,7 @@ if (!repoName || repoName === '.' || repoName === '..' || repoName.toLowerCase()
 }
 
 // Archive prior session and report files before starting scan/writing new configurations
-archiveSession(resolvedReport, { repoName, pillar: pillarFilters });
+archiveSession(resolvedReport, { repoName, pillar: pillarFilters, agent: targetAgentKey });
 
 console.log(`${BLUE}==>${RESET} ${BOLD}Starting initial codebase scan for: ${repoName}...${RESET}`);
 
@@ -248,12 +248,16 @@ for (const spec of SPECIALISTS) {
     status = 'pending_agent_fallback';
   }
 
-  // Preserve existing completed status for non-target pillars during incremental runs
+  // Preserve existing completed status for non-target pillars or non-target agents during incremental runs
   const hasPillarFilter = pillarFilters.length > 0 && !pillarFilters.includes('ALL');
-  if (hasPillarFilter && !pillarFilters.includes(specPillar) && existingManifest) {
+  if (existingManifest) {
     const existingContract = existingManifest.contracts.find(c => c.agent_name === spec);
     if (existingContract && existingContract.status === 'completed') {
-      status = 'completed';
+      if (targetAgentKey && spec !== targetAgentKey) {
+        status = 'completed';
+      } else if (hasPillarFilter && !pillarFilters.includes(specPillar)) {
+        status = 'completed';
+      }
     }
   }
 
