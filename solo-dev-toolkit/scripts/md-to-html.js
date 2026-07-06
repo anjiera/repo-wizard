@@ -50,7 +50,11 @@ function parseMarkdown(md) {
   const lines = md.split(/\r?\n/);
   
   let listStack = [];
-  let inDetailsBlock = false;
+  let openDetails = {
+    h2: false,
+    h3: false,
+    h4: false
+  };
   let inCodeBlock = false;
   let inTable = false;
   let tableHeaderParsed = false;
@@ -234,10 +238,14 @@ function parseMarkdown(md) {
       const contentText = `${extraAnchor}${inlineParse(headingText)}`;
       
       if (h1 || h2) {
-        if (inDetailsBlock) {
-          html += `  </div>\n</details>\n`;
-          inDetailsBlock = false;
-        }
+        if (openDetails.h4) { html += `    </div>\n  </details>\n`; openDetails.h4 = false; }
+        if (openDetails.h3) { html += `  </div>\n</details>\n`; openDetails.h3 = false; }
+        if (openDetails.h2) { html += `</div>\n</details>\n`; openDetails.h2 = false; }
+      } else if (h3) {
+        if (openDetails.h4) { html += `    </div>\n  </details>\n`; openDetails.h4 = false; }
+        if (openDetails.h3) { html += `  </div>\n</details>\n`; openDetails.h3 = false; }
+      } else if (h4) {
+        if (openDetails.h4) { html += `    </div>\n  </details>\n`; openDetails.h4 = false; }
       }
       
       if (h1) { html += `<h1 id="${id}">${contentText}</h1>\n`; continue; }
@@ -245,11 +253,23 @@ function parseMarkdown(md) {
         html += `<details class="section-details" id="details-${id}">\n`;
         html += `  <summary class="section-summary"><h2 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h2></summary>\n`;
         html += `  <div class="section-content">\n`;
-        inDetailsBlock = true;
+        openDetails.h2 = true;
         continue;
       }
-      if (h3) { html += `<h3 id="${id}">${contentText}</h3>\n`; continue; }
-      if (h4) { html += `<h4 id="${id}">${contentText}</h4>\n`; continue; }
+      if (h3) {
+        html += `<details class="subsection-details h3-details" id="details-${id}">\n`;
+        html += `  <summary class="subsection-summary"><h3 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h3></summary>\n`;
+        html += `  <div class="subsection-content">\n`;
+        openDetails.h3 = true;
+        continue;
+      }
+      if (h4) {
+        html += `<details class="subsection-details h4-details" id="details-${id}">\n`;
+        html += `  <summary class="subsection-summary"><h4 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h4></summary>\n`;
+        html += `  <div class="subsection-content">\n`;
+        openDetails.h4 = true;
+        continue;
+      }
       if (h5) { html += `<h5 id="${id}">${contentText}</h5>\n`; continue; }
       if (h6) { html += `<h6 id="${id}">${contentText}</h6>\n`; continue; }
     }
@@ -283,9 +303,17 @@ function parseMarkdown(md) {
       }
     }
   }
-  if (inDetailsBlock) {
+  if (openDetails.h4) {
+    html += `    </div>\n  </details>\n`;
+    openDetails.h4 = false;
+  }
+  if (openDetails.h3) {
     html += `  </div>\n</details>\n`;
-    inDetailsBlock = false;
+    openDetails.h3 = false;
+  }
+  if (openDetails.h2) {
+    html += `</div>\n</details>\n`;
+    openDetails.h2 = false;
   }
   if (inTable) html += '  </tbody>\n</table>\n';
   if (inCodeBlock) {
@@ -676,6 +704,59 @@ function convertMdToHtml(mdContent, title = 'Documentation', styleName = 'whitep
 
     .section-content {
       padding: 20px;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+    }
+
+    details.subsection-details {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin: 15px 0;
+      background-color: var(--bg-primary);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    details.subsection-details:hover {
+      border-color: var(--accent);
+    }
+
+    summary.subsection-summary {
+      padding: 10px 15px;
+      background-color: var(--bg-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      list-style: none;
+      user-select: none;
+    }
+
+    summary.subsection-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary.subsection-summary::before {
+      content: "▶";
+      display: inline-block;
+      margin-right: 10px;
+      transition: transform 0.2s ease;
+      color: var(--accent);
+      font-size: 0.75em;
+    }
+
+    details[open] > summary.subsection-summary::before {
+      transform: rotate(90deg);
+    }
+
+    summary.subsection-summary h3,
+    summary.subsection-summary h4 {
+      border-bottom: none !important;
+      padding-bottom: 0 !important;
+      margin: 0 !important;
+    }
+
+    .subsection-content {
+      padding: 15px;
       border-top: 1px solid var(--border-color);
       background-color: var(--bg-primary);
     }

@@ -22,7 +22,7 @@ For the step-by-step pre-scan setup, questionnaire sequence, dynamic screening c
 You can run in one of two execution environments. Detect your environment on startup and apply this handoff rule:
 
 1. **Antigravity Chat Session (Native Path):** This is active when executing natively inside the chat interface (e.g. triggered via a slash command like `/repo-wizard`). You have direct access to the native `invoke_subagent` tool.
-    - **Verification Ordering Rule:** Before launching the questionnaire or dispatching subagents, always run: `node scripts/initial-codebase-scan.js --report-path <resolved_report_path>` (forwarding `--headless` if running in headless mode). Verify it exits with code `0`. If it fails (non-zero status), halt execution and report the error to the developer.
+    - **Verification Ordering Rule:** Before launching the questionnaire or dispatching subagents, always run: `node scripts/initial-codebase-scan.js --report-path <resolved_report_path>` (forwarding `--headless` if running in headless mode, and forwarding any `--pillar` flags if specified). Verify it exits with code `0`. If it fails (non-zero status), halt execution and report the error to the developer.
     - **Action:** Natively coordinate, configure, and dispatch all High and Medium relevance specialist subagents concurrently in parallel under the global concurrency cap (see **Specialist Quality Pillars & Concurrency Framework** in [SKILL.md](../skills/repo-wizard/SKILL.md)).
         - **Just-In-Time (JIT) Dynamic Definition:** Before invoking any subagent, you MUST define it using the `define_subagent` tool. Load its permissions block from [agent-registry.json](agent-registry.json) (specifically checking for `"permissions"` metadata) and load its complete raw prompt content from `agents/<subagent-name>.md` to pass as the `system_prompt`.
         - **Direct Workspace Tools:** Ensure that `enable_write_tools` is set to the value defined in the registry permissions (e.g. `true`) in `define_subagent` to grant specialists direct workspace read/write access.
@@ -48,7 +48,7 @@ You can run in one of two execution environments. Detect your environment on sta
     - **Pass Paths & Params**: For each subagent, pass a clear contract and instruct it to check for consent at the resolved TOS path (`tosPath` or `<reportRoot>/.repo-wizard/.tos_agreed`), write observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and write its contract file to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/<agent-name>-contract.json`.
     - **Propagate Redaction Flag**: If `--redact true` is active, explicitly instruct the subagents to follow Rule 2 of the Agent Execution Rules to only output plain-text file basenames in their observations.
  2. **Terminal CLI (Sequential Fallback Path):** This is active when executing from a command-line interface or CI system outside of the chat sandbox (where `invoke_subagent` is not available).
-     - **Action:** Run `node scripts/run-fallback-sequential-orchestration.js` forwarding all command-line parameters (specifically `--report-path`, `--report-style`, `--mock-cli`, and `--redact`) to coordinate the scan.
+     - **Action:** Run `node scripts/run-fallback-sequential-orchestration.js` forwarding all command-line parameters (specifically `--report-path`, `--report-style`, `--mock-cli`, `--redact`, and any `--pillar` flags) to coordinate the scan.
 
 ---
 
