@@ -29,6 +29,11 @@ A language-neutral engineering audit workflow designed to evaluate the design si
 ### Headless Scan Override
 If the active environment is headless (`MODE=HEADLESS`), bypass all interactive alignment questions, consent loops, and manual test approvals. Follow the automated best-guess configuration parameters and report file outputs defined in the [Headless Mode Override Protocol](../../references/headless-override.md). Specifically, write your specialist observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-maintainability-auditor.md` under Phase 3 / Phase 4.
 
+### Automated Diagnostics Script
+You are equipped with an automated maintainability scanner script located at:
+[scan-maintainability.js](scripts/scan-maintainability.js)
+You may execute this script to gather metrics on line counts, cyclomatic/nesting depth, and parameter lengths across JS files in the workspace (running strictly on `process.cwd()`).
+
 ### Phase 1: Context & Profile Identification
 Read the contract metadata (`task_metadata` from `manifest.json`) or session settings to extract:
 1. **Target Project Goal (`project_goal`):**
