@@ -158,6 +158,7 @@ function compileRealReports(session) {
 
   // Format maturity model guidance
   let maturityGuidance = '## 3. Maturity Model Guidance\n\n';
+  maturityGuidance += 'This maturity model assesses the repository\'s current governance, security, and quality gating posture relative to your developer profile (Solo Hobbyist, Open-Source Maintainer, Startup Team, or Regulated Enterprise). Levels are directional indicators ranging from Level 1 (Baseline Development) up to Level 3+ (Fully Automated Gating). The recommendations below represent adjustments to help shift the codebase towards a higher level of repository governance without providing absolute guarantees.\n\n';
   if (!compiledAnalysis.maturityStates) {
     missingFields.push('maturityStates');
   }
@@ -169,7 +170,9 @@ function compileRealReports(session) {
   };
 
   for (const key of ['SECURITY', 'PERFORMANCE', 'ARCHITECTURE', 'QUALITY']) {
-    maturityGuidance += `* **${QUALITY_PILLARS[key]}:** ${maturityStates[key]}\n`;
+    let stateVal = maturityStates[key] || '';
+    stateVal = stateVal.replace(/shift it to Level (\d+)/gi, 'shift it towards Level $1');
+    maturityGuidance += `* **${QUALITY_PILLARS[key]}:** ${stateVal}\n`;
   }
 
   // Format consolidated observations by pillar
@@ -360,7 +363,7 @@ Run Date: ${currentDate}
 ## Preamble
 This report was compiled by the **Repo Wizard** multi-agent LLM-based code analysis and onboarding tool. Repo Wizard conducts token-efficient codebase sweeps, analyzes project configuration rules, and evaluates toolchain compatibility against target standards. The system coordinates specialized subagents—each auditing distinct domains like security, testing, performance, and version control—to generate observations and structured task backlogs.
 
-This report is a compass, and not a scale. There are no scorecards involved, or valuations of technical debt. Rather, this report is intended to help you understand where your repo sits, and to give you concrete suggestions on how to move towards your goals for the project. The recommendations compiled below are directly based on the project parameters, development environment, and quality thresholds identified in your wizard session.
+This report provides LLM-driven direction, like a compass. It does not provide firm, quantifiable measurements, like a scale. There are no scorecards involved, or valuations of technical debt. Rather, this report is intended to help you understand where your repo sits, and to give you concrete suggestions on how to move towards your goals for the project. The recommendations compiled below are directly based on the project parameters, development environment, and quality thresholds identified in your wizard session.
 
 ## Table of Contents
 - [1. Executive Summary](#1-executive-summary)
