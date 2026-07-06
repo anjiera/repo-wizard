@@ -15,3 +15,6 @@ evals/
 .env
 .env.local
 .env.*.local
+
+# Ignore documentation files
+docs/

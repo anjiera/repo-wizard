@@ -12,8 +12,9 @@ Thumbs.db
 # Repo Wizard active sessions and history
 .repo-wizard/
 
-# Locally generated HTML documentation files
-docs/**/*.html
+# Locally generated HTML documentation files (except docs/examples)
+**/*.html
+!docs/examples/**/*.html
 tests/**/*.html
 
 # Environment variables and secrets
