@@ -78,7 +78,7 @@ function validate() {
           }
 
           // Check required fields
-          const requiredFields = ['title', 'description', 'pillar', 'color', 'mockCapability', 'mockTool', 'command', 'reference', 'permissions'];
+          const requiredFields = ['title', 'description', 'pillar', 'alias', 'color', 'mockCapability', 'mockTool', 'command', 'reference', 'permissions'];
           for (const field of requiredFields) {
             if (!(field in spec)) {
               errors.push(`agent-registry.json: agent "${agentKey}" is missing required property "${field}".`);
@@ -98,6 +98,9 @@ function validate() {
           }
           if ('description' in spec && (typeof spec.description !== 'string' || !spec.description)) {
             errors.push(`agent-registry.json: agent "${agentKey}" description must be a non-empty string.`);
+          }
+          if ('alias' in spec && (typeof spec.alias !== 'string' || !spec.alias)) {
+            errors.push(`agent-registry.json: agent "${agentKey}" alias must be a non-empty string.`);
           }
           if ('pillar' in spec && !allowedPillars.includes(spec.pillar)) {
             errors.push(`agent-registry.json: agent "${agentKey}" pillar "${spec.pillar}" is invalid. Allowed: ${JSON.stringify(allowedPillars)}`);

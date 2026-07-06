@@ -57,6 +57,24 @@ for (const p of pillarFilters) {
   }
 }
 
+let agentFilter = null;
+const agentIdx = args.indexOf('--agent');
+if (agentIdx !== -1 && args[agentIdx + 1] && !args[agentIdx + 1].startsWith('-')) {
+  agentFilter = args[agentIdx + 1];
+}
+
+let targetAgentKey = null;
+if (agentFilter) {
+  const match = Object.keys(agentRegistry).find(
+    key => key === agentFilter || (agentRegistry[key].alias && agentRegistry[key].alias === agentFilter)
+  );
+  if (!match) {
+    console.error(`${RED}✗ Error: Invalid agent option '${agentFilter}'. Specified agent must match a registry key (e.g. 'qa-engineer') or its alias (e.g. 'qual-qae').${RESET}`);
+    process.exit(1);
+  }
+  targetAgentKey = match;
+}
+
 const isHeadless = args.includes('--headless') || process.env.HEADLESS === 'true' || process.env.ANTIGRAVITY_AGENT !== '1';
 
 const resolvedTarget = path.resolve(process.cwd());
@@ -218,7 +236,13 @@ for (const spec of SPECIALISTS) {
   const isPillarMatch = pillarFilters.length === 0 || pillarFilters.includes('ALL') || pillarFilters.includes(specPillar);
 
   let status = 'pending';
-  if (relevance === 'Low' || !isPillarMatch) {
+  if (targetAgentKey) {
+    if (spec !== targetAgentKey) {
+      status = 'skipped';
+    } else if (isNativeChat) {
+      status = 'pending_agent_fallback';
+    }
+  } else if (relevance === 'Low' || !isPillarMatch) {
     status = 'skipped';
   } else if (isNativeChat) {
     status = 'pending_agent_fallback';
