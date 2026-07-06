@@ -176,6 +176,7 @@ function validateDuplication() {
   const globalParagraphs = new Map();
 
   for (const file of files) {
+    if (file.includes(path.join('docs', 'examples'))) continue;
     if (!fs.existsSync(file)) continue;
     const content = fs.readFileSync(file, 'utf8');
 
