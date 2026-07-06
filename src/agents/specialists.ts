@@ -93,3 +93,54 @@ export const qualityAgents = {
   vcsWorkflowEngineer
 };
 
+// ==========================================
+// PERFORMANCE PILLAR AGENTS (Commit 6c)
+// ==========================================
+export const deploymentEngineer = createAdkAgent('deployment-engineer');
+export const observabilityEngineer = createAdkAgent('observability-engineer');
+export const performanceAuditor = createAdkAgent('performance-auditor');
+export const reactPerformanceAuditor = createAdkAgent('react-performance-auditor');
+export const resilienceArchitect = createAdkAgent('resilience-architect');
+
+export const performanceAgents = {
+  deploymentEngineer,
+  observabilityEngineer,
+  performanceAuditor,
+  reactPerformanceAuditor,
+  resilienceArchitect
+};
+
+// ==========================================
+// ARCHITECTURE & HELPER AGENTS (Commit 6d)
+// ==========================================
+export const apiContractArchitect = createAdkAgent('api-contract-architect');
+export const dataPipelineArchitect = createAdkAgent('data-pipeline-architect');
+export const databaseLifecycleAuditor = createAdkAgent('database-lifecycle-auditor');
+export const maintainabilityAuditor = createAdkAgent('maintainability-auditor');
+export const stateIntegrityAuditor = createAdkAgent('state-integrity-auditor');
+export const technicalScribe = createAdkAgent('technical-scribe');
+export const toolchainArchitect = createAdkAgent('toolchain-architect');
+
+// Helper & Orchestration
+export const toolAuditor = createAdkAgent('tool-auditor');
+export const toolingEngineer = createAdkAgent('tooling-engineer');
+export const repoWizard = createAdkAgent('repo-wizard');
+
+export const architectureAgents = {
+  apiContractArchitect,
+  dataPipelineArchitect,
+  databaseLifecycleAuditor,
+  maintainabilityAuditor,
+  stateIntegrityAuditor,
+  technicalScribe,
+  toolchainArchitect
+};
+
+export const helperAgents = {
+  toolAuditor,
+  toolingEngineer,
+  repoWizard
+};
+
+
+
