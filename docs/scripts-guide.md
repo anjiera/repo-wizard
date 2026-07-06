@@ -6,6 +6,36 @@ This guide details the purpose, parameters, and side-effects of each script.
 
 ---
 
+## Unified CLI Orchestrator (`scripts/repo-wizard.js`)
+
+The primary subcommand router that consolidates all execution phases of the repo-wizard workflow. Instead of invoking individual utility scripts directly, developers and agents call this unified interface with positional subcommands.
+
+### Pitch & Value Proposition
+> "New to coding? You don't know what you don't know. repo-wizard can help. Point repo-wizard at any local repository, and let specialized agents audit your codebase, recommend best-practice tooling, and build a ready-to-run improvement backlog that you can hand off to other coding agents to roll out."
+
+The lifecycle of repo-wizard consists of:
+$$\text{Scan} \longrightarrow \text{Interview} \longrightarrow \text{Prepare} \longrightarrow \text{Dispatch} \longrightarrow \text{Compile}$$
+
+### Commands:
+- **`scan`**: Unified pre-scan setup.
+  ```bash
+  node scripts/repo-wizard.js scan [--report-path <path>] [--pillar <pillar>] [--headless]
+  ```
+- **`prepare`**: Promotes configuration states and unpacks subagent prompt and contract files.
+  ```bash
+  node scripts/repo-wizard.js prepare [--report-path <path>]
+  ```
+- **`run`**: Runs subagents sequentially in fallback mode.
+  ```bash
+  node scripts/repo-wizard.js run [--report-path <path>] [--report-style <style>] [--mock-cli <bool>] [--redact]
+  ```
+- **`compile`**: Compiles final reports and the backlog CSV.
+  ```bash
+  node scripts/repo-wizard.js compile [--report-path <path>]
+  ```
+
+---
+
 ## 1. Documentation Utilities
 
 ### Markdown-to-HTML Compiler (`scripts/md-to-html.js`)

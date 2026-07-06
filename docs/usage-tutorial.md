@@ -94,12 +94,12 @@ Instead of running all 27 specialized agents concurrently, you can restrict audi
 **Example Staging Commands:**
 ```bash
 # 1. Run only the security pillar
-node scripts/initial-codebase-scan.js --pillar SECURITY
-node scripts/run-fallback-sequential-orchestration.js
+node scripts/repo-wizard.js scan --pillar SECURITY
+node scripts/repo-wizard.js run
 
 # 2. Run performance audits incrementally on top of security results
-node scripts/initial-codebase-scan.js --pillar PERFORMANCE
-node scripts/run-fallback-sequential-orchestration.js
+node scripts/repo-wizard.js scan --pillar PERFORMANCE
+node scripts/repo-wizard.js run
 ```
 
 ### 4.2 State Merging & Incremental Archiving
