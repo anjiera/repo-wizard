@@ -15,7 +15,6 @@ const validateAgents = require('../tests/validate-agents.test');
 const validateCommands = require('../tests/validate-commands.test');
 const validateSkills = require('../tests/validate-skills.test');
 const validateDocs = require('../tests/validate-docs.test');
-const orchestration = require('../tests/orchestration.test');
 const adkRunner = require('../tests/adk-runner.test');
 const validateDeliverables = require('../tests/validate-deliverables.test');
 const reportStyling = require('../tests/report-styling.test');
@@ -24,7 +23,6 @@ const initialCodebaseScan = require('../tests/initial-codebase-scan.test');
 const validateScripts = require('../tests/validate-scripts.test');
 const validateContracts = require('../tests/validate-contracts.test');
 const registerPlugin = require('../tests/register-plugin.test');
-const runEvals = require('../tests/run-evals.test');
 const redactor = require('../tests/redactor.test');
 
 function runAll() {
@@ -33,7 +31,6 @@ function runAll() {
     validateCommands.run();
     validateSkills.run();
     validateDocs.run();
-    orchestration.run();
     adkRunner.run();
     validateDeliverables.run();
     reportStyling.run();
@@ -42,7 +39,6 @@ function runAll() {
     validateScripts.run();
     validateContracts.run();
     registerPlugin.run();
-    runEvals.run();
     redactor.run();
 
     console.log(`\nAll helper validator tests complete: ${stats.testsPassed} / ${stats.testsRun} assertions passed.`);

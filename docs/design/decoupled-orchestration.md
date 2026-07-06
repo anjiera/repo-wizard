@@ -6,7 +6,7 @@ This document outlines the design and lifecycle of the contract-based decoupled 
 
 ## 1. Background & Context
 
-In legacy systems, coordinating specialist subagents relied on platform-specific nested sandboxes and API calls (`define_subagent` and `invoke_subagent`). This model created tight coupling between the planning logic and the runtime host environment, reducing portability and causing execution halts when subagents encountered security permission gates.
+In legacy systems, coordinating specialist subagents relied on platform-specific nested sandboxes and API calls (`InMemoryRunner` and `LlmAgent`). This model created tight coupling between the planning logic and the runtime host environment, reducing portability and causing execution halts when subagents encountered security permission gates.
 
 This decoupled architecture separates **planning** (conducted by the Lead Agent) from **execution** (coordinated by the host runtime script and standard CLI).
 
@@ -45,7 +45,7 @@ sequenceDiagram
 ## 3. Concurrency & Resource Controls
 
 To mitigate system slowdowns and avoid triggering rate limits on API keys, the system implements threshold-based concurrency controls:
-- **CLI Execution (Orchestrator)**: Uses a worker pool pattern that default-limits concurrent child process spawns to a maximum of **4** concurrent processes. This threshold is configurable via the `MAX_CONCURRENCY` environment variable.
+- **CLI Execution (Orchestrator)**: Uses a worker pool pattern that default-limits concurrent `LlmAgent` spawns to a maximum of **4** concurrent processes. This threshold is configurable via the `MAX_CONCURRENCY` environment variable.
 - **Native Execution (Lead Agent)**: Enforces a cap of at most **6** concurrent subagents per quality pillar category (`SECURITY`, `PERFORMANCE`, `ARCHITECTURE`, `QUALITY`) during parallel dispatch to mitigate LLM request rate issues.
 
 ---
@@ -54,7 +54,7 @@ To mitigate system slowdowns and avoid triggering rate limits on API keys, the s
 
 Spawning LLM-based agents headlessly requires skipping permission prompts, which introduces security risks. We mitigate these risks using the following design guidelines:
 - **Passive Data Principle**: All codebase files read by specialist subagents are treated strictly as passive static text. Subagents do not execute scripts found within target repositories.
-- **Directory Confinement**: Child processes are confined to the target directory. They are blocked from writing configurations outside the scope of the target repository.
+- **Directory Confinement**: Execution processes are confined to the target directory. They are blocked from writing configurations outside the scope of the target repository.
 - **Read-Only / Backlog Scoping**: If the user selects "Generate Backlog Only", the backend limits operations to observations gathering and compiles findings without writing setup configurations or executing packages.
 
 ---

@@ -6,7 +6,7 @@ This document describes the design, execution lifecycle, and technical motivatio
 
 ## 1. Architectural Overview
 
-AI agents are traditionally orchestrated by having a lead agent sequentially spawn subagents using tool calls (such as `invoke_subagent`). While simple, this approach has limits:
+AI agents are traditionally orchestrated by having a lead agent sequentially spawn subagents using tool calls (such as `LlmAgent`). While simple, this approach has limits:
 1. **High Latency**: Spawning subagents sequentially inside the LLM prompt loop blocks execution.
 2. **Context Window Pressure**: Maintaining multiple subagent logs in a single conversation thread bloats token usage.
 3. **Rigidity**: If the LLM generates arguments that violate schemas, validation fails late in the run.
@@ -40,7 +40,7 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
                          v (Parallel Run)                          v (Fallback)
          +---------------+---------------+             +-----------+-----------+
          | Spawn subagents in parallel   |             | Update manifest       |
-         | via CLI: child_process.spawn  |             | status to fallback    |
+         | via InMemoryRunner            |             | status to fallback    |
          +---------------+---------------+             +-----------+-----------+
                          |                                         |
                          | 3. Writes Observations                  | 3. Exit 0
@@ -49,7 +49,7 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
          | .repo-wizard/agents/          |             | Lead Agent resumes    |
          |  observations-*.md            |             | and calls subagents   |
          +-------------------------------+             | sequentially via      |
-                                                       | invoke_subagent tool  |
+                                                       | LlmAgent              |
                                                        +-----------------------+
 ```
 
@@ -71,10 +71,10 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
 
 ### Phase 3: Split-Execution Path
 * **CLI Found (High-Speed Concurrency)**:
-  * The script spawns the specialist agents concurrently using Node's `child_process.spawn`.
-  * **TTY Auto-Detection**: The script inspects `process.stdout.isTTY` to detect the environment type:
-    * *TTY (CLI Shell)*: Renders a live, animated progress bar smoothly updating in-place.
-    * *Non-TTY (Antigravity UI / CI)*: Prints clean, line-by-line logging milestones to avoid control characters from cluttering scroll windows.
+  * The script spawns the specialist agents concurrently using the new `InMemoryRunner`.
+  * **Session Service Tracking**: The script inspects the `sessionService` to track the environment type and execution milestones.
+    * *InMemoryRunner*: Renders a live, animated progress bar smoothly updating in-place.
+    * *sessionService*: Prints clean, line-by-line logging milestones to avoid cluttering scroll windows.
   * Writes reports to `.repo-wizard/agents/observations-<agent>-<repo>.md` and updates the manifest to `completed`.
 * **CLI Absent (Graceful Fallback)**:
   * The script prints an execution notice.
@@ -84,7 +84,7 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
 ### Phase 4: Report Synthesis (Lead Agent)
 * The lead agent reads `.repo-wizard/manifest.json`.
 * If status is `completed`, it consolidates the generated observation reports.
-* If status is `fallback_to_agent`, it loops through the pending contracts and sequentially spawns them using its native `invoke_subagent` tool, writes their files, and then consolidates reports.
+* If status is `fallback_to_agent`, it loops through the pending contracts and sequentially spawns them using its native `LlmAgent` tool, writes their files, and then consolidates reports.
 
 ---
 
@@ -92,7 +92,7 @@ AI agents are traditionally orchestrated by having a lead agent sequentially spa
 
 1. **Graceful Degradation / Fallback**: Enables the system to remain 100% portable across headless servers, local terminals, and IDE extensions without code modification.
 2. **Pre-flight Contracts**: Validates arguments before invoking AI agents, protecting against late-stage run failures and token wastage.
-3. **Environment Feature Detection**: Dynamically determines capability (binary presence and TTY support) to optimize performance and rendering.
+3. **Environment Feature Detection**: Dynamically determines capability (binary presence and sessionService support) to optimize performance and rendering.
 
 ---
 

@@ -1,5 +1,6 @@
 import { LlmAgent, InMemoryRunner, stringifyContent } from '@google/adk';
 import * as fs from 'fs';
+import { z } from 'zod';
 import * as path from 'path';
 import { 
   securityAgents, qualityAgents, performanceAgents, 
@@ -20,13 +21,34 @@ for (const group of agentGroups) {
   }
 }
 
+const ContractSchema = z.object({
+  status: z.string().optional(),
+  agent_name: z.string(),
+  contract: z.any() // Type contracts will validate the inner structure
+});
+
+const ManifestSchema = z.object({
+  status: z.string().optional(),
+  contracts: z.array(ContractSchema)
+});
+
 export async function runPipeline(manifestPath: string) {
   const resolvedManifestPath = path.resolve(process.cwd(), manifestPath);
-  const manifest = JSON.parse(fs.readFileSync(resolvedManifestPath, 'utf8'));
   
-  if (!manifest.contracts || !Array.isArray(manifest.contracts)) {
-    throw new Error('Manifest must contain a "contracts" array.');
+  let rawManifest;
+  try {
+    rawManifest = JSON.parse(fs.readFileSync(resolvedManifestPath, 'utf8'));
+  } catch (err: any) {
+    throw new Error(`Failed to parse manifest JSON: ${err.message}`);
   }
+
+  // Zod Validation!
+  const parseResult = ManifestSchema.safeParse(rawManifest);
+  if (!parseResult.success) {
+    throw new Error(`Manifest Schema Validation Error: ${parseResult.error.message}`);
+  }
+  const manifest = rawManifest; // Type-safe after schema check
+
 
   console.log(`Starting ADK Runner execution...`);
 
@@ -77,22 +99,41 @@ export async function runPipeline(manifestPath: string) {
         sessionId
       });
 
-      const responseGenerator = runner.runAsync({
-        userId: 'local-user',
-        sessionId,
-        newMessage: { role: 'user', parts: [{ text: prompt }] } as any
-      });
-
+      // Exponential Backoff Retry Wrapper for ADK Execution
+      const maxRetries = 3;
       let finalOutput = '';
-      for await (const event of responseGenerator) {
-        // Collect model outputs, assuming they generate stringified text chunks
-        const text = stringifyContent(event) || '';
-        finalOutput += text;
+      
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          const responseGenerator = runner.runAsync({
+            userId: 'local-user',
+            sessionId,
+            newMessage: { role: 'user', parts: [{ text: prompt }] } as any
+          });
+          
+          let buffer = '';
+          for await (const event of responseGenerator) {
+            const text = stringifyContent(event) || '';
+            buffer += text;
+          }
+          finalOutput = buffer;
+          break; // Success! Break out of retry loop.
+        } catch (execError: any) {
+          if (attempt === maxRetries) throw execError;
+          const backoff = Math.pow(2, attempt) * 500;
+          console.warn(`[WARN] ${agentName} runAsync failed (attempt ${attempt}/${maxRetries}). Retrying in ${backoff}ms...`);
+          await new Promise(res => setTimeout(res, backoff));
+        }
       }
+      
+      // Secret Redaction Interceptor
+      const redactedOutput = finalOutput
+        .replace(new RegExp(process.env.GEMINI_API_KEY || 'MISSING_KEY', 'g'), '[REDACTED_API_KEY]')
+        .replace(/sk-[a-zA-Z0-9]{48}/g, '[REDACTED_SECRET_TOKEN]');
       
       const obsPath = path.resolve(process.cwd(), '.repo-wizard/reports/repo-wizard/agents', `repo-wizard-observations-${agentName}.md`);
       fs.mkdirSync(path.dirname(obsPath), { recursive: true });
-      fs.writeFileSync(obsPath, finalOutput || `# Observations for ${agentName}\n\nEmpty output from ADK.\n`, 'utf8');
+      fs.writeFileSync(obsPath, redactedOutput || `# Observations for ${agentName}\n\nEmpty output from ADK.\n`, 'utf8');
       
       entry.status = 'completed';
       console.log(`[DONE] ${agentName}`);

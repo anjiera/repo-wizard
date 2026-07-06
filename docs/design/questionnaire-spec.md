@@ -65,7 +65,7 @@ The spec file uses a structured JSON schema to categorize questions and handle c
     * `mapping` (Object): Dictates how the selected value modifies `session.json` and compiles into `manifest.json`.
 
 ### 2.2 Branching Mechanics (`dependsOn`)
-To prevent questionnaire fatigue, questions are conditionally activated using the `dependsOn` constraint:
+To mitigate questionnaire fatigue, questions are conditionally activated using the `dependsOn` constraint:
 * **`questionId`**: The parent question whose value determines visibility.
 * **`value`**: The exact value that triggers the question (e.g., `true` for a boolean flag).
 * **`contains`**: Evaluates multi-select arrays, displaying the question if the parent list contains the specified string.
@@ -108,4 +108,4 @@ Pre-commit hooks are scripts configured within the repository's local Git config
 CI pipelines are automated workflows executed by third-party hosting services (such as GitHub Actions or GitLab CI) on shared servers.
 * **Configuration-as-Code Model:** Repo Wizard configures these remote checks programmatically by writing static configuration files directly into the project workspace (e.g. `.github/workflows/ci.yml` or `.gitlab-ci.yml`). No external dashboard interaction is required; the cloud provider automatically triggers these workflows when the files are pushed.
 * **How it works:** When a developer pushes commits to a remote server or opens a Pull Request to merge their branch, the hosting platform spins up a clean virtual machine, pulls the code, installs dependencies, and runs the entire suite of linters, security scanners, and tests.
-* **Centralized Enforcement:** Because developers can bypass local hooks (e.g. using `git commit --no-verify`), the CI pipeline serves as the ultimate authoritative gatekeeper. It guarantees that all code entering the main branch meets the team's defined standards.
+* **Centralized Enforcement:** Because developers can bypass local hooks (e.g. using `git commit --no-verify`), the CI pipeline serves as the ultimate authoritative gatekeeper. It verifies that all code entering the main branch meets the team's defined standards.

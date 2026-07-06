@@ -9,7 +9,7 @@ This document specifies the permissions architecture and tool injection model fo
 To mitigate risk and respect security boundaries, the orchestration model restricts agent capabilities depending on the runtime context. The system defines two distinct executing pathways.
 
 ### 1.1 Native Chat Mode (IDE / GUI)
-When executing inside the Antigravity Chat sandbox, subagents are run via the `invoke_subagent` tool. 
+When executing inside the Antigravity Chat sandbox, subagents are run via the `LlmAgent` tool. 
 
 * **Default Behavior**: The platform defaults to a restricted ("zero-trust") sandbox for newly invoked subagents, stripping all file-system read/write tools to isolate execution.
 * **Dynamic JIT Registration**: To provide access without requiring persistent global permissions, `repo-wizard` dynamically calls `define_subagent` for each specialist prior to invocation.
@@ -70,7 +70,7 @@ At the very top of your observations report, write a section titled `## Verifica
   - define_subagent
   - find_by_name
   - grep_search
-  - invoke_subagent
+  - LlmAgent
   - list_dir
   - manage_subagents
   - manage_task

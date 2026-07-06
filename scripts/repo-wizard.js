@@ -11,7 +11,7 @@ const COMMANDS = {
   scan: './initial-codebase-scan.js',
   prepare: './prepare-native-execution.js',
   synthesize: './reports-synthesize.js',
-  run: './run-fallback-sequential-orchestration.js',
+  run: './run-adk-orchestrator.js',
   compile: './reports-compile.js'
 };
 

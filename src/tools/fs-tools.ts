@@ -19,7 +19,7 @@ export const readFileTool = new FunctionTool({
   name: 'read_file',
   description: 'Reads the contents of a file from the local workspace.',
   parameters: z.object({
-    filePath: z.string().describe('The path to the file, relative to the workspace root.'),
+    filePath: z.string().transform(v => v.replace(/\0/g, '').trim()).describe('The path to the file, relative to the workspace root.'),
   }),
   execute: async ({ filePath }) => {
     const workspaceRoot = process.cwd();
@@ -38,7 +38,7 @@ export const writeFileTool = new FunctionTool({
   name: 'write_file',
   description: 'Writes content to a file in the local workspace. Creates directories if they do not exist.',
   parameters: z.object({
-    filePath: z.string().describe('The path to the file, relative to the workspace root.'),
+    filePath: z.string().transform(v => v.replace(/\0/g, '').trim()).describe('The path to the file, relative to the workspace root.'),
     content: z.string().describe('The content to write to the file.'),
   }),
   execute: async ({ filePath, content }) => {
@@ -59,7 +59,7 @@ export const listDirectoryTool = new FunctionTool({
   name: 'list_directory',
   description: 'Lists the files and folders in a given directory.',
   parameters: z.object({
-    dirPath: z.string().describe('The directory path to list, relative to the workspace root. Use "." for the root.'),
+    dirPath: z.string().transform(v => v.replace(/\0/g, '').trim()).describe('The directory path to list, relative to the workspace root. Use "." for the root.'),
   }),
   execute: async ({ dirPath }) => {
     const workspaceRoot = process.cwd();

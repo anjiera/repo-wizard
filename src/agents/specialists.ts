@@ -18,6 +18,28 @@ interface RegistryEntry {
   };
 }
 
+/**
+ * Formal Contract defining the JSON parameter payload passed to agents.
+ */
+export interface AgentParameterContract {
+  contract_version: string;
+  packages?: Array<{
+    name: string;
+    version: string;
+    scope: 'dependencies' | 'devDependencies';
+  }>;
+  configs?: Array<{
+    path: string;
+    content: string;
+  }>;
+  verification_command?: string;
+  task_metadata?: Record<string, any>;
+  compliance_targets?: Array<{
+    standard: string;
+    focus_areas: string[];
+  }>;
+}
+
 const registryPath = path.resolve(process.cwd(), 'agents/agent-registry.json');
 const registry: Record<string, RegistryEntry> = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
 

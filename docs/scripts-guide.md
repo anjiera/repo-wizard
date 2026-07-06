@@ -48,7 +48,7 @@ Compiles standard Markdown documentation into responsive HTML files. It automati
   ```bash
   node solo-dev-toolkit/scripts/md-to-html.js docs/TESTING.md docs/TESTING.html
   ```
-* **Side-Effects:** Generates an HTML file at the specified output path. (Note: Locally compiled HTML files in `docs/` are git-ignored to prevent duplicate source files).
+* **Side-Effects:** Generates an HTML file at the specified output path. (Note: Locally compiled HTML files in `docs/` are git-ignored to reduce likelihood of duplicate source files).
 
 ### Project Docs Validator (`scripts/validate-project-docs.js`)
 Validates that project documentation is aligned across the workspace:
@@ -69,18 +69,18 @@ Validates that project documentation is aligned across the workspace:
 Run these checks to verify codebase format compliance before submitting code.
 
 ### Agent Persona Linter (`scripts/validate-agents.js`)
-Ensures that all Markdown files under `agents/` satisfy the required structural standard.
+Verifies that all Markdown files under `agents/` satisfy the required structural standard.
 * **Checks:**
   - Verifies existence of required section headers (Step 1, Step 2, Step 3, 3.1, 3.2, 3.3).
   - Asserts references to the repository's robustness protocol exist.
-  - Ensures a corresponding dynamic evaluation file exists in `evals/<agent-name>.js`.
+  - Verifies a corresponding dynamic evaluation file exists in `evals/<agent-name>.js`.
 * **Usage:**
   ```bash
   node scripts/validate-agents.js
   ```
 
 ### Command Parity Validator (`scripts/validate-commands.js`)
-Ensures that CLI commands and their arguments match exactly across different agent environment configurations.
+Verifies that CLI commands and their arguments match exactly across different agent environment configurations.
 * **Checks:**
   - Synchronizes commands defined in `.claude/commands/`, `.gemini/commands/`, and `commands/` (Antigravity).
 * **Usage:**
@@ -103,7 +103,7 @@ Validates that custom skills adhere to the plugin architecture constraints.
 Audits generated reports for required compliance disclaimers and styling structure.
 * **Checks:**
   - Validates that the "Developer Empowerment Disclaimer" is appended to the bottom of all HTML and Markdown reports.
-  - Ensures specific section counts and length limits are respected.
+  - Verifies specific section counts and length limits are respected.
 * **Usage:**
   ```bash
   # Run linter assertions
@@ -121,7 +121,7 @@ Checks that the parameter objects passed between the lead orchestrator and subag
   ```
 
 ### Developer Script Validator (`scripts/validate-scripts.js`)
-Statically checks utility scripts to ensure code styling compliance and AST rules safety.
+Statically checks utility scripts to verify code styling compliance and AST rules mitigation.
 * **Checks:**
   - Asserts mock data strings or structures are strictly contained within `// mock-start` and `// mock-end` blocks.
   - Checks for zero-dependency requirements.
@@ -135,7 +135,7 @@ Statically checks utility scripts to ensure code styling compliance and AST rule
 ## 3. Dynamic Evals & Test Runners
 
 ### LLM-as-a-Judge Eval Runner (`scripts/run-evals.js`)
-Runs dynamic LLM tests to ensure that changes to agent system prompts do not break behavior or trigger regressions.
+Runs dynamic LLM tests to verify that changes to agent system prompts do not break behavior or trigger regressions.
 * **Requirements:** Requires the `GEMINI_API_KEY` environment variable.
 * **Usage:**
   ```bash

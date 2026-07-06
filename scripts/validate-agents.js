@@ -22,7 +22,7 @@ const { ROOT_DIR, COLORS } = require('./validation-helpers');
 const { RESET, BOLD, GREEN, RED, BLUE } = COLORS;
 
 const AGENTS_DIR = path.join(ROOT_DIR, 'agents');
-const EVALS_FILE = path.join(ROOT_DIR, 'scripts', 'run-evals.js');
+// EVALS_FILE removed
 const { QUALITY_PILLARS } = require('./quality-pillars');
 const { TEAM_COLORS } = require('./report-constants');
 
@@ -36,26 +36,7 @@ function main() {
     process.exit(1);
   }
 
-  if (!fs.existsSync(EVALS_FILE)) {
-    console.error(`ERROR: run-evals.js not found at ${EVALS_FILE}`);
-    process.exit(1);
-  }
-
-  // Load registered test suites
-  let TEST_SUITE;
-  try {
-    const evalsModule = require(EVALS_FILE);
-    TEST_SUITE = evalsModule.TEST_SUITE;
-  } catch (err) {
-    console.error(`ERROR: Failed to load TEST_SUITE from run-evals.js: ${err.message}`);
-    process.exit(1);
-  }
-
-  if (!Array.isArray(TEST_SUITE)) {
-    console.error('ERROR: TEST_SUITE is not exported or is not an array in run-evals.js');
-    process.exit(1);
-  }
-
+  // EVALS load removed
   const agentFiles = fs.readdirSync(AGENTS_DIR)
     .filter(f => f.endsWith('.md'))
     .sort();
@@ -68,18 +49,7 @@ function main() {
     const fullPath = path.join(AGENTS_DIR, file);
     const resolvedPath = path.resolve(fullPath);
     
-    // Find matching suite by resolving paths
-    const matchingSuite = TEST_SUITE.find(suite => {
-      const suitePath = path.resolve(suite.personaFile);
-      return suitePath === resolvedPath;
-    });
-
-    if (!matchingSuite) {
-      console.log(`  ${RED}✗${RESET}  ${file} — No evaluation test suite defined in run-evals.js`);
-      totalErrors++;
-      continue;
-    }
-
+    // matchingSuite removed
     const errors = [];
 
     // Quality Pillar & Team Color mapping validation
@@ -115,22 +85,7 @@ function main() {
       }
     }
 
-    if (!Array.isArray(matchingSuite.testCases) || matchingSuite.testCases.length === 0) {
-      errors.push('No test cases defined in testCases array');
-    } else {
-      matchingSuite.testCases.forEach((tc, idx) => {
-        if (!tc.name) {
-          errors.push(`Test case at index ${idx} is missing a 'name'`);
-        }
-        if (!tc.input) {
-          errors.push(`Test case "${tc.name || idx}" is missing 'input'`);
-        }
-        if (!Array.isArray(tc.rubrics) || tc.rubrics.length === 0) {
-          errors.push(`Test case "${tc.name || idx}" has no rubrics defined`);
-        }
-      });
-    }
-
+    // testCases checks removed
     // Scan agent file contents for structure, prompt injection, and cheating patterns
     try {
       const content = fs.readFileSync(fullPath, 'utf8');

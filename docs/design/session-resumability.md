@@ -116,4 +116,4 @@ When the `repo-wizard` command is invoked, the orchestrator checks for the exist
 This state and recovery system complements other core parts of the architecture:
 * **[Decoupled Agent Orchestration](decoupled-orchestration.md)**: Explains how the contract parameters defined in `manifest.json` are read and executed asynchronously by the host runner without platform-specific nesting.
 * **[Hybrid Orchestration Runner](hybrid-orchestration.md)**: Explains the execution state loop of `run-orchestration.js` and how it updates contract statuses in `manifest.json`.
-* **[Tooling & Rollback](tooling-and-rollback-safety.md)**: Describes how the workspace is restored to a clean state if the subagent configurations generated from the manifest contracts fail verification builds.
+* **[Tooling & Rollback Mitigation](tooling-and-rollback-safety.md)**: Describes how the workspace is restored to a clean state if the subagent configurations generated from the manifest contracts fail verification builds.
