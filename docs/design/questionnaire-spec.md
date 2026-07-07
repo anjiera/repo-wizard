@@ -41,7 +41,7 @@ Saves the user's explicit selections during the onboarding wizard.
 
 ### 1.3 Execution Manifest (`manifest.json`)
 Stores the translated system and specialist subagent parameter contracts.
-* **Purpose:** Serves as the payload for the orchestrator script (`run-fallback-sequential-orchestration.js`) and parallel subagent dispatches.
+* **Purpose:** Serves as the payload for the orchestrator script (`run-adk-orchestrator.js`) and parallel subagent dispatches.
 * **Structure:** Separated into a `global` block (metadata like codebase languages) and a `contracts` block (subagent configurations).
 
 ---

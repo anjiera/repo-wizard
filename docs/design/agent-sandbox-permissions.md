@@ -16,26 +16,15 @@ When executing inside the Antigravity Chat sandbox, subagents are run via the `L
 * **Tool Injection**: By referencing metadata from [agent-registry.json](../../agents/agent-registry.json), the Lead Agent specifies the requested permission level (e.g., `"enable_write_tools": true`).
 * **Sandbox Verification**: This dynamic definition directs the platform runtime to inject the complete file toolset (`view_file`, `list_dir`, `write_to_file`, `replace_file_content`, `multi_replace_file_content`) into the subagent's active context, enabling direct workspace inspection.
 
-### 1.2 Fallback CLI Mode (Terminal / Headless)
-When executing via the terminal CLI runner (`run-fallback-sequential-orchestration.js`), subagents are spawned as standalone Node processes via:
-```bash
-agy --dangerously-skip-permissions run-agent <agent-name> --prompt "..."
-```
 
-* **Default Behavior**: Because these subprocesses run independently of a Lead Agent's conversational workspace, they do not execute the JIT `define_subagent` path.
-* **Context Ingestion**: The platform CLI mitigates the lack of runtime file tools by sweeping the target workspace directory on startup, reading text files, and automatically populating them directly into the subagent's input context window.
-* **I/O Redirection**: The subagent prints its report to `stdout`. The orchestrator captures this stream and writes the file to the target `.repo-wizard/reports/` directory. Direct file writing tools are bypassed in this path.
+## 2. Technical Capabilities
 
----
-
-## 2. Technical Comparison Matrix
-
-| Capability | Native Chat Mode (JIT Sandbox) | Fallback CLI Mode (Subprocess) |
-| :--- | :--- | :--- |
-| **Workspace Reading** | Active via `view_file` and `list_dir` | Ingested on startup by CLI context builder |
-| **Workspace Writing** | Active via `write_to_file` and `replace_file_content` | Streamed to `stdout` and saved by orchestrator |
-| **Tool Capabilities** | Dynamic injection based on registry metadata | Fixed CLI execution profile (`send_message`, `schedule`) |
-| **Token Utilization** | Low (audits targets on-demand via file tools) | Medium (entire target context loaded at startup) |
+| Capability | Native Chat Mode & ADK Runner (JIT Sandbox) |
+| :--- | :--- |
+| **Workspace Reading** | Active via `view_file` and `list_dir` |
+| **Workspace Writing** | Active via `write_to_file` and `replace_file_content` |
+| **Tool Capabilities** | Dynamic injection based on registry metadata |
+| **Token Utilization** | Low (audits targets on-demand via file tools) |
 
 ---
 
@@ -52,15 +41,6 @@ At the very top of your observations report, write a section titled `## Verifica
 ```
 
 ### 3.2 Test Results and Observations
-
-* **CLI Execution Output**:
-  Running the scan via the terminal CLI generates an observations report listing only the standard non-workspace tools:
-  ```markdown
-  ## Verification: Tool Diagnostics
-  - `send_message`
-  - `schedule`
-  ```
-  *Verdict*: Confirms that CLI mode operates via context ingestion rather than sandbox tool execution.
 
 * **Native Chat Execution Output**:
   Running the scan natively inside the Antigravity chat session generates an observations report displaying the fully injected toolset:

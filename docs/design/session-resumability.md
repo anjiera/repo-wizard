@@ -26,7 +26,7 @@ graph TD
     end
     
     subgraph Execution Space
-        C -->|Reads Parameters| D[run-orchestration.js]
+        C -->|Reads Parameters| D[run-adk-orchestrator.js]
         D -->|Launches Specialists| E[Subagent Specialist Sweeps]
     end
     
@@ -57,7 +57,7 @@ Key fields in `session.json`:
 ```
 
 ### 2.2 Execution Manifest (`manifest.json`)
-Located at `.repo-wizard/manifest.json`, this file contains the compiled technical contract parameters for each selected specialist subagent. It decouples user-facing selections from execution payloads, allowing the orchestrator script (`run-orchestration.js`) to invoke agents independently of the interactive CLI questionnaire.
+Located at `.repo-wizard/manifest.json`, this file contains the compiled technical contract parameters for each selected specialist subagent. It decouples user-facing selections from execution payloads, allowing the orchestrator script (`run-adk-orchestrator.js`) to invoke agents independently of the interactive CLI questionnaire.
 
 Key fields in `manifest.json`:
 * `repoName`: The folder name of the scanned repository.
@@ -71,7 +71,7 @@ Key fields in `manifest.json`:
   "mode": "backlog",
   "contracts": {
     "legal-neutrality-auditor": {
-      "status": "pending_agent_fallback",
+      "status": "pending",
       "params": {
         "keywords": ["warning", "caution", "advice"],
         "targetExtensions": [".js", ".jsx", ".md"]
@@ -113,7 +113,4 @@ When the `repo-wizard` command is invoked, the orchestrator checks for the exist
 
 ## 4. Relationship to Other Design Documents
 
-This state and recovery system complements other core parts of the architecture:
-* **[Decoupled Agent Orchestration](decoupled-orchestration.md)**: Explains how the contract parameters defined in `manifest.json` are read and executed asynchronously by the host runner without platform-specific nesting.
-* **[Hybrid Orchestration Runner](hybrid-orchestration.md)**: Explains the execution state loop of `run-orchestration.js` and how it updates contract statuses in `manifest.json`.
 * **[Tooling & Rollback Mitigation](tooling-and-rollback-safety.md)**: Describes how the workspace is restored to a clean state if the subagent configurations generated from the manifest contracts fail verification builds.

@@ -27,7 +27,6 @@ You can run in one of two execution environments. Detect your environment on sta
         - **Unified Workspace Preparation:** Right after user confirmation and BEFORE invoking any subagents, you MUST run: `node scripts/repo-wizard.js prepare --report-path <resolved_report_path>` to promote configurations, build directory structures, unpack contracts, and write the consolidated agent definitions file `.repo-wizard/resolved_agents_data.json` to disk.
         - **Just-In-Time (JIT) Dynamic Definition:** Before invoking any subagent, you MUST define it using the `define_subagent` tool. Instead of making individual read calls for every agent, read `.repo-wizard/resolved_agents_data.json` once to obtain each active subagent's name, title, description, system prompt, and permissions, then define them.
         - **Direct Workspace Tools:** Ensure that `enable_write_tools` is set to the value defined in the registry permissions (e.g. `true`) in `define_subagent` to grant specialists direct workspace read/write access.
-    - **Sequential Fallback Restraint:** Do not run or spawn `node scripts/repo-wizard.js run` in this environment. Proceed directly to parallel native subagent definition and invocation.
     - **Banned Sandbox Bypass and Context-Bridging:** Do not write or run custom code serialization scripts (like `gather-target-info.js`). You MUST NEVER act as a context, codebase, or metadata bridge (such as copying code files, file lists, directory paths, or sizing summaries) to subagents via `send_message`. All specialist subagents possess direct read/write access to the active workspace directory and MUST read the codebase files directly via absolute paths.
     - **Parallel Dispatch Syntax Example:** Call `invoke_subagent` once using this structure:
       ```json
@@ -48,9 +47,6 @@ You can run in one of two execution environments. Detect your environment on sta
       ```
     - **Pass Paths & Params**: For each subagent, pass a clear contract and instruct it to check for consent at the resolved TOS path (`tosPath` or `<reportRoot>/.repo-wizard/.tos_agreed`), write observations to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/agents/<repo-name-here>-observations-<agent-name>.md`, and write its contract file to `<reportRoot>/.repo-wizard/reports/<repo-name-here>/contracts/<agent-name>-contract.json`.
     - **Propagate Redaction Flag**: If `--redact true` is active, explicitly instruct the subagents to follow Rule 2 of the Agent Execution Rules to only output plain-text file basenames in their observations.
- 2. **Terminal CLI (Sequential Fallback Path):** This is active when executing from a command-line interface or CI system outside of the chat sandbox (where `invoke_subagent` is not available).
-      - **Action:** Run `node scripts/repo-wizard.js run` forwarding all command-line parameters (specifically `--report-path`, `--report-style`, `--mock-cli`, `--redact`, and any `--pillar` flags) to coordinate the scan.
-
 ---
 
 ## Chat UI Alignment & Consent Gate
@@ -73,7 +69,6 @@ When executing in local interactive mode (`MODE=INTERACTIVE_LOCAL`) in the chat 
    - List ONLY the specialist sub-agents selected to run based on the chosen pillar focus (do NOT list skipped or irrelevant subagents), along with a brief 1-sentence description of what each sub-agent does.
    - Ask the user if they would like to review/update their answers, or if they would like to proceed with the analysis.
    - Only launch Optimization & Handoff and call `node scripts/repo-wizard.js run` (or invoke natively after running `prepare`) after the user explicitly confirms they want to proceed.
-8. **Handle Fallback Sequential Execution Warning**: If sequential fallback mode is active and the CLI fails with `fallback_to_agent`, display the mandatory token usage warning in the chat window and request explicit developer confirmation before sequentially invoking subagents.
 9. **Post-Execution Output Summary**:
    - Upon successfully compiling all reports and deliverables, output a clear, friendly summary message to the developer in the chat window.
    - Include a clear statement indicating whether the scan was executed in MOCK mode (simulated) or REAL mode (actual LLM specialist agents) by documenting the status of the `--mock-cli` parameter.

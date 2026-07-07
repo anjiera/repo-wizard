@@ -73,5 +73,4 @@ Both `initial-codebase-scan.js` and the orchestrator utilize the unified environ
 
 ## 5. Related Specifications
 
-* **[Decoupled Agent Orchestration](decoupled-orchestration.md)**: Describes the contract manifest execution flow and processes spawning limits.
 * **[Session Resumability](session-resumability.md)**: Explains session backup archiving and resume state checks.

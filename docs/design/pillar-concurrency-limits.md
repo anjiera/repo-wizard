@@ -29,7 +29,7 @@ To guide the user in choosing a stage, the warning reports the precise count of 
 This allows developers to execute audits in smaller, isolated stages (e.g. `--pillar SECURITY`) to mitigate concurrent token load.
 
 ### 2.2 Native Execution Batching
-During native parallel execution (where the Lead Agent directly invokes subagents via the `LlmAgent` tool), a strict **Pillar Concurrency & Batching Rule** is enforced:
+During native parallel execution (where the Lead Agent directly invokes subagents via the `invoke_subagent` tool), a strict **Pillar Concurrency & Batching Rule** is enforced:
 * **Global Concurrency Cap**: A maximum of **6** active subagents total across all quality pillars are permitted to execute concurrently at any given time.
 * **Mixed Pillar Batching**: If the total number of relevant subagents to run exceeds 6, the Lead Agent partitions them into batches of at most 6 (which can contain a mix of different pillars).
 * **Sequential Batch Gate**: The Lead Agent must wait for the active batch to write its observation reports to disk before invoking the subsequent batch.
