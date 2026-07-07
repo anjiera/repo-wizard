@@ -1,8 +1,119 @@
-# Repo Wizard (`repo-wizard`)
+# Repo Wizard: Technical Documentation
 
-Repo Wizard is a production-grade collection of governance, legal safety, regulatory compliance, testing, and documentation skills for AI coding agents (Antigravity, Claude Code, etc.). 
+Repo Wizard is an advanced, production-grade local workspace optimization tool and IDE plugin built natively on top of the Google Agent Development Kit (@google/adk) framework. Designed specifically for the agent-first era, Repo Wizard automates the process of code hardening by orchestrating a decoupled network of 31 specialized expert AI subagents.
 
-It packages instructions, checklists, and persona configurations that can be loaded into agents to automate complex repository auditing and tooling.
+By separating macro-level orchestration from localized workspace tool execution, Repo Wizard systematically reviews, audits, and hardens codebases across application security, structural resilience, and regulatory compliance—all while operating entirely within a secure, local-first sandbox environment.
+
+---
+
+## Technical Architecture and System Design
+
+Repo Wizard avoids the pitfalls of long-context token bloat and non-deterministic logic by implementing a Hybrid Orchestration Model powered by the Google ADK.
+
+```mermaid
+graph TD
+    User([Developer]) -->|Run Command /repo-wizard| Orchestrator[Lead Orchestrator]
+    Orchestrator -->|1. Size Codebase| Sizer[Sizer & Language Detector]
+    Orchestrator -->|2. Interactive Interview / Headless Heuristics| Config[session.json]
+    Orchestrator -->|3. Subagent Relevance Sweep| Specialists[Specialist Agents network]
+    Specialists -->|Relevance High/Medium| Audit[Run Checklist]
+    Specialists -->|Relevance Low| Skip[Bypassed]
+    Audit -->|4. Tool recommendations| Evaluator[tool-auditor]
+    Evaluator -->|5. Tooling approval| Scaffolder[tooling-engineer]
+    Scaffolder -->|6. Tool Configs| Files[(Workspace Files)]
+    Orchestrator -->|7. Compile Reports| MD_HTML[Technical & Executive Reports]
+```
+
+1. **The Lead Orchestrator (`run-adk-orchestrator.js`)**
+The central nervous system of Repo Wizard. Built using the ADK InMemoryRunner, the Orchestrator never ingests the raw codebase directly to prevent token bloat. Instead, it runs a fast, lightweight heuristic baseline scan across the local directory to compile a structural `manifest.json`. Before launching downstream agents, the Orchestrator forces a strict Zod runtime schema validation over the manifest, guaranteeing that subagents receive perfectly typed context configurations. It then outputs deterministic `AgentParameterContract` JSON objects to define specific boundary objectives for the subagents.
+
+2. **Parallel Specialist Subagents (`subagents/`)**
+Repo Wizard houses a robust library of 31 discrete expert personas (including resilience-architect, appsec-hardener, and legal-neutrality-auditor). Triggered asynchronously via `invoke_subagent` calls, these agents receive their target objectives inside their strict contract scopes. Rather than receiving code snippets over API boundaries, the subagents are granted localized absolute pathway addresses, utilizing custom tools to natively "pull" and inspect the precise files relevant to their domains.
+
+3. **Fault Tolerance and Self-Healing Loops**
+To withstand network timeouts, transient LLM failures, or API rate limitations during heavy parallel swarms, the core orchestrator runner wraps all agent execution blocks in an automated 3-attempt exponential backoff retry loop, ensuring system resilience without terminating the main development process.
+
+---
+
+## Hardened Security and Sandboxing Features
+
+Repo Wizard implements an uncompromising approach to code privacy and system safety through three specific engineering guardrails:
+
+* **Input Path Sanitization (`fs-tools.ts`)**: To neutralize malicious path traversals or malformed file configurations, all core file-system tools route through runtime regex filters that automatically strip out dangerous null-byte (`\0`) injections and anomalous whitespace padding before hitting the host OS layer.
+* **Credential Data Redaction Interceptors**: The data synthesis layer includes an active outbound log interceptor. This engine scans agent-generated text streams in real-time, programmatically masking and redacting exposed API keys, environment parameters, or Git credentials before compiling reports.
+* **Dynamic Temp Sandboxing**: End-to-end testing harnesses execute within isolated, dynamically generated `temp_e2e_sandbox_*/` file spaces that are automatically scrubbed upon execution termination, protecting live working branches from accidental corruption.
+
+---
+
+## Environment Requirements and Local Installation
+
+Repo Wizard is built strictly as a Local Workspace Tool and IDE Plugin to preserve total IP security and code isolation. It requires no external cloud databases or cloud microservices.
+
+### Prerequisites
+* **Runtime**: Node.js (v18 or higher)
+* **Package Manager**: npm
+* **Core Dependencies**: Powered via `@google/adk` and `zod`
+
+### Environment Variables
+To enable the underlying evaluation runners and LLM execution loops, create a `.env` file in your root workspace and configure your secure credentials:
+```env
+GEMINI_API_KEY=your_secure_google_ai_studio_api_key_here
+```
+> [!NOTE]
+> Repo Wizard includes built-in output interceptors to ensure this variable is never logged or leaked into generated workspace artifacts.
+
+### Installation Lifecycle
+1. **Clone and Install Dependencies**:
+   ```bash
+   npm install
+   ```
+2. **Register the Native Antigravity Plugin**:
+   Integrate Repo Wizard directly into your Google Antigravity IDE environment using the automated registration hook:
+   ```bash
+   agy plugin install .
+   ```
+3. **Initialize Git Lifecycle Protection**:
+   Run the setup utility to automatically inject pre-commit and pre-push verification hooks into your repository:
+   ```bash
+   # On Linux / macOS / Git Bash
+   ./setup.sh
+   # On Windows (PowerShell)
+   .\setup.ps1
+   ```
+
+---
+
+## Step-by-Step Execution Sequence
+
+Repo Wizard provides a flexible, robust operational sequence that can be executed entirely via the headless CLI or through interactive IDE slash commands.
+
+### Phase 1: Heuristic Workspace Mapping
+Execute a lightning-fast sweep of the target repository to construct the structural layout:
+```bash
+node scripts/repo-wizard.js scan
+```
+**Output:** Generates a validated, Zod-verified `manifest.json` map.
+
+### Phase 2: Orchestrated Multi-Agent Audit
+Launch the parallel swarm of specialized expert agents to inspect the codebase pathways:
+```bash
+node scripts/repo-wizard.js run
+```
+**Mechanics:** Spawns the ADK InMemoryRunner, distributes typed parameter contracts, and runs specialized audits across 31 domains with active credential redaction.
+
+### Phase 3: Deliverable Compilation
+Synthesize the scattered standalone agent markdown observations into highly-polished executive insights:
+```bash
+node scripts/repo-wizard.js compile
+```
+**Output:** Employs zero-dependency data extractors to generate a unified, beautiful HTML Compliance and Engineering Report.
+
+### Alternative: Interactive IDE Execution
+Open your Google Antigravity IDE Sidebar Chat and utilize the native interactive slash shortcut:
+```text
+/repo-wizard
+```
+This triggers the identical ADK multi-agent orchestration lifecycle natively within your active editor context, leveraging our 25 individually registered slash commands.
 
 ---
 
@@ -35,26 +146,9 @@ To help you get started quickly, please refer to the following guides:
 * **[pillar-concurrency-limits.md](docs/design/pillar-concurrency-limits.md)** — Resource control design for concurrency limits and sequential batching of subagent execution.
 * **[repo-sizing-relevance-refactoring.md](docs/design/repo-sizing-relevance-refactoring.md)** — Technical design for proportional report requirements and setup-phase relevance checks.
 * **[questionnaire-spec.md](docs/design/questionnaire-spec.md)** — Formal specification schema and validator for onboarding questionnaire structures.
-
----
-
-## Architecture & Orchestration Flow
-
-Repo Wizard utilizes a multi-agent orchestration pattern where a lead orchestrator handles user onboarding and sizing checks, and coordinates specialist subagents using parameter contract validations.
-
-```mermaid
-graph TD
-    User([Developer]) -->|Run Command /repo-wizard| Orchestrator[Lead Orchestrator]
-    Orchestrator -->|1. Size Codebase| Sizer[Sizer & Language Detector]
-    Orchestrator -->|2. Interactive Interview / Headless Heuristics| Config[session.json]
-    Orchestrator -->|3. Subagent Relevance Sweep| Specialists[Specialist Agents network]
-    Specialists -->|Relevance High/Medium| Audit[Run Checklist]
-    Specialists -->|Relevance Low| Skip[Bypassed]
-    Audit -->|4. Tool recommendations| Evaluator[tool-auditor]
-    Evaluator -->|5. Tooling approval| Scaffolder[tooling-engineer]
-    Scaffolder -->|6. Tool Configs| Files[(Workspace Files)]
-    Orchestrator -->|7. Compile Reports| MD_HTML[Technical & Executive Reports]
-```
+* **[antigravity-setup.md](docs/antigravity-setup.md)** — Installing as an Antigravity plugin.
+* **[claude-setup.md](docs/claude-setup.md)** — Loading into Claude Code.
+* **[copilot-setup.md](docs/copilot-setup.md)** — Importing into GitHub Copilot.
 
 ---
 
@@ -70,7 +164,7 @@ graph TD
 * **Skill:** `skills/agent-alignment-auditor/SKILL.md`
 
 > [!NOTE]
-> For the full list of all 27 specialized quality, performance, compliance, and security agents, please refer to the comprehensive taxonomy in [AGENT_MATRIX.md](docs/AGENT_MATRIX.md).
+> For the full list of all 31 specialized quality, performance, compliance, and security agents, please refer to the comprehensive taxonomy in [AGENT_MATRIX.md](docs/AGENT_MATRIX.md).
 
 ### 3. Helper & Validation Scripts
 For a complete guide to all available helper, validation, and test runner scripts, please refer to [scripts-guide.md](docs/scripts-guide.md). 
@@ -101,26 +195,6 @@ These folders and files are used locally by developers and AI coding assistants 
 
 ---
 
-## Installation & Setup
-
-To automatically configure your local environment, install pre-commit git hooks, and verify code integrity:
-
-```bash
-# On Linux / macOS / Git Bash
-./setup.sh
-
-# On Windows (PowerShell)
-.\setup.ps1
-```
-
-For detailed setup instructions on different client environments, see:
-* [getting-started.md](docs/getting-started.md) — General overview.
-* [antigravity-setup.md](docs/antigravity-setup.md) — Installing as an Antigravity plugin.
-* [claude-setup.md](docs/claude-setup.md) — Loading into Claude Code.
-* [copilot-setup.md](docs/copilot-setup.md) — Importing into GitHub Copilot.
-
----
-
 ## Disclaimer & Legal Safety
 
 > [!IMPORTANT]
@@ -131,4 +205,3 @@ For detailed setup instructions on different client environments, see:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-

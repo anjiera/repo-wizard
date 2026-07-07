@@ -47,7 +47,7 @@ function printUsageAndExit(err) {
   console.log('  scan       Perform codebase sizing, stacking analysis, and pre-scan setup.');
   console.log('  prepare    Archive previous files, promote configurations, and unpack contracts and prompt data.');
   console.log('  synthesize Synthesize subagent observations into compiledAnalysis session payload.');
-  console.log('  run        Run fallback sequential subagents scan loop.');
+  console.log('  run        Run ADK InMemoryRunner subagent orchestration loop.');
   console.log('  compile    Compile technical reports, executive summaries, and backlog CSV deliverables.');
   console.log('\nExamples:');
   console.log('  node scripts/repo-wizard.js scan --report-path . --pillar QUALITY');
