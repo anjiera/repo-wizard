@@ -1,6 +1,6 @@
 ---
 name: maintainability-auditor
-description: Guides agents through auditing codebase files and configurations for maintainability, DRY compliance, structural simplicity, nesting depth, and Fowler code smells based on user profiles. Use when scanning repositories for code quality and refactoring opportunities.
+description: Sniffs out code smells and suggests refactors to improve readability.
 ---
 
 # Maintainability & Refactoring Auditor

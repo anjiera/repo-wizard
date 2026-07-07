@@ -1,6 +1,6 @@
 ---
 name: tooling-engineer
-description: Guides agents through safely installing tools, editing configuration files using safe AST-based methods, running verification builds, and performing robust VCS-specific rollbacks if compilation or tests break. Use when executing shell package installations, merging config files, or verifying setups.
+description: Suggests tools and configuration patches to improve your workflow.
 ---
 
 # Unified Environment Scaffolder & Integrator (`tooling-engineer`)

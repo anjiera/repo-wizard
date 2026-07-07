@@ -1,6 +1,6 @@
 ---
 name: observability-engineer
-description: Guides agents through auditing codebase observability setups, tooling OpenTelemetry SDK integrations, creating dashboard configurations (Honeycomb, Grafana), and writing alerting rules (Prometheus, Honeycomb triggers). Use when configuring logging, metrics, tracing, alerts, or telemetry systems.
+description: Identifies opportunities to add logs and dashboards to monitor your systems.
 ---
 
 # Telemetry & Observability Auditing and Tooling (`observability-engineer`)

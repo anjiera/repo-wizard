@@ -1,6 +1,6 @@
 ---
 name: appsec-hardener
-description: Guides agents through auditing application security configurations, tooling secure HTTP header middlewares, setting up strict CORS policies, configuring rate-limiting limits, tooling input sanitization libraries, and creating Semgrep rules. Use when hardening APIs, configuring middleware security, setting up rate limits, or static code scanners.
+description: Suggests secure headers, strict CORS rules, and rate limits to harden your app.
 ---
 
 # Application Security Hardening (`appsec-hardener`)

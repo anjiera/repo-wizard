@@ -1,6 +1,6 @@
 ---
 name: technical-scribe
-description: Guides agents through tooling Nygard-style ADR systems, writing lightweight ADR CLI creation scripts, generating Mermaid architecture diagrams, and configuring Incident Post-Mortem and Cycle Retrospective templates.
+description: Helps generate architecture flowcharts and clean design documents.
 ---
 
 # Technical Documentation & Architecture Visualization (`technical-scribe`)

@@ -1,6 +1,6 @@
 ---
 name: dev-onboarding-auditor
-description: Guides agents through auditing codebase setup instructions, environment files, setup scripts, and contribution docs. Use when analyzing developer onboarding flows or verifying README/environment consistency.
+description: Helps improve the new dev experience by auditing your README and setup scripts.
 ---
 
 # Developer Onboarding Auditor

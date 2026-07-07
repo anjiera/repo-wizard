@@ -1,6 +1,6 @@
 ---
 name: ai-robustness-hardener
-description: Guides agents through auditing AI/ML components and LLM integrations, configuring secure input/output guardrails, mitigating OWASP LLM vulnerabilities, and tooling model bias and fairness auditing metrics. Use when auditing AI components, setting up prompt injection filters, or validating model bias.
+description: Highlights ways to harden your AI models against prompt injections and bad inputs.
 ---
 
 # AI Robustness & ML Governance Auditing and Tooling (`ai-robustness-hardener`)

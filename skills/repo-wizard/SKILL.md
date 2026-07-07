@@ -1,6 +1,6 @@
 ---
 name: repo-wizard
-description: Orchestrates the repository onboarding checklist and QA setup. Use when a developer wants to audit their repository and tool tailored testing suites, compliance engines, git hooks, documentation tools, and linting configurations.
+description: Your lead agent. Scans your repo, guides the setup checklist, and manages the swarm.
 ---
 
 # Repo Wizard

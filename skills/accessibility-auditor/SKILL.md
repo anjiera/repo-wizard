@@ -1,6 +1,6 @@
 ---
 name: accessibility-auditor
-description: Guides agents through auditing codebase files and configurations for compliance with digital accessibility standards (WCAG 2.1/2.2 AA, EN 301 549). Configures automated a11y testing configurations (ESLint, axe-core CLI scripts) conditionally based on user choice. Use when setting up accessibility tools, auditing UI accessibility, or adding tests.
+description: Identifies UI accessibility issues to help make your app more inclusive.
 ---
 
 # Accessibility Auditor (`accessibility-auditor`)

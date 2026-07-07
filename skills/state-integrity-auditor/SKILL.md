@@ -1,6 +1,6 @@
 ---
 name: state-integrity-auditor
-description: Guides agents through auditing codebase state machines, tooling mathematical specifications (TLA+), writing Rust Kani proof verification harnesses, and verifying model invariants. Use when specifying protocols, proving absence of out-of-bounds index errors, model-checking concurrency locks, or proving mathematical correctness.
+description: Suggests ways to use math to verify your complex state machines.
 ---
 
 # Formal Verification & Specifications (`state-integrity-auditor`)

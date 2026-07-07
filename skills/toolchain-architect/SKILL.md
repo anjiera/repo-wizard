@@ -1,6 +1,6 @@
 ---
 name: toolchain-architect
-description: Guides agents through auditing build system target constraints, tooling CMake cross-compilation toolchain files, configuring Rust target configs, setting up sysroot locations, and verifying cross-compiler flags. Use when configuring cross-compilers, managing target triples, setting up Emscripten, or overriding linker parameters.
+description: Helps wrangle C/Rust build targets and cross-compilation settings.
 ---
 
 # Cross-Compilation & Build Toolchains (`toolchain-architect`)

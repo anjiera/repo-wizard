@@ -1,6 +1,6 @@
 ---
 name: api-contract-architect
-description: Guides agents through auditing API boundaries, tooling OpenAPI/Swagger yaml files, writing gRPC Protobuf schemas, designing GraphQL SDL structures, and integrating Spectral, Buf, or GraphQL Inspector linters. Use when configuring API schemas, Protobufs, GraphQL, or api validation tooling.
+description: Helps design crisp APIs and enforce schema rules to improve integration stability.
 ---
 
 # API Contract & Schema Governance (`api-contract-architect`)

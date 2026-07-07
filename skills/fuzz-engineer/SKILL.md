@@ -1,6 +1,6 @@
 ---
 name: fuzz-engineer
-description: Guides agents through auditing codebases to identify crash-prone parsing blocks, tooling fuzz-testing harnesses (libFuzzer, cargo-fuzz, Atheris), configuring address/undefined behavior sanitizers, and integrating continuous fuzzing in CI. Use when setting up fuzz tests, searching for memory leaks, testing parsers, or investigating boundary vulnerability discovery.
+description: Uses randomness to expose sneaky crash bugs in your parsers.
 ---
 
 # Fuzz Testing & Vulnerability Discovery (`fuzz-engineer`)

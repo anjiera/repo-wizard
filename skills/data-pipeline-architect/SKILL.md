@@ -1,6 +1,6 @@
 ---
 name: data-pipeline-architect
-description: Guides agents through auditing data workflows, tooling Pandera/Great Expectations validation rules, writing Airflow/Prefect DAG retry scripts, and configuring database connection pools (SQLAlchemy/pg-pool). Use when configuring data pipelines, database pools, or data validation packages.
+description: Identifies ways to untangle data pipelines and optimize database connection pools.
 ---
 
 # Data Pipeline & Quality Governance (`data-pipeline-architect`)

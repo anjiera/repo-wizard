@@ -1,6 +1,6 @@
 ---
 name: qa-engineer
-description: Guides agents through configuring unit, integration, and E2E test runners (Jest, Vitest, PyTest, Cargo test), API/database mocking layers (MSW), and local code coverage gates. Use when setting up test suites or adding mocks.
+description: Suggests tests and mocking strategies to help catch bugs earlier.
 ---
 
 # QA Engineer (`qa-engineer`)

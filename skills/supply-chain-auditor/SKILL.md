@@ -1,6 +1,6 @@
 ---
 name: supply-chain-auditor
-description: Guides agents through auditing codebase dependencies for vulnerabilities and copyleft licenses, and tooling SBOM generators (CycloneDX, SPDX), lockfile integrity checks, and dependency checkers (Snyk, Dependabot) conditionally. Use when auditing dependencies, setting up SBOMs, or configuring license checks.
+description: Scans your dependencies for known vulnerabilities and open-source licenses.
 ---
 
 # Supply Chain Auditor (`supply-chain-auditor`)

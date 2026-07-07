@@ -1,6 +1,6 @@
 ---
 name: performance-auditor
-description: Guides agents through auditing codebase performance setups, tooling local micro-benchmarks, writing automated HTTP load/stress tests, and configuring CI performance budget gates. Use when setting up benchmarking, optimizing speed/latency, configuring load testing, or adding performance gates.
+description: Finds slow bottlenecks in your code and suggests speed tests for CI.
 ---
 
 # Performance Auditing & Tooling (`performance-auditor`)

@@ -1,6 +1,6 @@
 ---
 name: vcs-workflow-engineer
-description: Guides agents through configuring pre-commit/submission hooks, code formatting/styling, Conventional Commit validation, and automated copyright header validation for Git, Mercurial, and Perforce codebases.
+description: Suggests pre-commit hooks and git commit formatting rules.
 ---
 
 # VCS Hook & Commit Discipline Agent (`vcs-workflow-engineer`)

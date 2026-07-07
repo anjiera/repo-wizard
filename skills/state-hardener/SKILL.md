@@ -1,6 +1,6 @@
 ---
 name: state-hardener
-description: Guides agents through auditing codebase hooks and states for stale closures, memory leaks, and async fetch race conditions. Use when configuring React states, checking event listeners, or auditing async hooks.
+description: Spots potential memory leaks and stale closures in tricky async React hooks.
 ---
 
 # State Sanitization Auditing & Tooling (`state-hardener`)

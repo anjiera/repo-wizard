@@ -1,6 +1,6 @@
 ---
 name: tool-auditor
-description: Guides agents through screening recommended packages, libraries, and tools against security databases, commit activity indicators, and licensing rules, returning a structured verification verdict. Use when evaluating a third-party tool before recommending it.
+description: Checks if the npm packages you want to use are actively maintained.
 ---
 
 # Package & Tool Auditor (`tool-auditor`)

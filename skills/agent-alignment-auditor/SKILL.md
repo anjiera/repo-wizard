@@ -1,6 +1,6 @@
 ---
 name: agent-alignment-auditor
-description: Guides agents through auditing agent prompts, configurations, and workflows for consistency, style, formatting, and token limits, and tooling rubric-based evaluations and validation checks. Use when reviewing agent code quality or setting up testing suites for agents.
+description: Suggests tweaks to AI agent prompts to help save tokens and keep them on-script.
 ---
 
 # Agent Alignment Auditor (`agent-alignment-auditor`)

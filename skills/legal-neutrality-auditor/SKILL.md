@@ -1,6 +1,6 @@
 ---
 name: legal-neutrality-auditor
-description: Guides agents through scanning the codebase for user-facing UI phrasing that may lack legal neutrality (e.g. verging on medical/health/financial advice or high-liability guarantees) and suggesting up to 5 neutral alternatives. Use when auditing UI copy, warning alerts, Terms of Service, or user-facing descriptions.
+description: Identifies areas to improve legal neutrality in the UI.
 ---
 
 # Legal Neutrality Scanner

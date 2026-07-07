@@ -1,6 +1,6 @@
 ---
 name: compliance-auditor
-description: Guides agents through auditing and tooling security and compliance configurations (SOC 2, ISO 27001, FIPS, HIPAA, PCI-DSS, FedRAMP). Use when checking compliance profiles, setting up security configurations, or audit logging.
+description: Suggests improvements in line with compliance standards.
 ---
 
 # Compliance Auditor (`compliance-auditor`)

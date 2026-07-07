@@ -1,6 +1,6 @@
 ---
 name: notebook-auditor
-description: Guides agents through auditing data science repositories, configuring nbstripout pre-commit filters to strip Jupyter Notebook output cells, setting up nbqa notebook linters, and creating virtual environment managers (Poetry, Conda, Pipenv). Use when configuring notebook filters, environment managers, or notebook linting.
+description: Suggests filters for Jupyter notebook outputs to make git diffs easier to read.
 ---
 
 # Jupyter Notebook VCS Hygiene & Environments (`notebook-auditor`)

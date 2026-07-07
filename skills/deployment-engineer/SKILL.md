@@ -1,6 +1,6 @@
 ---
 name: deployment-engineer
-description: Guides agents through auditing container configuration files, tooling high-availability Docker Compose replicas, configuring Kubernetes liveness/readiness/startup probes, and writing automated database backup and restore verification scripts. Use when configuring HA containers, Kubernetes probes, or database backups.
+description: Suggests ways to improve Docker containers, k8s probes, and automated backup scripts.
 ---
 
 # Code Deployment & Availability (`deployment-engineer`)

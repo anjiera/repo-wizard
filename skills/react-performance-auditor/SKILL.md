@@ -1,6 +1,6 @@
 ---
 name: react-performance-auditor
-description: Guides agents through auditing React components for re-renders, INP yielding, variable font overrides, and bfcache. Use when optimizing React client-side rendering speed, fixing layout shifts, or fixing back/forward navigation.
+description: Identifies annoying layout shifts and React components that over-render.
 ---
 
 # React Web Performance Auditing & Tooling (`react-performance-auditor`)

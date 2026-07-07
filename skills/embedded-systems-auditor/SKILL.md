@@ -1,6 +1,6 @@
 ---
 name: embedded-systems-auditor
-description: Guides agents through configuring low-level firmware robustness guidelines, static analysis tools (MISRA compliance via cppcheck), compiler warning flags, QEMU target testing templates, and local ring buffer logging. Use when configuring firmware codebases, embedded build systems, static analysis linter rules, or micro-controller emulators.
+description: Highlights ways to improve low-level firmware stability and MISRA compliance.
 ---
 
 # Embedded Systems & Firmware Robustness (`embedded-systems-auditor`)

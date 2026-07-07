@@ -1,6 +1,6 @@
 ---
 name: database-lifecycle-auditor
-description: Guides agents through auditing codebase files and configurations for database migrations, schemas, queries, and connection practices based on inferred stacks. Use when scanning repositories for database performance, indexing, and migration risks.
+description: Spots slow queries and risky database migrations for you to review.
 ---
 
 # Database Lifecycle Auditor

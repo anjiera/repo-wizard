@@ -1,6 +1,6 @@
 ---
 name: privacy-hardener
-description: Guides agents through auditing data storage schemas and configurations for regulatory compliance (GDPR, CCPA/CPRA, COPPA). Configures database column encryption rules, PII logging filters, and data export/deletion routing templates. Use when reviewing privacy compliance or setting up data handling.
+description: Suggests data storage improvements to help align with GDPR and CCPA guidelines.
 ---
 
 # Privacy Hardener (`privacy-hardener`)

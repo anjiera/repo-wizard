@@ -1,6 +1,6 @@
 ---
 name: resilience-architect
-description: Guides agents through auditing codebase fault-tolerance setups, tooling retry policies with backoff/jitter, wrapping network calls with circuit breakers, establishing fallback behaviors, and deploying chaos engineering script templates. Use when configuring retries, circuit breakers, fallbacks, or chaos engineering.
+description: Suggests retries and circuit breakers to help apps survive bad network calls.
 ---
 
 # Code Resilience & Fault-Tolerance (`resilience-architect`)
