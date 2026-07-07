@@ -196,9 +196,9 @@ try {
     highValue.push("- **Testing Tooling:** [Integrate automated test runner configuration](#specialist-agent-general) for validation.");
   }
 
-  // Group findings into narrative paragraphs
-  const healthFindings = extractedFindings.filter(f => f.text.toLowerCase().includes('structure') || f.text.toLowerCase().includes('file') || f.text.toLowerCase().includes('modular') || f.text.toLowerCase().includes('health'));
-  const opportunityFindings = extractedFindings.filter(f => !healthFindings.includes(f));
+  // Group findings into narrative paragraphs (Limit to top 4 to prevent gigantic reports)
+  const healthFindings = extractedFindings.filter(f => f.text.toLowerCase().includes('structure') || f.text.toLowerCase().includes('file') || f.text.toLowerCase().includes('modular') || f.text.toLowerCase().includes('health')).slice(0, 4);
+  const opportunityFindings = extractedFindings.filter(f => !healthFindings.includes(f)).slice(0, 4);
 
   // Chunk sentences to ensure paragraphs have between 1 and 8 sentences
   const chunkParagraphs = (findings, baseText) => {
@@ -259,27 +259,29 @@ Specifically, configuring local git pre-commit hooks to validate code formatting
 
 The second phase should address high-value, medium-effort tooling. This includes introducing a standardized test runner configuration and establishing a baseline code coverage target of eighty percent. The test runner configuration will unify test patterns across the repository, while the coverage gate will ensure that new features are accompanied by corresponding test cases. To support this, the third phase should introduce mock service worker boundaries to intercept external network calls, ensuring that unit and integration tests remain isolated and deterministic. This phased structure helps maintain engineering momentum while incrementally raising code quality.`;
 
-  // mock-start
+  const getMaturityState = (keywords, defaultText) => {
+    const matched = extractedFindings.find(f => keywords.some(k => f.text.toLowerCase().includes(k)));
+    return matched ? matched.text : defaultText;
+  };
+
   const compiledAnalysis = {
     section1: sec1Text,
     section2: sec2Text,
     section3: sec3Text,
     maturityStates: {
-      SECURITY: "The target codebase incorporates basic access control, but lacks automated scanning for secrets or software supply chain verification.",
-      PERFORMANCE: "Performance monitoring and benchmarking are currently manual. Integrating automated budgets and regression checks would help track latency.",
-      ARCHITECTURE: "System design is documented through markdown, but lacks formal contract verification for API boundaries or schemas.",
-      QUALITY: "The codebase features testing utilities, but lacks unified runner configuration and automated commit validation hooks."
+      SECURITY: getMaturityState(['security', 'access', 'secret', 'vulnerability', 'auth'], "The target codebase incorporates basic access control, but lacks automated scanning for secrets or software supply chain verification."),
+      PERFORMANCE: getMaturityState(['performance', 'latency', 'benchmark', 'speed', 'memory'], "Performance monitoring and benchmarking are currently manual. Integrating automated budgets and regression checks would help track latency."),
+      ARCHITECTURE: getMaturityState(['architecture', 'design', 'boundary', 'schema', 'dependency'], "System design is documented through markdown, but lacks formal contract verification for API boundaries or schemas."),
+      QUALITY: getMaturityState(['test', 'lint', 'coverage', 'quality', 'hook'], "The codebase features testing utilities, but lacks unified runner configuration and automated commit validation hooks.")
     },
-    conclusion: `Transitioning the target codebase toward structured repository governance is an incremental journey that is entirely achievable. Prioritizing low-effort, high-value quality gates will help establish a stable verification baseline.`,
-    suggestedAdjustments: `- Establish standard lint rules to mitigate formatting discrepancies.
-- Set up a pre-commit validation framework to verify syntax and run unit tests.`,
+    conclusion: \`Transitioning the target codebase toward structured repository governance is an incremental journey that is entirely achievable. \${quickWins.length > 0 ? 'Addressing the identified quick wins will immediately improve code quality.' : 'Prioritizing low-effort, high-value quality gates will help establish a stable verification baseline.'}\`,
+    suggestedAdjustments: quickWins.slice(0, 2).join('\\n') || \`- Establish standard lint rules to mitigate formatting discrepancies.\\n- Set up a pre-commit validation framework to verify syntax and run unit tests.\`,
     quickWins,
     highValue,
     papercuts,
     strategicDebt,
     backlog
   };
-  // mock-end
 
   // Write updated session to both paths
   session.compiledAnalysis = compiledAnalysis;
