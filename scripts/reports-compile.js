@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 const { compileRealReports, getSafeRepoName } = require('./reports-compiler-engine');
 
 const { RESET, BOLD, GREEN, RED, BLUE } = require('../solo-dev-toolkit/scripts/cli-helpers');
@@ -18,68 +19,53 @@ const ROOT = require('./root-resolver');
 console.log(`${BLUE}==>${RESET} ${BOLD}Compiling Repo Wizard reports from specialist observations...${RESET}`);
 
 let reportStyleOverride = null;
-const styleIdx = process.argv.indexOf('--report-style');
-if (styleIdx !== -1) {
-  if (process.argv[styleIdx + 1] && !process.argv[styleIdx + 1].startsWith('-')) {
-    reportStyleOverride = process.argv[styleIdx + 1];
-    process.argv.splice(styleIdx, 2);
-  } else {
-    process.argv.splice(styleIdx, 1);
-  }
-}
-
 let reportPathOverride = null;
-const reportPathIdx = process.argv.indexOf('--report-path');
-if (reportPathIdx !== -1) {
-  if (process.argv[reportPathIdx + 1] && !process.argv[reportPathIdx + 1].startsWith('-')) {
-    reportPathOverride = process.argv[reportPathIdx + 1];
-    process.argv.splice(reportPathIdx, 2);
-  } else {
-    process.argv.splice(reportPathIdx, 1);
-  }
-}
-
 let isRedactOverride = false;
-const redactIdx = process.argv.indexOf('--redact');
-if (redactIdx !== -1) {
-  isRedactOverride = true;
-  process.argv.splice(redactIdx, 1);
-}
-
 let agentOverride = null;
-const agentIdx = process.argv.indexOf('--agent');
-if (agentIdx !== -1) {
-  if (process.argv[agentIdx + 1] && !process.argv[agentIdx + 1].startsWith('-')) {
-    agentOverride = process.argv[agentIdx + 1];
-    process.argv.splice(agentIdx, 2);
-  } else {
-    process.argv.splice(agentIdx, 1);
-  }
-}
-
 let headlessOverride = false;
-const headlessIdx = process.argv.indexOf('--headless');
-if (headlessIdx !== -1) {
-  headlessOverride = true;
-  process.argv.splice(headlessIdx, 1);
-}
-
 let pillarOverride = null;
-const pillarIdx = process.argv.indexOf('--pillar');
-if (pillarIdx !== -1) {
-  if (process.argv[pillarIdx + 1] && !process.argv[pillarIdx + 1].startsWith('-')) {
-    pillarOverride = process.argv[pillarIdx + 1];
-    process.argv.splice(pillarIdx, 2);
+let sessionPath = null;
+
+const args = process.argv.slice(2);
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (arg === '--report-style') {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      reportStyleOverride = args[i + 1];
+      i++;
+    }
+  } else if (arg === '--report-path') {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      reportPathOverride = args[i + 1];
+      i++;
+    }
+  } else if (arg === '--agent') {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      agentOverride = args[i + 1];
+      i++;
+    }
+  } else if (arg === '--pillar') {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      pillarOverride = args[i + 1];
+      i++;
+    }
+  } else if (arg === '--redact') {
+    isRedactOverride = true;
+  } else if (arg === '--headless') {
+    headlessOverride = true;
+  } else if (arg.startsWith('-')) {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      i++;
+    }
   } else {
-    process.argv.splice(pillarIdx, 1);
+    if (!sessionPath) {
+      sessionPath = arg;
+    }
   }
 }
-
-// Find first non-flag argument in remaining arguments for sessionPath
-let sessionPath = process.argv.slice(2).find(arg => !arg.startsWith('-'));
 
 if (!sessionPath) {
-  const baseDir = reportPathOverride ? path.resolve(reportPathOverride) : ROOT;
+  const baseDir = reportPathOverride ? path.resolve(ROOT, reportPathOverride) : ROOT;
   const sessionPointerPath = path.join(baseDir, '.repo-wizard', 'last_session_path.json');
   if (fs.existsSync(sessionPointerPath)) {
     try {
@@ -92,7 +78,7 @@ if (!sessionPath) {
 }
 
 if (!sessionPath) {
-  const baseDir = reportPathOverride ? path.resolve(reportPathOverride) : ROOT;
+  const baseDir = reportPathOverride ? path.resolve(ROOT, reportPathOverride) : ROOT;
   const defaultPath = path.join(baseDir, '.repo-wizard', 'session.json');
   if (fs.existsSync(defaultPath)) {
     sessionPath = defaultPath;
@@ -100,8 +86,19 @@ if (!sessionPath) {
 }
 
 // Validate path to prevent path traversal or writing to arbitrary directories
+if (!sessionPath) {
+  console.error(`${RED}✗ Error:${RESET} Active session file not found. Please run the codebase scan first.`);
+  process.exit(1);
+}
+
+if (!fs.existsSync(sessionPath)) {
+  console.error(`${RED}✗ Error:${RESET} Session file not found at "${sessionPath}".`);
+  process.exit(1);
+}
+
 const resolvedSessionPath = path.resolve(sessionPath);
-const relative = path.relative(path.resolve(ROOT), resolvedSessionPath);
+const baseDir = reportPathOverride ? path.resolve(ROOT, reportPathOverride) : ROOT;
+const relative = path.relative(baseDir, resolvedSessionPath);
 if (relative.startsWith('..') || path.isAbsolute(relative) || path.extname(resolvedSessionPath) !== '.json') {
   console.error(`${RED}✗ Error:${RESET} Invalid session file path. Path must reside within the workspace and have a .json extension.`);
   process.exit(1);
@@ -141,15 +138,22 @@ try {
   const repoName = getSafeRepoName(workspaceDir);
   const reportsRoot = session.reportPath ? path.join(path.resolve(session.reportPath), '.repo-wizard', 'reports') : path.join(ROOT, '.repo-wizard', 'reports');
   const reportsDir = path.join(reportsRoot, repoName);
+  const execUrl = url.pathToFileURL(path.join(reportsDir, repoName + '-executive-summary.md')).toString();
+  const fullUrl = url.pathToFileURL(path.join(reportsDir, repoName + '-full-report.md')).toString();
+  const obsUrl = url.pathToFileURL(path.join(reportsDir, repoName + '-observations.md')).toString();
+  const csvUrl = url.pathToFileURL(path.join(reportsDir, 'backlog.csv')).toString();
+
   console.log(`${BOLD}Generated deliverables:${RESET}`);
-  console.log(`  - Executive Summary:  [${repoName}-executive-summary.md](file:///${path.join(reportsDir, repoName + '-executive-summary.md').replace(/\\/g, '/')})`);
-  console.log(`  - Full Tech Report:   [${repoName}-full-report.md](file:///${path.join(reportsDir, repoName + '-full-report.md').replace(/\\/g, '/')})`);
-  console.log(`  - Observations List:  [${repoName}-observations.md](file:///${path.join(reportsDir, repoName + '-observations.md').replace(/\\/g, '/')})`);
-  console.log(`  - Backlog CSV:        [backlog.csv](file:///${path.join(reportsDir, 'backlog.csv').replace(/\\/g, '/')})`);
+  console.log(`  - Executive Summary:  [${repoName}-executive-summary.md](${execUrl})`);
+  console.log(`  - Full Tech Report:   [${repoName}-full-report.md](${fullUrl})`);
+  console.log(`  - Observations List:  [${repoName}-observations.md](${obsUrl})`);
+  console.log(`  - Backlog CSV:        [backlog.csv](${csvUrl})`);
   if (session.isRedact || session.redact) {
+    const redactedExecUrl = url.pathToFileURL(path.join(reportsDir, 'redacted-executive-summary.md')).toString();
+    const redactedFullUrl = url.pathToFileURL(path.join(reportsDir, `redacted-${repoName}-full-report.md`)).toString();
     console.log(`\n${BOLD}Redacted deliverables:${RESET}`);
-    console.log(`  - Redacted Exec Summary:  [redacted-executive-summary.md](file:///${path.join(reportsDir, 'redacted-executive-summary.md').replace(/\\/g, '/')})`);
-    console.log(`  - Redacted Full Report:   [redacted-${repoName}-full-report.md](file:///${path.join(reportsDir, `redacted-${repoName}-full-report.md`).replace(/\\/g, '/')})`);
+    console.log(`  - Redacted Exec Summary:  [redacted-executive-summary.md](${redactedExecUrl})`);
+    console.log(`  - Redacted Full Report:   [redacted-${repoName}-full-report.md](${redactedFullUrl})`);
   }
   console.log('');
 } catch (err) {

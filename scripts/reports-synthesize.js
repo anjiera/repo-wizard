@@ -23,29 +23,38 @@ console.log(`${BLUE}==>${RESET} ${BOLD}Synthesizing subagent observations into s
 
 // Parse arguments
 const args = process.argv.slice(2);
-const isRedact = args.includes('--redact') || process.env.REDACT === 'true';
-
+let isRedact = args.includes('--redact') || process.env.REDACT === 'true';
 let reportPath = null;
-const reportIdx = args.indexOf('--report-path');
-if (reportIdx !== -1 && args[reportIdx + 1] && !args[reportIdx + 1].startsWith('-')) {
-  reportPath = args[reportIdx + 1];
-}
-
 let sessionPath = null;
+
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
-  if (arg.startsWith('-')) {
-    if (arg === '--report-path' || arg === '--report-style' || arg === '--tos-path' || arg === '--agent' || arg === '--pillar') {
+  if (arg === '--report-path') {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      reportPath = args[i + 1];
+      i++;
+    }
+  } else if (arg === '--report-style' || arg === '--tos-path' || arg === '--agent' || arg === '--pillar') {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
+      i++;
+    }
+  } else if (arg === '--redact') {
+    isRedact = true;
+  } else if (arg.startsWith('-')) {
+    if (args[i + 1] && !args[i + 1].startsWith('-')) {
       i++;
     }
   } else {
-    sessionPath = arg;
-    break;
+    if (!sessionPath) {
+      sessionPath = arg;
+    }
   }
 }
 
+const baseDir = reportPath ? path.resolve(reportPath) : ROOT;
+
 if (!sessionPath) {
-  const sessionPointerPath = path.join(ROOT, '.repo-wizard', 'last_session_path.json');
+  const sessionPointerPath = path.join(baseDir, '.repo-wizard', 'last_session_path.json');
   if (fs.existsSync(sessionPointerPath)) {
     try {
       const pointer = JSON.parse(fs.readFileSync(sessionPointerPath, 'utf8'));
@@ -57,7 +66,7 @@ if (!sessionPath) {
 }
 
 if (!sessionPath) {
-  const defaultPath = path.join(ROOT, '.repo-wizard', 'session.json');
+  const defaultPath = path.join(baseDir, '.repo-wizard', 'session.json');
   if (fs.existsSync(defaultPath)) {
     sessionPath = defaultPath;
   }
@@ -65,6 +74,14 @@ if (!sessionPath) {
 
 if (!sessionPath || !fs.existsSync(sessionPath)) {
   console.error(`${RED}✗ Error:${RESET} Active session file not found. Please run the codebase scan first.`);
+  process.exit(1);
+}
+
+// Validate path to prevent path traversal or writing to arbitrary directories
+const resolvedSessionPath = path.resolve(sessionPath);
+const relative = path.relative(baseDir, resolvedSessionPath);
+if (relative.startsWith('..') || path.isAbsolute(relative) || path.extname(resolvedSessionPath) !== '.json') {
+  console.error(`${RED}✗ Error:${RESET} Invalid session file path. Path must reside within the workspace and have a .json extension.`);
   process.exit(1);
 }
 
@@ -78,14 +95,12 @@ try {
   const obsDir = path.join(reportsDir, 'agents');
 
   // Detect and read all specialist observations
-  const activeAgents = [];
   const observationContents = {};
   if (fs.existsSync(obsDir)) {
     const files = fs.readdirSync(obsDir);
     for (const file of files) {
       if (file.startsWith(`${repoName}-observations-`) && file.endsWith('.md')) {
         const agentName = file.replace(`${repoName}-observations-`, '').replace(/\.md$/, '');
-        activeAgents.push(agentName);
         try {
           observationContents[agentName] = fs.readFileSync(path.join(obsDir, file), 'utf8');
         } catch (e) {}
@@ -138,13 +153,16 @@ try {
       // Extract rows from recommendations tables
       if (inRecommendationsTable) {
         if (line.startsWith('|') && line.endsWith('|')) {
-          const cells = line.split('|').map(c => c.trim()).filter(Boolean);
+          const cells = line.split('|').map(c => c.trim());
+          cells.shift();
+          cells.pop();
           if (cells.length >= 3 && !cells[0].startsWith('---') && !cells[0].toLowerCase().includes('file') && !cells[0].toLowerCase().includes('location') && !cells[0].toLowerCase().includes('target')) {
             extractedRecommendations.push({
               agent: agentName,
               file: redactText(cells[0]),
               issue: redactText(cells[1]),
-              recommendation: redactText(cells[cells.length - 1])
+              recommendation: redactText(cells[cells.length - 1]),
+              rawCells: cells
             });
           }
         } else {
@@ -161,20 +179,43 @@ try {
   const strategicDebt = [];
   const backlog = [];
 
-  extractedRecommendations.forEach((rec, idx) => {
-    const isHighCost = rec.recommendation.toLowerCase().includes('decompose') || rec.recommendation.toLowerCase().includes('architecture') || rec.recommendation.toLowerCase().includes('fuzz');
-    const isMediumCost = rec.recommendation.toLowerCase().includes('runner') || rec.recommendation.toLowerCase().includes('tool') || rec.recommendation.toLowerCase().includes('threshold');
+  extractedRecommendations.forEach((rec) => {
+    let priority = 'quick-win';
+    if (rec.rawCells && rec.rawCells.length >= 4) {
+      const cellPriority = rec.rawCells[2].toLowerCase();
+      if (cellPriority.includes('high') || cellPriority.includes('strategic') || cellPriority.includes('debt')) {
+        priority = 'strategic-debt';
+      } else if (cellPriority.includes('medium') || cellPriority.includes('value')) {
+        priority = 'high-value';
+      } else if (cellPriority.includes('papercut') || cellPriority.includes('nit') || cellPriority.includes('low')) {
+        priority = 'papercut';
+      } else {
+        priority = 'quick-win';
+      }
+    } else {
+      const lowerRec = rec.recommendation.toLowerCase();
+      const lowerIssue = rec.issue.toLowerCase();
+      if (lowerRec.includes('decompose') || lowerRec.includes('architecture') || lowerRec.includes('fuzz') || lowerRec.includes('rewrite')) {
+        priority = 'strategic-debt';
+      } else if (lowerRec.includes('runner') || lowerRec.includes('tool') || lowerRec.includes('threshold') || lowerRec.includes('test') || lowerRec.includes('mock')) {
+        priority = 'high-value';
+      } else if (lowerRec.includes('nit') || lowerRec.includes('unused') || lowerRec.includes('dead code') || lowerIssue.includes('papercut') || lowerRec.includes('papercut')) {
+        priority = 'papercut';
+      } else {
+        priority = 'quick-win';
+      }
+    }
 
     const formattedRec = `- **${rec.file}:** [${rec.recommendation}](#specialist-agent-${rec.agent})`;
 
-    if (isHighCost) {
+    if (priority === 'strategic-debt') {
       strategicDebt.push(formattedRec);
-    } else if (isMediumCost) {
+    } else if (priority === 'high-value') {
       highValue.push(formattedRec);
-    } else if (idx % 2 === 0) {
-      quickWins.push(formattedRec);
-    } else {
+    } else if (priority === 'papercut') {
       papercuts.push(formattedRec);
+    } else {
+      quickWins.push(formattedRec);
     }
 
     backlog.push({
@@ -184,7 +225,7 @@ try {
       epic: 'Code Health Refactoring',
       agent: rec.agent,
       goal: 'Code Quality Improvement',
-      priority: isHighCost ? 'strategic-debt' : (isMediumCost ? 'high-value' : 'quick-win')
+      priority
     });
   });
 
@@ -232,6 +273,7 @@ try {
   const healthParagraphs = chunkParagraphs(healthFindings, 'The target codebase demonstrates modular design structures and a clean segregation of core components.');
   const opportunityParagraphs = chunkParagraphs(opportunityFindings, 'Opportunities exist to integrate standard test runner configurations, enforce coverage thresholds, and modularize manual parser functions.');
 
+  // mock-start
   // Build word-count compliant paragraphs (aiming for 150-1000 words for M size)
   const sec1Text = `*This section highlights the key strengths of the target repository, detailing its modular structure, lightweight footprint, and predictable layout.*
 
@@ -258,6 +300,7 @@ Overview: To minimize developer friction and ensure a smooth adoption of these t
 Specifically, configuring local git pre-commit hooks to validate code formatting and run fast unit tests on modified files will immediately prevent syntax regressions. This setup ensures that developers receive rapid feedback during the coding loop without stalling their workspace. Implementing these hooks takes minimal time but builds immediate discipline around code formatting and basic lint rules.
 
 The second phase should address high-value, medium-effort tooling. This includes introducing a standardized test runner configuration and establishing a baseline code coverage target of eighty percent. The test runner configuration will unify test patterns across the repository, while the coverage gate will ensure that new features are accompanied by corresponding test cases. To support this, the third phase should introduce mock service worker boundaries to intercept external network calls, ensuring that unit and integration tests remain isolated and deterministic. This phased structure helps maintain engineering momentum while incrementally raising code quality.`;
+  // mock-end
 
   const getMaturityState = (keywords, defaultText) => {
     const matched = extractedFindings.find(f => keywords.some(k => f.text.toLowerCase().includes(k)));
@@ -274,8 +317,8 @@ The second phase should address high-value, medium-effort tooling. This includes
       ARCHITECTURE: getMaturityState(['architecture', 'design', 'boundary', 'schema', 'dependency'], "System design is documented through markdown, but lacks formal contract verification for API boundaries or schemas."),
       QUALITY: getMaturityState(['test', 'lint', 'coverage', 'quality', 'hook'], "The codebase features testing utilities, but lacks unified runner configuration and automated commit validation hooks.")
     },
-    conclusion: \`Transitioning the target codebase toward structured repository governance is an incremental journey that is entirely achievable. \${quickWins.length > 0 ? 'Addressing the identified quick wins will immediately improve code quality.' : 'Prioritizing low-effort, high-value quality gates will help establish a stable verification baseline.'}\`,
-    suggestedAdjustments: quickWins.slice(0, 2).join('\\n') || \`- Establish standard lint rules to mitigate formatting discrepancies.\\n- Set up a pre-commit validation framework to verify syntax and run unit tests.\`,
+    conclusion: `Transitioning the target codebase toward structured repository governance is an incremental journey that is entirely achievable. ${quickWins.length > 0 ? 'Addressing the identified quick wins will immediately improve code quality.' : 'Prioritizing low-effort, high-value quality gates will help establish a stable verification baseline.'}`,
+    suggestedAdjustments: quickWins.slice(0, 2).join('\n') || `- Establish standard lint rules to mitigate formatting discrepancies.\n- Set up a pre-commit validation framework to verify syntax and run unit tests.`,
     quickWins,
     highValue,
     papercuts,
@@ -294,7 +337,8 @@ The second phase should address high-value, medium-effort tooling. This includes
     try {
       fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
     } catch (e) {
-      console.error(`Failed to write session file to ${filePath}:`, e.message);
+      console.error(`${RED}✗ Error: Failed to write session file to ${filePath}:${RESET}`, e.message);
+      process.exit(1);
     }
   }
 

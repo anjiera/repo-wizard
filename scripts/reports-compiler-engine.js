@@ -189,7 +189,7 @@ function compileRealReports(session) {
     if (list && list.length > 0) {
       const formattedReports = list.map((item, idx) => {
         const letter = String.fromCharCode(97 + idx); // a, b, c, d...
-        let report = `#### ${pNum}. ${letter}) Specialist Agent: ${item.agentName}\n\n`;
+        let report = `#### <a id="specialist-agent-${item.agentName}"></a>${pNum}. ${letter}) Specialist Agent: ${item.agentName}\n\n`;
         if (item.color && TEAM_COLORS[item.color]) {
           report += `**Cybersecurity Role Alignment:** ${TEAM_COLORS[item.color]}\n\n`;
         }
