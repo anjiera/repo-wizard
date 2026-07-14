@@ -13,7 +13,7 @@
 
 'use strict';
 
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -59,6 +59,82 @@ function checkGitInstalled() {
     logSuccess('Git is installed');
   } catch (err) {
     logError('Git was not found on your path. Please install Git to continue.');
+    process.exit(1);
+  }
+}
+
+function checkGitleaks() {
+  logStep('Verifying Gitleaks installation...');
+
+  if (process.argv.includes('--skip-gitleaks')) {
+    logWarning('Skipping Gitleaks installation and PATH check via --skip-gitleaks flag.');
+    return;
+  }
+
+  try {
+    execSync('gitleaks version', { stdio: 'ignore' });
+    logSuccess('Gitleaks is installed on system PATH');
+    return;
+  } catch (err) {
+    // Continue verification
+  }
+
+  const fallbackPath = 'D:\\gitleaks';
+  const exePath = path.join(fallbackPath, 'gitleaks.exe');
+
+  if (process.platform === 'win32') {
+    if (fs.existsSync(exePath)) {
+      logWarning(`Gitleaks found at ${exePath} but is not on your current system PATH.`);
+      try {
+        logStep(`Attempting to append ${fallbackPath} to User PATH...`);
+        // Query User PATH securely using execFileSync to avoid cmd.exe parsing issues
+        const userPathResult = execFileSync('powershell', [
+          '-NoProfile',
+          '-Command',
+          '[Environment]::GetEnvironmentVariable("PATH", "User")'
+        ], { encoding: 'utf8' }).trim();
+
+        const paths = userPathResult.split(';').filter(Boolean);
+        const normalizedFallback = path.normalize(fallbackPath).toLowerCase().replace(/\\$/, '');
+        const alreadyExists = paths.some(p => path.normalize(p).toLowerCase().replace(/\\$/, '') === normalizedFallback);
+
+        if (!alreadyExists) {
+          const newPath = userPathResult ? `${userPathResult};${fallbackPath}` : fallbackPath;
+          // Set environment variable securely passing newPath as argument to avoid command injection
+          execFileSync('powershell', [
+            '-NoProfile',
+            '-Command',
+            '[Environment]::SetEnvironmentVariable("PATH", $args[0], "User")',
+            newPath
+          ]);
+          logSuccess(`Successfully appended ${fallbackPath} to User PATH.`);
+          logWarning('Please restart your terminal/IDE for the environment PATH update to take effect.');
+        } else {
+          logWarning(`Gitleaks path ${fallbackPath} is already registered in User PATH, but the current terminal session needs a restart to refresh its environment.`);
+        }
+
+        // Update the active process PATH for the remainder of this setup execution
+        process.env.PATH = `${process.env.PATH}${path.delimiter}${fallbackPath}`;
+        logSuccess('Temporarily updated active process environment PATH to include Gitleaks.');
+      } catch (pathErr) {
+        logError(`Failed to update environment PATH: ${pathErr.message}`);
+        console.log(`Please manually add ${fallbackPath} to your environment PATH variable.`);
+      }
+    } else {
+      logError('Gitleaks was not found on your system PATH and could not be resolved at D:\\gitleaks.');
+      console.log('Please download Gitleaks and add it to your PATH.');
+      console.log('You can bypass this check by running: node scripts/setup.js --skip-gitleaks');
+      process.exit(1);
+    }
+  } else {
+    // Non-Windows platform instructions
+    logError('Gitleaks was not found on your system PATH.');
+    if (process.platform === 'darwin') {
+      console.log('To install on macOS, run: brew install gitleaks');
+    } else if (process.platform === 'linux') {
+      console.log('To install on Linux, run: sudo apt install gitleaks (or download from https://github.com/gitleaks/gitleaks)');
+    }
+    console.log('You can bypass this check by running: node scripts/setup.js --skip-gitleaks');
     process.exit(1);
   }
 }
@@ -195,6 +271,7 @@ function main() {
   
   checkNodeVersion();
   checkGitInstalled();
+  checkGitleaks();
   installHooks();
   runValidationsAndTests();
   checkGeminiKey();

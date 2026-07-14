@@ -19,6 +19,22 @@ const PRE_COMMIT_HOOK = path.join(HOOKS_DIR, 'pre-commit');
 const preCommitContent = `#!/bin/sh
 # Run fast-running structural validations and local test suites
 echo "Running pre-commit validations..."
+
+# Run gitleaks check on staged changes (if gitleaks is available on PATH)
+if command -v gitleaks >/dev/null 2>&1; then
+  echo "Running gitleaks protect on staged changes..."
+  gitleaks protect --staged --verbose
+  if [ $? -ne 0 ]; then
+    echo "✗ Gitleaks found potential secrets. Commit aborted."
+    exit 1
+  fi
+else
+  echo "✗ ERROR: gitleaks command not found. Secrets check aborted."
+  echo "  Please make sure Gitleaks is installed and added to your system PATH."
+  echo "  You can run 'node scripts/setup.js' to automatically verify and configure."
+  exit 1
+fi
+
 node scripts/validate-skills.js && \
 node scripts/validate-commands.js && \
 node scripts/validate-agents.js && \
