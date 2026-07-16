@@ -45,7 +45,7 @@ function slugify(text) {
 /**
  * Basic regex-based Markdown parser
  */
-function parseMarkdown(md) {
+function parseMarkdown(md, expanded = false) {
   let html = '';
   const lines = md.split(/\r?\n/);
   
@@ -134,18 +134,18 @@ function parseMarkdown(md) {
       inTable = false;
     }
 
-    // 2. Unordered List Handler
-    const listMatch = line.match(/^([ \t]*)[-\*\+]\s+(.*)$/);
+    // 2. List Handler
+    const listMatch = line.match(/^([ \t]*)([-\*\+]|\d+\.)\s+(.*)$/);
     const isListContinuation = listStack.length > 0 && line.trim() !== '' &&
-      (line.startsWith(' ') || line.startsWith('\t') || (!line.match(/^[#<|]/) && line.trim() !== '---'));
+      (line.startsWith(' ') || line.startsWith('\t') || (!line.match(/^[#<|>]/) && line.trim() !== '---'));
 
     if (listStack.length > 0 && !listMatch && !isListContinuation) {
       if (line.trim() === '') {
         const nextLine = lines[i + 1];
-        if (!nextLine || !nextLine.match(/^[ \t]*[-\*\+]\s+/)) {
+        if (!nextLine || !nextLine.match(/^[ \t]*(?:[-\*\+]|\d+\.)\s+/)) {
           while (listStack.length > 0) {
             const popped = listStack.pop();
-            html += '</ul>\n';
+            html += `</${popped.type}>\n`;
             if (popped.parentOpen) {
               html += '</li>\n';
             }
@@ -155,7 +155,7 @@ function parseMarkdown(md) {
       } else {
         while (listStack.length > 0) {
           const popped = listStack.pop();
-          html += '</ul>\n';
+          html += `</${popped.type}>\n`;
           if (popped.parentOpen) {
             html += '</li>\n';
           }
@@ -166,23 +166,24 @@ function parseMarkdown(md) {
     if (listMatch) {
       flushParagraph();
       const indent = listMatch[1].replace(/\t/g, '    ').length;
-      const content = inlineParse(listMatch[2]);
+      const listType = listMatch[2].match(/^\d+\./) ? 'ol' : 'ul';
+      const content = inlineParse(listMatch[3]);
 
       if (listStack.length === 0) {
-        html += '<ul>\n';
-        listStack.push({ indent, type: 'ul' });
+        html += `<${listType}>\n`;
+        listStack.push({ indent, type: listType });
       } else {
         let top = listStack[listStack.length - 1];
         if (indent > top.indent) {
           if (html.endsWith('</li>\n')) {
             html = html.slice(0, -6);
           }
-          html += '<ul>\n';
-          listStack.push({ indent, type: 'ul', parentOpen: true });
+          html += `<${listType}>\n`;
+          listStack.push({ indent, type: listType, parentOpen: true });
         } else if (indent < top.indent) {
           while (listStack.length > 1 && listStack[listStack.length - 1].indent > indent) {
             const popped = listStack.pop();
-            html += '</ul>\n';
+            html += `</${popped.type}>\n`;
             if (popped.parentOpen) {
               html += '</li>\n';
             }
@@ -248,23 +249,24 @@ function parseMarkdown(md) {
         if (openDetails.h4) { html += `    </div>\n  </details>\n`; openDetails.h4 = false; }
       }
       
+      const openAttr = expanded ? ' open' : '';
       if (h1) { html += `<h1 id="${id}">${contentText}</h1>\n`; continue; }
       if (h2) {
-        html += `<details class="section-details" id="details-${id}">\n`;
+        html += `<details class="section-details" id="details-${id}"${openAttr}>\n`;
         html += `  <summary class="section-summary"><h2 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h2></summary>\n`;
         html += `  <div class="section-content">\n`;
         openDetails.h2 = true;
         continue;
       }
       if (h3) {
-        html += `<details class="subsection-details h3-details" id="details-${id}">\n`;
+        html += `<details class="subsection-details h3-details" id="details-${id}"${openAttr}>\n`;
         html += `  <summary class="subsection-summary"><h3 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h3></summary>\n`;
         html += `  <div class="subsection-content">\n`;
         openDetails.h3 = true;
         continue;
       }
       if (h4) {
-        html += `<details class="subsection-details h4-details" id="details-${id}">\n`;
+        html += `<details class="subsection-details h4-details" id="details-${id}"${openAttr}>\n`;
         html += `  <summary class="subsection-summary"><h4 id="${id}" style="display: inline-block; margin: 0;">${contentText}</h4></summary>\n`;
         html += `  <div class="subsection-content">\n`;
         openDetails.h4 = true;
@@ -297,7 +299,7 @@ function parseMarkdown(md) {
   if (listStack.length > 0) {
     while (listStack.length > 0) {
       const popped = listStack.pop();
-      html += '</ul>\n';
+      html += `</${popped.type}>\n`;
       if (popped.parentOpen) {
         html += '</li>\n';
       }
@@ -380,6 +382,7 @@ function inlineParse(text) {
   const codePlaceholderPrefix = `@@CODEPLACEHOLDER${salt}X`;
   const linkPlaceholderPrefix = `@@LINKPLACEHOLDER${salt}X`;
   const anchorPlaceholderPrefix = `@@ANCHORPLACEHOLDER${salt}X`;
+  const imagePlaceholderPrefix = `@@IMAGEPLACEHOLDER${salt}X`;
 
   const anchors = [];
   // Extract anchors first to shield them from formatting and HTML escaping
@@ -387,6 +390,14 @@ function inlineParse(text) {
     const id = anchors.length;
     anchors.push(anchorId);
     return `${anchorPlaceholderPrefix}${id}@@`;
+  });
+
+  const images = [];
+  // Extract images from raw text first to avoid conflict with links
+  parsed = parsed.replace(/!\[([^\]]*?)\]\(((?:[^()\s]|\([^()\s]*\))*)\)/g, (match, altText, url) => {
+    const id = images.length;
+    images.push({ altText, url });
+    return `${imagePlaceholderPrefix}${id}@@`;
   });
 
   const links = [];
@@ -437,6 +448,16 @@ function inlineParse(text) {
     return `<a href="${escapeHtml(sanitizeUrl(link.url))}">${safeText}</a>`;
   });
 
+  // Restore images
+  parsed = parsed.replace(new RegExp(`${imagePlaceholderPrefix}(\\d+)@@`, 'g'), (match, id) => {
+    const imgIndex = parseInt(id, 10);
+    if (imgIndex < 0 || imgIndex >= images.length) {
+      return match;
+    }
+    const img = images[imgIndex];
+    return `<img src="${escapeHtml(sanitizeUrl(img.url))}" alt="${escapeHtml(img.altText)}" />`;
+  });
+
   // Restore anchors
   parsed = parsed.replace(new RegExp(`${anchorPlaceholderPrefix}(\\d+)@@`, 'g'), (match, id) => {
     const anchorIndex = parseInt(id, 10);
@@ -447,11 +468,12 @@ function inlineParse(text) {
   });
 
   // Final validation check to ensure no placeholder patterns remain in the returned text
-  if (parsed.includes(codePlaceholderPrefix) || parsed.includes(linkPlaceholderPrefix) || parsed.includes(anchorPlaceholderPrefix)) {
+  if (parsed.includes(codePlaceholderPrefix) || parsed.includes(linkPlaceholderPrefix) || parsed.includes(anchorPlaceholderPrefix) || parsed.includes(imagePlaceholderPrefix)) {
     parsed = parsed
       .replace(new RegExp(`${codePlaceholderPrefix}\\d+@@`, 'g'), '')
       .replace(new RegExp(`${linkPlaceholderPrefix}\\d+@@`, 'g'), '')
-      .replace(new RegExp(`${anchorPlaceholderPrefix}\\d+@@`, 'g'), '');
+      .replace(new RegExp(`${anchorPlaceholderPrefix}\\d+@@`, 'g'), '')
+      .replace(new RegExp(`${imagePlaceholderPrefix}\\d+@@`, 'g'), '');
   }
 
   return parsed;
@@ -467,8 +489,14 @@ function sanitizeHtml(html) {
   clean = clean.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
   // Remove iframe, object, embed, frame, frameset tags
   clean = clean.replace(/<(iframe|object|embed|frame|frameset)\b[^<]*(?:(?!<\/\1>)<[^<]*)*<\/\1>/gi, '');
-  // Remove inline on* event handlers
-  clean = clean.replace(/[\s/]+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  // Remove inline on* event handlers safely only inside HTML tags
+  clean = clean.replace(/<[^>]+>/g, (tag) => {
+    return tag.replace(/[\s/]+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]*)/gi, '');
+  });
+  // Remove inline on* event handlers safely only inside escaped HTML tags (&lt;...&gt;)
+  clean = clean.replace(/&lt;(?:(?!&gt;).)*&gt;/g, (tag) => {
+    return tag.replace(/(?:[\s/]|&quot;)+on[a-z]+\s*=\s*(?:&quot;[^&]*&quot;|'[^']*'|[^\s&>]*)/gi, '');
+  });
   // Remove javascript: links
   clean = clean.replace(/href\s*=\s*["']\s*javascript:[^"']*["']/gi, 'href="#"');
   return clean;
@@ -587,8 +615,8 @@ function loadStyleConfig(styleName) {
 /**
  * Injects markdown HTML body into the premium template
  */
-function convertMdToHtml(mdContent, title = 'Documentation', styleName = 'whitepaper') {
-  const htmlBody = sanitizeHtml(parseMarkdown(mdContent));
+function convertMdToHtml(mdContent, title = 'Documentation', styleName = 'whitepaper', expanded = false) {
+  const htmlBody = sanitizeHtml(parseMarkdown(mdContent, expanded));
   const styleConfig = loadStyleConfig(styleName);
 
   return `<!DOCTYPE html>
@@ -776,6 +804,12 @@ function convertMdToHtml(mdContent, title = 'Documentation', styleName = 'whitep
       text-decoration: underline;
     }
 
+    img {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+
     pre {
       background: #1e1e2e;
       color: #cdd6f4;
@@ -875,13 +909,28 @@ function main() {
   
   let reportStyle = 'whitepaper';
   const styleIdx = args.indexOf('--report-style');
-  if (styleIdx !== -1 && args[styleIdx + 1] && !args[styleIdx + 1].startsWith('-')) {
-    reportStyle = args[styleIdx + 1];
-    args.splice(styleIdx, 2);
+  if (styleIdx !== -1) {
+    if (args[styleIdx + 1] && !args[styleIdx + 1].startsWith('-')) {
+      reportStyle = args[styleIdx + 1];
+      args.splice(styleIdx, 2);
+    } else {
+      args.splice(styleIdx, 1);
+    }
+  }
+
+  let expanded = false;
+  const expandedIdx = args.indexOf('--expanded');
+  if (expandedIdx !== -1) {
+    if (args[expandedIdx + 1] && !args[expandedIdx + 1].startsWith('-')) {
+      expanded = args[expandedIdx + 1].toLowerCase() === 'true';
+      args.splice(expandedIdx, 2);
+    } else {
+      args.splice(expandedIdx, 1);
+    }
   }
 
   if (args.length < 2) {
-    console.error('Usage: node scripts/md-to-html.js <input.md> <output.html> [--report-style <style>]');
+    console.error('Usage: node scripts/md-to-html.js <input.md> <output.html> [--report-style <style>] [--expanded true|false]');
     process.exit(1);
   }
 
@@ -896,7 +945,7 @@ function main() {
   try {
     const mdContent = fs.readFileSync(inputPath, 'utf8');
     const title = path.basename(inputPath, '.md');
-    const htmlContent = convertMdToHtml(mdContent, title, reportStyle);
+    const htmlContent = convertMdToHtml(mdContent, title, reportStyle, expanded);
     
     // Ensure parent dir exists
     const outputDir = path.dirname(outputPath);
